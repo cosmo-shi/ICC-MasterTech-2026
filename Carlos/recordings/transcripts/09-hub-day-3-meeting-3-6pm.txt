@@ -1,0 +1,502 @@
+[OBS recording, Fri 6 Nov 2026, 5:57 pm, 53 min. Local Whisper (large-v3-turbo) auto-transcript, raw, unedited; [h:mm:ss] timestamps. Carlos's mic was captured this time. Hub day 3: Jeff's main-room arrivals; from about 5:50 Carlos and Justin pitch the music practice coach to an advisor; Chris from about 23:00; another advisor from about 27:40 (feedback incl. gamification, about 45:00); main-room wrap-up from about 48:50. Speaker names are not labelled.]
+
+[0:00:00] you have to remind me again um where you're from no worries i'm from uh uc from icc specifically
+[0:00:10] thank you thank you thank you i think i've mastered the um breakout rooms on the last day
+[0:00:29] no worries likely in the next year you'll be
+[0:00:33] doing it more smoothly now now that oh no this is the third year in a row
+[0:00:40] this is the third year in a row someone's over in the wrong one again i wonder how that keeps
+[0:00:47] happening hi stanley hi jeff i'm carlos sorry yes hi there stanley hello let's see you guys are like
+[0:01:02] six jeff you're six p.m shouldn't be working yeah that's all right
+[0:01:08] yeah i think the icc students just uh left the building now and we're just joining
+[0:01:15] oh so are they are is it just you uh all of us three will join but it's just uh from home now
+[0:01:25] that's fine yeah that's i'm home now too so it's all it's all good carlos all right now i've gotta
+[0:01:33] my challenge every year
+[0:01:36] is to try and learn everyone's name
+[0:01:38] before we get to the convention center
+[0:01:40] on Monday morning
+[0:01:41] who's doing the keynote
+[0:01:47] this year
+[0:01:47] I don't know
+[0:01:49] sorry
+[0:01:50] I don't really even get to see
+[0:01:54] much of the conference
+[0:01:56] because I'm
+[0:01:56] doing what I'm doing
+[0:01:59] and I went to the keynote
+[0:02:02] the last two times
+[0:02:03] hi madison hi can you remind me again where you're from uh adelaide and um who haven't you seen so
+[0:02:18] far um i don't think i've seen sydney or canberra yeah and perth as well oh and perth yeah of course
+[0:02:31] and stanley who haven't you seen so far i don't think i've met uh singapore
+[0:02:42] singapore yeah i'm having issues with singapore they haven't been coming so i don't think i've
+[0:02:47] met sydney yeah yeah i think the rest of them so the melbourne team has changed their minds about
+[0:02:58] four times so i think um melbourne will be new for everyone that that's okay that's that's the idea
+[0:03:06] can you see my um my screen can you see the powerpoint slide that's up yes all right good
+[0:03:16] well it's six o'clock six o'clock for us on a friday is it three o'clock for you there in perth
+[0:03:22] camera uh yeah so yeah all right oh here we go chris is here
+[0:03:30] Hey, Chris.
+[0:03:33] Hey, mate.
+[0:03:34] So I think you're probably one of the people that's spoken to everyone, right?
+[0:03:40] Who?
+[0:03:41] I think so, yeah.
+[0:03:44] Or they've just had enough of speaking to me.
+[0:03:46] It's probably more the point.
+[0:03:52] I'm just going to think about where to fit you.
+[0:03:55] No, I'm mastering the fine art of breakout rooms on the last day.
+[0:03:59] You've done well. Just in time to forget it until next week.
+[0:04:04] Well, it keeps my mind busy anyway.
+[0:04:06] Good.
+[0:04:09] I'm going to give everyone until five past six.
+[0:04:18] I mean, wait, so Madison, have you, you haven't talked to Perth.
+[0:04:24] Maybe for the time being, I'll just put you in with Perth.
+[0:04:30] Yeah, that's great.
+[0:04:31] Because they're here and there's no reason to make them wait, right?
+[0:04:35] I can talk to Carlos.
+[0:04:42] All right, Stanley, I'll put you in with Carlos for now,
+[0:04:45] and hopefully the rest of them will show up.
+[0:04:47] We'll see what happens.
+[0:04:49] And Chris, you can hang out with me for a minute.
+[0:04:53] I'll just have a chat about the setup,
+[0:04:56] because there's a lot of messaging flying around.
+[0:05:00] So just before we begin,
+[0:05:02] you remember we were talking about
+[0:05:03] what are you making possible for learners and who are they a few of the groups have been talking
+[0:05:08] about social versus individual learning which has been an interesting way of looking at the world
+[0:05:14] um and then what we're trying to do with this creative first thing is imagine the learning
+[0:05:20] experience that you want and explore problems and solutions and i i'm only saying that not to give
+[0:05:26] you more to do but just to say that i think that's what everyone's doing hi justin justin hello yeah
+[0:05:38] hello hello yes all right all right could you please remind me where you're from uh from ganbro
+[0:05:44] oh good yeah okay i'm gonna just um start the um breakout rooms and as people come in
+[0:05:52] i'll distribute you around but um carlos and justin you're going to be speaking to stanley
+[0:05:58] and those of you at icp you'll be speaking to madison so here we go and then chris and i will
+[0:06:03] stay in the um in the waiting area we'll see we'll see you all soon hi there stanley carlos
+[0:06:26] how are you guys doing how's your idea developed from yesterday um actually there's uh
+[0:06:33] we are i think last time we met we had a were you guys talking about the music the music yeah
+[0:06:41] Yeah, we're basically talking about the music one.
+[0:06:43] So basically, I think you know the gist of the music one that we had.
+[0:06:51] Yeah.
+[0:06:52] So we are building.
+[0:06:54] Yeah, I can give a general gist again.
+[0:06:57] We are building a practice coach for music fundamentals.
+[0:07:02] And it will likely work on the phone with or without an instrument.
+[0:07:08] Oh, okay.
+[0:07:09] So it's theory.
+[0:07:09] theory yep the learner names what they want they can make it the cover sound
+[0:07:16] good a song a song or basically teach or learn from instrument that they
+[0:07:24] specifically want okay so with that in mind so they improve on the thing that
+[0:07:32] they want and they improve overall without being told what they're doing
+[0:07:36] on the course okay and is it for your beginners or um i would say it's for general use but the
+[0:07:46] overall app has a ceiling when the likely it it can lower the barrier of entry so everyone it makes
+[0:07:57] so that can you uh cut in justin oh yeah so it is for people who don't have the time
+[0:08:05] all the resources to actually you know begin uh music lessons or like you know instrument piano
+[0:08:11] or guitar lessons so it's the app is basically to bridge that gap um so just to test out if they like
+[0:08:20] what they're getting into to see if piano is a thing to see if guitar is a thing
+[0:08:24] or to see if they can understand music at all okay yeah yeah picked up i tried to learn music
+[0:08:30] a couple times so maybe i'm fine yeah yeah yeah so so yeah there's a lot of people you know who
+[0:08:39] is just uncomfortable going to a person and then just you know starting out music and then just
+[0:08:43] realizing oh i don't really like what i'm doing yeah so this is like just like a testing area
+[0:08:49] to see how they fit in that area and we could uh teach them the basics and then later as carlos
+[0:08:58] are saying we have a very specific ceiling so once the AI feels like it's not going to help much
+[0:09:04] it can maybe connect to an instructor which can develop the skills more yeah and since
+[0:09:11] the AI has been personalized for the student since they have been talking to them and the AI
+[0:09:18] knows that what the student is struggling with it can actually use the overall overview of those
+[0:09:25] student and give it to the mentor so the mentor can have an actual context on what to teach like
+[0:09:33] the student is currently struggling with scaling maybe you should try to teach them more about
+[0:09:39] scaling or or the student has good ears but is struggling to uh understand music notes so maybe
+[0:09:48] try to uh uh correlate the two so the students can understand sheets better
+[0:09:56] yeah okay i can see that it's quite a wide scope here um you know so um
+[0:10:04] you always like starting from like a mock-up of how the app is going to look like first without
+[0:10:09] worrying too much about you know the the back end yeah yeah okay so even the feature with you know
+[0:10:16] like sending it to an instructor or like the stats sending the stats to the instructor that
+[0:10:22] is basically just an idea that we have but basically our main idea is just to have that
+[0:10:28] the piano or the guitar ai feedback interface so that's our main priority and then if time permits
+[0:10:36] we can maybe think about the other ones as well okay yeah and the overall app the basically the
+[0:10:44] overall gist of the app is to make uh learning instruments very make easier because uh when
+[0:10:52] studies shows when you're like uh uh basically when in primary schools there's basically no um
+[0:11:01] music uh teachers or anything in the curriculum at all and even in universities there's like i
+[0:11:09] I think I've heard 72% of universities doesn't have a music degree at all or music teaching at all.
+[0:11:17] So how do students find a way to learn music without trying to be very specific or trying to get a mentor that is far away?
+[0:11:34] i mean one example of um uh is dan the uh one of our mentors here he says yeah yeah basically he
+[0:11:45] said he was a learning guitar uh and the teacher he has is currently on canada so we have to really
+[0:11:53] think about the time of the student how their uh understanding of what they're currently uh
+[0:12:00] know or basically they don't know nothing at all and and and i think okay maybe i can give
+[0:12:12] my idea in australia because my daughter is seven yeah so they do have uh music lessons
+[0:12:19] primary school it depends on whether the primary school has music teachers okay yeah so um i don't
+[0:12:26] don't think it's core curriculum but most of them start on recording and you have seen that
+[0:12:32] plastic recording yeah it seems to be the easiest one of the easiest instruments to
+[0:12:37] learn from and one of the yeah so like when we were researching we found out like there aren't
+[0:12:44] many teachers too like who can teach music nowadays the students are decreasing the teachers
+[0:12:49] are decreasing so it's really uh we have to think about how we as you know uh how can we
+[0:12:57] bring that creativity to people who cannot access them with these type of disorders you have to
+[0:13:03] define your market first because if you are targeting young adults who wants to learn and
+[0:13:09] very young kids it's a totally different app yeah an app that works for a young adult will never
+[0:13:16] work for a seven-year-old because the graphics you know the the speed of delivering is totally
+[0:13:23] different like dance different dance advanced he's learning life is paying like 100 bucks per hour
+[0:13:29] or whatever i don't know yeah and um for me i remember i started with classical guitar in the
+[0:13:36] yamaha music school and all that yeah but then um again you know after that you want to learn lead
+[0:13:42] guitar you know then started buying cds and books and all that but there's no um feedback that's
+[0:13:49] the problem with those courses yeah yeah that's that's one good key that uh our app is trying to
+[0:13:56] do is currently feedback because i believe that uh current studies say that 50 percent
+[0:14:04] students actually
+[0:14:05] use the feedback that AI gave.
+[0:14:11] Like 50% of students actually use AI to get feedback
+[0:14:15] and 89% of students say that it's a positive experience
+[0:14:20] or that feedback.
+[0:14:22] And I can say from my actual experience
+[0:14:25] when I was trying to...
+[0:14:29] Well, last year when I was trying to
+[0:14:31] was find a vocal coach.
+[0:14:35] I was trying so hard to look for one,
+[0:14:38] but I was a very big introvert,
+[0:14:40] so I had a big serious anxiety
+[0:14:43] when I was basically saying,
+[0:14:45] just hire a coach.
+[0:14:48] So I basically just used my AI mod,
+[0:14:52] my cloud code specifically to just say,
+[0:14:56] oh, here's my recording.
+[0:14:58] What do you think of it?
+[0:15:00] Oh, really?
+[0:15:00] and I just say I usually just gave me a what you call it I usually just listen
+[0:15:09] to myself and I just ask him it's too loud on this part what can I do to make
+[0:15:15] it better and he usually says try to go back out of your mic and try to make
+[0:15:23] your voice more open and your vowels more more open too and even when I gave
+[0:15:34] vague and vague criticism on myself and I don't know how to articulate my
+[0:15:41] thoughts the AI was able to personalize or dumb it down a bit to make it
+[0:15:47] understand and feel like that I'm actually improving and I think that's
+[0:15:52] It's one good case that can say that AI can personalize music, learning music in different
+[0:16:01] types of understandings and levels.
+[0:16:04] Okay.
+[0:16:06] So back to your app, I think once you start getting down to trying to build up a wireframe
+[0:16:16] of your application, you will probably start to think about it.
+[0:16:19] think you're still very much at the ideation concept trying to nail down that idea but who
+[0:16:24] is your use case you know like who you're targeting for your music app i think it's probably one area
+[0:16:30] that you have to start to decide yeah whether it's young adult you know a kid you know seven to nine
+[0:16:36] for instance yeah yeah we talked about it specifically um i think simone has the answer
+[0:16:43] for that well because uh last session frank also uh mentioned that to us and i believe
+[0:16:52] we were trying to target uh actual uh primary and high school students because
+[0:17:00] uc for example has um extracurricular programs that can actually uh
+[0:17:06] uh uh what what is it called i think it's like an outreach program where they supply schools with
+[0:17:14] uh accessibility to yeah resources for creativity so yeah so this could be a part of that a system
+[0:17:24] yeah so it basically shows uh can give basically uh primary students that are outside of remote
+[0:17:33] areas or doesn't have internet that can actually try and maybe be uh try music for once or something
+[0:17:43] like that okay let me try to nail down you know because you need to emphasize on how you're using
+[0:17:50] the tech like for instance you know because the challenge is using ai or some kind of other
+[0:17:56] emerging technologies to enhance student learning studying and success so we that's still very much
+[0:18:05] the challenge yeah so i'd say that maybe delivering it doesn't mean yeah delivering the overall
+[0:18:13] delivery is not important but the actual target audiences will likely uh will target primary and
+[0:18:23] high school students
+[0:18:26] but I believe
+[0:18:27] but I believe that
+[0:18:30] we will able to
+[0:18:31] steer to
+[0:18:33] university
+[0:18:35] students too but we will likely talk
+[0:18:38] about it more
+[0:18:38] and that you mentioned an instrument
+[0:18:42] I think that's a really big stretch
+[0:18:44] because anything
+[0:18:46] from a piano to string
+[0:18:48] instruments to wind instruments to
+[0:18:50] percussions totally different
+[0:18:52] for now we'll likely yeah we'll likely do a prototype of two instruments first and since
+[0:19:01] i would say it's very scalable maybe showing the proof of concept of two instruments we can
+[0:19:08] move on to wind instruments and actually regional instruments but that says that's that's we'll just
+[0:19:16] start with the two instruments first yeah i think the lowest hanging foot is probably keyboard
+[0:19:21] based because at least you have a feedback on a tablet because imagine if it's a guitar then
+[0:19:27] you have to mic it in you know into a panel midi box and all kind of stuff yeah accessibility is
+[0:19:35] not there yeah that's why people always start teaching kids on keyboard yeah uh i understand
+[0:19:43] that because I wanted to play the guitar and then my dad was like play the piano first and so yeah
+[0:19:48] I've never I've never learned guitar but I've played piano for like 10 years now yeah so as
+[0:19:53] you see right most parents also start their kids on like the default go for you know lessons first
+[0:20:01] but the kids want to play drums most of the time somehow
+[0:20:06] yeah so uh yeah so a couple things that you probably have to nail down before monday is you
+[0:20:10] your target age group, because that's going to define the design, the language, the fonts,
+[0:20:18] the sizes, and everything. And also, I reckon because we are targeting whether people can
+[0:20:27] learn music, whether they're going to like it. So I think it's very much from beginner
+[0:20:31] onwards, right? From beginning onwards. And then nail down the instrument that you want
+[0:20:38] cover if you have two instruments it's going to be a piano and something else because if you are
+[0:20:44] needing the AI to you know to grade or to check whether it's doing well you need to interface it
+[0:20:49] to either a phone or a tablet which is accessible and don't forget think about it the judges would
+[0:20:57] be from Cisco and I think the three sponsor universities yeah the stakeholders are universities
+[0:21:03] Yeah, so you need to consider targeting not only your solution but your presentation towards the panel of judges.
+[0:21:15] And one type of music is, hopefully, if the judging panel has a little bit of knowledge of music,
+[0:21:22] then you can address, they will be able to link up to when you're doing the delivery of your presentation.
+[0:21:32] because I did tell them I was here the last two years during the judging so if
+[0:21:38] something clicks with the judges you will see them yeah you know so you need
+[0:21:43] something in your app that what's the impact that catches their attention
+[0:21:48] during the presentation or during the demo for instance yeah so you want
+[0:21:54] something within your solution that is not generic you know like a music app
+[0:22:00] The first job is for me to search all the music apps out there and see what's missing and how you want to deliver yours with AI and where the AI comes in to provide the feedback to the students.
+[0:22:16] So, Stanley, can I send you on a tour to Adelaide?
+[0:22:22] Yes, of course.
+[0:22:23] Adelaide, thank you.
+[0:22:24] Thank you.
+[0:22:25] I hope I didn't interrupt.
+[0:22:26] No, we're good.
+[0:22:27] We're good.
+[0:22:28] hey jeff uh sorry sorry to interrupt you but uh simone is actually waiting in the lobby
+[0:22:34] oh is she yeah i don't see her there um but i'm gonna i'll move stanley and then i'll go
+[0:22:42] i'll go get simone thank you yeah all right yes good luck guys thank you oh yeah i think simone
+[0:22:54] should we uh wait for simone hi there chris hi chris
+[0:23:03] change things a hell of a lot since we last spoke yeah we uh i think we change quite a
+[0:23:12] we quite a bit yeah we run around of two ideas and we basically jump to um music basically but
+[0:23:21] i'm not sure if we should wait for simone here no i think we can uh move without her
+[0:23:30] yes i'm pretty sure she can join once you know okay i guess i can uh explain try to explain it
+[0:23:36] again so we decided on our idea and so basically our research found that music education in
+[0:23:44] australia is uh thinning out from the bottom up primary teachers get about eight hours of music
+[0:23:50] in a four whole in a whole four year degree and in act it is just six and a half hours and around
+[0:24:00] 72 percent of the universities surveyed offer no primary music specialization so basically 72
+[0:24:08] universities don't even have degrees in general and none of uh the i i think when we search the
+[0:24:20] flinders and uc not even they don't even have an actual music school so whether a young person ever
+[0:24:28] learns an instrument comes down to money if there's a teacher nearby and basically the time to
+[0:24:36] and there's it has very little to do with um curiosity or talent basically yep um
+[0:24:44] yep so basically what we are building is a practice coach for music fundamentals that
+[0:24:52] works on a phone or with or without an instrument the learner tells it what do we what you actually
+[0:25:00] want and it makes the cover sound good or play this one song for i don't know for my mom or
+[0:25:08] something and the ai splits it into small goals and each small goal carries like a fun fundamental
+[0:25:14] like for like uh singing for example uh let's start with breathing or let's start with our vowels
+[0:25:22] or maybe a chord change a learner plays a song for 10 seconds or a syllable for uh one part of
+[0:25:30] of a syllable and the ai listens says one thing to fix and read uh the ai listens and
+[0:25:37] says one thing to fix about what you recorded or shown basically and retake and the student
+[0:25:47] basically retake and sees the improvement yeah so basically uh in the app it's just not giving
+[0:25:55] like playing feedback so that you know there are apps with like the piano or the guitar where you
+[0:26:01] can like simulate those instruments so it'll be similar to that where we can play the instruments
+[0:26:07] on the phone or the tablet but uh the ai can see how we play it and then it will give us feedback
+[0:26:13] based on what we are doing yeah so it's just uh the idea of the app is to bridge the gap between
+[0:26:21] the user and the piano is like just to uh start off like you know people will have trouble starting
+[0:26:28] off uh because it's something that they don't know or they are nervous about and they don't
+[0:26:32] know if they are going to like it so instead of paying someone to learn and then from after a few
+[0:26:38] weeks uh deciding that they don't like it they could start off with this app and then learn a
+[0:26:43] bit of theory music or just uh instruments and then see if they like it yep so it's just making
+[0:26:50] those instruments and uh music education more accessible to people yeah and uh to people who
+[0:26:58] don't have the time and basically lowers the barrier of entry since everyone can use the app
+[0:27:04] in a more personalized sense yeah so the ai can know uh based on what we are playing and how we
+[0:27:12] are playing what are strong and weak points are yep cool so i guess the stanley's point a little
+[0:27:20] bit i heard at the end i guess be really careful about what else is out there yep because and like
+[0:27:26] a pretty good example so i play guitar or when i get a chance i play guitar um my son plays
+[0:27:33] guitar drums trumpet all sorts of things but there i guess there are a lot of good luck guys
+[0:27:40] hi there man hi uh chris uh jeff said that he'll come kidnap you soon
+[0:27:49] all right well at least you got to tell me what it was um so yeah i'll just like obviously there
+[0:27:56] are a lot of tools like this out there so you look at how you're going to differentiate from
+[0:28:02] them and again to stanley's point what is that hook that you'll have that isn't there now
+[0:28:08] yeah um we've actually talked about this so there are videos that show you how to play
+[0:28:13] yes yeah yeah but then um it can't actually see how we are playing and give us feedback
+[0:28:19] yeah great agreed so yeah the main point of this ai is to like you know how to get the feedback
+[0:28:24] from uh you know from the way we play that's it yeah yeah no and it's good i i like the idea
+[0:28:30] the other thing you just look at because when you're pitching you're almost like you're you're
+[0:28:36] pitching to an investor right so think about who would pay for this and what they would want to
+[0:28:43] here um because this is and you've done a very interesting tact where like would you want this
+[0:28:50] to be something that the university would pay for are you looking at this going just commercially to
+[0:28:55] directly to um people or just you know students of any age i guess have a think of you know who
+[0:29:02] would you be targeting this to um and then that pitch you just want to make sure that it hits
+[0:29:09] those care abouts for who the audience is that you'd be pitching it to like a musical instrument
+[0:29:20] learning or guitar specifically learning environment is that is that what it is yeah it's
+[0:29:26] uh yeah it's an app that allows us to like uh get into the music education or without actually
+[0:29:34] having to pay having to pay for an instructor just to test out the waters and see if you're
+[0:29:39] going to like it or with four people who cannot access you know physical instruments and just you
+[0:29:45] know just to you know just just learn a bit um yeah and then you know just yeah lower as carlos
+[0:29:52] would say uh lower the um entry yeah barrier of entry yeah yeah very cool idea yeah i like it
+[0:30:04] good it's very different yeah um but yeah you just i guess have be very you have a good think about
+[0:30:12] who would be the target audience and then you know very much geared towards that and i guess
+[0:30:20] madison's point you know is it a particular instrument that maybe you'd start off with
+[0:30:24] before growing and maybe for the purposes of the demo you just focus on you know guitar piano or
+[0:30:29] something and then looked you know say in your in your presentation you could talk about the
+[0:30:35] vision of expanding to a whole orchestra or whatever yeah you could bring one of your guitars
+[0:30:42] yeah i could bring one of my guitars so if it's okay with you chris i'm going to move you to
+[0:30:47] singapore have a safe flight that's a long trip sure but it's good guys i like it thank you thank
+[0:30:57] All right. So I know I kind of came in like in the in the middle there, but tell me more about this.
+[0:31:08] This was this is actually a very interesting idea as someone who cannot play any musical instruments.
+[0:31:15] So I guess I can show how I specifically feel. Last year I was doing vocal covers at my home.
+[0:31:23] Basically, I have no idea how to do covers. I have no experience with music in general.
+[0:31:29] i just i just had my family say you have a good voice and that's it so because of the idea
+[0:31:37] we thought of the idea of a voice coach when we uh one of our teammates basically
+[0:31:45] had that same experience too but this time on um using pianos because back then when she wanted
+[0:31:53] to play piano back in high school she had to struggle a bit because a she doesn't have the
+[0:31:58] resources be the when she talked when she was explaining it to a mentor the mentor couldn't
+[0:32:07] really she couldn't get a grasp on what the mentor was explaining to her and yeah she we i guess
+[0:32:16] we're both in the same boat that we basically stopped uh playing music in general and we just
+[0:32:22] recently got back into it because of uh well for me specifically it was because i was able to
+[0:32:29] ask ai for help specifically even though that my answers were vague like um
+[0:32:35] how do i make this louder or why do i feel like my voice is uh too high or i feel like i'm
+[0:32:44] trying to reach something in my throat uh the ai was able to um i would say dumb it down a bit
+[0:32:53] it says don't get louder narrow your vowels uh go uh put your mic uh farther when you reach that
+[0:33:02] high notes and i would say that is a good case that we are currently creating uh basically the
+[0:33:09] uh what we are building is a practice uh coach on your phone for a music it will tell you what
+[0:33:16] it will tell you what you want like make this sound good or if you basically want to learn
+[0:33:23] i think uh can you explain more justin yeah so it's an it's an app for or instruments basically
+[0:33:31] look like a piano or a guitar where uh we provide a digital interface for people who don't have the
+[0:33:39] physical instrument so it's more accessible to them for people who has an interest in music but
+[0:33:44] just can't find the resources to you know have a piano or the guitar so this interface will allow
+[0:33:50] an ai to see how they're playing it and then give feedback based on how they play so
+[0:33:58] so it's basically like what my experience where the ai the coach is personalized on your feedback
+[0:34:08] so you gave you give them like for example when you're playing a guitar you give them
+[0:34:13] how you sound like and the ai can basically uh assess what where it sounded wrong or if you say
+[0:34:21] i think i'm struggling in this specific part of the uh chords how do i make it sound better or
+[0:34:29] clearer and the AI can try to help you in making it or making you do some specific things without
+[0:34:37] you ever knowing what you're basically trying to know yeah yeah I I guess um this idea fascinates
+[0:34:50] me because I my background's actually in um skill acquisition so I I really love just the process
+[0:34:56] people learning things i think it's so fascinating um i guess to what you were just saying uh when
+[0:35:03] you say it's a digital interface like would it be kind of if you want to learn piano for example
+[0:35:08] you would see the keys on your phone and you would be pressing it there or is it more like
+[0:35:14] with the voice stuff would it uh take in like would you actually give it audio for it to
+[0:35:20] detect what's going on or um how would that work uh it's just it's the piano layout on the phone
+[0:35:28] yeah and we could just play on the phone itself so it's not about not playing a piece it's about
+[0:35:34] learning what music is and learning the theory behind it yeah yeah yeah so the digitalization
+[0:35:41] of um the music we're specifically thinking of two instruments at the moment which is keyboard
+[0:35:48] and drums it is not there to actually replace the instruments but for the actual student to
+[0:35:55] try it before basically buying the equipment and committing to it expensive because it is
+[0:36:01] very expensive and you don't just want to buy something and say oh this isn't right for me
+[0:36:08] so if you like because at the end of the day when you're trying an instrument it's more about
+[0:36:14] if you feel you're you feel you can get attuned to the instrument and when you know it's the right
+[0:36:21] instrument for you that's where you actually can commit to it yeah yeah and i feel like with
+[0:36:28] something like learning the piano as well i i suppose it would be because a lot of music comes
+[0:36:33] down to understanding notes and keys and and things like that so it would be um if it could
+[0:36:40] explain that to people i really liked the idea that um it would explain it in layman's less theory
+[0:36:47] heavy yeah layman's terms essentially um which in the skill acquisition space is actually a very
+[0:36:53] important thing oftentimes um you need to get very prescriptive very detailed um feedback but
+[0:37:02] sometimes people struggle especially an instructor like a human instructor they struggle to actually
+[0:37:07] articulate the feedback they're trying to give in a way that's easy for somebody to understand
+[0:37:12] um so if you could get that portion of it right um and i wonder especially with something like
+[0:37:21] um a piano for example being able to visually show the person what they should have been doing
+[0:37:28] instead um can often be very useful um because not everyone like some people are visual learners
+[0:37:34] some people are auditory learners you know so there's different learning styles as well um
+[0:37:39] if you could in a way obviously this is a very this is a very small version of it this is you
+[0:37:45] know but you could talk about the fact that you would consider expanding to accommodate
+[0:37:51] different learning styles and things like that in the future yeah this is such a fascinating idea
+[0:37:57] It is quite an interesting idea because when we were thinking about the app, it's we were thinking about how to personalize it for each student.
+[0:38:08] So what the AI will actually do is try to adapt on what the knowledge of the student is.
+[0:38:16] So basically react to how they, for example, how they prompt it.
+[0:38:20] are they using very vague terms or are they like actually showing uh no like the f sharp
+[0:38:29] feels off or something or something like yeah yeah and they can actually very important yeah
+[0:38:35] and they can actually answer your question in the same level that you actually uh uh question it
+[0:38:44] with yeah yeah um that that kind of like dynamic sort of adjusting to the learner is also very
+[0:38:55] very important as well um in order for people to learn they need to be challenged but there is a
+[0:39:03] point where you're giving them too much challenge and too much information so um yeah so there's
+[0:39:11] kind of like this and it's different for every person there's like this optimal point between
+[0:39:16] enough challenge that they're they're being forced to problem solve and they're being forced to
+[0:39:20] really consciously engage with the task but not too much that they're starting to feel frustrated
+[0:39:26] and overwhelmed and and it's just information overload so um having that like dynamic
+[0:39:32] adjustability because people also have off days and you know so if it's if it's kind of in the
+[0:39:37] background running a bit of an algorithm to check in with them as to how they're doing and how
+[0:39:42] they're performing um that is the best way for people to learn yeah i uh our uh our other teammate
+[0:39:51] is not here but i think she did say that we can uh a split uh if it's like a big uh for example
+[0:40:01] if it's like a song that you wanted to play the ai usually can split it into very small syllables
+[0:40:08] first yes and when you don't have to think of the entire um song first you can just try to
+[0:40:18] learn the first four notes and you can just continue on with that and you won't have to
+[0:40:25] think about uh the entire song and then you'll just realize that oh you're playing
+[0:40:30] the interior song now yeah yeah that no that's um that's a great way to do it and you might even
+[0:40:37] have the ai decide depending on what song they want to learn how to play um the ai might even
+[0:40:44] be able to be smart enough i guess to decide what part of the song to start at because maybe the
+[0:40:49] first part of the song actually isn't the easiest part for the easiest maybe there's an easier part
+[0:40:53] so you know those kinds of things would be um really cool features but yeah we were planning
+[0:41:01] on having like a a strong and weak point section that the ai could like recognize from the user
+[0:41:08] playing the the instrument and then uh also like an instructor kind of mode so where
+[0:41:16] Basically, when we thought about, one of our mentors say that if this is going to replace actual music instructors, and we thought about it and we said the answer that we come up is that the app at the end of the day has a definite ceiling.
+[0:41:36] so it can uh it won't replace actual instructors but just when you reach like the advanced stage
+[0:41:45] and you don't feel like you're learning anymore the app can like take the overall overview of what
+[0:41:51] you actually prompted or what you're struggling with and it can basically show it to a mentor
+[0:41:57] where yeah yeah and say like the the student is currently having struggles with uh scaling
+[0:42:05] so you you might want to uh focus that focus it on that and basically the app can also refer
+[0:42:12] um mentors that might actually suit the students too yes like especially with their learning style
+[0:42:20] and things like that um how they could help match them yeah because i was going to ask that because
+[0:42:25] there would there would be limitations right you would eventually reach a point but this isn't
+[0:42:29] necessarily from what i understand it's not necessarily to teach you how to play piano
+[0:42:34] perfectly but it's more just helping you to gain the confidence and the foundational knowledge
+[0:42:41] to be able to then go and um you know maybe go and buy a piano if you have that is true because
+[0:42:48] knows how much money like the like the example that i did from my vocal cover experience when
+[0:42:55] they did say hire a vocal coach it when i thought about it it's not about um if i can actually learn
+[0:43:04] something it's but it's more about it's getting to the point that i might be embarrassed that i
+[0:43:09] don't know much or something like that but maybe with this app it might build some confidence with
+[0:43:16] the student to actually uh go to uh to a mentor since they have some for the for fundamentals
+[0:43:25] that they can work with yeah yeah absolutely and in those early stages of uh of learning a skill
+[0:43:34] that's really what it's actually about is is just helping someone to build a little bit of
+[0:43:38] confidence around um yeah so as someone who tried to learn to play piano a very long time ago
+[0:43:46] i didn't have no confidence in my ability that's for sure um but it's actually quite difficult
+[0:43:55] so it's quite difficult but and this would really um make it more accessible i think for anyone
+[0:44:02] even me maybe and as i said the overall app what it's trying to do is basically lower the barrier
+[0:44:10] to entry and it's not actually replacing mentors so everyone can try to be to basically learn
+[0:44:19] an instrument if they want but for the prototype will likely try to do two instruments first
+[0:44:27] simple is better yeah would you consider gamifying it in any way because i was just thinking in terms
+[0:44:34] lowering the barrier my brain just thought of duolingo which is kind of like this would kind
+[0:44:41] of be almost like a musical version of duolingo where it's like it's not going to teach you fluent
+[0:44:47] german or something you know but it at least gets you started and gets you on the right track and
+[0:44:53] then you might move to a different one or you might actually start working with an actual
+[0:44:58] instructor so would you consider gamifying it in some way yeah i mean we i've uh yesterday we
+[0:45:07] were actually thinking of two ideas uh first was the music app and the second was the uh
+[0:45:13] gamification of the uh actual education in general and i learned about uh in studying
+[0:45:22] gamification first is try to not actually make it a game because yes it is quite interactive but
+[0:45:30] people usually have uh the novelty the novelty usually runs off around the fourth week
+[0:45:38] so when i researched more into it and i think i realized that when you you basically have to first
+[0:45:47] incentivize them on actually learning so that's what splitting the tasks into smaller goals
+[0:45:57] would be good for so like as I said when you're creating if you're like
+[0:46:03] learning a new song you can just learn four notes at a time and doing that that's like
+[0:46:12] basically your reward like yeah you did it you did the four notes and you learned this
+[0:46:17] and yeah and each of those tasks can really pile up into basically you learning the entire song
+[0:46:26] yeah yeah and another thing that i learned about gamification is actually
+[0:46:32] socialization and when i realized that in in considering in our music app we thought of a
+[0:46:45] feature but we're not sure if we can implement it or not that we can have a big social group that
+[0:46:51] the app can identify your skill level and you can i was also thinking about that yeah you can
+[0:46:58] basically talk or like jam with other people in your level and you can just learn together
+[0:47:06] basically because at the end of the day when you're learning something it's nice that you
+[0:47:11] learn with someone that is also your skill level but it's also it's going to the same
+[0:47:17] problems that you're going through yeah yeah just to share the experience and the journey with yeah
+[0:47:22] And it's not a good idea to have someone that is very good at it
+[0:47:30] because you might feel, I would say, intimidated sometimes.
+[0:47:36] Yeah, absolutely.
+[0:47:39] But overall, I think...
+[0:47:39] This is a great idea.
+[0:47:41] This is a very fascinating idea.
+[0:47:43] I think you guys are certainly on the right track here.
+[0:47:46] Overall, that's what we're thinking.
+[0:47:48] and it's very just excited to do it since all of us have a personal take on it yeah yeah all of us
+[0:47:56] have gone through similar problems with music so it was something like we all like agate quickly on
+[0:48:02] yeah and there's definitely a place for it as well because i i'm not entirely sure where i would
+[0:48:10] even go if i wanted to start learning an instrument but i know that i'll be too scared to reach out to
+[0:48:15] an instructor so this would be a great place to start yeah this is a great idea oh thank you very
+[0:48:22] much thank you thank you yeah thank you for telling me about it and uh good luck with uh
+[0:48:27] with everything we'll likely thank you so much yeah yeah thank you thank you
+[0:48:32] and abruptly it finished again i hope that didn't interrupt anyone but um you're all um
+[0:48:49] welcome to keep talking to each other if you like but um i thought um i'll spend two minutes just
+[0:48:57] because we've got um the the full contingent from singapore here i thought i would just
+[0:49:02] share my screen for two minutes maybe one and just remind everyone what we're doing
+[0:49:10] uh hang on carlos got ditched somehow that dies back and um the creative first challenge was
+[0:49:40] really about imagining learning and some of you are um looking at almost reinventing um learning
+[0:49:46] because we have ai which i think is an interesting way of looking at things so
+[0:49:50] and really the idea is can we improve teaching delivery um some of you are talking about
+[0:49:56] employability and career focus um and uh some of you are talking about the student experience
+[0:50:02] all of which are good things and i don't want to give anything away but um i think you're all doing
+[0:50:07] fantastic
+[0:50:09] challenges
+[0:50:11] really challenging ideas
+[0:50:14] really thoughtful ideas
+[0:50:16] and it's only going to get better
+[0:50:18] over the next week or so
+[0:50:19] that article
+[0:50:22] I don't know if everyone's not on WebEx
+[0:50:24] please get on WebEx
+[0:50:26] Frank
+[0:50:28] our Frank
+[0:50:29] who is our
+[0:50:31] Cisco chair of
+[0:50:34] critical infrastructure
+[0:50:36] at the University of Canberra
+[0:50:37] shared an article today and um suggesting that learning deepens when individual study connects
+[0:50:45] with social social participation which is sort of what we're doing in master tech right now
+[0:50:50] and um so you know how might education give learners more room to imagine experiment and
+[0:50:57] develop their own direction i i think is um one of the obvious things that we can talk about with
+[0:51:02] ai and i believe that's um that's what we're doing here and that's what many of you are
+[0:51:09] are working on with your your projects and your ideas so before we sign off for the weekend does
+[0:51:16] anyone have any questions or comments that they'd like to make back to the group no okay
+[0:51:27] well look for all of you who participated today thank you very much for all the teams that are
+[0:51:32] are here um right now thanks so much for being here and i'm really looking forward to seeing you
+[0:51:37] all all this all the um participant teams on sunday and then uh the rest of you at hopefully
+[0:51:43] at cisco live madison are you going to be at cisco live i won't be but um unless there's any is it
+[0:51:52] online is there the not any anything online but um but no i know that yeah everybody has appreciated
+[0:52:01] your input so thank you very much and i'm sorry we won't see you there
+[0:52:05] unfortunately can't travel to melbourne but um yeah so the um the keynote is online i can
+[0:52:13] share you that link if you yes i'd be interested in that yeah yeah i think yeah there's a lot of
+[0:52:19] online content there's an online broadcast actually i think it's all you can find on
+[0:52:23] cisco live.com and that's all free all right cool i'll uh i'll check that out but um yeah it's been
+[0:52:29] a pleasure if anyone asks for you specifically we'll figure out how to bring you in on a webex
+[0:52:37] meeting yeah yeah we have the power we have the power all right this has been a great
+[0:52:46] uh couple of days everyone thank you very much and i'll see you all um for real soon
+[0:52:51] see you everyone bye everyone bye bye thank you bye bye bye thank you sir
