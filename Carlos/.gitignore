@@ -1,0 +1,25 @@
+# OS and Google Drive artefacts
+.DS_Store
+Icon?
+desktop.ini
+Thumbs.db
+*.tmp.drive*
+.tmp.driveupload/
+.tmp.drivedownload/
+
+# Office lock files
+~$*
+.~lock.*
+
+# Audio and video stay on personal machines; only transcripts are shared
+*.m4a
+*.mp3
+*.wav
+*.mkv
+*.mp4
+*.flac
+
+# Local scratch
+*.log
+.venv/
+__pycache__/

@@ -1,0 +1,1538 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practice Canvas</title>
+<style>
+:root{--bg:#f6f4ef;--card:#fffdf9;--ink:#1f2328;--muted:#5d6670;--line:#d6d0c4;--accent:#0f766e;--accent-ink:#ffffff;--accent-soft:#e0f1ee;--chip:#ece7dd;--key:#ffffff;--lit:#9fd8cf}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14171a;--card:#1c2024;--ink:#ecebe7;--muted:#a3aab2;--line:#353b42;--accent:#5ec4b6;--accent-ink:#0c1f1c;--accent-soft:#1d3532;--chip:#272c31;--key:#2a2f35;--lit:#2f6f66}}
+:root[data-theme="dark"]{--bg:#14171a;--card:#1c2024;--ink:#ecebe7;--muted:#a3aab2;--line:#353b42;--accent:#5ec4b6;--accent-ink:#0c1f1c;--accent-soft:#1d3532;--chip:#272c31;--key:#2a2f35;--lit:#2f6f66}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow-x:hidden}
+main,.top,#teacher,footer{max-width:920px;margin:0 auto;padding-left:16px;padding-right:16px}
+button,input,textarea{font:inherit;color:inherit}
+h2{font-size:1.35rem;margin:.2rem 0 .5rem}
+h3{font-size:1.05rem;margin:.2rem 0 .4rem}
+.top{padding-top:12px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.between{justify-content:space-between}
+.brand{font-weight:700;font-size:1.1rem}
+.tag{display:inline-block;font-size:.78rem;border:1px solid var(--line);border-radius:999px;padding:2px 10px;color:var(--muted);background:transparent}
+.tag-btn{cursor:pointer}
+.labels{margin-top:6px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin:12px 0}
+.kicker{display:block;font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:0 0 4px}
+.goal-input{width:100%;font-size:1.25rem;font-weight:600;border:0;border-bottom:2px dashed var(--line);background:transparent;padding:4px 0}
+.goal-input:focus{outline:none;border-bottom-color:var(--accent)}
+.step{margin:.5rem 0 0;color:var(--muted)}
+.hint{font-size:1.2rem;margin:18px 0 8px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--chip);border-radius:999px;padding:8px 14px;cursor:pointer;font-size:.95rem}
+.chip:hover,.chip:focus-visible{border-color:var(--accent)}
+.ask{display:flex;gap:8px;margin:10px 0 2px}
+.ask input{flex:1;min-width:0;border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:var(--card)}
+.ask button,.btn{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:8px 14px;cursor:pointer}
+.primary{background:var(--accent);color:var(--accent-ink);border:0;border-radius:14px;padding:14px 22px;font-size:1.15rem;font-weight:700;cursor:pointer}
+.primary[disabled]{opacity:.55;cursor:default}
+.link{background:none;border:0;padding:0;color:var(--accent);text-decoration:underline;cursor:pointer;font-size:.95rem}
+.small{font-size:.82rem;color:var(--muted);margin:.35rem 0}
+.example{font-size:.82rem;color:var(--muted);margin:2px 0 0}
+.vreq{font:12px/1.4 ui-monospace,Consolas,monospace;color:var(--muted);word-break:break-all;margin:8px 0 0}
+.view:empty{display:none}
+.big{font-size:1.4rem;font-weight:650;line-height:1.3;margin:.3rem 0 .6rem}
+.fix{background:var(--accent-soft);border-left:6px solid var(--accent);border-radius:12px;padding:12px 14px;margin:10px 0}
+.fix .big{margin:0}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;align-items:center}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.staves{display:grid;grid-template-columns:1fr;gap:6px}
+@media (min-width:700px){.staves.two{grid-template-columns:1fr 1fr}}
+svg{display:block;width:100%;height:auto}
+.staff .sl{stroke:var(--ink);stroke-width:1.1}
+.staff .bl{stroke:var(--ink);stroke-width:1.4}
+.staff .bl.end{stroke-width:3.5}
+.staff .nh{fill:var(--ink);stroke:var(--ink);stroke-width:1}
+.staff .nh.half{fill:var(--card);stroke-width:2}
+.staff .stem{stroke:var(--ink);stroke-width:1.5}
+.staff .beam,.staff .flag,.staff .dot{fill:var(--ink)}
+.staff .clef,.staff .ts{fill:var(--ink)}
+.staff .ts{font-weight:800;font-size:21px}
+.staff .nh.on{fill:var(--accent);stroke:var(--accent)}
+.staff .sg{cursor:pointer}
+.staff .sg rect{fill:transparent}
+.staff .sg.on rect{fill:var(--accent-soft)}
+.staff .syl{fill:var(--ink);font-size:20px;font-weight:650}
+.staff .nname{fill:var(--muted);font-size:13px;display:none}
+.show-names .staff .nname{display:inline}
+.strip .tick{stroke:var(--line);stroke-width:2}
+.strip .barl{stroke:var(--muted);stroke-width:1.5;stroke-dasharray:3 3}
+.strip .exp{stroke:var(--muted);stroke-width:1.5}
+.strip text{fill:var(--muted);font-size:12px}
+.strip .d-ok{fill:var(--ink)}
+.strip .d-off{fill:var(--accent)}
+.strip .d-wrong{fill:none;stroke:var(--ink);stroke-width:2}
+.strip .d-extra{fill:none;stroke:var(--accent);stroke-width:2;stroke-dasharray:2 2}
+.strip .d-live{fill:var(--muted)}
+.keys{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;margin:12px 0 4px;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.key{background:var(--key);border:1px solid var(--line);border-radius:0 0 10px 10px;min-height:104px;padding:4px 0 8px;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;cursor:pointer}
+.key b{font-size:1rem}
+.key small{font-size:.7rem;color:var(--muted)}
+.key.lit{background:var(--lit)}
+.count{font-size:2.2rem;font-weight:800;color:var(--accent);min-height:1.2em;margin:.2rem 0}
+.phrases{display:grid;grid-template-columns:1fr;gap:10px}
+@media (min-width:700px){.phrases{grid-template-columns:1fr 1fr}}
+.phrase{border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.phrase.kick{border:2px solid var(--accent)}
+.kickline{font-size:1.15rem;font-weight:650;margin:.2rem 0 .4rem}
+.answers{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.said{font-style:italic;color:var(--muted)}
+dl.ho{margin:8px 0;display:grid;grid-template-columns:minmax(0,1fr);gap:2px}
+dl.ho dt{font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:6px}
+dl.ho dd{margin:0}
+textarea{width:100%;min-height:70px;border:1px solid var(--line);border-radius:12px;padding:8px;background:var(--card)}
+.ok-line{color:var(--accent);font-weight:650}
+.selftest{max-width:920px;margin:0 auto;padding:10px 16px;font:14px/1.4 ui-monospace,Consolas,monospace;background:var(--accent-soft);border-bottom:2px solid var(--accent)}
+.selftest pre{white-space:pre-wrap;margin:6px 0 0;max-height:240px;overflow:auto}
+.gloss li{margin:4px 0}
+.chart .bar{fill:var(--accent)}
+.chart text{fill:var(--ink);font-size:13px}
+.chart .val{fill:var(--muted)}
+table.t{border-collapse:collapse;width:100%;font-size:.95rem}
+table.t td,table.t th{border-bottom:1px solid var(--line);padding:6px 4px;text-align:left}
+footer{padding-top:18px;padding-bottom:28px;color:var(--muted);font-size:.8rem}
+/* Phone-width guard: no element may be wider than the viewport */
+html,body{max-width:100%;overflow-x:hidden}
+main,.top,#teacher,footer{width:100%}
+.card,.phrase,.view,section,dl.ho dd{min-width:0;max-width:100%;overflow-wrap:anywhere}
+.row>*,.actions>*,.chips>*,.answers>*{min-width:0;max-width:100%}
+.chip,.btn,.tag-btn,.link{white-space:normal;text-align:left;overflow-wrap:anywhere}
+.staves,.phrases{grid-template-columns:minmax(0,1fr)}
+@media (min-width:700px){.staves.two,.phrases{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.keys{grid-template-columns:repeat(8,minmax(0,1fr));max-width:100%}
+.key{min-width:0;overflow:hidden}
+svg{max-width:100%}
+table.t{table-layout:fixed;overflow-wrap:anywhere}
+.goal-input,.ask input,textarea{max-width:100%;min-width:0}
+@media (max-width:419px){.ask{flex-direction:column}.ask button{align-self:flex-start}.key b{font-size:.85rem}.primary{padding:12px 18px}}
+.foot-toggle{margin-left:8px}
+.mock{color:var(--accent);font-weight:700}
+/* v1: empty canvas, mic, model panel, options card, thinking shimmer */
+body.pre .later{display:none !important}
+.mic{font-weight:700}
+.mic[data-state="listening"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.mic[disabled]{opacity:.55;cursor:default}
+.engine{font-size:.8rem;color:var(--muted);margin:8px 0 0;overflow-wrap:anywhere}
+.coachline{font-size:1.1rem;font-weight:600;margin:12px 0 0;overflow-wrap:anywhere}
+.opts{display:grid;gap:8px;margin:8px 0}
+.opt{display:grid;gap:2px;text-align:left;min-width:0;overflow-wrap:anywhere;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);cursor:pointer}
+.opt:hover,.opt:focus-visible{border-color:var(--accent)}
+.opt span{color:var(--muted);font-size:.85rem}
+.panel-row{display:grid;gap:6px;margin:6px 0}
+.panel-row input{width:100%;min-width:0;border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:var(--card)}
+.thinking{margin:12px 0;padding:12px 16px;border-radius:16px;color:var(--muted);background:linear-gradient(90deg,var(--card) 25%,var(--accent-soft) 50%,var(--card) 75%);background-size:200% 100%;animation:shimmer 1.2s linear infinite}
+@keyframes shimmer{from{background-position:200% 0}to{background-position:0 0}}
+@media (prefers-reduced-motion:reduce){.thinking{animation:none}}
+</style>
+</head>
+<body class="pre">
+<div id="selftest" class="selftest" hidden></div>
+<header class="top">
+  <div class="row between">
+    <span class="brand">Practice canvas</span>
+    <button id="teacherBtn" class="link" type="button">Teacher view (mock)</button>
+  </div>
+  <div class="row labels">
+    <span class="tag">prototype, saved model output</span>
+    <button id="modelBtn" class="tag tag-btn" type="button" aria-pressed="false" aria-controls="modelPanel">model: saved</button>
+    <button id="voiceOut" class="tag tag-btn" type="button" aria-pressed="false">coach voice: off</button>
+  </div>
+</header>
+
+<div id="modelPanel" class="top" hidden>
+  <div class="card">
+    <p class="kicker">live model, prototype only</p>
+    <div class="panel-row"><label class="small" for="apiKey">API key for this tab only: kept in this tab's session storage, never in a file, the record or the address</label>
+      <input id="apiKey" type="password" placeholder="paste an API key for this tab only" autocomplete="off" spellcheck="false"></div>
+    <p class="small" id="keyState">no key set: the page tries serve.py at /api/coach</p>
+    <label class="small"><input type="checkbox" id="cloud"> cloud (under-15 rule): send typed text and measured numbers only; never audio, never the record</label>
+    <p class="small">model: claude-opus-5-5. With serve.py running, the page needs no key.</p>
+    <div class="actions"><button class="btn" type="button" id="clearKey">clear key</button><button class="btn" type="button" id="closePanel">close</button></div>
+  </div>
+</div>
+
+<main id="learner">
+  <section class="card later">
+    <label class="kicker" for="goal">My goal, in my words</label>
+    <input id="goal" class="goal-input" value="play the first two bars smoothly" maxlength="140">
+    <p class="step">Today's step: <b>steady pulse, day 1 of 5</b></p>
+  </section>
+
+  <section aria-label="Practice canvas">
+    <p class="hint">tap the mic or type</p>
+    <div class="chips later" id="chips">
+      <button class="chip" data-act="chip" data-say="Show me the sheet">Show me the sheet</button>
+      <button class="chip" data-act="chip" data-say="Break it down">Break it down</button>
+      <button class="chip" data-act="chip" data-say="Play bar 1">Play bar 1</button>
+      <button class="chip" data-act="chip" data-say="Let me try">Let me try</button>
+      <button class="chip" data-act="chip" data-say="What does that mean?">What does that mean?</button>
+      <button class="chip" data-act="chip" data-say="Ask a person">Ask a person</button>
+      <button class="chip" data-act="chip" data-say="Find a real instrument">Find a real instrument</button>
+      <button class="chip" data-act="chip" data-say="Pick a song">Pick a song</button>
+    </div>
+    <form id="ask" class="ask" autocomplete="off">
+      <button id="mic" class="mic" type="button" data-state="idle" aria-pressed="false" title="tap to talk, tap again to stop">mic</button>
+      <label for="askText" class="sr">type what you want</label>
+      <input id="askText" placeholder="type here" maxlength="120">
+      <button type="submit">Show</button>
+    </form>
+    <p class="example later">for example: I want to play I'm a pirate now</p>
+    <p id="voiceLabel" class="small" hidden>voice: browser speech recognition (audio goes to the browser vendor), typed fallback</p>
+    <div id="view" class="view" aria-live="polite"></div>
+    <p id="engine" class="engine" hidden></p>
+    <p id="vreq" class="vreq" hidden></p>
+  </section>
+
+  <p class="later"><button class="link" type="button" data-act="record">Open my record</button></p>
+</main>
+
+<section id="teacher" hidden>
+  <div class="card">
+    <p class="kicker mock">teacher view, mock data</p>
+    <h2>Your class this week</h2>
+    <p class="small">Class aggregates from sample data plus this device's practice record as one more learner. Records are never shown side by side and no names appear.</p>
+    <div id="tCounts"></div>
+  </div>
+  <div class="card">
+    <h3>Ask the data</h3>
+    <div class="chips">
+      <button class="chip" data-act="tq" data-q="hardest">hardest concept this week</button>
+      <button class="chip" data-act="tq" data-q="person">who needs a person</button>
+    </div>
+    <div id="tOut"></div>
+    <p class="small">inspired by generative dashboards; mock</p>
+  </div>
+  <p><button class="link" type="button" id="backBtn">Back to the learner screen</button></p>
+</section>
+
+<footer>Prototype for a team working document, 2026-11-08 <button class="link foot-toggle" type="button" id="reqToggle" aria-pressed="false">show the request</button></footer>
+
+<script>
+// CORE-BEGIN
+var Core = (function () {
+  "use strict";
+  var BPM = 90, BEAT_MS = 60000 / BPM, BEATS_PER_BAR = 4;
+  var TH = { onTimeMs: 120, alignMaxBeats: 2.5 };
+  var NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+  var SEMI = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+  var STEP = { C: 0, D: 1, E: 2, F: 3, G: 4, A: 5, B: 6 };
+  var DUR = { e: 0.5, q: 1, dq: 1.5, h: 2 };
+  var NUMWORD = ["no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"];
+  var KEYS = [60, 62, 64, 65, 67, 69, 71, 72];
+  var KEY_LETTERS = ["a", "s", "d", "f", "g", "h", "j", "k"];
+  function letter(m) { return NAMES[((m % 12) + 12) % 12]; }
+  function noteName(m) { return letter(m) + (Math.floor(m / 12) - 1); }
+  function midiOf(n) { var x = /^([A-G])(\d)$/.exec(n); return x ? 12 * (Number(x[2]) + 1) + SEMI[x[1]] : NaN; }
+  function staffStep(m) { var l = letter(m); return (Math.floor(m / 12) - 5) * 7 + (STEP[l.charAt(0)] || 0); }
+  function isWhole(b) { return Math.abs(b - Math.round(b)) < 1e-6; }
+  function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+  function andList(a) { return a.length <= 1 ? (a[0] || "") : a.slice(0, -1).join(", ") + " and " + a[a.length - 1]; }
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+
+  // Songbook: own notation, one syllable per note, every note on the eight white keys C4 to C5, all 4/4.
+  var SONG_DATA = [
+    { id: "ode", title: "Ode to Joy (opening)", keywords: ["joy", "ode"], lineEnds: [2],
+      source: "source: classical melody (1824) with its poem text (1785), public domain; bars 1 and 2 only, notation written for this prototype",
+      bars: ["E4 q Freu-|E4 q de|F4 q schö-|G4 q ner", "G4 q Göt-|F4 q ter-|E4 q fun-|D4 q ken"] },
+    { id: "sailor", title: "What Shall We Do with the Drunken Sailor", keywords: ["pirate", "pirates", "sailor", "sea", "shanty", "drunken"], lineEnds: [2, 4],
+      source: "source: traditional sea shanty, public domain; notation and syllables written for this prototype",
+      bars: ["A4 q What|A4 e shall|A4 e we|A4 q do|A4 e with|A4 e the", "A4 q drunk-|D4 q en|F4 q sai-|A4 q lor",
+             "G4 q What|G4 e shall|G4 e we|G4 q do|G4 e with|G4 e the", "G4 q drunk-|C4 q en|E4 q sai-|G4 q lor"] },
+    { id: "twinkle", title: "Twinkle Twinkle Little Star", keywords: ["twinkle"], lineEnds: [2, 4],
+      source: "source: traditional melody with an 1806 poem, public domain; notation written for this prototype",
+      bars: ["C4 q Twin-|C4 q kle|G4 q twin-|G4 q kle", "A4 q lit-|A4 q tle|G4 h star", "F4 q how|F4 q I|E4 q won-|E4 q der", "D4 q what|D4 q you|C4 h are"] },
+    { id: "mary", title: "Mary Had a Little Lamb", keywords: ["mary", "lamb"], lineEnds: [4],
+      source: "source: traditional rhyme (1830), public domain; notation written for this prototype",
+      bars: ["E4 q Ma-|D4 q ry|C4 q had|D4 q a", "E4 q lit-|E4 q tle|E4 h lamb", "D4 q lit-|D4 q tle|D4 h lamb", "E4 q lit-|G4 q tle|G4 h lamb"] },
+    { id: "buns", title: "Hot Cross Buns", keywords: ["hot", "cross", "buns"], lineEnds: [2, 4],
+      source: "source: traditional street cry, public domain; notation written for this prototype",
+      bars: ["E4 q Hot|D4 q cross|C4 h buns", "E4 q hot|D4 q cross|C4 h buns", "C4 e One|C4 e a|C4 e pen-|C4 e ny|D4 e two|D4 e a|D4 e pen-|D4 e ny", "E4 q hot|D4 q cross|C4 h buns"] }
+  ];
+  // The title "Twinkle Twinkle Little Star" is matched by its keyword list plus the word "star" (a song word, never a rating).
+  SONG_DATA[2].keywords.push("star");
+
+  function parseSong(d) {
+    var notes = [], bars = [], beat = 0, idx = 0;
+    d.bars.forEach(function (bs, bi) {
+      var start = beat, list = [];
+      bs.split("|").forEach(function (tok) {
+        var p = tok.trim().split(/\s+/);
+        var n = { idx: idx++, pitch: midiOf(p[0]), dur: DUR[p[1]], durCode: p[1], syl: p.slice(2).join(" "), bar: bi + 1, beat: beat };
+        beat += n.dur; notes.push(n); list.push(n);
+      });
+      bars.push({ bar: bi + 1, start: start, len: beat - start, notes: list });
+    });
+    return { id: d.id, title: d.title, source: d.source, keywords: d.keywords, lineEnds: d.lineEnds, bpm: BPM, beatsPerBar: BEATS_PER_BAR, notes: notes, bars: bars };
+  }
+  var SONGBOOK = SONG_DATA.map(parseSong), SONG_BY_ID = {};
+  SONGBOOK.forEach(function (s) { SONG_BY_ID[s.id] = s; });
+  // Team-written drill phrases: own notation, not taken from any piece; counting syllables under the notes.
+  var DRILL_DATA = [
+    { id: "drill-pirate", title: "Drill phrase: D minor, driving (team-written)", keywords: [], lineEnds: [2],
+      source: "source: written by the team for this prototype in the same key and feel; not taken from any piece",
+      bars: ["D4 e|D4 e|A4 q|A4 e|G4 e|F4 q", "E4 e|E4 e|F4 e|G4 e|A4 q|D4 q"] },
+    { id: "drill-fast", title: "Drill phrase: C major, quick (team-written)", keywords: [], lineEnds: [2],
+      source: "source: written by the team for this prototype; not taken from any piece",
+      bars: ["C4 e|C4 e|E4 e|G4 e|E4 q|C4 q", "D4 e|D4 e|F4 e|A4 e|G4 h"] },
+    { id: "drill-slow", title: "Drill phrase: C major, slow and held (team-written)", keywords: [], lineEnds: [2],
+      source: "source: written by the team for this prototype; not taken from any piece",
+      bars: ["C4 q|E4 q|G4 h", "F4 q|D4 q|C4 h"] }
+  ];
+  var DRILLS = DRILL_DATA.map(function (d, k) {
+    var s = parseSong(d); s.drill = true;
+    s.notes.forEach(function (n) { n.idx += 1000 + k * 100; var off = n.beat - s.bars[n.bar - 1].start; n.syl = isWhole(off) ? String(Math.round(off) + 1) : "and"; });
+    return s;
+  });
+  var DRILL_BY_ID = {};
+  DRILLS.forEach(function (s) { DRILL_BY_ID[s.id] = s; });
+  function has(o, k) { return typeof k === "string" && Object.prototype.hasOwnProperty.call(o, k); }
+  function song(id) { return has(SONG_BY_ID, id) ? SONG_BY_ID[id] : has(DRILL_BY_ID, id) ? DRILL_BY_ID[id] : SONG_BY_ID.ode; }
+  // Saved popular-title table (saved model output): skills and a plan only. No notes, lyrics or rhythm of these pieces exist in this file.
+  var PLANS = {
+    "pirate": { title: "He's a Pirate", match: /\bhe'?s a pirate\b|\bpirates of the caribbean\b/, drill: "drill-pirate",
+                skills: ["the minor scale", "a driving steady pulse", "a repeating left-hand pattern", "fast repeated notes"] },
+    "letitgo": { title: "Let It Go", match: /\blet it go\b/, drill: "drill-slow",
+                 skills: ["a calm steady pulse that builds", "long held notes", "simple chords in the left hand", "wide jumps between notes"] },
+    "shape": { title: "Shape of You", match: /\bshape of you\b/, drill: "drill-fast",
+               skills: ["a steady pulse at a medium speed", "off-beat rhythms", "a repeating left-hand pattern"] }
+  };
+  var PLAN_LABEL_SAVED = "saved model output: skills and a plan, no notes";
+  var PLAN_LABEL_RULES = "rules-made plan: this title is not in the saved table";
+  var COPYRIGHT_LINE = "This coach does not show or play copyrighted music; it listens to you and gives one fix.";
+  function cleanTitle(t) { return String(t || "").replace(/[^A-Za-z0-9' .,!?-]/g, " ").replace(/\s+/g, " ").trim().slice(0, 60); }
+  function makePlan(id, title, tempo) {
+    var saved = has(PLANS, id) ? PLANS[id] : null, t = saved ? saved.title : cleanTitle(title) || "your piece";
+    var day1 = tempo === "fast" ? "steady pulse: clap with the clicks slowly, then a little faster" : tempo === "slow" ? "steady pulse: hold each long note for its full count" : "steady pulse: clap and count with the clicks";
+    return { id: saved ? id : "generic", saved: !!saved, title: t, goal: t + ", on keyboard", tempo: tempo || null,
+      skills: saved ? saved.skills.slice() : ["a steady pulse", "note reading", "both hands together"],
+      label: saved ? PLAN_LABEL_SAVED : PLAN_LABEL_RULES, askTempo: !saved,
+      days: ["Day 1: " + day1, "Day 2: the drill phrase", "Day 3: left hand", "Day 4: both hands", "Day 5: bring your own sheet music and play it to me"],
+      drill: saved ? saved.drill : tempo === "fast" ? "drill-fast" : "drill-slow", kickoff: CUEBOOK.kickoffPlan[0] };
+  }
+  function notesIn(s, from, to) { return s.notes.filter(function (n) { return n.bar >= from && n.bar <= to; }); }
+  function segmentBars(s) { return s.bars.map(function (b) { return { bar: b.bar, notes: b.notes.slice() }; }); }
+
+  var CUEBOOK = {
+    label: "saved model output: lines written ahead of time and checked by a person; picked by cause, never written at runtime",
+    kickoff: ["Let's get this started: bar 1, {count} notes, say the words first."],
+    kickoffPlan: ["Let's get this started: the drill phrase first, then your own sheet."],
+    none: ["Keep it: play it once more the same way.", "Now try it with your eyes on the words, not the keys."],
+    early: ["Count out loud with the clicks, play it again.", "Tap your foot on each click first, then play with the tap."],
+    late: ["Look at the next key before the click, play it again.", "Rest your fingers on the keys before you start, then play."],
+    wrong: ["Find the key the sheet shows, press it three times slowly, then play it again.", "Say the note names out loud while you play it slowly."],
+    missing: ["Play it again and keep going to the last note, even if one slips.", "Play just the last two notes three times, then the whole bit."],
+    extra: ["Lift your finger all the way between notes, play it again.", "Play it slowly once: one press for each word."],
+    hesitation: ["Look ahead to the next bar's first note while you play.", "Play the last note of one bar and the first of the next, back and forth three times."]
+  };
+  var GLOSSARY = {
+    "beat": { plain: "The steady click you can clap along to.", task: "Clap four times with the clicks." },
+    "bar": { plain: "A small box of beats on the sheet; here each bar holds four beats.", task: "Count 1 2 3 4 and point at bar 1 on the sheet." },
+    "early": { plain: "The note came before its click.", task: "Wait for the click, then press, like catching a ball." },
+    "late": { plain: "The note came after its click.", task: "Press right on the click, as if you clap with it." },
+    "steady pulse": { plain: "Beats that stay evenly spaced, like a clock ticking.", task: "Say tick on every click for ten seconds." },
+    "count-in": { plain: "Four clicks before you play, so you know the speed.", task: "Count the four clicks out loud, then start on the next one." },
+    "wrong note": { plain: "A different key from the one the sheet shows.", task: "Find the key on the sheet, press it once and say its name." },
+    "syllable": { plain: "One part of a word that gets one note, like twin and kle.", task: "Clap once for each part of the word twinkle." },
+    "phrase": { plain: "A short musical sentence, often one line of words.", task: "Say the words of the first bit in one breath." }
+  };
+  var CAUSES = ["wrong", "missing", "extra", "hesitation", "early", "late"]; // fixed precedence: the first one found is the one cause shown
+  var CAUSE_TERM = { wrong: "wrong note", missing: "bar", extra: "beat", hesitation: "steady pulse", early: "early", late: "late", none: "steady pulse" };
+  var CAUSE_SHORT = { early: "steady beat", late: "steady beat", wrong: "right notes", missing: "playing every note", extra: "one press per note", hesitation: "keeping going between bars" };
+  var CAUSE_PLURAL = { early: "early beats", late: "late beats", wrong: "wrong notes", missing: "missing notes", extra: "extra notes", hesitation: "the pause between bars" };
+  var MENU_TEXT = "I can show you: sheet, breakdown, playback, a try, a meaning, a person";
+  var CATALOGUE_LINE = "the real product would use a licensed catalogue; the prototype only draws public-domain tunes";
+
+  // ---- rules: phrase split (bar lines; a phrase ends after a long note or a line of words; at most two bars)
+  function kickoffLine(s) { var n = s.bars[0].notes.length; return CUEBOOK.kickoff[0].replace("{count}", NUMWORD[n] || String(n)); }
+  function splitPhrases(s) {
+    var out = [], cur = [];
+    s.bars.forEach(function (b) {
+      cur.push(b.bar);
+      var last = b.notes[b.notes.length - 1];
+      if (last.dur >= 2 || s.lineEnds.indexOf(b.bar) >= 0 || cur.length === 2) { out.push(cur); cur = []; }
+    });
+    if (cur.length) out.push(cur);
+    if (out.length === 1 && out[0].length > 1) out = out[0].map(function (b) { return [b]; }); // one phrase only: split at the bar line
+    return out.map(function (bars, i) {
+      var from = bars[0], to = bars[bars.length - 1];
+      var r = { index: i + 1, from: from, to: to, syllables: notesIn(s, from, to).map(function (n) { return n.syl; }) };
+      if (i === 0) r.kickoff = kickoffLine(s);
+      return r;
+    });
+  }
+
+  // ---- router: text to a view request from the fixed menu
+  var SAFETY = /\b(pain|painful|hurt|hurts|hurting|tired|sore|ache|aches|aching)\b/;
+  var RULES = [
+    { view: "glossary", re: /\b(mean|means|meaning)\b|\bwhat is\b|\bwhat's\b|\bwhats\b/ },
+    { view: "handoff", re: /\b(person|teacher|help|human)\b/ },
+    { view: "find-instrument", re: /\b(instrument|real|piano|keyboard)\b/ },
+    { view: "songbook", re: /\b(song|songs|songbook|tune|tunes)\b/ },
+    { view: "breakdown", re: /\b(break|breakdown|bars|split)\b/ },
+    { view: "sheet", re: /\b(sheet|notes|score)\b/ },
+    { view: "play", re: /\b(play|hear|listen)\b/ },
+    { view: "practice", re: /\b(try|go|ready)\b/ }
+  ];
+  var REQUEST_VERB = /\b(play|want to play|wanna play|let's do|lets do|can we try|can we do|can we play|learn|sing)\b/;
+  var FILLER = {};
+  ("i im i'm want wanna to play lets let's let do can we try the a an it again me please now this that some bar one two three four " +
+   "and with from start whole all learn sing how about could you us for on of is my just more once").split(" ").forEach(function (w) { FILLER[w] = true; });
+  var TERMS = [["steady pulse", /\bsteady pulse\b|\bpulse\b/], ["count-in", /\bcount[- ]?in\b/], ["wrong note", /\bwrong note/], ["syllable", /\bsyllables?\b/],
+               ["phrase", /\bphrases?\b/], ["beat", /\bbeats?\b/], ["bar", /\bbar\b/], ["early", /\bearly\b/], ["late", /\blate\b/]];
+  function norm(text) { return String(text == null ? "" : text).toLowerCase().replace(/[‘’]/g, "'").replace(/[^a-z0-9' -]/g, " ").replace(/\s+/g, " ").trim(); }
+  function songFor(t) {
+    for (var i = 0; i < SONGBOOK.length; i++) {
+      var kws = SONGBOOK[i].keywords;
+      for (var k = 0; k < kws.length; k++) if (new RegExp("\\b" + kws[k] + "\\b").test(t)) return SONGBOOK[i].id;
+    }
+    return null;
+  }
+  function barOf(t, s) {
+    var x = /\bbar (\d|one|two|three|four)\b/.exec(t);
+    if (!x) return null;
+    var n = /\d/.test(x[1]) ? Number(x[1]) : NUMWORD.indexOf(x[1]);
+    return n >= 1 && n <= s.bars.length ? n : null;
+  }
+  function req(view, params, rule) { return { view: view, params: params, rule: rule }; }
+  function titleFrom(text) {
+    var c = String(text == null ? "" : text).replace(/[‘’]/g, "'").replace(/[^A-Za-z0-9' -]/g, " ").replace(/\s+/g, " ").trim();
+    var re = new RegExp(REQUEST_VERB.source, "g"), low = c.toLowerCase(), m, end = 0;
+    while ((m = re.exec(low))) end = m.index + m[0].length;
+    var words = c.slice(end).trim().split(" ").filter(Boolean);
+    while (words.length && /^(me|to)$/i.test(words[0])) words.shift();
+    while (words.length && /^(now|please|today|again|on|keyboard)$/i.test(words[words.length - 1])) words.pop();
+    return cleanTitle(words.join(" ")) || "your piece";
+  }
+  // ---- v1: opening question and options cards
+  var COACH_QUESTION = "What do you want to play today?";
+  var OPENING_CHIPS = ["a pirate song", "Twinkle", "something else"];
+  var GREET = {};
+  ("hi hello hey hiya start ready lets let's go ok okay there coach yes yeah good morning afternoon begin please").split(" ").forEach(function (w) { GREET[w] = true; });
+  function isGreeting(t) { var w = t.split(" ").filter(Boolean); return w.length > 0 && w.length <= 5 && w.every(function (x) { return GREET[x]; }); }
+  var PIRATE = /\bpirates?\b/;
+  var SONG_ASK = /\ba song\b|\bsomething( else)?\b|\banything\b|\bwhat can (we|i) (do|play)\b/;
+  var OPTION_SETS = {
+    pirate: { title: "Pirate songs we can do", line: "Pick one and I will set it up.", options: [
+      { label: SONG_BY_ID.sailor.title, ask: "sailor", note: "public domain: show the sheet with the words" },
+      { label: PLANS.pirate.title, ask: PLANS.pirate.title, note: "copyrighted: plan it: skills, five days, our own drill phrase, no notes of the tune" },
+      { label: "Drill phrase: D minor, driving", ask: "drill-pirate", note: "team-written: try it now" }] },
+    songbook: { title: "Songs we can do today", line: "Pick one to see the sheet with the words.", options: SONGBOOK.map(function (s) {
+      return { label: s.title, ask: s.id, note: "public domain: the sheet with the words" }; }) }
+  };
+  function optionsFor(set) { return clone(OPTION_SETS[set]); }
+  // An option's ask must be a catalogue entry: a songbook id or title, a saved title, or a drill id or title
+  function resolveAsk(ask) {
+    var a = String(ask == null ? "" : ask).trim(), low = a.toLowerCase(), i;
+    if (!a) return null;
+    if (has(SONG_BY_ID, a)) return req("song", { song: a }, "catalogue ask: songbook id");
+    if (has(DRILL_BY_ID, a)) return req("breakdown", { song: a }, "catalogue ask: drill phrase");
+    for (i = 0; i < SONGBOOK.length; i++) if (SONGBOOK[i].title.toLowerCase() === low) return req("song", { song: SONGBOOK[i].id }, "catalogue ask: songbook title");
+    for (i = 0; i < DRILLS.length; i++) if (DRILLS[i].title.toLowerCase() === low) return req("breakdown", { song: DRILLS[i].id }, "catalogue ask: drill phrase");
+    for (var k in PLANS) if (has(PLANS, k) && (k === low || PLANS[k].title.toLowerCase() === low)) return req("plan", { plan: k, title: PLANS[k].title }, "catalogue ask: saved title, plan only");
+    return null;
+  }
+  function route(text, ctx) {
+    var cur = ctx && (has(SONG_BY_ID, ctx.song) || has(DRILL_BY_ID, ctx.song)) ? ctx.song : "ode", s = song(cur);
+    var t = norm(text), m;
+    if (!t) return req("menu", {}, "empty text");
+    m = t.match(SAFETY);
+    if (m) return req("handoff", { reason: "safety" }, "safety word '" + m[1] + "' always goes to a person");
+    for (var pk in PLANS) if (has(PLANS, pk) && PLANS[pk].match.test(t)) return req("plan", { plan: pk, title: PLANS[pk].title }, "saved popular-title table: plan, no notes");
+    if (PIRATE.test(t) && !REQUEST_VERB.test(t) && !/\b(sailor|drunken|shanty)\b/.test(t)) return req("options", optionsFor("pirate"), "'pirate' with no exact title: options");
+    var sid = songFor(t);
+    if (sid) return req("song", { song: sid }, "songbook keyword");
+    if (isGreeting(t)) return req("opening", {}, "greeting or start word: the coach asks");
+    if (SONG_ASK.test(t)) return req("options", optionsFor("songbook"), "asked for a song with no title: songbook options");
+    var hit = null;
+    for (var i = 0; i < RULES.length; i++) { m = t.match(RULES[i].re); if (m) { hit = { rule: RULES[i], word: m[0] }; break; } }
+    var otherView = hit && hit.rule.view !== "play" && hit.rule.view !== "practice";
+    if (REQUEST_VERB.test(t) && !otherView) {
+      var left = t.split(" ").filter(function (w) { return w && !FILLER[w] && !/^\d+$/.test(w); });
+      if (left.length) return req("plan", { plan: "generic", title: titleFrom(text) }, "named piece not in the public-domain songbook: song plan, no notes");
+    }
+    if (!hit) return ctx && ctx.first ? req("opening", {}, "opening input matched nothing: the coach asks") : req("menu", {}, "no keyword matched");
+    var v = hit.rule.view, p = {};
+    if (v === "handoff") p.reason = "asked";
+    if (v === "songbook") p.why = "list";
+    if (v === "sheet" || v === "breakdown" || v === "play" || v === "practice") p.song = cur;
+    if (v === "play" || v === "practice") { var b = barOf(t, s); if (b) { p.from = b; p.to = b; } }
+    if (v === "glossary") { for (var j = 0; j < TERMS.length; j++) if (TERMS[j][1].test(t)) { p.term = TERMS[j][0]; break; } }
+    return req(v, p, "keyword '" + hit.word + "'");
+  }
+
+  // ---- view request validation against the fixed menu
+  var VIEWS = {
+    "menu": {}, "songbook": { why: ["list"] }, "song": { song: "song!" }, "listen": {},
+    "plan": { plan: ["pirate", "letitgo", "shape", "generic"], title: "title!", tempo: ["fast", "slow"] }, "sheet": { song: "song" }, "breakdown": { song: "song" },
+    "play": { song: "song", from: "bar", to: "bar" }, "practice": { song: "song", from: "bar", to: "bar" }, "fix": {}, "compare": {},
+    "glossary": { term: "term" }, "handoff": { reason: ["asked", "safety", "repeat"] }, "find-instrument": {},
+    "opening": { line: "line" }, "options": { title: "title!", line: "line", options: "options!" }
+  };
+  function validateView(r) {
+    var errs = [];
+    if (!r || typeof r !== "object" || Array.isArray(r)) return { ok: false, errors: ["not an object"] };
+    Object.keys(r).forEach(function (k) { if (["view", "params", "rule", "line"].indexOf(k) < 0) errs.push("unknown field " + k); });
+    if (typeof r.view !== "string" || !Object.prototype.hasOwnProperty.call(VIEWS, r.view)) { errs.push("view not on the menu"); return { ok: false, errors: errs }; }
+    if (r.line !== undefined) { var tl = lineProblem(r.line); if (tl) errs.push(tl); }
+    var spec = VIEWS[r.view], p = r.params == null ? {} : r.params;
+    if (typeof p !== "object" || Array.isArray(p)) { errs.push("params must be an object"); return { ok: false, errors: errs }; }
+    Object.keys(p).forEach(function (k) {
+      var rule = Object.prototype.hasOwnProperty.call(spec, k) ? spec[k] : null, v = p[k];
+      if (!rule) { errs.push("unknown param " + k); return; }
+      if (Array.isArray(rule)) { if (rule.indexOf(v) < 0) errs.push("bad value for " + k); }
+      else if (rule === "song!") { if (!has(SONG_BY_ID, v)) errs.push("song not in the songbook"); }
+      else if (rule === "song") { if (!has(SONG_BY_ID, v) && !has(DRILL_BY_ID, v)) errs.push("song not in the songbook or drills"); }
+      else if (rule === "title!") { if (typeof v !== "string" || !/^[A-Za-z0-9' .,!?-]{1,60}$/.test(v)) errs.push("bad title"); }
+      else if (rule === "term") { if (typeof v !== "string" || !Object.prototype.hasOwnProperty.call(GLOSSARY, v)) errs.push("term not in the glossary"); }
+      else if (rule === "line") { var lp = lineProblem(v); if (lp) errs.push(lp); }
+      else if (rule === "options!") { var op = optionsProblem(v, 5); if (op) errs.push(op); }
+      else if (rule === "bar") { var s = song(p.song); if (!(typeof v === "number" && v === Math.floor(v) && v >= 1 && v <= s.bars.length)) errs.push("bar out of range"); }
+    });
+    Object.keys(spec).forEach(function (k) { if ((spec[k] === "song!" || spec[k] === "title!" || spec[k] === "options!") && p[k] === undefined) errs.push("missing " + k); });
+    if (r.view === "plan" && p.plan === undefined) errs.push("missing plan");
+    if (typeof p.from === "number" && typeof p.to === "number" && p.to < p.from) errs.push("to before from");
+    return { ok: errs.length === 0, errors: errs };
+  }
+
+  // ---- v1: live replies. The model picks a view and words one line; this validator and the rules decide the rest
+  var LIVE_VIEWS = Object.keys(VIEWS).filter(function (v) { return v !== "fix" && v !== "compare"; });
+  var LINE_BANNED = /\b(score|scores|grade|grades|star|stars|pass|passed|fail|failed|percent|percentage|first|best|winner)\b|%/i;
+  var NOTATION = /\b[A-G][#b]?\d\b|\b[A-G]#|\b[A-G][#b]?(?:\s+[A-G][#b]?){2,}\b|\b(quarter|eighth|half|whole|sixteenth|crotchet|quaver|minim|semibreve)[- ]notes?\b/;
+  function lineProblem(line) {
+    if (typeof line !== "string") return "line must be text";
+    var words = line.trim().split(/\s+/).filter(Boolean);
+    if (words.length > 20) return "line over twenty words";
+    if (NOTATION.test(line)) return "line has notation";
+    if (/\d/.test(line)) return "line has a digit";
+    if (LINE_BANNED.test(line)) return "line has a score or ranking word";
+    return null;
+  }
+  function optionsProblem(list, max) {
+    if (!Array.isArray(list) || !list.length) return "options must be a non-empty list";
+    if (list.length > max) return max === 4 ? "more than four options" : "too many options";
+    for (var i = 0; i < list.length; i++) {
+      var o = list[i];
+      if (!o || typeof o !== "object" || typeof o.label !== "string" || typeof o.ask !== "string" || !o.label.trim() || o.label.length > 80) return "bad option";
+      var lp = resolveAsk(o.label) ? null : lineProblem(o.label); if (lp) return "option label: " + lp;
+      if (o.note !== undefined && (typeof o.note !== "string" || o.note.length > 160)) return "bad option note";
+      if (!resolveAsk(o.ask)) return "option ask not in the catalogue: " + String(o.ask).slice(0, 40);
+    }
+    return null;
+  }
+  function validateRequest(r) {
+    function no(reason) { return { ok: false, reason: reason }; }
+    if (!r || typeof r !== "object" || Array.isArray(r)) return no("not an object");
+    var extra = Object.keys(r).filter(function (k) { return ["view", "song", "title", "line", "options"].indexOf(k) < 0; });
+    if (extra.length) return no("unknown field " + extra[0]);
+    if (typeof r.view !== "string" || LIVE_VIEWS.indexOf(r.view) < 0) return no("view not on the menu");
+    var v = r.view, song = r.song == null ? "" : r.song, title = r.title == null ? "" : r.title, line = r.line == null ? "" : r.line, opts = r.options == null ? [] : r.options;
+    if (typeof song !== "string" || typeof title !== "string" || typeof line !== "string" || !Array.isArray(opts)) return no("wrong field type");
+    var lp = line ? lineProblem(line) : null; if (lp) return no(lp);
+    if (title && (title.length > 60 || lineProblem(title))) return no("bad title");
+    if (opts.length && v !== "options") return no("options only belong on the options view");
+    var p = {};
+    if (v === "song") { if (!has(SONG_BY_ID, song)) return no("song not in the songbook"); p.song = song; }
+    else if (["sheet", "breakdown", "play", "practice"].indexOf(v) >= 0) { if (song) { if (!has(SONG_BY_ID, song) && !has(DRILL_BY_ID, song)) return no("song not in the catalogue"); p.song = song; } }
+    else if (v === "plan") { var pr = resolveAsk(title); if (!pr || pr.view !== "plan") return no("title not in the saved table"); p = pr.params; }
+    else if (v === "options") {
+      var op = optionsProblem(opts, 4); if (op) return no(op);
+      p = { title: title || "Here is what we can do", line: line || "Pick one.", options: opts.map(function (o) { return { label: o.label, ask: o.ask }; }) };
+    }
+    else if (v === "glossary") { if (title && has(GLOSSARY, title)) p.term = title; }
+    else if (v === "handoff") p.reason = "asked";
+    else if (v === "songbook") p.why = "list";
+    else if (v === "opening" && line) p.line = line;
+    if (song && !p.song && v !== "plan" && v !== "options") return no("song given for a view that takes none");
+    var out = { view: v, params: p, rule: "live model reply, checked by the validator" };
+    if (line && v !== "opening" && v !== "options") out.line = line;
+    var chk = validateView(out);
+    return chk.ok ? { ok: true, request: out } : no(chk.errors.join(", "));
+  }
+  function catalogue() {
+    return SONGBOOK.map(function (s) { return { id: s.id, title: s.title, rights: "public domain" }; })
+      .concat(Object.keys(PLANS).map(function (k) { return { id: k, title: PLANS[k].title, rights: "copyrighted, plan only" }; }))
+      .concat(DRILLS.map(function (d) { return { id: d.id, title: d.title, rights: "team-written" }; }));
+  }
+  function coachPrompt(cat) {
+    cat = cat || catalogue();
+    return [
+      "You are the coach voice of a music practice canvas for learners aged nine to fourteen. You pick one view from a fixed menu and write one short coach line; the app renders the view and its rules decide the rest.",
+      "Views: " + LIVE_VIEWS.join(", ") + ".",
+      "opening asks what to play; options offers up to four catalogue choices; song shows a public-domain sheet; plan gives a skills plan, no notes, for a saved title; sheet, breakdown, play and practice take a songbook or drill id; glossary explains the word in title; handoff sends the learner to a person.",
+      "Catalogue (id | title | rights):"
+    ].concat(cat.map(function (c) { return "- " + c.id + " | " + c.title + " | " + c.rights; })).concat([
+      "Rules:",
+      "- Pick only from the catalogue: song takes a songbook id, plan a saved title as written, each option ask a catalogue id or title.",
+      "- If the learner names a song that is not in the catalogue, choose options or menu. Never invent a song, title or id.",
+      "- line is one sentence of at most twenty words, warm and plain.",
+      "- Never write digits, scores, grades, stars, percentages, pass or fail, or words like best or winner.",
+      "- Never write notes, note letters of a melody, tabs, lyrics of a copyrighted song or chords of a copyrighted song. The app shows public-domain sheets itself.",
+      "- If the learner mentions pain, feeling hurt, tiredness or asks for a teacher, choose handoff.",
+      "- Never judge a take; the rules measure takes.",
+      "Reply with JSON only: view, song, title, line, options (a list of label and ask). Use an empty string or an empty list for fields the view does not use.",
+      "The user message is JSON: text is what the learner said or typed; state holds the song, the last view and any measured take."
+    ]).join("\n");
+  }
+  var liveSchema = {
+    type: "object",
+    properties: {
+      view: { type: "string", enum: LIVE_VIEWS.slice() }, song: { type: "string" }, title: { type: "string" }, line: { type: "string" },
+      options: { type: "array", items: { type: "object", properties: { label: { type: "string" }, ask: { type: "string" } }, required: ["label", "ask"], additionalProperties: false } }
+    },
+    required: ["view", "song", "title", "line", "options"],
+    additionalProperties: false
+  };
+
+  // ---- take measurement: align played notes to the target, then pick one cause
+  function makeTarget(id, from, to) {
+    var s = song(id), nb = s.bars.length;
+    if (from === undefined || from === null) { from = 1; to = nb; }
+    if (to === undefined || to === null) to = from;
+    from = Math.max(1, Math.min(nb, Math.floor(from) || 1)); to = Math.max(from, Math.min(nb, Math.floor(to) || from));
+    var start = s.bars[from - 1].start;
+    var notes = notesIn(s, from, to).map(function (n) { return { idx: n.idx, pitch: n.pitch, dur: n.dur, syl: n.syl, bar: n.bar, beat: n.beat - start }; });
+    return { song: s.id, from: from, to: to, beats: (to - from + 1) * BEATS_PER_BAR, notes: notes, bpm: s.bpm };
+  }
+  function align(exp, played, beatMs) {
+    var n = exp.length, m = played.length, INF = 1e9, D = [], P = [], i, j;
+    for (i = 0; i <= n; i++) { D.push([]); P.push([]); for (j = 0; j <= m; j++) { D[i].push(INF); P[i].push(null); } }
+    D[0][0] = 0;
+    for (i = 0; i <= n; i++) for (j = 0; j <= m; j++) {
+      var d = D[i][j]; if (d >= INF) continue;
+      if (i < n && d + 1 < D[i + 1][j]) { D[i + 1][j] = d + 1; P[i + 1][j] = "del"; }
+      if (j < m && d + 1 < D[i][j + 1]) { D[i][j + 1] = d + 1; P[i][j + 1] = "ins"; }
+      if (i < n && j < m) {
+        var dt = played[j].t - exp[i].beat * beatMs;
+        if (Math.abs(dt) <= TH.alignMaxBeats * beatMs) {
+          var c = (played[j].pitch === exp[i].pitch ? 0 : 1.2) + Math.min(Math.abs(dt) / beatMs, 1) * 0.5;
+          if (d + c < D[i + 1][j + 1]) { D[i + 1][j + 1] = d + c; P[i + 1][j + 1] = "match"; }
+        }
+      }
+    }
+    var ops = []; i = n; j = m;
+    while (i > 0 || j > 0) {
+      var op = P[i][j];
+      if (op === "match") { ops.push({ op: "match", i: i - 1, j: j - 1 }); i--; j--; }
+      else if (op === "del") { ops.push({ op: "del", i: i - 1 }); i--; }
+      else { ops.push({ op: "ins", j: j - 1 }); j--; }
+    }
+    return ops.reverse();
+  }
+  function beatPhrase(list) {
+    var whole = [], parts = [];
+    list.slice().sort(function (a, b) { return a - b; }).forEach(function (b) {
+      if (isWhole(b)) whole.push(String(Math.round(b) + 1)); else parts.push("the and after beat " + (Math.floor(b) + 1));
+    });
+    var head = whole.length === 0 ? [] : [whole.length === 1 ? "beat " + whole[0] : "beats " + andList(whole)];
+    return andList(head.concat(parts));
+  }
+  function measure(target, take) {
+    var beatMs = 60000 / (target.bpm || BPM), exp = target.notes;
+    var played = ((take && take.notes) || []).filter(function (n) { return n && isFinite(n.t) && isFinite(n.pitch); })
+      .map(function (n) { return { pitch: Number(n.pitch), t: Number(n.t) }; }).sort(function (a, b) { return a.t - b.t; });
+    var res = exp.map(function (e) { return { beat: e.beat, bar: e.bar, pitch: e.pitch, syl: e.syl, status: "missing", dt: null, got: null }; });
+    var extras = [];
+    align(exp, played, beatMs).forEach(function (o) {
+      if (o.op === "match") {
+        var r = res[o.i], p = played[o.j];
+        r.dt = Math.round(p.t - exp[o.i].beat * beatMs); r.got = p.pitch;
+        r.status = p.pitch !== r.pitch ? "wrong" : r.dt < -TH.onTimeMs ? "early" : r.dt > TH.onTimeMs ? "late" : "ok";
+      } else if (o.op === "ins") {
+        var q = played[o.j], nb = Math.round((q.t / beatMs) * 2) / 2;
+        extras.push({ pitch: q.pitch, t: Math.round(q.t), nearBeat: Math.max(0, Math.min(target.beats - 0.5, nb)) });
+      }
+    });
+    var m = { song: target.song, from: target.from, to: target.to, beats: target.beats, notes: res, extras: extras,
+              played: played.map(function (p) { return { pitch: p.pitch, t: Math.round(p.t) }; }) };
+    m.cause = chooseCause(m, target);
+    return m;
+  }
+  function hesitationBar(m) {
+    for (var b = m.from + 1; b <= m.to; b++) {
+      var before = m.notes.filter(function (r) { return r.bar < b && r.dt !== null; });
+      var after = m.notes.filter(function (r) { return r.bar >= b && r.dt !== null; });
+      if (before.length && after.length >= 2 && before.every(function (r) { return Math.abs(r.dt) <= TH.onTimeMs; }) &&
+          after.every(function (r) { return r.dt > TH.onTimeMs; })) return b;
+    }
+    return 0;
+  }
+  function chooseCause(m) {
+    function by(s) { return m.notes.filter(function (r) { return r.status === s; }); }
+    function beatsOf(a) { return a.map(function (r) { return r.beat; }); }
+    function sylOf(a) { return a.map(function (r) { return r.syl; }); }
+    var wrong = by("wrong"), missing = by("missing"), early = by("early"), late = by("late"), c, hb;
+    if (m.played.length === 0) c = { id: "missing", beats: beatsOf(missing), words: [], text: "No notes reached the app this time." };
+    else if (wrong.length) c = { id: "wrong", beats: [wrong[0].beat], words: [wrong[0].syl], expected: letter(wrong[0].pitch), got: letter(wrong[0].got),
+                                 text: cap(beatPhrase([wrong[0].beat])) + " was a " + letter(wrong[0].got) + "; the sheet says " + letter(wrong[0].pitch) + "." };
+    else if (missing.length) c = { id: "missing", beats: beatsOf(missing), words: sylOf(missing), text: cap(beatPhrase(beatsOf(missing))) + " didn't sound." };
+    else if (m.extras.length) c = { id: "extra", beats: [m.extras[0].nearBeat], words: [], text: "An extra note sounded near " + beatPhrase([m.extras[0].nearBeat]) + "." };
+    else if ((hb = hesitationBar(m))) c = { id: "hesitation", beats: [], bar: hb, words: [], text: "There was a pause between bar " + (hb - 1) + " and bar " + hb + "." };
+    else if (early.length || late.length) {
+      var e = early.length >= late.length, list = e ? early : late;
+      c = { id: e ? "early" : "late", beats: beatsOf(list), words: sylOf(list), text: cap(beatPhrase(beatsOf(list))) + (e ? " came early." : " came late.") };
+    } else c = { id: "none", beats: [], words: [], text: "That was steady." };
+    return c;
+  }
+
+  // ---- retake comparison, worded by rules from the two measurements (no numbers beyond beat labels)
+  var STILL = { early: "still early", late: "still late", wrong: "still on a wrong note", missing: "still missing" };
+  var NOW = { early: "now early", late: "now late", wrong: "now on a wrong note", missing: "now missing" };
+  var NEW = { early: "came early this time", late: "came late this time", wrong: "on a wrong note this time", missing: "missing this time" };
+  function compare(m1, m2) {
+    var a = m1.cause.id, b = m2.cause.id;
+    if (a === "none" && b === "none") return "Steady both times.";
+    if (b === "none") return "Every beat landed this time.";
+    var groups = {}, order = [], n = Math.min(m1.notes.length, m2.notes.length), i;
+    function add(k, beat) { if (!groups[k]) { groups[k] = []; order.push(k); } groups[k].push(beat); }
+    for (i = 0; i < n; i++) {
+      var s1 = m1.notes[i].status, s2 = m2.notes[i].status, bt = m1.notes[i].beat;
+      if (s1 === "ok" && s2 === "ok") continue;
+      if (s2 === "ok") add("landed", bt);
+      else if (s1 === s2) add(STILL[s2], bt);
+      else if (s1 === "ok") add(NEW[s2], bt);
+      else add(NOW[s2], bt);
+    }
+    order.sort(function (x, y) { return (x === "landed" ? 0 : 1) - (y === "landed" ? 0 : 1); });
+    var parts = order.map(function (k) { return beatPhrase(groups[k]) + " " + k; });
+    if (a === "hesitation" && b !== "hesitation") parts.push("no pause between the bars this time");
+    if (a === "hesitation" && b === "hesitation") parts.push("still a pause between the bars");
+    if (a !== "hesitation" && b === "hesitation") parts.push("a pause between the bars this time");
+    if (m1.extras.length && !m2.extras.length) parts.push("no extra note this time");
+    if (!m1.extras.length && m2.extras.length) parts.push("an extra note this time");
+    if (m1.extras.length && m2.extras.length) parts.push("still an extra note");
+    if (!parts.length) return "Same as last time: " + m2.cause.text.charAt(0).toLowerCase() + m2.cause.text.slice(1);
+    return cap(parts.join(", ")) + ".";
+  }
+  function betterDetail(m1, m2) {
+    var id = m1.cause.id;
+    if (id === "none") return null;
+    if (id === "hesitation") return m2.cause.id !== "hesitation" ? CAUSE_PLURAL.hesitation : null;
+    if (id === "extra") return m2.extras.length === 0 ? CAUSE_PLURAL.extra : null;
+    var idx = [], bars = [];
+    m1.notes.forEach(function (r, i) { if (r.status === id) idx.push(i); });
+    if (!idx.length || !idx.every(function (i) { return m2.notes[i] && m2.notes[i].status === "ok"; })) return null;
+    idx.forEach(function (i) { if (bars.indexOf(m1.notes[i].bar) < 0) bars.push(m1.notes[i].bar); });
+    return CAUSE_PLURAL[id] + " in bar" + (bars.length > 1 ? "s " : " ") + andList(bars.map(String));
+  }
+
+  // ---- "play it to me" from the learner's own sheet: timing and steadiness only, pitches are dropped (never a transcription)
+  function measureFree(take, beats) {
+    var played = ((take && take.notes) || []).filter(function (n) { return n && isFinite(n.t); }).map(function (n) { return { t: Math.round(Number(n.t)) }; })
+      .sort(function (a, b) { return a.t - b.t; });
+    var early = 0, late = 0, c;
+    played.forEach(function (p) { var pos = p.t / BEAT_MS, dt = (pos - Math.round(pos * 2) / 2) * BEAT_MS; if (dt < -TH.onTimeMs) early++; else if (dt > TH.onTimeMs) late++; });
+    if (!played.length) c = { id: "missing", text: "No notes reached the app this time." };
+    else if ((early + late) * 3 < played.length) c = { id: "none", text: "Your pulse stayed steady." };
+    else if (early >= late) c = { id: "early", text: "Your notes tended to come before the clicks." };
+    else c = { id: "late", text: "Your notes tended to come after the clicks." };
+    return { free: true, beats: beats || 16, played: played, notes: [], extras: [], cause: c };
+  }
+
+  // ---- practice record: practice events only; never audio, never names
+  var VALID_IDS = CAUSES.concat(["none"]);
+  function newRecord() {
+    return { v: 1, goal: "play the first two bars smoothly", causes: {}, recent: [], tried: [], gotIt: {}, better: {}, words: {},
+             prefs: { told: "one short line", input: "screen keys" } };
+  }
+  function sanitizeRecord(r) {
+    var out = newRecord(); r = r && typeof r === "object" ? r : {};
+    if (typeof r.goal === "string") out.goal = r.goal.slice(0, 140);
+    if (r.causes && typeof r.causes === "object") CAUSES.forEach(function (c) { var v = r.causes[c]; if (typeof v === "number" && v > 0) out.causes[c] = Math.floor(v); });
+    if (Array.isArray(r.recent)) out.recent = r.recent.filter(function (c) { return VALID_IDS.indexOf(c) >= 0; }).slice(-5);
+    if (Array.isArray(r.tried)) r.tried.forEach(function (t) { if (typeof t === "string" && /^(none|wrong|missing|extra|hesitation|early|late)\.[12]$/.test(t) && out.tried.indexOf(t) < 0) out.tried.push(t); });
+    if (r.gotIt && typeof r.gotIt === "object") CAUSES.forEach(function (c) { if (r.gotIt[c] === true) out.gotIt[c] = true; });
+    if (r.better && typeof r.better === "object") CAUSES.forEach(function (c) { if (typeof r.better[c] === "string") out.better[c] = r.better[c].slice(0, 80); });
+    if (r.words && typeof r.words === "object") Object.keys(GLOSSARY).forEach(function (w) { var v = r.words[w]; if (typeof v === "number" && v > 0) out.words[w] = Math.floor(v); });
+    if (r.prefs && typeof r.prefs === "object") {
+      if (typeof r.prefs.told === "string") out.prefs.told = r.prefs.told.slice(0, 40);
+      if (r.prefs.input === "screen keys" || r.prefs.input === "MIDI keyboard") out.prefs.input = r.prefs.input;
+    }
+    return out;
+  }
+  function recordTake(rec, m, cueId) {
+    var r = sanitizeRecord(clone(rec)), id = m.cause.id;
+    if (id !== "none") r.causes[id] = (r.causes[id] || 0) + 1;
+    r.recent.push(id); r.recent = r.recent.slice(-5);
+    if (cueId && r.tried.indexOf(cueId) < 0) r.tried.push(cueId);
+    return sanitizeRecord(r);
+  }
+  function recordGotIt(rec, id) { var r = sanitizeRecord(clone(rec)); if (CAUSES.indexOf(id) >= 0) r.gotIt[id] = true; return sanitizeRecord(r); }
+  function recordBetter(rec, id, detail) { var r = sanitizeRecord(clone(rec)); if (CAUSES.indexOf(id) >= 0 && detail) r.better[id] = detail; return sanitizeRecord(r); }
+  function recordWord(rec, term) { var r = sanitizeRecord(clone(rec)); if (Object.prototype.hasOwnProperty.call(GLOSSARY, term)) r.words[term] = (r.words[term] || 0) + 1; return sanitizeRecord(r); }
+  function setGoal(rec, goal) { var r = sanitizeRecord(clone(rec)); r.goal = String(goal || "").slice(0, 140); return sanitizeRecord(r); }
+  function setInput(rec, input) { var r = sanitizeRecord(clone(rec)); r.prefs.input = input; return sanitizeRecord(r); }
+  function shouldHandOff(rec, id) {
+    var last = (rec.recent || []).slice(-3);
+    return id !== "none" && last.length === 3 && last.every(function (c) { return c === id; });
+  }
+  function pickCue(cause, rec) {
+    var id = cause && CUEBOOK[cause.id] ? cause.id : "none", list = CUEBOOK[id];
+    var k = rec && rec.causes && rec.causes[id] > 0 && list.length > 1 ? 1 : 0;
+    return { id: id + "." + (k + 1), variant: k + 1, fix: list[k] };
+  }
+  function cueText(cueId) { var p = String(cueId).split("."), list = CUEBOOK[p[0]]; return list && Array.isArray(list) ? list[Number(p[1]) - 1] || "" : ""; }
+  function topWorkingOn(r) {
+    var best = null;
+    CAUSES.forEach(function (c) { if (r.causes[c] && !r.better[c] && !r.gotIt[c] && (!best || r.causes[c] > r.causes[best])) best = c; });
+    return best;
+  }
+  function recordSummary(rec) {
+    var r = sanitizeRecord(rec), lines = ["Your goal: " + r.goal + "."];
+    var w = topWorkingOn(r);
+    if (w) lines.push("Working on: " + CAUSE_SHORT[w] + ".");
+    var better = CAUSES.filter(function (c) { return r.better[c]; }).map(function (c) { return r.better[c]; });
+    if (better.length) lines.push("Got better: " + better.join("; ") + ".");
+    var got = CAUSES.filter(function (c) { return r.gotIt[c]; }).map(function (c) { return CAUSE_SHORT[c]; });
+    if (got.length) lines.push("You marked got it: " + got.filter(function (x, i) { return got.indexOf(x) === i; }).join(", ") + ".");
+    var words = Object.keys(r.words);
+    if (words.length) lines.push("Words you looked up: " + words.join(", ") + ".");
+    lines.push("How you like to be told: " + r.prefs.told + ". Playing on: " + r.prefs.input + ".");
+    if (!w && !better.length && !got.length) lines.splice(1, 0, "Nothing to work on yet. This fills in as you practise.");
+    return lines;
+  }
+  function handoffCard(rec) {
+    var r = sanitizeRecord(rec), seen = [];
+    r.recent.forEach(function (c) { if (c !== "none" && seen.indexOf(CAUSE_PLURAL[c]) < 0) seen.push(CAUSE_PLURAL[c]); });
+    var worked = CAUSES.filter(function (c) { return r.better[c]; }).map(function (c) { return r.better[c]; })
+      .concat(CAUSES.filter(function (c) { return r.gotIt[c]; }).map(function (c) { return "marked got it: " + CAUSE_SHORT[c]; }));
+    return { goal: r.goal, lastCauses: seen, tried: r.tried.map(cueText).filter(Boolean), worked: worked };
+  }
+
+  // ---- teacher mock: class aggregates only
+  var SAMPLE_CLASS = { label: "sample data, mock", learners: 24,
+    causes: { early: 31, late: 12, wrong: 18, missing: 7, extra: 5, hesitation: 14 },
+    words: { "steady pulse": 11, "beat": 9, "early": 6, "wrong note": 5, "count-in": 4, "bar": 3, "late": 2, "syllable": 2, "phrase": 1 },
+    handoffs: { "steady pulse": 2, "wrong notes in bar 2": 1 } };
+  var CONCEPT = { early: "steady pulse (early)", late: "steady pulse (late)", wrong: "note reading (wrong note)", missing: "keeping going (missing notes)",
+                  extra: "one press per note (extra notes)", hesitation: "bar to bar (pause)" };
+  function classAggregate(sample, rec) {
+    var r = sanitizeRecord(rec), out = { label: sample.label, learners: sample.learners + 1, causes: {}, words: {}, handoffs: {} };
+    CAUSES.forEach(function (c) { out.causes[c] = (sample.causes[c] || 0) + (r.causes[c] || 0); });
+    Object.keys(GLOSSARY).forEach(function (w) { out.words[w] = (sample.words[w] || 0) + (r.words[w] || 0); });
+    Object.keys(sample.handoffs).forEach(function (k) { out.handoffs[k] = sample.handoffs[k]; });
+    return out;
+  }
+  function hardest(agg) { return CAUSES.map(function (c) { return { label: CONCEPT[c], value: agg.causes[c] }; }).sort(function (a, b) { return b.value - a.value; }); }
+
+  // ---- synthetic takes for the self-test and the desk demo
+  function makeTake(spec) {
+    spec = spec || {};
+    var tg = spec.target || makeTarget("ode", 1, 2), beatMs = 60000 / tg.bpm, notes = [];
+    tg.notes.forEach(function (n, i) {
+      if (spec.drop && spec.drop.indexOf(i) >= 0) return;
+      var p = spec.pitches && spec.pitches[i] != null ? spec.pitches[i] : n.pitch;
+      notes.push({ pitch: p, t: n.beat * beatMs + ((spec.offsets && spec.offsets[i]) || 0) });
+    });
+    (spec.extra || []).forEach(function (x) { notes.push({ pitch: x.pitch, t: x.beat * beatMs }); });
+    return { bpm: tg.bpm, notes: notes };
+  }
+
+  // ---- self-test list (the same list runs in the browser with ?selftest=1 and under Node)
+  var TESTS = [];
+  function T(name, fn) { TESTS.push([name, fn]); }
+  function ode() { return makeTarget("ode", 1, 2); }
+  function keysDeep(o, acc) { acc = acc || []; if (o && typeof o === "object") Object.keys(o).forEach(function (k) { acc.push(k); keysDeep(o[k], acc); }); return acc; }
+  var SCORE_WORDS = /\b(score|scores|grade|grades|percent|percentage|stars?|pass|fail|passed|failed)\b|%/i;
+  T("router: 'Show me the sheet' gives the sheet view", function () { return route("Show me the sheet").view === "sheet"; });
+  T("router: 'Break it down' gives the breakdown view", function () { return route("Break it down").view === "breakdown"; });
+  T("router: 'Play bar 1' gives playback of bar 1", function () { var r = route("Play bar 1"); return r.view === "play" && r.params.from === 1 && r.params.to === 1; });
+  T("router: 'Let me try' gives the practice view", function () { return route("Let me try").view === "practice"; });
+  T("router: 'What does that mean?' gives the glossary", function () { return route("What does that mean?").view === "glossary"; });
+  T("router: 'what is a bar' opens the glossary at bar", function () { var r = route("what is a bar"); return r.view === "glossary" && r.params.term === "bar"; });
+  T("router: 'Ask a person' gives the hand-off", function () { var r = route("Ask a person"); return r.view === "handoff" && r.params.reason === "asked"; });
+  T("router: 'Find a real instrument' gives find-instrument", function () { return route("Find a real instrument").view === "find-instrument"; });
+  T("router: pain goes to a person even when 'play' is in the text", function () { var r = route("play bar 1 but my wrist hurts"); return r.view === "handoff" && r.params.reason === "safety"; });
+  T("router: tired goes to a person before anything else", function () { return route("I'm tired, let me try again").view === "handoff"; });
+  T("router: unknown text gives the menu card, never a free-text reply", function () { var r = route("banana pancakes"); return r.view === "menu" && MENU_TEXT === "I can show you: sheet, breakdown, playback, a try, a meaning, a person"; });
+  T("router: empty text gives the menu card", function () { return route("   ").view === "menu"; });
+  T("song: 'I want to play I'm a pirate now' requests Drunken Sailor", function () { var r = route("I want to play I'm a pirate now"); return r.view === "song" && r.params.song === "sailor"; });
+  T("song: 'play twinkle' requests Twinkle", function () { var r = route("play twinkle"); return r.view === "song" && r.params.song === "twinkle"; });
+  T("song: 'play' alone is playback of the current song", function () { var r = route("play", { song: "mary" }); return r.view === "play" && r.params.song === "mary"; });
+  T("plan: an unknown title ('I want to play Bohemian Rhapsody') gives a generic rules-made plan, no sheet", function () { var r = route("I want to play Bohemian Rhapsody"), p = makePlan(r.params.plan, r.params.title); return r.view === "plan" && r.params.plan === "generic" && r.params.title === "Bohemian Rhapsody" && p.askTempo && p.skills.join(",") === "a steady pulse,note reading,both hands together" && p.goal === "Bohemian Rhapsody, on keyboard"; });
+  T("plan: 'I want to play He's a Pirate' gives the song plan with saved skills and the drill phrase", function () { var r = route("I want to play He's a Pirate"), p = makePlan(r.params.plan, r.params.title); return r.view === "plan" && r.params.plan === "pirate" && p.saved && p.skills.length === 4 && p.skills[0] === "the minor scale" && p.drill === "drill-pirate" && p.goal === "He's a Pirate, on keyboard" && p.kickoff === "Let's get this started: the drill phrase first, then your own sheet."; });
+  T("plan: the songbook holds no entry for He's a Pirate and the saved table holds no notes", function () { return !SONGBOOK.some(function (s) { return /pirate|caribbean/i.test(s.title); }) && !Object.keys(PLANS).some(function (k) { return PLANS[k].notes || PLANS[k].bars || PLANS[k].lyrics; }); });
+  T("plan: 'play some pirate song' still gives the Drunken Sailor sheet", function () { var r = route("play some pirate song"); return r.view === "song" && r.params.song === "sailor"; });
+  T("plan: the fast or slow chips adjust the generic plan", function () { var f = makePlan("generic", "Moon Song", "fast"), s = makePlan("generic", "Moon Song", "slow"); return f.drill === "drill-fast" && s.drill === "drill-slow" && f.days[0] !== s.days[0] && f.days.length === 5 && /own sheet music/.test(f.days[4]); });
+  T("plan: drill phrases sit on C4 to C5 white keys, fill four beats a bar, count 1 and 2 under the notes", function () { return DRILLS.every(function (d) { return d.notes.every(function (n) { return KEYS.indexOf(n.pitch) >= 0; }) && d.bars.every(function (b) { return Math.abs(b.len - 4) < 1e-9; }); }) && song("drill-pirate").bars[0].notes.map(function (n) { return n.syl; }).join(" ") === "1 and 2 3 and 4"; });
+  T("plan: the pirate drill is D minor feel and is practised like any phrase", function () { var tg = makeTarget("drill-pirate", 1, 2); return tg.notes[0].pitch === 62 && tg.notes[tg.notes.length - 1].pitch === 62 && measure(tg, makeTake({ target: tg, offsets: { 2: -200 } })).cause.id === "early"; });
+  T("plan: play it to me measures timing only and keeps no pitches", function () { var steady = measureFree({ notes: [{ pitch: 60, t: 0 }, { pitch: 64, t: BEAT_MS }, { pitch: 67, t: 2 * BEAT_MS }] }, 16), early = measureFree({ notes: [{ pitch: 60, t: -140 }, { pitch: 62, t: BEAT_MS - 140 }] }, 16); return steady.cause.id === "none" && early.cause.id === "early" && keysDeep(steady).indexOf("pitch") < 0; });
+  T("song: pain plus a song title goes to a person", function () { return route("play twinkle, my hand hurts").view === "handoff"; });
+  T("song: 'can we try hot cross buns' requests Hot Cross Buns", function () { var r = route("can we try hot cross buns"); return r.view === "song" && r.params.song === "buns"; });
+  T("song: 'I want to play the piano' is about an instrument, not a song", function () { return route("I want to play the piano").view === "find-instrument"; });
+  T("songbook: five entries, each with a public-domain source line", function () { return SONGBOOK.length === 5 && SONGBOOK.every(function (s) { return /public domain/.test(s.source); }); });
+  T("songbook: every note sits on the eight white keys C4 to C5", function () { return SONGBOOK.every(function (s) { return s.notes.every(function (n) { return KEYS.indexOf(n.pitch) >= 0; }); }); });
+  T("songbook: every entry has one syllable per note", function () { return SONGBOOK.every(function (s) { return s.notes.every(function (n) { return typeof n.syl === "string" && n.syl.length > 0; }); }); });
+  T("songbook: every bar fills four beats with quarter, half or eighth notes", function () { return SONGBOOK.every(function (s) { return s.bars.every(function (b) { return Math.abs(b.len - 4) < 1e-9; }) && s.notes.every(function (n) { return [0.5, 1, 2].indexOf(n.dur) >= 0; }); }); });
+  T("songbook: Ode to Joy is E E F G | G F E D in quarter notes", function () { var s = song("ode"); return s.notes.map(function (n) { return noteName(n.pitch); }).join(" ") === "E4 E4 F4 G4 G4 F4 E4 D4" && segmentBars(s).length === 2; });
+  T("rules: Ode to Joy splits into bar 1 and bar 2", function () { var p = splitPhrases(song("ode")); return p.length === 2 && p[0].from === 1 && p[0].to === 1 && p[1].from === 2 && p[1].to === 2; });
+  T("rules: Drunken Sailor gives two or more phrases, kick-off line on the first only", function () { var p = splitPhrases(song("sailor")); return p.length >= 2 && p[0].kickoff.indexOf("Let's get this started: bar 1") === 0 && !p[1].kickoff; });
+  T("rules: the Ode to Joy kick-off says four notes", function () { return splitPhrases(song("ode"))[0].kickoff === "Let's get this started: bar 1, four notes, say the words first."; });
+  T("rules: a phrase ends after a long note (Mary bar 3 stands alone)", function () { return splitPhrases(song("mary")).some(function (p) { return p.from === 3 && p.to === 3; }); });
+  T("measure: a perfect take gives no fix: 'That was steady.' with no number", function () { var m = measure(ode(), makeTake({})); return m.cause.id === "none" && m.cause.text === "That was steady." && !/\d/.test(m.cause.text); });
+  T("measure: small jitter is still steady", function () { return measure(ode(), makeTake({ offsets: { 1: 60, 2: -50, 5: 70, 7: -60 } })).cause.id === "none"; });
+  T("measure: one early beat gives the early cause on beat 3", function () { var c = measure(ode(), makeTake({ offsets: { 2: -220 } })).cause; return c.id === "early" && c.beats.length === 1 && c.beats[0] === 2; });
+  T("measure: beats 3 and 4 early are worded in plain words", function () { return measure(ode(), makeTake({ offsets: { 2: -200, 3: -200 } })).cause.text === "Beats 3 and 4 came early."; });
+  T("measure: one wrong note gives the wrong-note cause at beat 6", function () { var c = measure(ode(), makeTake({ pitches: { 5: 67 } })).cause; return c.id === "wrong" && c.beats[0] === 5 && c.text === "Beat 6 was a G; the sheet says F."; });
+  T("measure: a wrong note at note 1 is still found", function () { var c = measure(ode(), makeTake({ pitches: { 0: 62 } })).cause; return c.id === "wrong" && c.beats[0] === 0; });
+  T("measure: missing notes at the end", function () { var c = measure(ode(), makeTake({ drop: [6, 7] })).cause; return c.id === "missing" && c.text === "Beats 7 and 8 didn't sound."; });
+  T("measure: no notes at all", function () { return measure(ode(), { notes: [] }).cause.text === "No notes reached the app this time."; });
+  T("measure: an extra note", function () { return measure(ode(), makeTake({ extra: [{ pitch: 69, beat: 2.5 }] })).cause.id === "extra"; });
+  T("measure: late on beat 7", function () { var c = measure(ode(), makeTake({ offsets: { 6: 230 } })).cause; return c.id === "late" && c.text === "Beat 7 came late."; });
+  T("measure: a pause before bar 2 is a hesitation between bars", function () { var c = measure(ode(), makeTake({ offsets: { 4: 420, 5: 420, 6: 420, 7: 420 } })).cause; return c.id === "hesitation" && c.text === "There was a pause between bar 1 and bar 2."; });
+  T("measure: Drunken Sailor eighths, a perfect take is steady", function () { var tg = makeTarget("sailor", 1, 2); return measure(tg, makeTake({ target: tg })).cause.id === "none"; });
+  T("measure: an early eighth is named 'the and after beat 2'", function () { var tg = makeTarget("sailor", 1, 2); var c = measure(tg, makeTake({ target: tg, offsets: { 2: -150 } })).cause; return c.id === "early" && c.text === "The and after beat 2 came early." && c.words[0] === "we"; });
+  T("measure: a phrase from another song works (Mary bar 3 wrong note)", function () { var tg = makeTarget("mary", 3, 3); var c = measure(tg, makeTake({ target: tg, pitches: { 1: 64 } })).cause; return c.id === "wrong" && c.beats[0] === 1; });
+  T("compare: improvement reads 'Beat 3 landed, beat 4 still early.'", function () { return compare(measure(ode(), makeTake({ offsets: { 2: -200, 3: -200 } })), measure(ode(), makeTake({ offsets: { 3: -200 } }))) === "Beat 3 landed, beat 4 still early."; });
+  T("compare: no change reads 'Beats 3 and 4 still early.'", function () { var a = measure(ode(), makeTake({ offsets: { 2: -200, 3: -200 } })); return compare(a, a) === "Beats 3 and 4 still early."; });
+  T("compare: everything landed", function () { return compare(measure(ode(), makeTake({ pitches: { 5: 67 } })), measure(ode(), makeTake({}))) === "Every beat landed this time."; });
+  T("compare: lines carry no score words", function () { var a = measure(ode(), makeTake({ offsets: { 2: -200 } })), b = measure(ode(), makeTake({ offsets: { 6: 250 } })); return !SCORE_WORDS.test(compare(a, b)); });
+  T("hand-off: the third take with the same cause triggers it, the second does not", function () { var m = measure(ode(), makeTake({ offsets: { 2: -220 } })), r = recordTake(recordTake(newRecord(), m), m); var two = shouldHandOff(r, "early"); r = recordTake(r, m); return !two && shouldHandOff(r, "early"); });
+  T("hand-off: card carries goal, causes and tries, no audio or names", function () { var m = measure(ode(), makeTake({ offsets: { 2: -220 } })), r = recordTake(newRecord(), m, "early.1"), c = handoffCard(r); return c.goal && c.lastCauses[0] === "early beats" && c.tried.length === 1 && !keysDeep(c).some(function (k) { return /audio|clip|name|school/i.test(k); }); });
+  T("view request: an unknown view is rejected", function () { return validateView({ view: "dance", params: {} }).ok === false; });
+  T("view request: unknown song, bad bar and unknown param rejected; a good one accepted", function () { return !validateView({ view: "song", params: { song: "bohemian" } }).ok && !validateView({ view: "play", params: { song: "ode", from: 3 } }).ok && !validateView({ view: "sheet", params: { colour: "red" } }).ok && validateView({ view: "play", params: { song: "sailor", from: 3, to: 4 } }).ok; });
+  T("view request: every router output validates", function () { return ["Show me the sheet", "Break it down", "Play bar 1", "Let me try", "What does that mean?", "Ask a person", "Find a real instrument", "Pick a song", "I want to play I'm a pirate now", "I want to play Bohemian Rhapsody", "my arm hurts", "zzz", "what is a syllable", "try bar 2"].every(function (t) { return validateView(route(t, { song: "sailor" })).ok; }); });
+  T("record: never stores audio, clip or name fields", function () { var m = measure(ode(), makeTake({ pitches: { 5: 67 } })), r = recordTake(newRecord(), m, "wrong.1"); var dirty = JSON.parse(JSON.stringify(r)); dirty.audio = "data"; dirty.name = "x"; dirty.clip = "y"; dirty.school = "z"; dirty.prefs.name = "x"; var s = sanitizeRecord(dirty); return !keysDeep(s).some(function (k) { return /audio|clip|name|school|location/i.test(k); }) && s.causes.wrong === 1; });
+  T("record: a cause seen before gets its second cue variant", function () { var m = measure(ode(), makeTake({ offsets: { 2: -220 } })), r0 = newRecord(), c1 = pickCue(m.cause, r0), r1 = recordTake(r0, m, c1.id), c2 = pickCue(m.cause, r1); return c1.variant === 1 && c2.variant === 2 && c1.fix === "Count out loud with the clicks, play it again."; });
+  T("record: plain-words summary says what is being worked on, with no numbers", function () { var m = measure(ode(), makeTake({ offsets: { 2: -220 } })), r = recordTake(recordTake(newRecord(), m), m), s = recordSummary(r); return s.indexOf("Working on: steady beat.") >= 0 && s.every(function (l) { return !/\d/.test(l); }); });
+  T("record: an improved retake becomes a got-better line", function () { var a = measure(ode(), makeTake({ pitches: { 5: 67 } })), b = measure(ode(), makeTake({})), r = recordBetter(recordTake(newRecord(), a), "wrong", betterDetail(a, b)); return recordSummary(r).indexOf("Got better: wrong notes in bar 2.") >= 0; });
+  T("text: cue book, glossary and menu lines use no score words", function () { return !SCORE_WORDS.test(JSON.stringify(CUEBOOK) + JSON.stringify(GLOSSARY) + MENU_TEXT + COPYRIGHT_LINE + PLAN_LABEL_SAVED + PLAN_LABEL_RULES + JSON.stringify(makePlan("pirate"))); });
+  T("teacher mock: class aggregates only, no per-learner rows", function () { var a = classAggregate(SAMPLE_CLASS, newRecord()); return a.learners === 25 && !Array.isArray(a.causes) && hardest(a)[0].label === "steady pulse (early)" && !keysDeep(a).some(function (k) { return /learner\d|name/i.test(k); }); });
+
+  // ---- v1 tests: opening, options, live-reply validator, coach prompt, schema
+  function liveReply(o) { var b = { view: "song", song: "ode", title: "", line: "Here is the sheet with the words.", options: [] }; for (var k in o) b[k] = o[k]; return b; }
+  T("opening: 'hi' gives the coach question with three chips", function () { var r = route("hi"); return r.view === "opening" && COACH_QUESTION === "What do you want to play today?" && OPENING_CHIPS.join("|") === "a pirate song|Twinkle|something else"; });
+  T("opening: 'hello' and 'let's start' open; 'let me try' does not", function () { return route("hello").view === "opening" && route("let's start").view === "opening" && route("let me try").view === "practice"; });
+  T("opening: the first unmatched input opens, a later one gives the menu", function () { return route("banana pancakes", { first: true }).view === "opening" && route("banana pancakes", { first: false }).view === "menu"; });
+  T("opening: a safety word still wins over a greeting", function () { var r = route("hi my hand hurts"); return r.view === "handoff" && r.params.reason === "safety"; });
+  T("options: 'a pirate song' gives three options that resolve to the sheet, the plan and the drill", function () { var r = route("a pirate song"), o = r.params.options, a = o.map(function (x) { return resolveAsk(x.ask); }); return r.view === "options" && o.length === 3 && a[0].view === "song" && a[0].params.song === "sailor" && a[1].view === "plan" && a[1].params.plan === "pirate" && a[2].params.song === "drill-pirate" && a.every(function (x) { return validateView(x).ok; }); });
+  T("options: 'something else' and 'a song' give the five songbook titles, all resolving", function () { var a = route("something else"), b = route("can we do a song"); return a.view === "options" && b.view === "options" && a.params.options.length === SONGBOOK.length && a.params.options.every(function (x) { var q = resolveAsk(x.ask); return q && q.view === "song" && validateView(q).ok; }); });
+  T("options: a named title skips the options (sailor sheet, pirate plan, play-verb pirate request)", function () { return route("drunken sailor").view === "song" && route("he's a pirate").view === "plan" && route("play some pirate song").view === "song"; });
+  T("options: an unknown ask resolves to nothing", function () { return resolveAsk("bohemian") === null && resolveAsk("") === null && resolveAsk("He's a Pirate").view === "plan"; });
+  T("validateRequest: accepts a good options reply", function () { var v = validateRequest({ view: "options", song: "", title: "Pirate songs we can do", line: "Pick one and I will set it up.", options: [{ label: "Drunken Sailor", ask: "sailor" }, { label: "He's a Pirate", ask: "He's a Pirate" }] }); return v.ok && v.request.view === "options" && v.request.params.options.length === 2 && validateView(v.request).ok; });
+  T("validateRequest: accepts a good song reply", function () { var v = validateRequest(liveReply({ song: "twinkle" })); return v.ok && v.request.view === "song" && v.request.params.song === "twinkle" && v.request.line === "Here is the sheet with the words."; });
+  T("validateRequest: rejects an unknown view and an unknown song id", function () { return !validateRequest(liveReply({ view: "dance" })).ok && !validateRequest(liveReply({ song: "bohemian" })).ok; });
+  T("validateRequest: rejects a line with a digit", function () { var v = validateRequest(liveReply({ line: "Play bar 2 now." })); return !v.ok && v.reason === "line has a digit"; });
+  T("validateRequest: rejects score and ranking words (first, score, stars)", function () { return ["You are the first to try this.", "Your score is great.", "Three stars for you."].every(function (l) { var v = validateRequest(liveReply({ line: l })); return !v.ok && /score or ranking/.test(v.reason); }); });
+  T("validateRequest: rejects a line over twenty words", function () { var l = "this line keeps going and going with plain words until it is clearly longer than the twenty words allowed here today, friend"; return l.split(" ").length > 20 && validateRequest(liveReply({ line: l })).reason === "line over twenty words"; });
+  T("validateRequest: rejects notation ('C D E', 'C4', 'G#', 'quarter note')", function () { return ["Play C D E slowly.", "Start on C4 today.", "Use G# here.", "Hold the quarter note longer."].every(function (l) { return validateRequest(liveReply({ line: l })).reason === "line has notation"; }); });
+  T("validateRequest: rejects five options and an option with an unknown ask", function () { var five = [0, 1, 2, 3, 4].map(function () { return { label: "Hot Cross Buns", ask: "buns" }; }); var a = validateRequest({ view: "options", song: "", title: "Songs", line: "Pick one.", options: five }), b = validateRequest({ view: "options", song: "", title: "Songs", line: "Pick one.", options: [{ label: "A tune", ask: "bohemian" }] }); return !a.ok && a.reason === "more than four options" && !b.ok && /not in the catalogue/.test(b.reason); });
+  T("validateRequest: a plan only for a saved title; the fix and compare views never come from the model", function () { return validateRequest(liveReply({ view: "plan", song: "", title: "He's a Pirate", line: "Here is a plan with no notes of the tune." })).ok && !validateRequest(liveReply({ view: "plan", song: "", title: "Bohemian Rhapsody" })).ok && !validateRequest(liveReply({ view: "fix", song: "" })).ok; });
+  T("coachPrompt: under 450 words, says never, names every catalogue id", function () { var p = coachPrompt(), w = p.split(/\s+/).filter(Boolean).length; return w < 450 && /\bnever\b/i.test(p) && catalogue().every(function (c) { return p.indexOf(c.id) >= 0; }) && catalogue().length === SONGBOOK.length + DRILLS.length + Object.keys(PLANS).length; });
+  T("liveSchema: additionalProperties false and every property required, at both levels, no length limits", function () { var s = liveSchema, it = s.properties.options.items; function all(o) { return Object.keys(o.properties).every(function (k) { return o.required.indexOf(k) >= 0; }) && o.required.length === Object.keys(o.properties).length; } return s.additionalProperties === false && it.additionalProperties === false && all(s) && all(it) && s.properties.view.enum.indexOf("options") >= 0 && s.properties.view.enum.indexOf("fix") < 0 && !/minLength|maxLength|minimum|maximum|minItems|maxItems/.test(JSON.stringify(s)); });
+  T("view request: v1 router outputs validate", function () { return ["hi", "a pirate song", "something else", "Twinkle", "Pick a song", "ok", "banana pancakes"].every(function (t) { return validateView(route(t, { first: true })).ok; }); });
+  T("text: the coach question, chips and option cards use no score words or digits", function () { var s = COACH_QUESTION + OPENING_CHIPS.join(" ") + ["pirate", "songbook"].map(function (k) { var o = OPTION_SETS[k]; return o.title + o.line + o.options.map(function (x) { return resolveAsk(x.label) ? x.note : x.label + x.note; }).join(" "); }).join(" "); return !SCORE_WORDS.test(s) && !/\d/.test(s) && lineProblem(COACH_QUESTION) === null; });
+
+  function runTests() {
+    var pass = 0, lines = [];
+    TESTS.forEach(function (t) {
+      var ok = false, err = "";
+      try { ok = t[1]() === true; } catch (e) { err = String((e && e.message) || e); }
+      if (ok) pass++;
+      lines.push((ok ? "ok    " : "FAIL  ") + t[0] + (err ? " (" + err + ")" : ""));
+    });
+    return { pass: pass, total: TESTS.length, lines: lines };
+  }
+
+  return {
+    BPM: BPM, BEAT_MS: BEAT_MS, KEYS: KEYS, KEY_LETTERS: KEY_LETTERS, SONGBOOK: SONGBOOK, CUEBOOK: CUEBOOK, GLOSSARY: GLOSSARY, CAUSE_TERM: CAUSE_TERM,
+    CAUSE_PLURAL: CAUSE_PLURAL, MENU_TEXT: MENU_TEXT, COPYRIGHT_LINE: COPYRIGHT_LINE, CATALOGUE_LINE: CATALOGUE_LINE, DRILLS: DRILLS, makePlan: makePlan, measureFree: measureFree, SAMPLE_CLASS: SAMPLE_CLASS, VIEWS: VIEWS,
+    COACH_QUESTION: COACH_QUESTION, OPENING_CHIPS: OPENING_CHIPS, LIVE_VIEWS: LIVE_VIEWS, liveSchema: liveSchema, optionsFor: optionsFor, resolveAsk: resolveAsk,
+    catalogue: catalogue, coachPrompt: coachPrompt, validateRequest: validateRequest, lineProblem: lineProblem,
+    letter: letter, noteName: noteName, staffStep: staffStep, isWhole: isWhole, song: song, notesIn: notesIn, segmentBars: segmentBars, splitPhrases: splitPhrases,
+    route: route, validateView: validateView, makeTarget: makeTarget, measure: measure, compare: compare, betterDetail: betterDetail,
+    newRecord: newRecord, sanitizeRecord: sanitizeRecord, recordTake: recordTake, recordGotIt: recordGotIt, recordBetter: recordBetter, recordWord: recordWord,
+    setGoal: setGoal, setInput: setInput, shouldHandOff: shouldHandOff, pickCue: pickCue, cueText: cueText, recordSummary: recordSummary, handoffCard: handoffCard,
+    classAggregate: classAggregate, hardest: hardest, makeTake: makeTake, tests: TESTS, runTests: runTests
+  };
+})();
+if (typeof module !== "undefined") module.exports = Core;
+// CORE-END
+</script>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[c]; }); }
+  function attr(o) { return esc(JSON.stringify(o)); }
+  var REC_KEY = "practiceCanvas.record.v0";
+  function loadRec() { try { var raw = localStorage.getItem(REC_KEY); if (raw) return Core.sanitizeRecord(JSON.parse(raw)); } catch (e) { /* storage blocked: memory only */ } return Core.newRecord(); }
+  function saveRec() { try { localStorage.setItem(REC_KEY, JSON.stringify(S.rec)); } catch (e) { /* storage blocked: memory only */ } }
+  var S = { rec: loadRec(), song: "ode", from: 1, to: 2, last: null, prev: null, cue: null, cap: null, retake: false, timers: [], model: "saved", sent: 0, first: true, lastView: null, liveSeq: 0, voiceOut: false };
+  var BEAT_MS = Core.BEAT_MS;
+
+  /* ---------- audio: one context, own oscillator synth ---------- */
+  var ac = null, master = null;
+  function audioOn() {
+    try {
+      if (!ac) { var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return false; ac = new AC(); master = ac.createGain(); master.gain.value = 0.5; master.connect(ac.destination); }
+      if (ac.state !== "running" && ac.resume) ac.resume();
+      return true;
+    } catch (e) { return false; }
+  }
+  function hz(m) { return 440 * Math.pow(2, (m - 69) / 12); }
+  function tone(m, when, dur) {
+    if (!ac) return;
+    var o = ac.createOscillator(), g = ac.createGain();
+    o.type = "triangle"; o.frequency.value = hz(m);
+    g.gain.setValueAtTime(0.0001, when); g.gain.exponentialRampToValueAtTime(0.28, when + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, when + Math.max(0.15, dur));
+    o.connect(g); g.connect(master); o.start(when); o.stop(when + dur + 0.05);
+  }
+  function click(when, accent, quiet) {
+    if (!ac) return;
+    var o = ac.createOscillator(), g = ac.createGain(), pk = quiet ? 0.06 : accent ? 0.3 : 0.18;
+    o.type = "square"; o.frequency.value = accent ? 1760 : 1320;
+    g.gain.setValueAtTime(0.0001, when); g.gain.exponentialRampToValueAtTime(pk, when + 0.002); g.gain.exponentialRampToValueAtTime(0.0001, when + 0.05);
+    o.connect(g); g.connect(master); o.start(when); o.stop(when + 0.07);
+  }
+  function later(fn, ms) { S.timers.push(setTimeout(fn, Math.max(0, ms))); }
+  function stopAll() { S.timers.forEach(clearTimeout); S.timers = []; S.cap = null; document.querySelectorAll(".on").forEach(function (el) { el.classList.remove("on"); }); }
+  function hl(idx, on) { document.querySelectorAll('[data-i="' + idx + '"]').forEach(function (el) { el.classList.toggle("on", on); }); }
+  function nowS() { return ac ? ac.currentTime : 0; }
+
+  /* ---------- drawing: staff with syllables (own SVG) ---------- */
+  function adv(n) { return Math.max(18 + 24 * n.dur, n.syl.length * 11 + 12); }
+  function staffSvg(notes, o) {
+    o = o || {};
+    var x = o.clef ? 44 : 8, out = [], heads = [];
+    if (o.clef) out.push('<text class="clef" x="2" y="68" font-size="52">&#x1D11E;</text>');
+    if (o.time) { out.push('<text class="ts" x="' + x + '" y="38">4</text><text class="ts" x="' + x + '" y="58">4</text>'); x += 20; }
+    x += 6;
+    var bars = [];
+    notes.forEach(function (n) { if (!bars.length || bars[bars.length - 1].bar !== n.bar) bars.push({ bar: n.bar, notes: [] }); bars[bars.length - 1].notes.push(n); });
+    bars.forEach(function (b, bi) {
+      b.notes.forEach(function (n) {
+        var a = adv(n), cx = x + a / 2, step = Core.staffStep(n.pitch), y = 60 - (step - 2) * 5, up = step < 6;
+        heads.push({ n: n, cx: cx, y: y, up: up, a: a });
+        x += a;
+      });
+      var last = o.endBar && bi === bars.length - 1;
+      out.push('<line class="bl' + (last ? " end" : "") + '" x1="' + (x + 2) + '" y1="20" x2="' + (x + 2) + '" y2="60"/>');
+      x += 8;
+    });
+    var W = x + 4, lines = "";
+    for (var k = 0; k < 5; k++) lines += '<line class="sl" x1="0" y1="' + (20 + k * 10) + '" x2="' + W + '" y2="' + (20 + k * 10) + '"/>';
+    heads.forEach(function (h, i) {
+      var n = h.n, sx = h.up ? h.cx + 6 : h.cx - 6, sy2 = h.up ? h.y - 30 : h.y + 30;
+      if (h.y >= 70) out.push('<line class="sl" x1="' + (h.cx - 11) + '" y1="70" x2="' + (h.cx + 11) + '" y2="70"/>');
+      out.push('<ellipse class="nh' + (n.dur >= 2 ? " half" : "") + '" data-i="' + n.idx + '" cx="' + h.cx + '" cy="' + h.y + '" rx="6.6" ry="4.6" transform="rotate(-20 ' + h.cx + " " + h.y + ')"/>');
+      out.push('<line class="stem" x1="' + sx + '" y1="' + h.y + '" x2="' + sx + '" y2="' + sy2 + '"/>');
+      if (n.dur === 1.5) out.push('<circle class="dot" cx="' + (h.cx + 11) + '" cy="' + (h.y - 2) + '" r="1.8"/>');
+      if (n.dur === 0.5) {
+        var nx = heads[i + 1], pv = heads[i - 1];
+        var startsPair = nx && nx.n.dur === 0.5 && nx.n.bar === n.bar && Core.isWhole(n.beat) && nx.up === h.up;
+        var endsPair = pv && pv.n.dur === 0.5 && pv.n.bar === n.bar && Core.isWhole(pv.n.beat) && pv.up === h.up;
+        if (startsPair) { var x2 = nx.up ? nx.cx + 6 : nx.cx - 6; out.push('<polygon class="beam" points="' + sx + "," + sy2 + " " + x2 + "," + sy2 + " " + x2 + "," + (sy2 + (h.up ? 4 : -4)) + " " + sx + "," + (sy2 + (h.up ? 4 : -4)) + '"/>'); }
+        else if (!endsPair) out.push('<path class="flag" d="M' + sx + " " + sy2 + " q 8 6 7 16 q -2 -8 -7 -10 z" + '"/>');
+      }
+      out.push('<g class="sg" data-act="note" data-m="' + n.pitch + '" data-i="' + n.idx + '"><rect x="' + (h.cx - h.a / 2 + 1) + '" y="72" width="' + (h.a - 2) + '" height="44" rx="8"/>' +
+        '<text class="nname" x="' + h.cx + '" y="87" text-anchor="middle">' + Core.letter(n.pitch) + '</text>' +
+        '<text class="syl" x="' + h.cx + '" y="109" text-anchor="middle">' + esc(n.syl) + "</text></g>");
+    });
+    return '<svg class="staff" viewBox="0 0 ' + W + ' 120" role="img" aria-label="' + esc(o.label || "sheet") + '">' + lines + out.join("") + "</svg>";
+  }
+  function sheetHtml(s, from, to) {
+    from = from || 1; to = to || s.bars.length;
+    var chunks = [], b;
+    for (b = from; b <= to; b += 2) chunks.push([b, Math.min(b + 1, to)]);
+    return '<div class="staves' + (chunks.length > 1 ? " two" : "") + '">' + chunks.map(function (c, i) {
+      return staffSvg(Core.notesIn(s, c[0], c[1]), { clef: true, time: i === 0 && c[0] === 1, endBar: c[1] === s.bars.length, label: s.title + ", bars " + c[0] + " to " + c[1] });
+    }).join("") + "</div>";
+  }
+
+  /* ---------- drawing: beat strip ---------- */
+  function stripSvg(tg, rows) {
+    var L = 78, Wb = 40, n = tg.beats, W = L + n * Wb + 8, rowH = 32, H = 22 + rows.length * rowH, out = [];
+    function bx(b) { return L + b * Wb; }
+    for (var i = 0; i < n; i++) {
+      out.push('<line class="tick" x1="' + bx(i) + '" y1="4" x2="' + bx(i) + '" y2="' + (H - 16) + '"/>');
+      out.push('<text x="' + bx(i) + '" y="' + (H - 3) + '" text-anchor="middle">' + (i + 1) + "</text>");
+      if (i > 0 && i % 4 === 0) out.push('<line class="barl" x1="' + bx(i - 0.5) + '" y1="2" x2="' + bx(i - 0.5) + '" y2="' + (H - 16) + '"/>');
+    }
+    rows.forEach(function (r, ri) {
+      var y = 4 + ri * rowH + rowH / 2;
+      out.push('<text x="2" y="' + (y + 4) + '">' + esc(r.label) + "</text>");
+      tg.notes.forEach(function (e) { if (!Core.isWhole(e.beat)) out.push('<line class="exp" x1="' + bx(e.beat) + '" y1="' + (y - 5) + '" x2="' + bx(e.beat) + '" y2="' + (y + 5) + '"/>'); });
+      if (r.m) {
+        r.m.notes.forEach(function (res) {
+          if (res.dt === null) return;
+          var cls = res.status === "wrong" ? "d-wrong" : res.status === "ok" ? "d-ok" : "d-off";
+          out.push('<circle class="' + cls + '" cx="' + bx(Math.max(-0.6, Math.min(n - 0.4, res.beat + res.dt / BEAT_MS))) + '" cy="' + y + '" r="7"/>');
+        });
+        r.m.extras.forEach(function (x) { out.push('<circle class="d-extra" cx="' + bx(Math.max(-0.6, Math.min(n - 0.4, x.t / BEAT_MS))) + '" cy="' + y + '" r="7"/>'); });
+      } else (r.notes || []).forEach(function (p) {
+        out.push('<circle class="d-live" cx="' + bx(Math.max(-0.6, Math.min(n - 0.4, p.t / BEAT_MS))) + '" cy="' + y + '" r="7"/>');
+      });
+    });
+    return '<svg class="strip" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="beat strip: ticks are beats, dots are your notes">' + out.join("") + "</svg>";
+  }
+  var STRIP_KEY = '<p class="small">Ticks are beats. A dark dot on a tick landed on the beat; a coloured dot came early or late; a hollow dot is a different key; short marks show where in-between notes go.</p>';
+
+  /* ---------- views (the fixed menu) ---------- */
+  function chip(label, say) { return '<button class="chip" data-act="chip" data-say="' + esc(say || label) + '">' + esc(label) + "</button>"; }
+  function reqBtn(label, r, cls, extra) { return '<button class="' + (cls || "btn") + '" data-act="req" data-req="' + attr(r) + '"' + (extra || "") + ">" + esc(label) + "</button>"; }
+  function songChips() { return '<div class="chips">' + Core.SONGBOOK.map(function (s) { return reqBtn(s.title, { view: "song", params: { song: s.id } }, "chip"); }).join("") + "</div>"; }
+  function firstPhrase() { var p = Core.splitPhrases(Core.song(S.song))[0]; return [p.from, p.to]; }
+  function curSong() { return Core.song(S.song); }
+
+  var V = {};
+  V.menu = function () { return '<div class="card"><p class="big">' + esc(Core.MENU_TEXT) + '</p><div class="chips">' + chip("sheet", "Show me the sheet") + chip("breakdown", "Break it down") +
+    chip("playback", "Play it") + chip("a try", "Let me try") + chip("a meaning", "What does that mean?") + chip("a person", "Ask a person") + "</div></div>"; };
+  V.songbook = function (p) {
+    return '<div class="card"><p class="big">Here is what I can show you today:</p>' + songChips() + '<p class="small">' + esc(Core.CATALOGUE_LINE) + "</p></div>";
+  };
+  V.plan = function (p) {
+    var pl = Core.makePlan(p.plan, p.title, p.tempo), d = Core.song(pl.drill);
+    S.rec = Core.setGoal(S.rec, pl.goal); saveRec(); $("goal").value = S.rec.goal;
+    S.song = d.id; S.from = 1; S.to = d.bars.length;
+    var prm = { song: d.id, from: 1, to: d.bars.length };
+    var tempo = pl.askTempo ? '<p>tell me if it is fast or slow</p><div class="chips">' + reqBtn("It's fast", { view: "plan", params: { plan: "generic", title: pl.title, tempo: "fast" } }, "chip") +
+      reqBtn("It's slow", { view: "plan", params: { plan: "generic", title: pl.title, tempo: "slow" } }, "chip") + "</div>" : "";
+    return '<div class="card"><p class="kicker">song plan</p><h2>' + esc(pl.title) + '</h2><p class="small">' + esc(Core.COPYRIGHT_LINE) + "</p>" +
+      "<h3>What this piece needs</h3><ul>" + pl.skills.map(function (s) { return "<li>" + esc(s) + "</li>"; }).join("") + '</ul><p class="small">' + esc(pl.label) + "</p>" + tempo + "</div>" +
+      '<div class="card"><h3>Five-day plan</h3><ul>' + pl.days.map(function (s) { return "<li>" + esc(s) + "</li>"; }).join("") + '</ul><div class="actions">' +
+      reqBtn("Play it to me (day 5, your own sheet)", { view: "listen", params: {} }) + "</div></div>" +
+      '<div class="card' + (S.names ? " show-names" : "") + '" data-names><div class="phrase kick"><p class="kickline">' + esc(pl.kickoff) + '</p><p class="small">from the saved cue book (saved model output)</p>' +
+      '<p class="kicker">drill phrase: team-written in the same key and feel, own notation, not from the piece</p>' +
+      staffSvg(d.notes, { clef: true, time: true, endBar: true, label: d.title }) + '<div class="actions">' + reqBtn("Play", { view: "play", params: prm }) +
+      '<button class="btn" data-act="say" data-from="1" data-to="' + d.bars.length + '">Say it</button>' + reqBtn("Try this bit", { view: "practice", params: prm }, "btn") + namesToggle() + "</div></div></div>" +
+      '<div class="card"><p>or start on one of these</p>' + songChips() + '<p class="small">' + esc(Core.CATALOGUE_LINE) + "</p></div>";
+  };
+  V.listen = function () {
+    var midi = navigator.requestMIDIAccess ? '<button class="link" data-act="midi">Use a MIDI keyboard</button>' : "No Web MIDI here: the on-screen keys and letters work.";
+    return '<div class="card"><p class="kicker">play it to me, from your own sheet</p><p class="small">' + esc(Core.COPYRIGHT_LINE) + "</p>" +
+      "<p>Put your own sheet music in front of you. After four clicks, play along with the clicks for four bars. The coach checks timing and steadiness only and never writes down your piece.</p>" +
+      '<div id="strip">' + stripSvg({ beats: 16, notes: [], free: true }, [{ label: "this time", notes: [] }]) + '</div><p class="count" id="count"></p><p id="pstatus">Press Play it when you are ready.</p>' +
+      '<div class="actions"><button class="primary" id="playIt" data-act="playfree">Play it</button></div>' + keysHtml() + '<p class="small" id="midiState">' + midi + "</p></div>";
+  };
+  function songHead(s) { return '<p class="kicker">' + esc(s.title) + '</p><p class="small">' + esc(s.source) + "</p>"; }
+  function namesToggle() { return '<label class="small"><input type="checkbox" data-act="names"' + (S.names ? " checked" : "") + "> note names</label>"; }
+  V.sheet = function (p) {
+    var s = Core.song(p.song || S.song); S.song = s.id;
+    return '<div class="card' + (S.names ? " show-names" : "") + '" data-names>' + songHead(s) + sheetHtml(s) +
+      '<div class="actions">' + namesToggle() + '<span class="small">Tap a word to hear its note.</span></div></div>';
+  };
+  function phraseCards(s) {
+    var ph = Core.splitPhrases(s);
+    return '<p class="small">split by the rules engine: at bar lines, after a long note or a line of words</p><div class="phrases">' + ph.map(function (f) {
+      var label = f.from === f.to ? "bar " + f.from : "bars " + f.from + " and " + f.to, prm = { song: s.id, from: f.from, to: f.to };
+      return '<div class="phrase' + (f.kickoff ? " kick" : "") + '">' +
+        (f.kickoff ? '<p class="kickline">' + esc(f.kickoff) + '</p><p class="small">from the saved cue book (saved model output)</p>' : "") +
+        '<p class="kicker">' + esc(label) + "</p>" + staffSvg(Core.notesIn(s, f.from, f.to), { clef: true, time: f.from === 1, endBar: f.to === s.bars.length, label: s.title + ", " + label }) +
+        '<div class="actions">' + reqBtn("Play", { view: "play", params: prm }) +
+        '<button class="btn" data-act="say" data-from="' + f.from + '" data-to="' + f.to + '">Say it</button>' +
+        reqBtn("Try this bit", { view: "practice", params: prm }, "btn") +
+        (f.kickoff && f.to > 1 ? reqBtn("Try bar 1", { view: "practice", params: { song: s.id, from: 1, to: 1 } }) : "") + "</div></div>";
+    }).join("") + "</div>";
+  }
+  V.breakdown = function (p) {
+    var s = Core.song(p.song || S.song); S.song = s.id;
+    return '<div class="card' + (S.names ? " show-names" : "") + '" data-names>' + songHead(s) + phraseCards(s) + '<div class="actions">' + namesToggle() + "</div></div>";
+  };
+  V.song = function (p) {
+    var s = Core.song(p.song); S.song = s.id; var f = firstPhrase(); S.from = f[0]; S.to = f[1];
+    return '<div class="card' + (S.names ? " show-names" : "") + '" data-names><h2>' + esc(s.title) + '</h2><p class="small">' + esc(s.source) + "</p>" +
+      sheetHtml(s) + '<div class="actions">' + namesToggle() + '<span class="small">Tap a word to hear its note.</span></div></div>' +
+      '<div class="card' + (S.names ? " show-names" : "") + '" data-names><h3>Broken into bits</h3>' + phraseCards(s) + "</div>";
+  };
+  V.play = function (p) {
+    var s = Core.song(p.song || S.song); S.song = s.id;
+    var from = p.from || 1, to = p.to || (p.from ? p.from : s.bars.length);
+    var label = from === to ? "bar " + from : "bars " + from + " to " + to;
+    later(function () { playNotes(s, from, to, "tone"); }, 30);
+    return '<div class="card"><p class="kicker">Listening: ' + esc(s.title) + ", " + esc(label) + "</p>" + sheetHtml(s, from, to) +
+      '<p class="small">Four clicks, then the notes. Each note lights up as it sounds.</p><div class="actions">' +
+      '<button class="btn" data-act="replay" data-from="' + from + '" data-to="' + to + '">Play again</button>' +
+      reqBtn("Let me try", { view: "practice", params: { song: s.id, from: from, to: to } }, "primary") + "</div></div>";
+  };
+  function keysHtml() {
+    return '<div class="keys" aria-label="keys C4 to C5">' + Core.KEYS.map(function (m, i) {
+      return '<button class="key" data-key="' + m + '" aria-label="' + Core.noteName(m) + '"><b>' + Core.noteName(m) + "</b><small>" + Core.KEY_LETTERS[i].toUpperCase() + "</small></button>";
+    }).join("") + "</div>";
+  }
+  V.practice = function (p) {
+    var s = Core.song(p.song || S.song); S.song = s.id;
+    if (p.from) { S.from = p.from; S.to = p.to || p.from; } else if (!S.retake) { var f = firstPhrase(); S.from = f[0]; S.to = f[1]; }
+    var tg = Core.makeTarget(s.id, S.from, S.to), label = S.from === S.to ? "bar " + S.from : "bars " + S.from + " to " + S.to;
+    var midi = navigator.requestMIDIAccess ? '<button class="link" data-act="midi">Use a MIDI keyboard</button>' : "No Web MIDI here: the on-screen keys and letters work.";
+    return '<div class="card' + (S.names ? " show-names" : "") + '" data-names><p class="kicker">Your try: ' + esc(s.title) + ", " + esc(label) + "</p>" +
+      staffSvg(Core.notesIn(s, S.from, S.to), { clef: true, time: S.from === 1, endBar: S.to === s.bars.length, label: label }) +
+      '<div id="strip">' + stripSvg(tg, liveRows(tg, [])) + "</div>" + STRIP_KEY +
+      '<p class="count" id="count"></p><p id="pstatus">Press Play it: four clicks, then play on the next click.</p>' +
+      '<div class="actions"><button class="primary" id="playIt" data-act="playit">Play it</button>' + namesToggle() + "</div>" + keysHtml() +
+      '<p class="small" id="midiState">' + midi + "</p>" +
+      '<p class="small"><button class="link" data-act="demo">Desk demo: use a sample take</button> (planted wrong key on the first try, a clean retake after)</p></div>';
+  };
+  function liveRows(tg, notes) {
+    var rows = [];
+    if (!tg.free && S.retake && S.last && !S.last.free && S.last.song === tg.song && S.last.from === tg.from && S.last.to === tg.to) rows.push({ label: "before", m: S.last });
+    rows.push({ label: "this time", notes: notes });
+    return rows;
+  }
+  function modelTag() { return S.model === "saved" ? "saved model output" : "saved model output; live mode words only the view line"; }
+  function wordsLine(c) { return c.words && c.words.length && c.id !== "none" ? '<p class="small">on the words: ' + c.words.map(function (w) { return "“" + esc(w) + "”"; }).join(", ") + "</p>" : ""; }
+  V.fix = function () {
+    var m = S.last; if (!m) return V.menu();
+    if (m.free) {
+      var fx = m.cause.id === "early" || m.cause.id === "late" ? '<div class="fix"><p class="big">' + esc(S.cue.fix) + '</p><p class="small">one ten-second fix, from the saved cue book (' + esc(modelTag()) + ")</p></div>" : "";
+      return '<div class="card"><p class="kicker">rules engine measured timing only</p>' + stripSvg({ beats: m.beats, notes: [], free: true }, [{ label: "your take", notes: m.played }]) +
+        '<p class="big">' + esc(m.cause.text) + "</p>" + fx + '<p class="small">timing and steadiness only: no notes of your piece are shown or kept</p><div class="actions">' +
+        reqBtn("Try again", { view: "listen", params: {} }, "primary") + "</div></div>";
+    }
+    var tg = Core.makeTarget(m.song, m.from, m.to), c = m.cause, retry = '<button class="primary" data-act="retry">Try again</button>';
+    var body = c.id === "none"
+      ? '<p class="big">' + esc(c.text) + '</p><div class="actions">' + retry + reqBtn("Break it down", { view: "breakdown", params: { song: m.song } }) + "</div>"
+      : '<p class="big">' + esc(c.text) + "</p>" + wordsLine(c) + '<div class="fix"><p class="big">' + esc(S.cue.fix) + '</p><p class="small">one ten-second fix, from the saved cue book (' + esc(modelTag()) + ")</p></div>" +
+        '<div class="actions">' + reqBtn("What does that mean?", { view: "glossary", params: { term: Core.CAUSE_TERM[c.id] } }) + retry + "</div>";
+    return '<div class="card"><p class="kicker">rules engine measured this</p>' + stripSvg(tg, [{ label: "your take", m: m }]) + body + "</div>";
+  };
+  V.compare = function () {
+    var a = S.prev, b = S.last; if (!a || !b) return V.fix();
+    var tg = Core.makeTarget(b.song, b.from, b.to);
+    var next = b.cause.id === "none" ? "" : '<div class="fix"><p class="big">' + esc(S.cue.fix) + '</p><p class="small">next ten-second fix, from the saved cue book (' + esc(modelTag()) + ")</p></div>";
+    return '<div class="card"><p class="kicker">rules engine measured both takes</p>' + stripSvg(tg, [{ label: "take 1", m: a }, { label: "retake", m: b }]) +
+      '<p class="big">What changed?</p><div class="answers">' +
+      ["It felt steadier", "Something still feels off", "Not sure"].map(function (t) { return '<button class="chip" data-act="answer" data-say="' + esc(t) + '">' + esc(t) + "</button>"; }).join("") +
+      '</div><div id="coach" hidden><p class="said" id="said"></p><p class="big ok-line">' + esc(Core.compare(a, b)) + '</p><p class="small">worded by the rules from the two takes</p>' + next +
+      '<div class="actions"><button class="btn" data-act="gotit">Got it</button><button class="primary" data-act="retry">Try again</button>' +
+      (b.cause.id !== "none" ? reqBtn("What does that mean?", { view: "glossary", params: { term: Core.CAUSE_TERM[b.cause.id] } }) : "") + '</div><p class="small" id="gotMsg"></p></div></div>';
+  };
+  V.glossary = function (p) {
+    var term = p.term || (S.last && S.last.cause.id !== "none" ? Core.CAUSE_TERM[S.last.cause.id] : null), g = Core.GLOSSARY;
+    if (term) { S.rec = Core.recordWord(S.rec, term); saveRec(); }
+    var top = term ? '<p class="kicker">' + esc(term) + '</p><p class="big">' + esc(g[term].plain) + '</p><div class="fix"><p>' + esc(g[term].task) + '</p><p class="small">ten-second task, fixed glossary</p></div>' : '<p class="big">Pick a word:</p>';
+    var list = Object.keys(g).filter(function (k) { return k !== term; }).map(function (k) { return reqBtn(k, { view: "glossary", params: { term: k } }, "chip"); }).join("");
+    var back = S.last ? '<button class="btn" data-act="back">Back to my take</button>' : "";
+    return '<div class="card">' + top + '<p class="small">Other words:</p><div class="chips">' + list + '</div><div class="actions">' + back + "</div></div>";
+  };
+  V.handoff = function (p) {
+    var c = Core.handoffCard(S.rec), why = p.reason === "safety"
+      ? "If something hurts or you feel tired, stop and rest. A person should look at this, not the app."
+      : p.reason === "repeat" ? "The same thing came up three times. A person can help with this one." : "Here is what a person would see if you send it.";
+    function list(a, empty) { return a.length ? a.map(esc).join("; ") : '<span class="small">' + esc(empty) + "</span>"; }
+    return '<div class="card"><h2>Let’s ask a person</h2><p>' + esc(why) + '</p><dl class="ho"><dt>Goal</dt><dd>' + esc(c.goal) + "</dd>" +
+      "<dt>Last causes</dt><dd>" + list(c.lastCauses, "none yet") + "</dd><dt>What was tried</dt><dd>" + list(c.tried, "nothing yet") + "</dd>" +
+      "<dt>What worked</dt><dd>" + list(c.worked, "nothing marked yet") + '</dd><dt>In your own words</dt><dd><label class="sr" for="own">In your own words</label>' +
+      '<textarea id="own" maxlength="280" placeholder="what feels tricky?"></textarea></dd></dl>' +
+      '<label class="small"><input type="checkbox" id="clip"> add a recording (clip only if you add it)</label>' +
+      '<div class="actions"><button class="primary" data-act="send">Send</button></div><p class="ok-line" id="sent"></p>' +
+      '<p class="small">Nobody sees this unless you send it.</p></div>';
+  };
+  V["find-instrument"] = function () {
+    return '<div class="card"><p class="big">Start on the screen today. When the real instrument arrives, the coach comes with you.</p>' +
+      '<p class="small">placeholders, not real organisations:</p><ul><li>Placeholder: school instrument loan scheme</li><li>Placeholder: community music library</li><li>Placeholder: local council arts loan</li></ul></div>';
+  };
+
+  V.opening = function (p) {
+    return '<div class="card"><p class="big">' + esc(p.line || Core.COACH_QUESTION) + '</p><div class="chips">' + Core.OPENING_CHIPS.map(function (c) { return chip(c); }).join("") + "</div></div>";
+  };
+  V.options = function (p) {
+    return '<div class="card"><h2>' + esc(p.title) + '</h2><p class="big">' + esc(p.line || "Pick one.") + '</p><div class="opts">' +
+      p.options.map(function (o) { return '<button class="opt" data-act="ask" data-ask="' + esc(o.ask) + '"><b>' + esc(o.label) + "</b>" + (o.note ? "<span>" + esc(o.note) + "</span>" : "") + "</button>"; }).join("") +
+      '</div><p class="small">' + esc(Core.COPYRIGHT_LINE) + "</p></div>";
+  };
+
+  /* ---------- request: validate, render, label the engine, speak the coach line ---------- */
+  var MODEL = "claude-opus-5-5", API_URL = "https://api.anthropic.com/v1/messages", KEY_NAME = "practiceCanvas.liveKey", memKey = "";
+  function engineLabel(label) {
+    var e = $("engine"); if (!e) return;
+    e.hidden = false; e.textContent = label || (S.model === "live" ? "model: live, this step is decided by the rules" : "model: saved");
+  }
+  function speak(line) {
+    if (!S.voiceOut || !line || /\d/.test(line) || !window.speechSynthesis || !window.SpeechSynthesisUtterance) return;
+    try { window.speechSynthesis.cancel(); var u = new window.SpeechSynthesisUtterance(String(line).slice(0, 200)); u.lang = "en-AU"; window.speechSynthesis.speak(u); } catch (e) { /* no voice: text only */ }
+  }
+  function request(r, label) {
+    var v = Core.validateView(r);
+    $("vreq").textContent = "view request " + JSON.stringify({ view: r.view, params: r.params || {} }) + (r.rule ? "  ·  rules: " + r.rule : "") + (v.ok ? "" : "  ·  rejected: " + v.errors.join(", "));
+    stopAll();
+    if (document.body && document.body.classList) document.body.classList.remove("pre");
+    var box = $("view"), html = v.ok ? V[r.view](r.params || {}) : V.menu();
+    if (v.ok && r.line && r.view !== "opening" && r.view !== "options") html = '<p class="coachline">' + esc(r.line) + "</p>" + html;
+    box.innerHTML = html;
+    S.lastView = v.ok ? r.view : "menu";
+    engineLabel(label);
+    var pb = $("playIt"); if (pb) pb.disabled = false;
+    var big = box.querySelector ? box.querySelector(".coachline, .big") : null;
+    speak(big ? big.textContent : "");
+  }
+  function route(text) {
+    S.retake = false;
+    var r = Core.route(text, { song: S.song, first: S.first }); S.first = false;
+    if (S.model !== "live" || !String(text || "").trim()) return request(r, "model: saved");
+    if (r.view === "handoff" && r.params && r.params.reason === "safety") return request(r, "model: live, safety rule: a person, no model call");
+    live(text, r);
+  }
+
+  /* ---------- live mode: one Messages API call, validated, with a rules fallback ---------- */
+  function getKey() { try { var k = sessionStorage.getItem(KEY_NAME); if (k) return k; } catch (e) { /* storage blocked: memory only */ } return memKey; }
+  function setKey(k) { memKey = k; try { if (k) sessionStorage.setItem(KEY_NAME, k); else sessionStorage.removeItem(KEY_NAME); } catch (e) { /* storage blocked: memory only */ } }
+  function liveState() { var m = S.last; return { song: S.song, lastView: S.lastView, take: m ? { cause: m.cause.id, from: m.from || 0, to: m.to || 0 } : null }; }
+  function liveBody(text) {
+    return { model: MODEL, max_tokens: 1024, fallbacks: "default", system: Core.coachPrompt(),
+      output_config: { effort: "low", format: { type: "json_schema", schema: Core.liveSchema } },
+      messages: [{ role: "user", content: JSON.stringify({ text: String(text).slice(0, 120), state: liveState() }) }] };
+  }
+  function post(url, headers, body) {
+    var ac = window.AbortController ? new AbortController() : null, timer = setTimeout(function () { if (ac) ac.abort(); }, 12000);
+    return fetch(url, { method: "POST", headers: headers, body: JSON.stringify(body), signal: ac ? ac.signal : undefined }).then(function (resp) {
+      clearTimeout(timer);
+      return resp.text().then(function (txt) { var j = null; try { j = JSON.parse(txt); } catch (e) { j = null; } return { status: resp.status, json: j }; });
+    }, function (e) { clearTimeout(timer); throw new Error(e && e.name === "AbortError" ? "timed out" : "offline"); });
+  }
+  function callLive(body) {
+    var key = getKey();
+    function viaKey() {
+      if (!key) return Promise.reject(new Error("NOKEY"));
+      return post(API_URL, { "content-type": "application/json", "x-api-key": key, "anthropic-version": "2026-10-21",
+        "anthropic-dangerous-direct-browser-access": "true", "anthropic-beta": "server-side-fallback-2026-07-01" }, body);
+    }
+    if (!/^https?:$/.test(location.protocol)) return viaKey();
+    return post("/api/coach", { "content-type": "application/json" }, body).then(function (res) {
+      return res.status === 404 || res.status === 405 || res.status === 501 ? viaKey() : res;
+    }, function () { return viaKey(); });
+  }
+  function live(text, rulesReq) {
+    var seq = ++S.liveSeq, box = $("view");
+    if (document.body && document.body.classList) document.body.classList.remove("pre");
+    var th = document.createElement("div"); th.className = "thinking"; th.textContent = "thinking"; box.insertBefore(th, box.firstChild);
+    function fallback(why) {
+      if (seq !== S.liveSeq) return;
+      request(rulesReq, why === "NOKEY" ? "model: live needs a key or serve.py; rules fallback" : "model: live, " + why + ", rules fallback");
+    }
+    callLive(liveBody(text)).then(function (res) {
+      if (seq !== S.liveSeq) return;
+      if (res.status === 401) return fallback("key not accepted");
+      if (res.status === 429) return fallback("rate limited");
+      if (res.status < 200 || res.status > 299) return fallback("status " + res.status);
+      var j = res.json;
+      if (!j) return fallback("unreadable reply");
+      if (j.stop_reason === "refusal" || j.stop_reason === "max_tokens") return fallback("stop reason " + j.stop_reason);
+      var block = (j.content || []).filter(function (b) { return b && b.type === "text"; })[0], obj = null;
+      if (!block) return fallback("no text in the reply");
+      try { obj = JSON.parse(block.text); } catch (e) { obj = null; }
+      var v = obj ? Core.validateRequest(obj) : { ok: false, reason: "reply was not JSON" };
+      if (!v.ok) return request(rulesReq, "model: live, reply rejected by the validator, rules fallback: " + v.reason);
+      request(v.request, "model: live (" + MODEL + ")");
+    }, function (e) { fallback(e && e.message ? e.message : "offline"); });
+  }
+
+  /* ---------- playback and say-it ---------- */
+  function playNotes(s, from, to, mode) {
+    stopAll();
+    var hasAudio = audioOn(), bs = BEAT_MS / 1000, t0 = nowS() + 0.15, start = s.bars[from - 1].start;
+    if (hasAudio) for (var k = 0; k < 4; k++) click(t0 + k * bs, k === 0);
+    Core.notesIn(s, from, to).forEach(function (n) {
+      var when = t0 + (4 + n.beat - start) * bs;
+      if (hasAudio) { if (mode === "tone") tone(n.pitch, when, n.dur * bs * 0.9); else click(when, false, false); }
+      var delay = (when - nowS()) * 1000;
+      later(function () { hl(n.idx, true); }, delay);
+      later(function () { hl(n.idx, false); }, delay + n.dur * BEAT_MS * 0.9);
+    });
+  }
+
+  /* ---------- the take loop ---------- */
+  function setStatus(t) { var el = $("pstatus"); if (el) el.textContent = t; }
+  function setCount(t) { var el = $("count"); if (el) el.textContent = t; }
+  function startTake(free) {
+    var tg = free ? { free: true, beats: 16, notes: [] } : Core.makeTarget(S.song, S.from, S.to); stopAll();
+    var hasAudio = audioOn(), lead = 150, n = tg.beats, base = nowS() + lead / 1000, bs = BEAT_MS / 1000;
+    if (hasAudio) { for (var k = 0; k < 4; k++) click(base + k * bs, k === 0, false); for (k = 0; k < n; k++) click(base + (4 + k) * bs, k % 4 === 0, true); }
+    var lat = hasAudio && ac ? ((ac.outputLatency || 0) + (ac.baseLatency || 0)) * 1000 : 0;
+    S.cap = { target: tg, t0: performance.now() + lead + 4 * BEAT_MS + lat, notes: [] };
+    var pb = $("playIt"); if (pb) pb.disabled = true;
+    setStatus("Listen to the four clicks.");
+    [0, 1, 2, 3].forEach(function (k) { later(function () { setCount(String(k + 1)); }, lead + k * BEAT_MS + lat); });
+    later(function () { setCount("play"); setStatus("Play now. The dots show where your notes land."); }, lead + 4 * BEAT_MS + lat);
+    later(finishTake, lead + (4 + n + 1) * BEAT_MS + lat);
+  }
+  function finishTake() {
+    var c = S.cap; if (!c) return; S.cap = null;
+    processTake(c.target.free ? Core.measureFree({ notes: c.notes }, c.target.beats) : Core.measure(c.target, { notes: c.notes }));
+  }
+  function processTake(m) {
+    var isRetake = !m.free && S.retake && S.last && !S.last.free && S.last.song === m.song && S.last.from === m.from && S.last.to === m.to;
+    var cue = Core.pickCue(m.cause, S.rec);
+    S.rec = Core.recordTake(S.rec, m, m.cause.id === "none" ? null : cue.id); saveRec();
+    S.prev = isRetake ? S.last : null; S.last = m; S.cue = cue;
+    if (Core.shouldHandOff(S.rec, m.cause.id)) { request({ view: "handoff", params: { reason: "repeat" }, rule: "same cause on three takes in a row" }); return; }
+    if (isRetake) {
+      var d = Core.betterDetail(S.prev, m); if (d) { S.rec = Core.recordBetter(S.rec, S.prev.cause.id, d); saveRec(); }
+      request({ view: "compare", params: {}, rule: "retake measured" });
+    } else request({ view: "fix", params: {}, rule: "take measured" });
+  }
+  function demoTake() {
+    var tg = Core.makeTarget(S.song, S.from, S.to), n = tg.notes.length, spec = { target: tg };
+    if (!S.retake) { var i = n > 5 ? 5 : Math.min(2, n - 1), p = tg.notes[i].pitch, alt = Core.KEYS[(Core.KEYS.indexOf(p) + 1) % Core.KEYS.length]; spec.pitches = {}; spec.pitches[i] = alt; }
+    processTake(Core.measure(tg, Core.makeTake(spec)));
+  }
+  function onNote(m, tEv) {
+    if (audioOn() && ac) tone(m, ac.currentTime, 0.45);
+    document.querySelectorAll('[data-key="' + m + '"]').forEach(function (k) { k.classList.add("lit"); setTimeout(function () { k.classList.remove("lit"); }, 160); });
+    var c = S.cap;
+    if (c) { var t = tEv - c.t0; if (t > -0.75 * BEAT_MS) { c.notes.push({ pitch: m, t: t }); var st = $("strip"); if (st) st.innerHTML = stripSvg(c.target, liveRows(c.target, c.notes)); } }
+  }
+  function evMs(e) { var t = e && e.timeStamp, now = performance.now(); return isFinite(t) && t > 0 && Math.abs(now - t) < 1000 ? t : now; }
+
+  /* ---------- input: on-screen keys, letters, optional Web MIDI ---------- */
+  document.addEventListener("pointerdown", function (e) {
+    var k = e.target.closest && e.target.closest("[data-key]"); if (!k) return;
+    e.preventDefault(); onNote(Number(k.getAttribute("data-key")), evMs(e));
+  });
+  var LETTERS = {}; Core.KEY_LETTERS.forEach(function (l, i) { LETTERS[l] = Core.KEYS[i]; });
+  document.addEventListener("keydown", function (e) {
+    var el = e.target; if (e.repeat || e.ctrlKey || e.metaKey || e.altKey || (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA"))) return;
+    var m = LETTERS[(e.key || "").toLowerCase()]; if (m === undefined || !$("playIt")) return;
+    e.preventDefault(); onNote(m, evMs(e));
+  });
+  function connectMidi() {
+    if (!navigator.requestMIDIAccess) return;
+    audioOn();
+    navigator.requestMIDIAccess({ sysex: false }).then(function (acc) {
+      function bind() {
+        var names = [];
+        acc.inputs.forEach(function (inp) { inp.onmidimessage = onMidi; names.push("keyboard"); });
+        var ms = $("midiState"); if (ms) ms.textContent = names.length ? "MIDI keyboard connected. The on-screen keys still work." : "No MIDI keyboard seen: plug it in once, or use the on-screen keys.";
+        if (names.length) { S.rec = Core.setInput(S.rec, "MIDI keyboard"); saveRec(); }
+      }
+      bind(); acc.onstatechange = bind;
+    }, function () { var ms = $("midiState"); if (ms) ms.textContent = "MIDI blocked: the on-screen keys and letters work."; });
+  }
+  function onMidi(e) {
+    var d = e.data; if (!d || d.length < 3) return;
+    if ((d[0] & 0xf0) === 0x90 && d[2] > 0) onNote(d[1], evMs(e));
+  }
+
+  /* ---------- clicks ---------- */
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest && e.target.closest("[data-act]"); if (!t) return;
+    var act = t.getAttribute("data-act");
+    if (act === "chip") route(t.getAttribute("data-say"));
+    else if (act === "ask") { var ar = Core.resolveAsk(t.getAttribute("data-ask")); if (ar) { S.retake = false; request(ar, S.model === "live" ? "model: live, option resolved by the rules" : "model: saved"); } }
+    else if (act === "req") { S.retake = false; request(JSON.parse(t.getAttribute("data-req"))); }
+    else if (act === "note") { if (audioOn()) tone(Number(t.getAttribute("data-m")), nowS(), 0.6); var i = t.getAttribute("data-i"); hl(i, true); setTimeout(function () { hl(i, false); }, 400); }
+    else if (act === "playit") startTake(false);
+    else if (act === "playfree") startTake(true);
+    else if (act === "demo") demoTake();
+    else if (act === "retry") { S.retake = true; request({ view: "practice", params: { song: S.last.song, from: S.last.from, to: S.last.to }, rule: "Try again" }); S.retake = true; }
+    else if (act === "replay") playNotes(curSong(), Number(t.getAttribute("data-from")), Number(t.getAttribute("data-to")), "tone");
+    else if (act === "say") playNotes(curSong(), Number(t.getAttribute("data-from")), Number(t.getAttribute("data-to")), "click");
+    else if (act === "midi") connectMidi();
+    else if (act === "names") { S.names = t.checked; document.querySelectorAll("[data-names]").forEach(function (c) { c.classList.toggle("show-names", S.names); }); }
+    else if (act === "answer") { $("said").textContent = "You said: " + t.getAttribute("data-say") + "."; $("coach").hidden = false; t.parentNode.querySelectorAll("button").forEach(function (b) { b.disabled = true; }); }
+    else if (act === "gotit") { if (S.prev && S.prev.cause.id !== "none") { S.rec = Core.recordGotIt(S.rec, S.prev.cause.id); saveRec(); } $("gotMsg").textContent = "Marked as got it in your record."; t.disabled = true; }
+    else if (act === "send") { S.sent++; $("sent").textContent = "Would send to your teacher (mock). Nothing left this device" + ($("clip").checked ? "; a clip would go only because you added it." : "."); }
+    else if (act === "back") request({ view: S.prev ? "compare" : "fix", params: {}, rule: "back" });
+    else if (act === "record") showRecord();
+    else if (act === "delrec") { try { localStorage.removeItem(REC_KEY); } catch (err) { /* memory only */ } S.rec = Core.newRecord(); $("goal").value = S.rec.goal; showRecord(); $("delMsg").textContent = "Deleted. Your record is empty."; }
+    else if (act === "tq") teacherAsk(t.getAttribute("data-q"));
+  });
+  function showRecord() {
+    stopAll();
+    $("vreq").textContent = "your practice record, on this device only";
+    $("view").innerHTML = '<div class="card"><p class="kicker">my practice record</p>' + Core.recordSummary(S.rec).map(function (l) { return "<p>" + esc(l) + "</p>"; }).join("") +
+      '<p class="small">Kept on this device. Practice events only: never audio, never names.</p><div class="actions"><button class="btn" data-act="delrec">Delete my record</button></div><p class="small" id="delMsg"></p></div>';
+  }
+
+  /* ---------- teacher view (mock) ---------- */
+  function teacherShow(on) {
+    $("teacher").hidden = !on; $("learner").hidden = on; $("teacherBtn").textContent = on ? "Learner screen" : "Teacher view (mock)";
+    if (on) {
+      var a = Core.classAggregate(Core.SAMPLE_CLASS, S.rec);
+      $("tCounts").innerHTML = '<table class="t"><tr><th>Concept (class total)</th><th>Takes</th></tr>' + Core.hardest(a).map(function (r) { return "<tr><td>" + esc(r.label) + "</td><td>" + r.value + "</td></tr>"; }).join("") +
+        '</table><p class="small">Learners in the sample: ' + a.learners + " (mock).</p>";
+      $("tOut").innerHTML = "";
+    }
+  }
+  function teacherAsk(q) {
+    var a = Core.classAggregate(Core.SAMPLE_CLASS, S.rec);
+    if (q === "hardest") {
+      var rows = Core.hardest(a), max = rows[0].value || 1, out = [], H = rows.length * 30 + 6;
+      rows.forEach(function (r, i) {
+        var y = 4 + i * 30, w = Math.max(2, (r.value / max) * 150);
+        out.push('<text x="0" y="' + (y + 17) + '">' + esc(r.label) + '</text><rect class="bar" x="190" y="' + (y + 5) + '" width="' + w + '" height="16" rx="3"/><text class="val" x="' + (196 + w) + '" y="' + (y + 18) + '">' + r.value + "</text>");
+      });
+      $("tOut").innerHTML = '<p class="kicker">hardest concept this week (mock)</p><svg class="chart" viewBox="0 0 380 ' + H + '" role="img" aria-label="bar chart of concepts">' + out.join("") + "</svg>";
+    } else {
+      var items = Object.keys(a.handoffs).map(function (k) { return "<li>" + esc(k) + ": " + a.handoffs[k] + " request" + (a.handoffs[k] > 1 ? "s" : "") + "</li>"; });
+      if (S.sent) items.push("<li>this device: " + S.sent + " mock request" + (S.sent > 1 ? "s" : "") + "</li>");
+      $("tOut").innerHTML = '<p class="kicker">who needs a person (mock)</p><ul>' + items.join("") + '</ul><p class="small">Topics only, no names. A request arrives only when a learner or guardian taps Send.</p>';
+    }
+  }
+
+  /* ---------- wiring ---------- */
+  $("ask").addEventListener("submit", function (e) { e.preventDefault(); var v = $("askText").value; $("askText").value = ""; route(v); });
+  $("goal").value = S.rec.goal;
+  $("goal").addEventListener("change", function () { S.rec = Core.setGoal(S.rec, $("goal").value); saveRec(); });
+  /* model panel: key for this tab only (sessionStorage), cloud switch default off */
+  function modelTagText() { var b = $("modelBtn"); b.textContent = S.model === "live" ? "model: live (" + MODEL + ")" : "model: saved"; b.setAttribute("aria-pressed", String(S.model === "live")); }
+  function keyState() { $("keyState").textContent = getKey() ? "a key is set for this tab" : "no key set: the page tries serve.py at /api/coach"; }
+  $("cloud").checked = false;
+  $("modelBtn").addEventListener("click", function () { var p = $("modelPanel"); p.hidden = !p.hidden; keyState(); });
+  $("closePanel").addEventListener("click", function () { $("modelPanel").hidden = true; });
+  $("apiKey").addEventListener("change", function () { var k = this.value.trim(); this.value = ""; if (k) setKey(k); keyState(); });
+  $("clearKey").addEventListener("click", function () { setKey(""); $("apiKey").value = ""; keyState(); });
+  $("cloud").addEventListener("change", function () { S.model = this.checked ? "live" : "saved"; modelTagText(); });
+  $("voiceOut").addEventListener("click", function () {
+    S.voiceOut = !S.voiceOut; this.textContent = "coach voice: " + (S.voiceOut ? "on" : "off"); this.setAttribute("aria-pressed", String(S.voiceOut));
+    if (!S.voiceOut && window.speechSynthesis) { try { window.speechSynthesis.cancel(); } catch (e) { /* nothing to stop */ } }
+  });
+  /* voice in: push-to-talk through the same submit path as typed text */
+  var NO_VOICE = "voice needs Chrome or Edge on localhost or https; type instead";
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition, recog = null, listening = false;
+  function micState(st) {
+    var b = $("mic"); b.setAttribute("data-state", st); b.setAttribute("aria-pressed", String(st === "listening"));
+    if (st === "off") { b.disabled = true; b.title = NO_VOICE; b.textContent = "mic off"; }
+    else b.textContent = st === "listening" ? "listening, tap to stop" : "mic";
+  }
+  function submitAsk() { var f = $("ask"); if (f.requestSubmit) f.requestSubmit(); else f.dispatchEvent(new Event("submit", { cancelable: true })); }
+  if (!SR) micState("off");
+  $("mic").addEventListener("click", function () {
+    if (listening) { try { recog.stop(); } catch (e) { /* already stopped */ } return; }
+    var said = "";
+    try {
+      recog = new SR(); recog.lang = "en-AU"; recog.interimResults = true; recog.continuous = false;
+      recog.onresult = function (e) { var t = ""; for (var i = 0; i < e.results.length; i++) { t += e.results[i][0].transcript; if (e.results[i].isFinal) said = t; } $("askText").value = t; };
+      recog.onerror = function (e) { if (e && (e.error === "not-allowed" || e.error === "service-not-allowed" || e.error === "audio-capture")) { said = ""; micState("off"); } };
+      recog.onend = function () { listening = false; if ($("mic").getAttribute("data-state") !== "off") micState("idle"); if (said.trim()) { $("askText").value = said.trim(); submitAsk(); } };
+      recog.start(); listening = true; micState("listening"); $("voiceLabel").hidden = false;
+    } catch (e) { listening = false; micState("off"); }
+  });
+  $("teacherBtn").addEventListener("click", function () { teacherShow($("teacher").hidden); });
+  $("backBtn").addEventListener("click", function () { teacherShow(false); });
+  $("reqToggle").addEventListener("click", function () {
+    var v = $("vreq"), show = v.hidden; v.hidden = !show;
+    this.textContent = show ? "hide the request" : "show the request"; this.setAttribute("aria-pressed", String(show));
+  });
+  /* Self-test mode: the core list plus one page-only layout guard (nothing wider than the screen), re-run after every render */
+  var SELFTEST = /[?&]selftest=1\b/.test(location.search), CORE_RESULT = SELFTEST ? Core.runTests() : null;
+  function layoutGuard() {
+    if (!SELFTEST) return;
+    var vw = window.innerWidth, sw = document.documentElement.scrollWidth, fits = sw <= vw, wide = [];
+    if (!fits) document.querySelectorAll("body *").forEach(function (el) {
+      var b = el.getBoundingClientRect(); if (wide.length < 6 && b.width > 0 && b.right > vw + 0.5) wide.push(el.tagName.toLowerCase() + (el.id ? "#" + el.id : "") + (el.className && el.className.baseVal === undefined ? "." + String(el.className).split(" ").join(".") : "") + " right " + Math.round(b.right));
+    });
+    var r = CORE_RESULT, lines = r.lines.concat([(fits ? "ok    " : "FAIL  ") + "layout: nothing wider than the screen (scrollWidth " + sw + ", innerWidth " + vw + ")" + (wide.length ? "; widest: " + wide.join(", ") : "")]);
+    var box = $("selftest"); box.hidden = false;
+    box.innerHTML = "<b>" + (r.pass + (fits ? 1 : 0)) + " of " + (r.total + 1) + " passed</b> (" + r.pass + " of " + r.total + " core, plus the layout guard)<pre>" + esc(lines.join("\n")) + "</pre>";
+  }
+  if (SELFTEST) {
+    layoutGuard();
+    window.addEventListener("resize", layoutGuard);
+    var mo = window.MutationObserver ? new MutationObserver(function () { setTimeout(layoutGuard, 60); }) : null;
+    if (mo) { mo.observe($("view"), { childList: true }); mo.observe($("teacher"), { attributes: true, attributeFilter: ["hidden"] }); }
+  }
+})();
+</script>
+</body>
+</html>

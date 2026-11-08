@@ -1,0 +1,360 @@
+[OBS recording, Thu 5 Nov 2026, 6:04 pm, 35 min. Local Whisper (large-v3-turbo) auto-transcript, raw, unedited; [h:mm:ss] timestamps. Team catch-up (Carlos, Simone, Justin) with the music-learning idea; Jeff joins the room about 13:00; main-room wrap-up from about 28:00.]
+[DISCLAIMER: Carlos's voice was not recorded. The OBS mic pointed at a disconnected device, so only the other participants (as heard through Webex) are in the audio and this transcript. Gaps in the conversation are mostly Carlos speaking. His side below is his own summary from memory, written 5 Nov 2026 - not transcribed.]
+
+CARLOS'S SIDE (from memory, not transcribed)
+- Lowering the barrier to entry in some fields, through personal use of AI, is a good concept.
+- Shared his own use of AI for his personal vocal covers project (kept on his own PC, not in this folder).
+- Carlos and Simone both framed the idea from personal experience, so the team may be biased.
+  o Next step: play devil's advocate - is this a trend worth chasing?
+  o Research other apps, e.g. piano-learning apps, and whether adding AI actually helps.
+
+RAW TRANSCRIPT (other participants only)
+
+
+[0:00:07] So, yeah, I hope the same for you.
+[0:00:16] I just got home right now as well.
+[0:00:19] Yeah.
+[0:00:21] Yeah.
+[0:00:24] Oh, hey, guys.
+[0:00:27] Yeah, sorry.
+[0:00:28] Yeah, I'm in the lab early.
+[0:00:32] Awesome.
+[0:00:35] I was – you go ahead.
+[0:00:44] Okay.
+[0:00:45] um yeah so um yeah I did a little bit more research um let me try to find what I'm even
+[0:00:58] looking at I just well no anyway so um basically what I did is when I was going home I was thinking
+[0:01:15] about like my myself as a as a as a learner but not just as a university student but just
+[0:01:22] all the way from a primary school to high school to now and I was thinking about you know now with
+[0:01:32] AI right that AI let's say tutors AI education is supporting students with that may not have
+[0:01:43] supported me in certain areas back then I thought that you know I was reading all these articles
+[0:01:47] but I'm like you know that's all really cool but I wanted to kind of get into the perspective of
+[0:01:51] like you know as a student how can I kind of work backwards and see you know if I go back to my
+[0:01:55] own experience what do I think would have been a gap even still now with technology that I don't
+[0:01:59] really see being addressed and I was um and I thought this might be a bit random but I was
+[0:02:05] thinking actually in terms of music so I in high school I did music right um it was a mandatory
+[0:02:12] subject that we have to take um and back then I really struggled I was okay with all the other
+[0:02:19] classes but I really struggled with music because it's something that's like more intuitive of course
+[0:02:24] you have you know sheet music um you just follow the teacher and all of that but no matter what I
+[0:02:29] did uh piano we did piano we we did the flute we did um guitar I still as a student struggled
+[0:02:36] to understand the fundamentals of instrument playing and even understanding how to replicate
+[0:02:41] in what the teacher was doing in front of me and I found that not that I found but I think that
+[0:02:48] that's probably the same for a lot of students and that if they don't get music at the very first
+[0:02:53] get-go whether that's either they have a poor teacher they just don't understand the complexity
+[0:02:57] of the instruments or they don't even have access to purchasing a guitar or whatever it is
+[0:03:02] I think that's how a lot of students end up gravitating to more let's say STEM focused things
+[0:03:09] because, you know, they were given a chance
+[0:03:11] or maybe they weren't even given a chance in the first place,
+[0:03:14] but it never progressed into anything else
+[0:03:16] because of the lack of resources and a lack of support,
+[0:03:20] especially, again, like I was saying, because music is something,
+[0:03:22] yes, it's a little bit quantitative,
+[0:03:24] but really it's about emotions and intuition,
+[0:03:26] and it's quite tactile and you have to use your fingers.
+[0:03:29] Anyways, all that's to say the reason why I thought about it
+[0:03:31] is because I'm actually thinking of getting back into music
+[0:03:34] and purchasing a guitar, and I'm going to be doing that next week
+[0:03:37] after Master Tech.
+[0:03:38] I'm going to be buying myself an electric guitar.
+[0:03:39] but I was thinking right right now I'm going to try to you know look up YouTube videos and
+[0:03:46] how to play guitar and learn on my own because I can't really you know have the time and the
+[0:03:53] money to purchase ongoing guitar lessons but I was thinking what if there was a way we could
+[0:03:58] integrate technology it doesn't have to be in the sort of generative AI to reduce the barrier
+[0:04:04] to music accessibility in terms of music education teaching students how a guitar sounds from like
+[0:04:13] and just giving them a guitar a piano giving them a sort of I'm just thinking again randomly let's
+[0:04:20] say some sort of if I have my phone I can pull up a digital keyboard and then start to learn
+[0:04:27] this is what this instrument sounds like this is what this key sounds like and then the AI tutor
+[0:04:32] can personalize, look at me saying kudo, but the AI can personalize the music education based on my
+[0:04:39] level of understanding, and especially in terms of accessibility. And I know you might be thinking
+[0:04:43] that, oh, you know, there's already piano things that exist. But I think the main gap is that
+[0:04:48] there's not that much depth in terms of online AI-assisted music education, but also it doesn't
+[0:04:55] cover the range of instruments that exist. It might exist for piano, but let's say it doesn't
+[0:04:59] exist for for the chinese flute it doesn't exist for a chinese guitar or something like that
+[0:05:04] hello but i'm just saying that that was one thing that i thought would be really cool
+[0:05:10] oh random hello hi guys um coincidentally you got me i did not do this on for first so it's
+[0:05:19] not bias okay anyway so what's happening how are you justin you're muted yeah no i'm just
+[0:05:26] the library it's kind of noisy here so yeah it's fine so how's everything how are you
+[0:05:41] yeah exactly yeah yeah yeah
+[0:06:32] yeah guys i need to stop you here sorry because i am supposed to conduct this like how i normally
+[0:06:37] conduct the rest even though i didn't know your idea i would love to know what you have come up
+[0:06:43] with so far other than like just repeat to me again what's your current idea you have
+[0:06:49] so far an idea at all no we we were just um exploring the topic well just to provide more
+[0:07:00] context as well to what Carlos was saying I was as we work on our ways to our respective areas
+[0:07:05] I was thinking a little bit more I did a little bit more research but also reflection in terms
+[0:07:11] of like my own educational experience and there's a lot of subjects that I took which um there's
+[0:07:17] There's lots of AI tools and solutions that support those subjects.
+[0:07:21] And I was thinking back, like, what is one subject or one area that I never fully developed that AI right now?
+[0:07:26] I can't see any sort of clear or popular solutions or accessible solutions for.
+[0:07:33] And one of them was music education.
+[0:07:35] And we were just talking about what I was just talking about, how in terms of quantitative subjects, English, maths, et cetera, even though English is qualitative, there's a lot of AI assisted support and tutoring and personalized support there.
+[0:07:46] but in terms of music education that's something that's a little bit more tact more inaccessible
+[0:07:51] and also something that requires a lot of um either money to go see a music um teacher uh
+[0:07:57] whatever or even have access to a school that has music um education there's a reason as to why
+[0:08:04] music isn't explored actually yeah which is actually very interesting i think it's good
+[0:08:09] that you came out of that and that was very creative but the reason why these industries
+[0:08:12] such as music and art hasn't been explored as you know that is the biggest area that they can't
+[0:08:18] explore due to creativity and it's very controversial so i think the idea the novel idea
+[0:08:25] is really good i think what you're saying is absolutely true a lot of ai isn't really in
+[0:08:29] music the reason because there's so much pushback it's also about adoptability yeah which is one
+[0:08:36] thing is yes it will assist students in um teaching let's say like music but majority
+[0:08:42] if you actually ask people who are in music and who are actually in arts they would not want to
+[0:08:46] have ai teach them whatsoever because they feel like music is more of a creative expression and
+[0:08:51] it's about emotion and ai as you know is artificial they can't really give that yes you can teach you
+[0:08:57] know like basic things like how do you play a guitar and stuff like that but they wouldn't
+[0:09:01] want that because in music itself it's one of the streams that they would like a more human aspect
+[0:09:08] to it as well like a lot of people just wouldn't want to adopt it and it's like more it's very niche
+[0:09:16] for wanting to help students learn better i think you're going in the right direction by trying to
+[0:09:20] think of people and industries that you know haven't really had much help but i would still
+[0:09:26] clear a little bit of the creative artistic side just because that you have to deal with a lot of
+[0:09:31] backlash and you do have to deal it's not that you shouldn't experiment with it but at the time
+[0:09:35] being being that it's quite hard of an area to infiltrate at the moment because ai is still
+[0:09:41] quite scary to the public one thing is you have to be convincing so i would suggest that i think
+[0:09:46] all of you like the three of you from what i heard come up with really really great ideas
+[0:09:51] um but one thing you lack in your ideas is sensitivity which i mentioned before is that
+[0:09:58] you don't want to come off tone deaf or insensitive research is also about researching
+[0:10:02] emotion it's not just about statistics i think music and arts is just an area that it's very
+[0:10:08] difficult i'm not saying don't do it i think experiment keep that idea i think you are going
+[0:10:12] down the right track with the music thing but just know that the reason why music is not there
+[0:10:17] because in ai it's very hard to touch artistic stuff it's just something they don't like they
+[0:10:22] don't even like that ai is like writing books even i think you've seen online controversies like
+[0:10:27] authors use ai that's the reason why and if you were to try to implement that i'm guarantee you
+[0:10:34] a lot of people criticize that how can ai know music when ai can't really hear as well you know
+[0:10:40] what i mean yeah i think what we i fully agree with you and that's why i was thinking that
+[0:10:44] whatever it again whatever this idea would ever have to be it's not creating any sort of art for
+[0:10:50] the student because at the core of all the ideas that we have to do i think we agreed on on monday
+[0:10:55] that it has to be something that allows a student to retain their own critical thinking but also
+[0:11:00] independence that wouldn't be allowing it to create something for them so in terms of this
+[0:11:06] not just this but in everything else what the idea is is essentially that reducing the barrier
+[0:11:12] of accessibility to students who may not have the funds to purchase a physical instrument or
+[0:11:18] attend instruments with a real teacher and providing them a sort of support assistant
+[0:11:25] that will allow them to learn instruments, not just the basic instruments as well, but
+[0:11:29] instruments that, again, might be somewhere outside of their own culture that they may
+[0:11:34] not have access to, again, just due to location, not just by funds as well.
+[0:11:39] And it could be a sort of cultural preservation as well for those instruments, which may not
+[0:11:44] be played around a lot but instead by digitally preserving it and allowing a more diverse range
+[0:11:50] of students to access and play it we can transform the way music education is but i fully agree with
+[0:11:56] the sensitivity pieces because people are very mad about generative ai sort of tool that we want
+[0:12:02] to do is something less of generating but providing a vehicle for students whether you're a student
+[0:12:08] with disability a student from a low scs background to have the same level of access and learning an
+[0:12:15] instrument on your phone or anywhere you are i think it is a great idea as well but another thing
+[0:12:20] to also consider is demonstration purposes you can simulate that but it's a lot harder to find
+[0:12:26] musical data sets as well if let's say you're doing yeah you actually want to train it or not
+[0:12:31] that's something you guys have to consider also that's a really good one manpower because right
+[0:12:37] now you are just at the idea stage right but you also want to make sure that your idea is not so
+[0:12:42] far-fetched that the three of you are like choking when you're down there because uh it should be
+[0:12:46] practical as well right absolutely yeah it has to be practical but again this is all proof of
+[0:12:52] concept you can always fake it like for example the qr scanning in our app didn't actually work
+[0:12:57] so all these things are just kind of proof of concepts but you don't want to be in an idea
+[0:13:02] That is so big that you're overwhelmed.
+[0:13:04] That it's hard to actually demonstrate.
+[0:13:06] Yes.
+[0:13:08] Hi, Jeff.
+[0:13:09] Hi, Maisha.
+[0:13:11] I'm going to move you right now.
+[0:13:13] There's one person from Singapore.
+[0:13:15] He hasn't met with his other team members yet.
+[0:13:17] But because you did the challenge last year, I thought maybe you could give him some advice and just talk to him about the program in general.
+[0:13:24] And I will leave Justin in here to talk to Canberra for a little while longer.
+[0:13:30] Okey dokey.
+[0:13:31] all right here we go justin which justin justin is the team in camera oh sorry one of our students
+[0:13:37] oh justin is oh oh okay well i'm gonna move sorry sorry i i know i'm learning your names right you
+[0:13:46] remember how long it took me to learn names last year right both of you simone was there too right
+[0:13:53] so you remember it took me at least a day so i'm almost there yeah almost there anyway i'm gonna
+[0:14:00] to send you, Mayisha, I'm going to send you to Singapore
+[0:14:02] and then I'm going to go find
+[0:14:04] maybe, have you, has this group
+[0:14:06] spoken to Stanley yet?
+[0:14:09] I don't think so.
+[0:14:10] I'll see if I can get Stanley
+[0:14:12] in your room after I move.
+[0:14:16] Mayisha,
+[0:14:16] give me one moment.
+[0:14:17] You guys later.
+[0:14:19] Yeah, thank you for the feedback. Very helpful.
+[0:14:21] Yeah, no worries. I think you have a good idea.
+[0:14:26] All right, just give me a second.
+[0:14:28] I'll go into one of the other, I'll go into
+[0:14:29] one of the big rooms. Sydney has five
+[0:14:31] people yeah yeah oh yeah yeah yeah yeah yeah absolutely i think that's what a lot of people
+[0:15:26] do nowadays too and duolingo and all those apps yeah yeah yeah i think that would be really good
+[0:16:01] yeah yeah that's what i was thinking in terms of like music as well because
+[0:16:11] in terms of us right that's something we could potentially vibe code a demo for or just work on
+[0:16:17] that together but i think the why music is really special to me is because like it's not um that
+[0:16:23] accessible for the average chord user or chat with a user to go on there and be like teach me how to
+[0:16:28] play this right they would have to develop their own sort of solution but then that could be like
+[0:16:32] where we come in because music again it's something more tactile a little bit more complex
+[0:16:35] but in reducing that barrier to entry i definitely think we could come up with something
+[0:16:40] that even, you know, I can't just go to Chatsubiti and do,
+[0:16:44] I can't be, you know, I don't have the effort
+[0:16:45] and the time to do that on my own.
+[0:16:57] Yeah.
+[0:17:00] Yeah.
+[0:17:02] Yeah.
+[0:17:07] Yeah.
+[0:17:09] Yeah.
+[0:17:11] Yeah.
+[0:17:16] Reducing the barrier to entry.
+[0:17:26] Hello, Stanley.
+[0:17:27] Hello.
+[0:17:28] Are your team Canberra?
+[0:17:30] Yes.
+[0:17:31] Yeah, right, yeah.
+[0:17:33] You're having a discussion.
+[0:17:34] And, yeah, just a quick one.
+[0:17:37] Yeah.
+[0:17:37] what you guys working on uh like all your top idea at the moment if you want to have a feedback
+[0:17:44] yeah oh you go ahead carlos yeah
+[0:18:06] yeah yeah um for context no specific domain or for context i was still exploring but one was
+[0:18:20] music music education specifically or just more so hobbyist education because um there's a real
+[0:18:26] barrier to entry especially for students who may not have the funds or the access to schools that
+[0:18:33] provide you know a music teacher a physical instrument etc so we thought that something
+[0:18:39] tactile with music just as an example hobby is something that students may benefit from
+[0:18:45] AI assisted education in a way that the AI isn't generating music for them but it really has a sort
+[0:18:51] of digitized version of an instrument whether it be something as common as a piano or something
+[0:18:56] an instrument from their home country which might be more obscure and you know supporting that sort
+[0:19:00] of cultural preservation and fostering fostering that learning but learning from the very basic
+[0:19:07] steps of you know how to play the instrument but in a very personalized way because we're
+[0:19:12] all talking that you know when we initially learned music or you know Spanish in high school
+[0:19:17] whatever we have we all learn differently but it's something that never quite really clicked
+[0:19:23] and obviously many of us are adults now
+[0:19:25] or uni students wanting to get back
+[0:19:27] into those sorts of things
+[0:19:27] but we want to support other students
+[0:19:29] who suffer those accessibility barriers
+[0:19:35] to learning.
+[0:19:36] And why not just decide on music now
+[0:19:40] and start to ideate more
+[0:19:42] on how you're going to approach that problem
+[0:19:45] because even music itself is wide
+[0:19:48] so you need to start narrowing down
+[0:19:51] are you going to be teaching music theory
+[0:19:53] for instance or string instruments because um yeah so
+[0:20:27] yeah i thought my feedback was good in terms of being culturally sensitive about the perceptions
+[0:20:33] of ai but i think what we can do then to pivot then whether we do music or not is if we do
+[0:20:38] something creative it's really about showing that the student retains their autonomy and
+[0:20:42] independence and learning and ai is only a vehicle to support that learning and it doesn't generate
+[0:20:47] it for them maybe i can chip in here is you know when you're learning you know the basics of
+[0:20:53] something um i don't think there's a big stigma of you know it being taught by ai but what the
+[0:20:59] general market doesn't like is you know buying music that's generated by ai yes that's it that's
+[0:21:06] exactly it yeah yeah yeah not the learning process yeah i love i love this topic so um stanley i'm
+[0:21:24] gonna move you to melbourne and i'll talk to this group and then i'm gonna i'm gonna i'm gonna finish
+[0:21:30] up um the the sessions at 6 30 we'll have um five or ten more minutes as a group and then um yeah
+[0:21:37] we'll call it a day but is that all right stanley are you okay for me to move you or no yes
+[0:21:47] all right well i'm gonna move him anyway see what happens yeah so talk to me i love this topic
+[0:21:56] because i'm i'm i'm a musician and i have made music with ai as a with ai as a collaborator yes
+[0:22:04] oh very cool yeah i'm gonna have some really good feedback then yeah very yeah we were just
+[0:22:09] thinking that um there's a really big barrier to entry for students no matter what level um who
+[0:22:14] want to access music education. One could be cost, accessibility to schools that have a good music
+[0:22:21] education, but also physical barriers, as in like for students with disabilities, students from
+[0:22:25] communities who may not have access to those sorts of things. We were thinking that to bridge that
+[0:22:30] gap, we have a sort of application or where we have an AI-assisted music education where you have
+[0:22:37] a digitized version of an instrument from something as common as a piano all the way to something as
+[0:22:41] obscure uh for as like a Chinese flute for example again to support that cultural preservation
+[0:22:46] aspect and you get um tailored learning specifically to your level um of music education
+[0:22:54] I thought that was really special to me because I really struggled in learning the piano and you
+[0:22:58] know guitar when I was in year seven I still struggled um no matter how hands-on the teacher
+[0:23:02] was with me but I think if I just got um I was able to break down my worries or just like oh I
+[0:23:07] can't do this I can't do that and then just get something more personalized like you know
+[0:23:11] play this and play this key do this key and just get a lesson plan and be able to also just play
+[0:23:17] a digital instrument and hear what it sounds like as well if I'm somebody who doesn't even have
+[0:23:21] access to a physical instrument I would have definitely helped me to prolong and retain my
+[0:23:26] musical education and I think that could be something creative but I don't know
+[0:23:30] yeah that sounds that sounds like fun like I I use it personally to learn things and then I've
+[0:23:37] used it to help me collaborate with other people so there's it's one of the
+[0:23:43] areas where I think that personal and the social learning can overlap and
+[0:23:48] interact so yeah love it so so Perth just arrived I'm gonna go chat to them
+[0:23:55] real quick and then I'll probably end these sessions in about three minutes so
+[0:24:00] stay tuned keep working together for another few minutes and I'll see you in
+[0:24:05] minute okay cool yeah yeah yeah yeah absolutely yeah yeah yeah yeah yeah yeah
+[0:25:36] Definitely. Yeah, definitely.
+[0:25:38] And I think that's something we can explore with further research.
+[0:25:41] But what we do doesn't have to be based on music.
+[0:25:43] But I was thinking that it really could be the most creative thing that we do, if anything.
+[0:25:58] Yeah. And also remember that what we're doing is indeed just a prototype.
+[0:26:01] So last year, we didn't even have a working demo.
+[0:26:03] We just only had the front end because you don't need a back end.
+[0:26:06] As long as what you show on stage in that three-minute pitch is...
+[0:26:10] Yeah, smoke and mirrors, exactly.
+[0:26:15] yeah um i had something similar to say as well but uh it's very specific to guitar per se so
+[0:26:23] uh it's when like you know whenever i play guitar so i've so ever since i was a kid i've always
+[0:26:28] wanted to play the guitar now that i have a guitar i don't really know how to play it
+[0:26:32] yeah so yeah so it's really uh hard to play the guitar so you know your fingers should be like
+[0:26:38] in the right position position yeah so yeah it's it's really really hard so like i was thinking
+[0:26:43] you know maybe if there was something to see like you know that we can use a camera to track our
+[0:26:48] fingers and like see the position oh yeah yeah that's so cool yeah so i think uh which could
+[0:26:54] recognize yeah which could recognize uh what chords we are playing or like our fingers are
+[0:26:58] sitting on like if there can be any changes made to it how can it be like you know better i think
+[0:27:05] that would be cool but it's very specific to the guitar yeah yeah yeah it's visible yeah
+[0:27:30] yeah yeah yeah something similar something similar could not be done for the piano i guess because
+[0:27:58] you know when you're playing it you're just covering the entire thing with your fingers
+[0:28:02] like your palm is blocking it so you couldn't really do that really quickly do you guys after
+[0:28:06] this whole session ends do you guys want to say uh for another 10 minutes yeah and then we can
+[0:28:11] can further discuss yeah that's it sounds great um but yeah what i i fully agree like that could be
+[0:28:20] the product can have many features but i was thinking that at the core we could have like
+[0:28:23] a digital version of a guitar with the strings with if you poke it like you know it'll make a
+[0:28:27] noise but you can have a visual feature as well if you're someone who actually has that instrument
+[0:28:31] as well or that could be future development type of thing yeah yeah okay guess we're gonna get
+[0:28:37] booted out in two seconds that's pretty abrupt isn't it i don't know hopefully you can all hear
+[0:28:54] me still yep that'll clear i love it how we all just come back together it's a great can someone
+[0:28:59] take it like a screenshot jeff yeah i've got screenshots from earlier but i'll do another
+[0:29:04] one now yes i'm just gonna come back into yeah no it's really good so this will be um this will go
+[0:29:10] up on linkedin later today don't you worry yes people can um put their camera on just for the
+[0:29:19] screenshot that'd be great i'd like to apologize to canberra i just got chopped off i just got
+[0:29:24] dropped off earlier no idea why no back to latro yeah oh yeah that was my that was me sorry about
+[0:29:31] that canberra that was me i'm sorry i apologize that was just me making another executive
+[0:29:36] decision i try to be um i try to communicate when i'm pushing you around but um that didn't
+[0:29:42] happen that time all right one more screenshot and then um i just thought i'd end with something
+[0:29:47] quickly that we could we could discuss if you want to so a few of you have been asking what
+[0:29:52] is the creativity what is the creativity bit supposed to be and it's not really like um there
+[0:29:58] are a couple of teams that are taking the creativity idea literally which is very good
+[0:30:04] um but um what i wanted to share with you which i put up on the um the master tech webex site today
+[0:30:11] right is the what does creative first means um it means making something that sets you apart
+[0:30:17] and particularly not a better version of what everyone else is doing but a different way of
+[0:30:22] thinking maybe your own way of thinking altogether and so like right now everyone has the same tools
+[0:30:28] the same ai and the same answers so the only edge you've got is an idea that nobody else thought of
+[0:30:33] So that's what I mean by creativity.
+[0:30:36] So find an idea that you think nobody else has had
+[0:30:39] and start there and learn whatever it takes to build it.
+[0:30:42] That's my advice on the creativity aspect of this.
+[0:30:47] And so that's my statement.
+[0:30:50] I wonder if any of the other people on the call have a perspective
+[0:30:54] that they'd like to share on that as well.
+[0:30:57] I've got a question, and I was physically putting my hand up.
+[0:31:01] I've got a question.
+[0:31:02] how are you guys handling if um if you see that there's two ideas that are just so similar
+[0:31:09] i mean i know it's an age-old problem and it's what you fall into with any of these types of
+[0:31:14] things but um but because we're in this situation where we're going around every single
+[0:31:21] every team and we're i'm trying to keep my mouth shut as much as possible and i'm trying to find
+[0:31:26] that balance of where to give advice without steering or without giving too much away
+[0:31:31] um and at the end of the day you're going to end up with some that are similar sorry jeff
+[0:31:36] yeah there we always have that like um last year the year before we ended up with things that were
+[0:31:42] both similar and complementary so at one point halfway through the program we thought well let's
+[0:31:48] just get everyone working on the same problem we didn't do that because what what happens is yeah
+[0:31:53] there are some similarities for sure but then once you meet each other and you see what somebody
+[0:31:57] else is working on you're going to have a idea about how to make it just a little bit different
+[0:32:01] so um i mean and even if it's never going to be exactly the same right the way you design your
+[0:32:08] user interface your user experience is going to be different even if it's the same exact idea
+[0:32:13] right somebody you all decide you're going to teach the world how to take apart lawnmowers
+[0:32:19] right you're going to do it slightly different each of you is going to do it slightly different
+[0:32:22] And it's those differences that you're going to be pitching on, right?
+[0:32:26] When you're pitching, you're pitching why your idea solves a problem, why it's better than anything that's out there, and why you're the ones who are the ones to make it happen, right?
+[0:32:36] Those are the three main things that need to come across in a pitch.
+[0:32:40] And we'll be rehearsing you and your pitches.
+[0:32:43] And then, again, there's never an idea that's exactly the same as someone else's.
+[0:32:48] But we're all working on the same topic.
+[0:32:50] So we're all trying to solve the same problem, which is AI is in the world now, and we don't really know how to use it to teach.
+[0:32:56] We don't really know how to use it to learn.
+[0:32:57] I mean, I think I do, but I do it the way I would do it.
+[0:33:00] I'm not sure yet how I would take how I use it and teach it, if that makes sense.
+[0:33:06] So it's definitely the other idea we had at one stage was, oh, let's just let's make national teams instead of city based teams.
+[0:33:14] But, you know, you end up with the same problem, right?
+[0:33:16] Their ideas are just going to be similar, and that's okay because, and even with AI, right?
+[0:33:24] You ask Claude to help you, Claude will give you a different UI than ChatGPT or Gemini, right?
+[0:33:30] So even with AI, the differences will come through, even if the ideas are sort of describable in almost exactly the same terms.
+[0:33:40] So that's one of the things I like about this, right?
+[0:33:43] is, yeah, we're all working on the same problem, but when you start your pitch, they're all
+[0:33:47] different. They're all pretty much very different. But yeah, thank you, Jane. Anyone else? Okay.
+[0:34:02] You covered it.
+[0:34:05] Well, thank you all again. We'll get going a little early again, and I'll be looking forward
+[0:34:12] to seeing you all after you've had a good rest or not, depending on how you're feeling about your
+[0:34:18] idea yeah um um sleep if you sleep if you can but you know don't if you can't i'll um see you
+[0:34:28] all tomorrow thank you thanks jeff see you bye

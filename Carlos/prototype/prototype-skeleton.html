@@ -1,0 +1,1025 @@
+<!doctype html>
+<!--
+Prototype skeleton: keyboard practice loop (T9, the cue and proof card wired to a scored take)
+
+- Date: Fri 6 Nov 2026, overnight. Purpose: the Saturday 09:00 starting point for the critical path in build-plan-v1.md (T9).
+- Scope: one self-contained HTML file; keyboard path end to end; inline CSS and JavaScript; no build step; no network.
+- Status: round 2 (pre-Saturday fixes, 6-7 Nov); draft for the team; verify before the pitch. Thresholds are team guesses to tune on Saturday takes.
+
+README
+- What it does
+  o Goal card (typed goal, never sent or stored), then "Take 1" as a labelled REPLAY of a stored take, scored now by the real code.
+  o One cue from the keyboard rules (plain words from tech-feedback-layer.md s3), a "Live now" banner, count-in, live retake.
+  o Proof card: big "On the beat: x of N" before and after, the cue's own proof line; per-note timing in a collapsed team view.
+  o Static "Proposed" hand-off card (Learner 12 style id, Webex mock); a Self-test button runs the sixteen contract fixtures.
+- Input
+  o Web MIDI (Connect MIDI button; any channel; note on, note off, velocity 0 as off, sustain pedal for sound only).
+  o On-screen keys C4 to C5, and laptop letters A S D F G H J K = C to C (W E T Y U = the black keys, an addition).
+- Sound: own WebAudio synth (oscillator plus envelope) for the count-in, the reference phrase, the replay and played notes; no samples.
+- How to open
+  o Chrome on the stage laptop: double-click the file (file://), or run `python -m http.server` in this folder and open
+    http://localhost:8000/prototype-skeleton.html; then click Connect MIDI and allow the prompt.
+  o Audio starts on the first click or key (Chrome autoplay rule); the phrase menu is in the top bar; tempo defaults to 80 bpm.
+  o Add #selftest to the address to run the fixtures on load (used for the headless check).
+- Three things NOT done
+  o Voice path: no microphone, no pitch detection, no loopback; voice rules exist only as far as the fixtures need (V5, V6, V7, V10, V11, V12).
+  o Model step: no LLM call anywhere; the plan box is hidden (SHOW_PLACEHOLDER_PLAN), so no model answer is shown or faked.
+  o Webex: the hand-off card is static text with a mock label; nothing is sent; no teacher arranged.
+  o Also not built: IndexedDB persistence (T20), service worker and offline manifest (T22), the "larger miss" and "last two cues" tie-breaks.
+- Contract version implemented: take-data-contract.md (Fri 6 Nov overnight draft); phrase/v1, take/v1, take-features/v1.1, cue/v1.
+  o validateTake and validatePhrase copied verbatim from contract s4 (only the Node export line is guarded); sixteen fixtures from s6.
+  o No v1.1 rule and no matcher window changed in round 2. Contract s8 (v1.2 proposals, F17 and F18) is NOT implemented; only the s8.3 keys wording for M1 is used.
+- One-line switches (top of the page script)
+  o TAKE1_IS_CAPTURE = false: the Take 1 banner reads "PLACEHOLDER TAKE, replace with the Saturday capture". Set true only once the
+    stored take 1 is the real Saturday capture; the banner then reads "TAKE 1 - REPLAY: recorded Saturday, scored now".
+  o SHOW_PLACEHOLDER_PLAN = false: the plan box ("Placeholder plan, not generated.") stays hidden; no model answer is faked.
+- Verified in (round 2, 6-7 Nov 2026, after all four groups)
+  o Node v24: pure block extracted from this file; self-test 22 of 22 (sixteen fixtures plus three phrases and three stored takes); 61 of 61 Node checks.
+  o Node v24: fixtures deep-equal the contract JSON (F01 to F16 only); 18 deliberate breakages each caught by the validator; retake and miss-ladder cases.
+  o Node v24 review fixtures: every note 200 ms late gives M2 in keys wording (no phone, no tap-along) and does not count; last note
+    missing gives X2; octave up gives X1 and on the beat 0 of 8; contract F17 and F18 run under v1.1 (see open questions).
+  o Browser check: headless Microsoft Edge (Chromium, the engine Chrome uses) on this PC: #selftest 22 of 22; whole stage flow driven
+    over the local debugging port (replay, cue, live retake by synthetic letter keys, proof card, validator ok, no console errors).
+  o NOT tested: real Chrome, a real USB MIDI keyboard, Web MIDI permission prompt, speakers or HDMI audio, touch, the stage laptop.
+
+Open questions (for the team)
+- K3 is fragile (prototype-review-v1 D1): with 25 ms of noise per onset, only 44% of variants of the stored take 1 still score K3
+  (38% X2, 18% K5); real rushes give X2 or none (a uniform 10% rush on Ode bars 1-2 ends 477 ms early, outside W = 375).
+  o Saturday capture rule: record five or more take 1s and keep one that scores K3 in this code unedited; else switch the scripted
+    cue to what the capture gives (K1 is robust) and change the spoken line.
+  o Sunday choice: keep a scripted K3 (the stored take) or adopt a robust rule (the drift-aware matcher drafted in contract s8.2).
+- Keys have no rule for notes that are late or early without a tempo change (contract s8.1 drafts K7 as v1.2; not built here).
+  o Contract F17 is meant to show this, but under v1.1 it scores K5, not "none": its last note (2 beats) is held 900 ms, held ratio
+    0.45 (same as F02). With the last note held 1900 ms it gives "none" with 4 of 7 on the beat. The fixture needs that fix.
+  o Contract F18 gives X2 under v1.1, as the contract says.
+- v1.2 proposal, on the beat: the count now includes only matched notes with the right pitch (status "hit"); an octave or other key
+  does not count even if on time. The contract is silent; the proposal is to write this into the F3 definition.
+- K4 trigger and the K5 "even notes" proof are own readings of the tech table (marked in TH); K4 stays open.
+- Ode bars 5-8 notes were typed from the engine spec description (span 7, ends D. C C); check against a score.
+- Fallback clock (no output timestamp): correction = outputLatency only, as the contract says; baseLatency may add more; test it.
+- The phrase choice (D1) stays open; Ode bars 1-2 is the freeze default.
+- Resolved in round 2: the M1 wording for an empty keys take now uses the contract s8.3 keys text (no phone).
+
+Method
+- Codex gpt-6-sol medium (start): file structure and Web MIDI / AudioContext pitfalls.
+  o Kept: delimited pure block, clock pair taken after audio runs with the contract fallback, velocity 0 as note off, sustain pedal.
+- Codex gpt-6-sol high (end): bug and race review of the full file.
+  o Fixed: run tokens against double starts, sound released at take end, per-source key identity, sustain cleared, one rAF loop.
+  o Fixed: Stop only after beat zero, live count from the real matcher, 3 s silence rule only after the last expected note.
+  o Fixed: first key waits for audio, correction clamped to 1500 ms, notes clipped at the take end.
+  o Kept as an open question: adding baseLatency to the fallback correction (the contract names outputLatency only).
+- Own tests: Node extraction of the pure block (scratch test.js) and a headless Edge drive (scratch flow.js); no team data used.
+
+Change log
+- Round 1, Fri 6 Nov overnight: first build (see Method).
+- Round 2, 6-7 Nov, from prototype-review-v1.md and consistency-audit-v1.md rows 11 to 13:
+  o Labels: placeholder Take 1 banner behind TAKE1_IS_CAPTURE; plan box hidden behind SHOW_PLACEHOLDER_PLAN with "Placeholder plan,
+    not generated"; "one phrase" in the goal; dev header chip removed; timing table and audio clock folded into collapsed team views
+    (no missed, late or ms on screen); pass line "Step 1 done." with "One more step, or finish for today."; K3 cue "Let the click
+    lead."; big "On the beat: x of N" on the cue and proof cards; phrase titles match the contract ("Ode, bars 1-2").
+  o Fixtures: M1 and M2 use keys wording on a keyboard take (no phone, no tap-along); on the beat counts correct pitches only;
+    the proof card no longer shows a cue cause beside a pass; the roll widens to played notes and clips bars to the timeline.
+  o Goal box: spellcheck, autocorrect and autocapitalize off.
+  o Codex points: M2, K3 and K6 read unrounded values with a small tolerance, so a value rounded onto a threshold no longer fires;
+    the K6 proof is the inverse of its trigger; takeCounts honours an incoming counts false. K4 left open.
+
+Privacy by construction
+- No network: no fetch, no XHR, no WebSocket, no external script, font or image; the CSP meta below blocks connections (connect-src 'none').
+- No audio stored: the page never asks for the microphone; played notes live in memory as numbers (pitch, onset, length, velocity).
+- No names: the hand-off example uses a pseudonymous "Learner 12" id; the typed goal stays in this page's memory and is never stored or sent.
+- No storage: no localStorage, no IndexedDB, no cookies in this skeleton; a reload forgets everything.
+- Nothing leaves the page.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Practice loop skeleton</title>
+<style>
+:root { --bg:#f6f5f2; --panel:#ffffff; --ink:#1d1f24; --muted:#5d6370; --line:#d9d6cf; --accent:#1f5fbf; --ok:#1d8a4e; --warn:#b26a00; --bad:#c0392b; --ghost:#d8dde6; --replay:#7a2fb8; --live:#c0392b; }
+@media (prefers-color-scheme: dark) { :root { --bg:#16181c; --panel:#20232a; --ink:#eceef2; --muted:#a3a9b5; --line:#3a3f49; --accent:#6ea2ff; --ok:#3ccf7f; --warn:#f0a83a; --bad:#ff6b5b; --ghost:#3a4150; --replay:#c18cff; --live:#ff6b5b; } }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.4 system-ui, "Segoe UI", sans-serif; }
+header { display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center; padding:10px 16px; border-bottom:1px solid var(--line); background:var(--panel); }
+header h1 { font-size:18px; margin:0 12px 0 0; }
+button, select, input { font:inherit; }
+button { padding:8px 14px; border-radius:8px; border:1px solid var(--line); background:var(--panel); color:var(--ink); cursor:pointer; }
+button.primary { background:var(--accent); color:#fff; border-color:var(--accent); font-weight:600; }
+button:disabled { opacity:.5; cursor:not-allowed; }
+.chip { font-size:13px; padding:3px 8px; border-radius:99px; border:1px solid var(--line); color:var(--muted); }
+.open { color:var(--warn); border-color:var(--warn); }
+main { max-width:1100px; margin:0 auto; padding:14px 16px 24px; }
+.steps { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+.steps span { font-size:13px; padding:3px 9px; border-radius:6px; background:var(--panel); border:1px solid var(--line); color:var(--muted); }
+.steps span.on { border-color:var(--accent); color:var(--accent); font-weight:600; }
+.card { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px 18px; margin-bottom:12px; }
+.card h2 { margin:0 0 8px; font-size:20px; }
+.hidden { display:none !important; }
+.banner { font-size:clamp(22px, 4vw, 40px); font-weight:800; text-align:center; padding:12px; border-radius:10px; margin-bottom:10px; color:#fff; letter-spacing:.02em; }
+.banner.replay { background:var(--replay); }
+.banner.live { background:var(--live); }
+.banner.sep { background:var(--muted); font-size:clamp(16px, 2.6vw, 24px); }
+.big { font-size:clamp(22px, 3.6vw, 34px); font-weight:700; margin:6px 0; }
+.huge { font-size:clamp(30px, 6vw, 60px); font-weight:800; margin:4px 0; }
+.muted { color:var(--muted); font-size:14px; }
+.example { border:2px dashed var(--warn); border-radius:8px; padding:8px 10px; margin-top:10px; }
+.example b { color:var(--warn); }
+textarea { width:100%; min-height:56px; font:inherit; padding:8px; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--ink); }
+.row { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:10px; }
+#roll { width:100%; height:220px; display:block; background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+#kb { position:relative; height:150px; margin-top:12px; user-select:none; touch-action:none; }
+.wk, .bk { position:absolute; top:0; border:1px solid #555; border-radius:0 0 6px 6px; display:flex; align-items:flex-end; justify-content:center; padding-bottom:6px; font-size:13px; font-weight:600; }
+.wk { height:150px; background:#fafafa; color:#333; z-index:1; }
+.bk { height:92px; background:#222; color:#ddd; z-index:2; }
+.wk.lit { background:#9ec5ff; } .bk.lit { background:#2f6fd6; }
+.wk.hint { box-shadow:inset 0 -10px 0 var(--warn); } .bk.hint { box-shadow:inset 0 -8px 0 var(--warn); }
+table { border-collapse:collapse; width:100%; font-size:15px; }
+th, td { border-bottom:1px solid var(--line); padding:4px 6px; text-align:left; }
+td.ok { color:var(--ok); font-weight:600; } td.off { color:var(--warn); font-weight:600; } td.bad { color:var(--bad); font-weight:600; }
+pre { white-space:pre-wrap; font-size:12px; background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:8px; max-height:300px; overflow:auto; }
+#debug { font:12px/1.4 ui-monospace, Consolas, monospace; color:var(--muted); margin-top:8px; }
+@media (max-width:600px) { header h1 { font-size:16px; } #roll { height:170px; } #kb { height:120px; } .wk { height:120px; } .bk { height:74px; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Practice loop (prototype skeleton)</h1>
+  <label>Phrase <select id="phrase"></select></label>
+  <label>Tempo <input id="bpm" type="number" min="40" max="150" step="1" value="80" style="width:70px"> bpm</label>
+  <button id="btnMidi">Connect MIDI</button>
+  <span class="chip" id="midiState">MIDI: not connected (on-screen keys and letters work)</span>
+  <button id="btnHear">Hear the phrase</button>
+  <button id="btnSelf">Self-test</button>
+  <button id="btnReset">Reset</button>
+</header>
+<main>
+  <div class="steps" id="steps"><span data-s="goal">1 Goal</span><span data-s="replay">2 Take 1 (replay)</span><span data-s="cue">3 One fix</span><span data-s="live">4 Live retake</span><span data-s="proof">5 Proof</span><span data-s="handoff">6 Hand-off (separate example)</span></div>
+
+  <section class="card" id="card-goal">
+    <h2>Your goal</h2>
+    <textarea id="goal" maxlength="200" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="Type a goal, for example: play this song for Mum (stays on this page; never stored or sent)"></textarea>
+    <p class="big" id="smallGoal">Today's small goal: one phrase, steady.</p>
+    <div class="example hidden" id="planBox"><b>Placeholder plan, not generated.</b> No model is called in this build.
+      <div class="muted" id="planExample"></div></div>
+    <div class="row"><button class="primary" id="btnReplay">Play take 1 (replay)</button></div>
+  </section>
+
+  <section class="card hidden" id="card-replay">
+    <div class="banner replay" id="replayBanner"></div>
+  </section>
+
+  <section class="card hidden" id="card-cue">
+    <h2>One fix</h2>
+    <p class="big" id="cueCause"></p>
+    <p class="huge" id="cueText"></p>
+    <p class="huge" id="cueBeat"></p>
+    <p class="muted" id="cueProof"></p>
+    <div class="row"><button class="primary" id="btnToLive">Next: live retake</button><button id="btnHear2">Hear the phrase</button></div>
+  </section>
+
+  <section class="card hidden" id="card-live">
+    <div class="banner live">Live now. Watch the on-beat count.</div>
+    <p class="big" id="liveCount">On the beat so far: 0</p>
+    <p class="muted" id="liveState">Press Start: four clicks, then play the phrase.</p>
+    <div class="row"><button class="primary" id="btnStart">Start count-in</button><button id="btnStop" disabled>Stop take</button></div>
+  </section>
+
+  <section class="card hidden" id="card-proof">
+    <h2>Proof: timing on this same phrase, today</h2>
+    <p class="huge" id="proofBeat"></p>
+    <p class="big" id="proofCue"></p>
+    <p class="muted" id="proofNext"></p>
+    <details><summary class="muted">Timing detail (team view)</summary><table id="proofTable"></table></details>
+    <div class="row"><button id="btnAgain">Retake again</button><button class="primary" id="btnHandoff">Show hand-off example</button></div>
+  </section>
+
+  <section class="card hidden" id="card-handoff">
+    <div class="banner sep">Separate example: a learner still stuck (sample week, scripted)</div>
+    <p class="big">Learner 12 <span class="muted">(pseudonymous id; no names; scripted data)</span></p>
+    <table>
+      <tr><th>Fix tried</th><td>You speed up as you play. Let the click lead; stay with it to the end.</td></tr>
+      <tr><th>Tries</th><td>3 retakes on the same fix (miss 3 of 3: the ceiling)</td></tr>
+      <tr><th>Proof lines</th><td>On the beat: 4 of 8, then 5 of 8, then 4 of 8</td></tr>
+      <tr><th>Shared</th><td>Fix list and proof lines only; no audio in this card</td></tr>
+    </table>
+    <p class="big">Proposed: Webex hand-off (mock)</p>
+    <p class="muted">Static text. Nothing is sent from this page; no teacher is arranged; the share button below does nothing.</p>
+    <div class="row"><button disabled>Share with a teacher (mock)</button><button id="btnBack">Back to start</button></div>
+  </section>
+
+  <canvas id="roll" aria-label="Live line: grey ghost bars are the phrase, coloured bars are what was played"></canvas>
+  <div id="kb" aria-label="On-screen keys"></div>
+  <details class="card"><summary>Team view: audio clock</summary><div id="debug"></div></details>
+  <details class="card" id="selfBox"><summary>Self-test output</summary><pre id="selfOut">Not run yet.</pre></details>
+</main>
+<script>
+/* PURE-BEGIN : pure functions only (no window, no document, no audio); extracted and run in Node by the test script */
+"use strict";
+const CONTRACT_VERSION = { phrase: "phrase/v1", take: "take/v1", features: "take-features/v1.1", cue: "cue/v1" };
+
+// Thresholds: one object, as the contract asks (one JSON, not scattered in code). Marked values are team guesses to tune on Saturday takes.
+const TH = {
+  window_max_ms: 400,      // matcher window cap; W = min(400, half the smallest expected gap) (contract s2)
+  on_time_ms: 150,         // "on the beat" per note, demo tolerance (contract s2)
+  in_tune_cents: 50,       // sourced line (contract s3)
+  m1_conf_pct: 60,         // M1 * (tech-feedback-layer s3)
+  m2_median_ms: 150,       // M2 * |median|, read symmetrically (contract s3)
+  m2_spread_ms: 30,        // M2 *
+  v10_median_ms: 120,      // V10 * (with spread >= 30)
+  v11_median_ms: -120,     // V11 *
+  v6_share: 0.6,           // V6, V7 *
+  v12_share: 0.5,          // V12 *
+  v12_held: 0.75,          // V12 *
+  k2_share: 0.3,           // K2 *
+  k3_fast_pct: 10,         // K3 * tempo_played >= target + 10%
+  k4_rise_ms: 100,         // K4 * (own reading: onsets later and later over the two notes before the first wrong note, rising 100 ms or more)
+  k5_spread: 0.3,          // K5 * held_ratio spread (max minus min, contract s5 row 14)
+  k5_even_band: 0.15,      // K5 proof: a note is "even" within 0.15 of the median held_ratio (own reading, team choice)
+  k6_rise: 0.4             // K6 * loud_rel rises 40% first to last
+};
+
+const NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+function noteName(m) { const r = Math.round(m); return NAMES[((r % 12) + 12) % 12] + (Math.floor(r / 12) - 1); }
+const r1 = (x) => Math.round(x * 10) / 10, r2 = (x) => Math.round(x * 100) / 100, r3 = (x) => Math.round(x * 1000) / 1000;
+const z = (x) => (x === 0 ? 0 : x); // turn -0 into 0
+function median(a) { if (!a.length) return null; const s = [...a].sort((x, y) => x - y), h = s.length >> 1; return s.length % 2 ? s[h] : (s[h - 1] + s[h]) / 2; }
+function popSd(a) { if (!a.length) return null; const m = a.reduce((x, y) => x + y, 0) / a.length; return Math.sqrt(a.reduce((x, y) => x + (y - m) * (y - m), 0) / a.length); }
+
+// ---- Phrases (contract shape, snake_case; lists from demo-phrase-and-rights.md s4 and small-goals-engine-spec s5) ----
+function mkPhrase(id, title, bpm, list) {
+  return { schema: "phrase/v1", id, title, key: "C", bpm, beats_per_bar: 4, ease: 1,
+    notes: list.map(([midi, start_beat, dur_beats]) => ({ midi, name: noteName(midi), start_beat, dur_beats })) };
+}
+const PHRASES = {
+  // (b) freeze default: Ode to Joy bars 1-2, E E F G G F E D, 8 notes, 8 beats
+  "ode-b1-2": mkPhrase("ode-b1-2", "Ode, bars 1-2", 90,
+    [[64, 0, 1], [64, 1, 1], [65, 2, 1], [67, 3, 1], [67, 4, 1], [65, 5, 1], [64, 6, 1], [62, 7, 1]]),
+  // (a) Twinkle bars 3-4, F F E E D D C, 7 notes, 8 beats
+  "twinkle-b3-4": mkPhrase("twinkle-b3-4", "Twinkle, bars 3-4", 90,
+    [[65, 0, 1], [65, 1, 1], [64, 2, 1], [64, 3, 1], [62, 4, 1], [62, 5, 1], [60, 6, 2]]),
+  // (c) Ode to Joy bars 5-8, 15 notes, 16 beats (bars 5-6 = bars 1-2; bars 7-8 end D. C C); typed from the engine spec's
+  // description (span 7, leap 2, 3 rhythm changes, ends on C); check by ear and against a score before use
+  "ode-b5-8": mkPhrase("ode-b5-8", "Ode, bars 5-8", 90,
+    [[64, 0, 1], [64, 1, 1], [65, 2, 1], [67, 3, 1], [67, 4, 1], [65, 5, 1], [64, 6, 1], [62, 7, 1],
+     [60, 8, 1], [60, 9, 1], [62, 10, 1], [64, 11, 1], [62, 12, 1.5], [60, 13.5, 0.5], [60, 14, 2]])
+};
+const DEFAULT_PHRASE_ID = "ode-b1-2"; // freeze default; the phrase choice is OPEN (build-plan-v1 D1, team decides)
+
+// ---- Matcher (contract s2 "Beat alignment and matching") ----
+function expectedStarts(phrase, bpm) { return phrase.notes.map((n) => (n.start_beat * 60000) / bpm); }
+function matchWindowMs(phrase, bpm) {
+  const s = expectedStarts(phrase, bpm); let gap = Infinity;
+  for (let k = 1; k < s.length; k++) gap = Math.min(gap, s[k] - s[k - 1]);
+  return Math.min(TH.window_max_ms, gap / 2); // one-note phrase: gap is Infinity, W = 400
+}
+function matchTake(phrase, take) {
+  const exp = expectedStarts(phrase, take.bpm), W = matchWindowMs(phrase, take.bpm);
+  const keys = take.instrument === "keyboard", used = new Set();
+  const pairs = phrase.notes.map((n, i) => {
+    const cand = [];
+    take.notes.forEach((p, k) => { if (!used.has(k) && Math.abs(p.onset_ms - exp[i]) <= W) cand.push(k); });
+    if (!cand.length) return null;
+    const near = (ks) => ks.reduce((a, b) => (Math.abs(take.notes[b].onset_ms - exp[i]) < Math.abs(take.notes[a].onset_ms - exp[i]) ? b : a));
+    let pick;
+    if (keys) { // same pitch nearest, else same pitch class (octave error), else nearest (a wrong note)
+      const same = cand.filter((k) => take.notes[k].pitch_midi === n.midi);
+      const pc = cand.filter((k) => (((take.notes[k].pitch_midi - n.midi) % 12) + 12) % 12 === 0);
+      pick = same.length ? near(same) : pc.length ? near(pc) : near(cand);
+    } else pick = near(cand); // voice: nearest in time, pitch judged afterwards by cents
+    used.add(pick); return pick;
+  });
+  return { exp, W, pairs };
+}
+
+// ---- Features take-features/v1.1 (contract s1.3, derived-field formulas) ----
+function computeFeatures(phrase, take, sessionMin = 0) {
+  const { exp, pairs } = matchTake(phrase, take);
+  const keys = take.instrument === "keyboard", beatMs = 60000 / take.bpm;
+  const lvl = (p) => (p.velocity !== null && p.velocity !== undefined ? p.velocity : p.rms);
+  const levels = take.notes.map(lvl).filter((v) => Number.isFinite(v));
+  const medLevel = median(levels);
+  const notes = phrase.notes.map((n, i) => {
+    const target = n.name || noteName(n.midi), k = pairs[i];
+    if (k === null) return { i, target, status: "missed", played_i: null, cents_off: null, octave_off: 0, cents_series: null,
+      wobbles: null, held_ratio: null, onset_ms: null, loud_rel: null, wrong_note: false };
+    const p = take.notes[k], diff = p.pitch_midi - n.midi;
+    let oct = Math.round(diff / 12);
+    if (Math.abs((diff - oct * 12) * 100) > TH.in_tune_cents) oct = 0; // octave only when the remainder is within 50 cents
+    oct = z(oct);
+    const wrong = keys && p.pitch_midi !== n.midi; // keys only; voice never sets it
+    const L = lvl(p);
+    return { i, target, status: keys && wrong ? "wrong" : "hit", played_i: k,
+      cents_off: z(Math.round((diff - oct * 12) * 100)), octave_off: oct,
+      cents_series: Array.isArray(p.pitch_series_midi) ? p.pitch_series_midi.map((m) => z(Math.round((m - oct * 12 - n.midi) * 100))) : null,
+      wobbles: Number.isInteger(p.wobbles) ? p.wobbles : null,
+      held_ratio: r3(p.dur_ms / (n.dur_beats * beatMs)),
+      onset_ms: z(Math.round(p.onset_ms - exp[i])),
+      loud_rel: Number.isFinite(L) && medLevel > 0 ? r2(L / medLevel) : null,
+      wrong_note: wrong };
+  });
+  const got = notes.filter((r) => r.status !== "missed"), ons = got.map((r) => r.onset_ms);
+  let tempo = null;
+  if (got.length >= 2) {
+    const a = got[0], b = got[got.length - 1];
+    const playedSpan = take.notes[b.played_i].onset_ms - take.notes[a.played_i].onset_ms, expSpan = exp[b.i] - exp[a.i];
+    if (playedSpan > 0) tempo = r1((take.bpm * expSpan) / playedSpan);
+  }
+  const pitches = got.map((r) => take.notes[r.played_i].pitch_midi);
+  const tuneOk = notes.filter((r) => r.status === "hit" && Math.abs(r.cents_off) <= TH.in_tune_cents && r.octave_off === 0).length;
+  const confPct = take.notes.length === 0 ? 0 : keys ? 100 : Math.round((take.notes.reduce((x, p) => x + p.conf, 0) / take.notes.length) * 100);
+  return {
+    schema: "take-features/v1.1", instrument: take.instrument, take_no: take.take_no, session_min: sessionMin,
+    target: { phrase_id: phrase.id, key: phrase.key, tempo_bpm: take.bpm },
+    notes,
+    summary: { notes_in_tune: `${tuneOk}/${notes.length}`, old_tune_pct: null,
+      range_used: pitches.length ? [noteName(Math.min(...pitches)), noteName(Math.max(...pitches))] : null,
+      comfort_range: null, above_range: 0, tempo_played: tempo,
+      onset_median_ms: median(ons), onset_spread_ms: ons.length ? Math.round(popSd(ons)) : null,
+      pitch_conf_pct: confPct, missed_count: notes.length - got.length, extra_count: take.notes.length - got.length,
+      octave_off_notes: notes.filter((r) => r.octave_off !== 0).length }
+  };
+}
+// v1.2 proposal (contract silent): a note counts as on the beat only when it was the right key (status "hit"), so a wrong key or an
+// octave error never adds to the proof count
+function onBeatCount(features) { return features.notes.filter((r) => r.status === "hit" && Math.abs(r.onset_ms) <= TH.on_time_ms).length; }
+
+// ---- Validator: copied verbatim from take-data-contract.md s4 (name and behaviour kept; only the Node export line is guarded) ----
+// Run in Node tonight on the sixteen fixtures with mocked data; NOT run in a browser or on a real take.
+const CAUSES = ["M1","M2","V1","V2","V3","V4","V5","V6","V7","V8","V9","V10","V11","V12",
+  "K1","K2","K3","K4","K5","K6","X1","X2","none","handoff","out_of_scope"];
+const BANNED = /audio|sample|pcm|blob|wave|buffer|recording|base64|wav/i;   // key names that must never appear
+const isObj = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
+const fin = Number.isFinite, int = Number.isInteger;
+const nullOr = (v, ok) => v === null || ok(v);
+function validatePhrase(p) {                                   // phrases with chords or overlaps are rejected in v1
+  const e = [];
+  if (!isObj(p) || !Array.isArray(p.notes) || p.notes.length === 0) return ["phrase.notes must be a non-empty array"];
+  if (!(fin(p.bpm) && p.bpm >= 30 && p.bpm <= 200)) e.push("phrase.bpm must be finite, 30 to 200");
+  p.notes.forEach((n, k) => {
+    if (!(int(n.midi) && n.midi >= 0 && n.midi <= 127)) e.push(`phrase note ${k}: midi`);
+    if (!(fin(n.start_beat) && n.start_beat >= 0)) e.push(`phrase note ${k}: start_beat`);
+    if (!(fin(n.dur_beats) && n.dur_beats > 0)) e.push(`phrase note ${k}: dur_beats`);
+    if (k > 0 && !(n.start_beat > p.notes[k - 1].start_beat)) e.push(`phrase note ${k}: chord or unsorted start_beat (chords not supported in v1)`);
+  });
+  return e;
+}
+function validateTake(phrase, take, features, cues, plan = null) {
+  const e = [], bad = (m) => e.push(m);
+  if (!isObj(take) || !isObj(features) || !Array.isArray(cues) || !cues.every(isObj)) return ["take, features must be objects; cues an array of objects"];
+  validatePhrase(phrase).forEach(bad);
+  if (!Array.isArray(take.notes) || !Array.isArray(features.notes) || !isObj(features.summary) || !isObj(take.latency)) return [...e, "take.notes, features.notes, features.summary, take.latency required"];
+  const n = take.notes, f = features.notes, s = features.summary, L = take.latency;
+  if (take.schema !== "take/v1" || features.schema !== "take-features/v1.1") bad("schema string");
+  if (take.phrase_id !== phrase.id) bad("take.phrase_id does not match the phrase");
+  if (!({ keyboard: ["midi", "screen"], voice: ["mic"] }[take.instrument] || []).includes(take.input)) bad("instrument and input do not pair");
+  if (features.instrument !== take.instrument) bad("features.instrument differs from take");
+  if (!(fin(take.bpm) && take.bpm >= 30 && take.bpm <= 200)) bad("take.bpm must be finite, 30 to 200");
+  if (!(fin(take.tempo_pct) && take.tempo_pct >= 40 && take.tempo_pct <= 150) || Math.abs(Math.round(phrase.bpm * take.tempo_pct) / 100 - take.bpm) > 0.1) bad("tempo_pct / bpm disagree with phrase.bpm");
+  if (!int(take.take_no) || take.take_no < 1 || !int(take.duration_ms) || take.duration_ms < 0 || typeof take.counts !== "boolean") bad("take_no, duration_ms or counts");
+  if (!["output_timestamp", "output_latency_estimate", "loopback", "none"].includes(L.method) || !(fin(L.correction_ms) && Math.abs(L.correction_ms) <= 1500)) bad("latency.method or correction_ms (finite, within 1500)");
+  n.forEach((x, k) => {                                        // invariants 1, 2, 9
+    if (x.i !== k) bad(`note ${k}: i must equal its index`);
+    if (!(int(x.onset_ms) && x.onset_ms >= -400 && int(x.onset_raw_ms))) bad(`note ${k}: onset_ms and onset_raw_ms must be integers, onset_ms at least -400`);
+    else if (x.onset_ms !== Math.round(x.onset_raw_ms - (fin(L.correction_ms) ? L.correction_ms : 0))) bad(`note ${k}: onset_ms is not onset_raw_ms minus correction_ms`);
+    if (k > 0 && x.onset_ms < n[k - 1].onset_ms) bad(`note ${k}: onsets not sorted`);
+    if (!(int(x.dur_ms) && x.dur_ms >= 0)) bad(`note ${k}: dur_ms must be a non-negative integer`);
+    if (!(fin(x.conf) && x.conf >= 0 && x.conf <= 1)) bad(`note ${k}: conf outside 0..1`);
+    if (!nullOr(x.velocity, (v) => int(v) && v >= 0 && v <= 127)) bad(`note ${k}: velocity`);
+    if (!nullOr(x.rms, (v) => fin(v) && v >= 0 && v <= 1)) bad(`note ${k}: rms`);
+    if (!nullOr(x.wobbles, (v) => int(v) && v >= 0)) bad(`note ${k}: wobbles`);
+    if (!nullOr(x.pitch_series_midi, (v) => Array.isArray(v) && v.length === 8 && v.every(fin))) bad(`note ${k}: pitch_series_midi`);
+    if (!(fin(x.pitch_midi) && x.pitch_midi >= 0 && x.pitch_midi <= 127)) bad(`note ${k}: pitch_midi must be finite, 0 to 127`);
+    else if (take.input !== "mic" && !int(x.pitch_midi)) bad(`note ${k}: key input must be an integer pitch`);
+  });
+  if (f.length !== phrase.notes.length) bad("features.notes length != phrase.notes length");
+  const seen = new Set();
+  f.forEach((r, k) => {                                        // invariants 3, 4
+    if (r.i !== k) bad(`feature ${k}: i must equal its index`);
+    if (r.status === "missed") {
+      if (![r.played_i, r.cents_off, r.onset_ms, r.held_ratio, r.loud_rel].every((v) => v === null)) bad(`feature ${k}: missed row must be null in played_i, cents_off, onset_ms, held_ratio, loud_rel`);
+    } else if (r.status === "hit" || r.status === "wrong") {
+      if (!(int(r.played_i) && r.played_i >= 0 && r.played_i < n.length) || seen.has(r.played_i)) bad(`feature ${k}: played_i out of range or used twice`);
+      seen.add(r.played_i);
+      if (!(fin(r.cents_off) && fin(r.onset_ms) && fin(r.held_ratio) && r.held_ratio >= 0)) bad(`feature ${k}: cents_off, onset_ms, held_ratio must be finite (held_ratio at least 0)`);
+      if (!nullOr(r.loud_rel, (v) => fin(v) && v >= 0)) bad(`feature ${k}: loud_rel`);
+    } else bad(`feature ${k}: status`);
+    if (!int(r.octave_off) || typeof r.wrong_note !== "boolean") bad(`feature ${k}: octave_off or wrong_note`);
+  });
+  const hit = f.filter((r) => r.status !== "missed").length;        // invariant 5: recompute, never trust the client
+  const tuneOk = f.filter((r) => r.status === "hit" && Math.abs(r.cents_off) <= 50 && r.octave_off === 0).length;
+  if (s.missed_count !== f.length - hit) bad("summary.missed_count disagrees with rows");
+  if (s.notes_in_tune !== `${tuneOk}/${f.length}`) bad("summary.notes_in_tune disagrees with rows");
+  if (s.extra_count !== n.length - hit) bad("summary.extra_count disagrees with rows");
+  if (s.octave_off_notes !== f.filter((r) => r.octave_off !== 0).length) bad("summary.octave_off_notes disagrees with rows");
+  if (!(int(s.pitch_conf_pct) && s.pitch_conf_pct >= 0 && s.pitch_conf_pct <= 100)) bad("summary.pitch_conf_pct");
+  (function scan(v, path) {                                    // invariant 6: no audio in features, cues or plan
+    if (Array.isArray(v)) {
+      if (v.length > 8 && v.some((x) => typeof x === "number")) bad(`${path}: number array longer than 8 (audio-like)`);
+      v.forEach((x, k) => scan(x, `${path}[${k}]`));
+    } else if (isObj(v)) {
+      for (const [k, x] of Object.entries(v)) { if (BANNED.test(k)) bad(`${path}.${k}: forbidden key`); scan(x, `${path}.${k}`); }
+    } else if (typeof v === "string" && v.length > 200) bad(`${path}: string over 200 chars`);
+  })({ features, cues, plan }, "payload");
+  const ids = cues.map((c) => c.id);                           // invariant 7: validate the whole cue set first
+  if (new Set(ids).size !== ids.length) bad("duplicate cue ids");
+  if (cues.some((c) => c.take_id !== take.id)) bad("cue belongs to another take");
+  const mine = cues.filter((c) => c.take_id === take.id);
+  if (mine.length !== 1) bad(`expected exactly 1 cue for take ${take.id}, found ${mine.length}`);
+  if (n.length === 0 && take.counts !== false) bad("empty take must have counts=false");
+  if (mine.length === 1) {
+    const c = mine[0], words = typeof c.cue_text === "string" ? c.cue_text.trim().split(/\s+/).filter(Boolean).length : 0;
+    if (!CAUSES.includes(c.cause_class)) bad("cue.cause_class not in the enum");
+    if (words < 1 || words > 20) bad("cue_text must be a string of 1 to 20 words");
+    if (!(int(c.miss_no) && c.miss_no >= 0 && c.miss_no <= 3) || typeof c.handoff_flag !== "boolean" || c.handoff_flag !== (c.miss_no === 3)) bad("miss_no, handoff_flag (true exactly when miss_no is 3)");
+    if (["M1", "M2"].includes(c.cause_class) && take.counts !== false) bad("M1 or M2 take must have counts=false");
+    if (n.length === 0 && c.cause_class !== "M1") bad("empty take must give the set-up cue M1");
+    if (c.cause_class === "none" && s.missed_count !== 0) bad("a pass needs missed_count 0");
+  }
+  return e;
+}
+if (typeof module !== "undefined" && module.exports) module.exports = { validateTake, validatePhrase, CAUSES }; // contract line was: module.exports = { validateTake, validatePhrase, CAUSES };
+
+// ---- Rules (Layer 1): wording verbatim from tech-feedback-layer.md s3 and contract s3 (X1, X2) ----
+// Voice rules V5, V6, V7, V10, V11, V12 exist only so the sixteen fixtures run; V1 to V4, V8, V9 are NOT built (voice path out of scope).
+const RULES = {
+  M1: { tier: 0, cause: "The app could not hear you clearly", cue: "Hold the phone closer and play it again.", metric: "Clear notes heard" },
+  M2: { tier: 0, cause: "Every note is shifted the same amount: likely the phone's delay, not you", cue: "Tap along once so the app can set its timing.", metric: "(set-up fix; no learner score)" },
+  X1: { tier: 3, cause: "You played the right note in a different octave", cue: "Find the note in the octave shown on screen, then play it again.", metric: "Notes in the right octave" },
+  K1: { tier: 3, cause: "You started on the wrong key", cue: "Find the first key on screen before you start.", metric: "First note right" },
+  K2: { tier: 3, cause: "Wrong keys in many places: slower practice usually helps", cue: "Play it at half speed with the click.", metric: "Right keys" },
+  X2: { tier: 3, cause: "You skipped a note", cue: "Play every note in the line, slower if you need to.", metric: "Notes played" },
+  V5: { tier: 4, cause: "The high note falls a little short of the target", cue: "Aim the high note at the top of the line on screen.", metric: "High note in tune" },
+  V6: { tier: 4, cause: "The whole line sits a little under the tune", cue: "Hum the first note with the guide, then sing.", metric: "Notes in tune" },
+  V7: { tier: 4, cause: "The whole line sits a little over the tune", cue: "Hear the guide note first, then match it, not above it.", metric: "Notes in tune" },
+  V10: { tier: 6, cause: "You come in after the beat", cue: "Breathe in on the beat before you sing.", metric: "Notes on the beat" },
+  V11: { tier: 6, cause: "You come in before the beat", cue: "Wait for the click, then sing.", metric: "Notes on the beat" },
+  K3: { tier: 6, cause: "You speed up as you play", cue: "Let the click lead.", metric: "Notes on the beat" }, // matches the spoken line and card in pitch-v2 (Sunday sheet B9)
+  K4: { tier: 6, cause: "You slow down before the hard spot", cue: "Look at the next key while you play this one.", metric: "Notes on the beat" },
+  K5: { tier: 7, cause: "Some notes are long and some short", cue: "Count \"one-two\" aloud and make every note last the same.", metric: "Even notes" },
+  V12: { tier: 7, cause: "You stop notes before their time", cue: "Hold each note for its full bar on screen.", metric: "Notes held to the end" },
+  K6: { tier: 8, cause: "You get louder as you go, so the end sounds rushed", cue: "Play the last note as gently as the first.", metric: "End as gentle as the start" },
+  // pass wording is our own (the tech file says only "say what improved, in proof terms"); it must not claim every note was on the beat:
+  // keys have no rule for notes that are late or early without a tempo change (open question), so a pass can still hold late notes
+  none: { tier: 9, cause: "Step 1 done", cue: "One more step, or finish for today.", metric: "Notes on the beat" } // engine spec s10 "Proof, pass" copy
+};
+// Keys wording for the set-up cues (no phone, no tap-along step that does not exist): M1 from take-data-contract.md s8.3;
+// M2 keys text is our own until a tap calibration exists (prototype-review-v1 D8)
+const KEYS_SETUP = {
+  M1: { cause: "The app did not hear any keys", cue: "Check the keyboard is connected or tap a key on screen, then play it again.", metric: "Notes heard" },
+  M2: { cause: "Every note is shifted the same amount: likely the sound set-up, not you", cue: "Check the sound output, then play it again.", metric: "(set-up fix; no learner score)" }
+};
+const EPS = 1e-9; // rule thresholds compare raw values plus a float guard; rounding is for display only
+function rawTempo(phrase, take, f) {
+  const got = f.notes.filter((r) => r.status !== "missed"); if (got.length < 2) return null;
+  const exp = expectedStarts(phrase, take.bpm), a = got[0], b = got[got.length - 1];
+  const ps = take.notes[b.played_i].onset_ms - take.notes[a.played_i].onset_ms; return ps > 0 ? (take.bpm * (exp[b.i] - exp[a.i])) / ps : null;
+}
+function rawLevelRise(take, f) {
+  const got = f.notes.filter((r) => r.status !== "missed"); if (got.length < 2) return null;
+  const lv = (p) => (p.velocity !== null && p.velocity !== undefined ? p.velocity : p.rms);
+  const a = lv(take.notes[got[0].played_i]), b = lv(take.notes[got[got.length - 1].played_i]);
+  return Number.isFinite(a) && Number.isFinite(b) && a > 0 ? b / a - 1 : null;
+}
+// Precedence (contract s3 table; first rule that fires wins). Same-tier "larger miss" and "not in the last two cues" tie-breaks are
+// not built: the listed order decides (rows 4 and 6 list their order explicitly; K2 sits right after K1).
+const PRECEDENCE = ["M1", "M2", "X1", "K1", "K2", "X2", "V5", "V6", "V7", "V10", "V11", "K3", "K4", "K5", "V12", "K6"];
+
+function firedRules(phrase, take, f) {
+  const s = f.summary, rows = f.notes, N = rows.length, got = rows.filter((r) => r.status !== "missed");
+  const keys = f.instrument === "keyboard", voice = !keys, med = s.onset_median_ms, sp = got.length ? popSd(got.map((r) => r.onset_ms)) : null; // raw spread
+  const fired = {};
+  fired.M1 = take.notes.length === 0 || s.pitch_conf_pct < TH.m1_conf_pct;
+  fired.M2 = med !== null && Math.abs(med) > TH.m2_median_ms && sp < TH.m2_spread_ms;
+  fired.X1 = s.octave_off_notes >= 1;
+  fired.K1 = keys && rows[0].status !== "missed" && rows[0].wrong_note === true;
+  fired.K2 = keys && rows.filter((r) => r.wrong_note).length / N >= TH.k2_share;
+  fired.X2 = s.missed_count >= 1;
+  const top = Math.max(...phrase.notes.map((n) => n.midi));
+  const topRows = got.filter((r) => phrase.notes[r.i].midi === top), lowRows = got.filter((r) => phrase.notes[r.i].midi !== top);
+  fired.V5 = voice && topRows.length > 0 && topRows.every((r) => r.cents_off <= -TH.in_tune_cents) && lowRows.every((r) => Math.abs(r.cents_off) <= TH.in_tune_cents);
+  fired.V6 = voice && got.filter((r) => r.cents_off <= -TH.in_tune_cents).length / N >= TH.v6_share;
+  fired.V7 = voice && got.filter((r) => r.cents_off >= TH.in_tune_cents).length / N >= TH.v6_share;
+  fired.V10 = voice && med !== null && med >= TH.v10_median_ms && sp >= TH.m2_spread_ms;
+  fired.V11 = voice && med !== null && med <= TH.v11_median_ms;
+  const tp = rawTempo(phrase, take, f);
+  fired.K3 = keys && tp !== null && tp >= take.bpm * (1 + TH.k3_fast_pct / 100) - EPS;
+  const w = rows.findIndex((r) => r.wrong_note);
+  fired.K4 = keys && w >= 2 && [w - 2, w - 1, w].every((k) => rows[k].status !== "missed") &&
+    rows[w - 2].onset_ms < rows[w - 1].onset_ms && rows[w - 1].onset_ms < rows[w].onset_ms && rows[w].onset_ms - rows[w - 2].onset_ms >= TH.k4_rise_ms;
+  const held = got.map((r) => r.held_ratio);
+  fired.K5 = keys && held.length >= 2 && Math.max(...held) - Math.min(...held) >= TH.k5_spread;
+  fired.V12 = voice && rows.filter((r) => r.held_ratio !== null && r.held_ratio < TH.v12_held).length / N >= TH.v12_share;
+  const rise = rawLevelRise(take, f);
+  fired.K6 = keys && rise !== null && rise >= TH.k6_rise - EPS;
+  return fired;
+}
+function pickRule(phrase, take, f) { const fired = firedRules(phrase, take, f); return PRECEDENCE.find((id) => fired[id]) || "none"; }
+
+// Proof counts for the cue's own metric (proof_n); "before" is measured on this take, "target" is the full count.
+function proofCount(id, phrase, f, take = null) {
+  const rows = f.notes, N = rows.length, got = rows.filter((r) => r.status !== "missed");
+  const top = Math.max(...phrase.notes.map((n) => n.midi));
+  const medHeld = median(got.map((r) => r.held_ratio));
+  switch (id) {
+    case "M1": case "X2": return { before: got.length, of: N };
+    case "M2": return null;
+    case "X1": return { before: got.filter((r) => r.octave_off === 0).length, of: N };
+    case "K1": return { before: rows[0].status === "hit" ? 1 : 0, of: 1 };
+    case "K2": return { before: rows.filter((r) => r.status === "hit").length, of: N };
+    case "V5": { const t = rows.filter((r) => phrase.notes[r.i].midi === top); return { before: t.filter((r) => r.status !== "missed" && Math.abs(r.cents_off) <= TH.in_tune_cents).length, of: t.length }; }
+    case "V6": case "V7": return { before: Number(f.summary.notes_in_tune.split("/")[0]), of: N };
+    case "K5": return { before: got.filter((r) => Math.abs(r.held_ratio - medHeld) <= TH.k5_even_band).length, of: N };
+    case "V12": return { before: got.filter((r) => r.held_ratio >= TH.v12_held).length, of: N };
+    case "K6": { const rise = take ? rawLevelRise(take, f) : null; return { before: rise !== null && rise >= TH.k6_rise - EPS ? 0 : 1, of: 1 }; } // inverse of the trigger
+    default: return { before: onBeatCount(f), of: N }; // V10, V11, K3, K4, none
+  }
+}
+const yesNo = (id) => id === "K1" || id === "K6";
+function proofText(id, n) { if (!n) return ""; return yesNo(id) ? (n.before >= n.of ? "yes" : "no") : `${n.before} of ${n.of}`; }
+
+// history: earlier cues of this session (oldest first) as { phrase_id, cause_class, counts, passed_at_target }
+function buildCue(phrase, take, f, history = []) {
+  const id = pickRule(phrase, take, f), R = RULES[id], setup = id === "M1" || id === "M2";
+  const pn = proofCount(id, phrase, f, take);
+  const T = take.instrument === "keyboard" && KEYS_SETUP[id] ? KEYS_SETUP[id] : R;
+  // Miss ladder (engine spec s9, T1): each counting take of this phrase with the same cause adds one; only a pass resets.
+  let miss = 0;
+  if (id !== "none" && !setup) {
+    miss = 1;
+    for (let k = history.length - 1; k >= 0; k--) {
+      const h = history[k];
+      if (h.phrase_id !== phrase.id || !h.counts) continue;
+      if (h.cause_class === "none") break;
+      if (h.cause_class === id) miss++;
+    }
+    miss = Math.min(3, miss);
+  }
+  let hint = { kind: "none", expected_i: null, midi: null };
+  const rows = f.notes;
+  if (id === "K1") hint = { kind: "light_key", expected_i: 0, midi: phrase.notes[0].midi };
+  else if (id === "X1") { const r = rows.find((x) => x.octave_off !== 0); hint = { kind: "light_key", expected_i: r.i, midi: phrase.notes[r.i].midi }; }
+  else if (id === "X2") { const r = rows.find((x) => x.status === "missed"); hint = { kind: "light_key", expected_i: r.i, midi: phrase.notes[r.i].midi }; }
+  else if (["K3", "K4", "V10", "V11"].includes(id)) {
+    const r = rows.filter((x) => x.status !== "missed").reduce((a, b) => (Math.abs(b.onset_ms) > Math.abs(a.onset_ms) ? b : a));
+    hint = { kind: "mark_note", expected_i: r.i, midi: phrase.notes[r.i].midi };
+  } else if (["K5", "V12"].includes(id)) {
+    const r = rows.filter((x) => x.status !== "missed").reduce((a, b) => (b.held_ratio < a.held_ratio ? b : a));
+    hint = { kind: "mark_note", expected_i: r.i, midi: phrase.notes[r.i].midi };
+  }
+  return { schema: "cue/v1", id: "cue-" + take.id, take_id: take.id, rule_id: id === "none" ? "PASS" : id, cause_class: id,
+    miss_no: miss, cause_text: T.cause, cue_text: T.cue, visual_hint: hint,
+    proof_metric: T.metric, proof_before: proofText(id, pn),
+    proof_after: pn ? (yesNo(id) ? "yes" : `${pn.of} of ${pn.of}`) : "", // holds the target until a retake exists (contract s1.4)
+    proof_n: pn ? { metric: id, before: pn.before, target: pn.of, of: pn.of } : null,
+    handoff_flag: miss === 3, next_goal_hint: id === "none" ? "harder" : miss === 2 ? "easier" : "same",
+    ceiling: miss === 3, // T1 only (miss 3); T2 to T5 are off in this skeleton
+    source: "rules" };
+}
+// After a retake of the same phrase: the engine overwrites proof_after with the measured value (contract s1.4).
+function measureProofAfter(cue, phrase, retakeFeatures, retakeTake = null) {
+  if (!cue.proof_n) return cue;
+  const n = proofCount(cue.cause_class, phrase, retakeFeatures, retakeTake);
+  return { ...cue, proof_after: proofText(cue.cause_class, n) };
+}
+function takeCounts(take, cue) { return take.counts !== false && !(take.notes.length === 0 || cue.cause_class === "M1" || cue.cause_class === "M2"); }
+
+// ---- Take builder (contract s1.2 shape) used by the fixtures, the stored stage take and the live adapters ----
+function makeTake(o) {
+  const keys = o.instrument === "keyboard", corr = o.correction_ms || 0;
+  return { schema: "take/v1", id: o.id, phrase_id: o.phrase_id, small_goal_id: o.small_goal_id || "sg-demo-1",
+    session_id: o.session_id || "s-fixture", instrument: o.instrument, input: o.input || (keys ? "midi" : "mic"),
+    started_at: o.started_at || "2026-11-07T10:00:00+11:00", take_no: o.take_no || 1, is_retake_of: o.is_retake_of || null,
+    counts: o.counts !== undefined ? o.counts : true, bpm: o.bpm, beats_per_bar: 4, count_in_beats: 4,
+    duration_ms: o.duration_ms, tempo_pct: o.tempo_pct,
+    latency: { method: o.method || (keys ? "output_timestamp" : "loopback"), correction_ms: corr, output_ms: null, input_ms: null, clock_drift_ms: o.clock_drift_ms || 0 },
+    notes: o.rows.map(([pitch, onsetRaw, dur, level, conf], i) => ({ i, pitch_midi: pitch, onset_ms: Math.round(onsetRaw - corr), onset_raw_ms: onsetRaw,
+      dur_ms: dur, velocity: keys ? (level === undefined ? null : level) : null, rms: keys ? null : level, conf: keys ? 1 : conf,
+      wobbles: keys ? null : 0, pitch_series_midi: null })) };
+}
+
+// ---- The sixteen fixtures (contract s6), compact rows: keys [pitch, onset, dur, velocity]; voice [pitch, onset, dur, rms, conf] ----
+const FX_PHRASES = {
+  "twinkle-b3-4": PHRASES["twinkle-b3-4"],
+  "p-repeat": mkPhrase("p-repeat", "p-repeat", 60, [[60, 0, 1], [60, 1, 1]]),
+  "p-chord": mkPhrase("p-chord", "p-chord", 60, [[60, 0, 1], [64, 0, 1]]),
+  "p-overlap": mkPhrase("p-overlap", "p-overlap", 200, [[60, 0, 1], [60, 1, 1]]),
+  "p-one": mkPhrase("p-one", "p-one", 60, [[65, 0, 1]]),
+  "p-early": mkPhrase("p-early", "p-early", 60, [[65, 0, 1], [64, 1, 1]])
+};
+const KEYS_BASE = [[65, 12, 900, 80], [65, 980, 920, 78], [64, 2035, 880, 82], [64, 2992, 910, 79], [62, 4018, 900, 81], [62, 4975, 890, 80], [60, 6010, 1000, 76]];
+const kb = (edits) => KEYS_BASE.map((r, k) => (edits[k] ? edits[k] : r));
+const V = (p, o, d, rms, c = 0.95) => [p, o, d, rms, c];
+const VOICE_OK = [V(64.97, 30, 880, 0.2), V(65.04, 975, 900, 0.21), V(63.95, 2040, 860, 0.22), V(64.06, 2990, 900, 0.23), V(61.96, 4020, 890, 0.24), V(62.03, 4965, 880, 0.25), V(60.02, 6015, 1800, 0.26)];
+const T60 = { phrase_id: "twinkle-b3-4", bpm: 60, tempo_pct: 66.7, duration_ms: 8000 };
+// expect: [cue, notes_in_tune, onset_median_ms, onset_spread_ms, pitch_conf_pct, missed, extra, octave_off_notes, wrong opening note]
+const FIXTURES = [
+  { id: "F01", t: { ...T60, id: "fx-01", instrument: "keyboard", rows: kb({ 0: [64, 12, 900, 80] }) }, expect: ["K1", "6/7", 10, 20, 100, 0, 0, 0, true] },
+  { id: "F02", t: { ...T60, id: "fx-02", instrument: "keyboard", take_no: 2, is_retake_of: "fx-01", rows: kb({}) }, expect: ["K5", "7/7", 10, 20, 100, 0, 0, 0, false] },
+  { id: "F03", t: { ...T60, id: "fx-03", instrument: "keyboard", rows: kb({ 6: [60, 6010, 1850, 76] }) }, expect: ["none", "7/7", 10, 20, 100, 0, 0, 0, false] },
+  { id: "F04", t: { ...T60, id: "fx-04", instrument: "voice", rows: [V(64.3, 30, 880, 0.2), V(64.3, 975, 900, 0.21), ...VOICE_OK.slice(2)] }, expect: ["V5", "5/7", 15, 26, 95, 0, 0, 0, false] },
+  { id: "F05", t: { ...T60, id: "fx-05", instrument: "voice", rows: [V(64.97, 200, 880, 0.2), V(65.04, 1150, 900, 0.21), V(63.95, 2120, 860, 0.22), V(64.06, 3260, 900, 0.23), V(61.96, 4180, 890, 0.24), V(62.03, 5140, 880, 0.25), V(60.02, 6230, 1800, 0.26)] }, expect: ["V10", "7/7", 180, 47, 95, 0, 0, 0, false] },
+  { id: "F06", t: { ...T60, id: "fx-06", instrument: "keyboard", rows: kb({ 1: [65, 980, 400, 78], 3: [64, 2992, 450, 79], 5: [62, 4975, 420, 80], 6: [60, 6010, 900, 76] }) }, expect: ["K5", "7/7", 10, 20, 100, 0, 0, 0, false] },
+  { id: "F07", t: { ...T60, id: "fx-07", instrument: "keyboard", rows: kb({ 0: [67, 12, 900, 80], 6: [60, 6010, 1850, 76] }) }, expect: ["K1", "6/7", 10, 20, 100, 0, 0, 0, true] },
+  { id: "F08", t: { ...T60, id: "fx-08", instrument: "voice", rows: [...VOICE_OK.slice(0, 4), V(50.04, 4020, 890, 0.24), V(50.03, 4965, 880, 0.25), VOICE_OK[6]] }, expect: ["X1", "5/7", 15, 26, 95, 0, 0, 2, false] },
+  { id: "F09", t: { ...T60, id: "fx-09", instrument: "voice", counts: false, rows: [V(64.97, 30, 880, 0.2, 0.5), V(65.04, 975, 900, 0.21, 0.5), V(63.95, 2040, 860, 0.22, 0.5), V(60.02, 6015, 1800, 0.26, 0.5)] }, expect: ["M1", "4/7", 22.5, 25, 50, 3, 0, 0, false] },
+  { id: "F10", t: { ...T60, id: "fx-10", instrument: "voice", counts: false, rows: [] }, expect: ["M1", "0/7", null, null, 0, 7, 0, 0, false] },
+  { id: "F11", t: { id: "fx-11", phrase_id: "p-repeat", instrument: "keyboard", bpm: 60, tempo_pct: 100, duration_ms: 2000, rows: [[60, 0, 900, 80], [60, 1000, 900, 80]] }, expect: ["none", "2/2", 0, 0, 100, 0, 0, 0, false] },
+  { id: "F12", t: { id: "fx-12", phrase_id: "p-chord", instrument: "keyboard", counts: false, bpm: 60, tempo_pct: 100, duration_ms: 1000, rows: [[60, 0, 900, 80], [64, 0, 900, 80]] }, expect: ["REJECT"] },
+  { id: "F13", t: { id: "fx-13", phrase_id: "p-overlap", instrument: "keyboard", bpm: 200, tempo_pct: 100, duration_ms: 600, rows: [[60, 250, 250, 80]] }, expect: ["X2", "1/2", -50, 0, 100, 1, 0, 0, false] },
+  { id: "F14", t: { id: "fx-14", phrase_id: "p-one", instrument: "voice", bpm: 60, tempo_pct: 100, duration_ms: 1000, rows: [V(53, 0, 900, 0.2)] }, expect: ["X1", "0/1", 0, 0, 95, 0, 0, 1, false] },
+  { id: "F15", t: { id: "fx-15", phrase_id: "p-one", instrument: "voice", counts: false, bpm: 60, tempo_pct: 100, duration_ms: 1000, rows: [] }, expect: ["M1", "0/1", null, null, 0, 1, 0, 0, false] },
+  { id: "F16", t: { id: "fx-16", phrase_id: "p-early", instrument: "voice", bpm: 60, tempo_pct: 100, duration_ms: 2000, rows: [V(65, -220, 800, 0.2), V(64, 860, 800, 0.2)] }, expect: ["V11", "2/2", -180, 40, 95, 0, 0, 0, false] }
+];
+function fixtureTake(fx) { return makeTake(fx.t); }
+
+// Self-test: matcher, features, rules, cue, then the contract validator; also the derived numbers of the reference run.
+function runSelfTest() {
+  const lines = []; let pass = 0, fail = 0;
+  for (const fx of FIXTURES) {
+    const phrase = FX_PHRASES[fx.t.phrase_id], take = fixtureTake(fx), errs = [];
+    if (fx.expect[0] === "REJECT") {
+      if (validatePhrase(phrase).length === 0) errs.push("validatePhrase accepted a chord phrase");
+    } else {
+      const f = computeFeatures(phrase, take), cue = buildCue(phrase, take, f), s = f.summary, e = fx.expect;
+      if (cue.cause_class !== e[0]) errs.push(`cue ${cue.cause_class}, expected ${e[0]}`);
+      const got = [s.notes_in_tune, s.onset_median_ms, s.onset_spread_ms, s.pitch_conf_pct, s.missed_count, s.extra_count, s.octave_off_notes, f.notes[0].wrong_note];
+      ["notes_in_tune", "onset_median", "spread", "conf", "missed", "extra", "octave_off", "wrong_opening"].forEach((k, j) => { if (got[j] !== e[j + 1]) errs.push(`${k} ${got[j]}, expected ${e[j + 1]}`); });
+      validateTake(phrase, take, f, [cue]).forEach((m) => errs.push("validator: " + m));
+    }
+    if (errs.length) { fail++; lines.push(`FAIL ${fx.id}: ${errs.join("; ")}`); } else { pass++; lines.push(`pass ${fx.id} (${fx.expect[0]})`); }
+  }
+  // the three phrase records and the stored stage takes must also pass
+  for (const id of Object.keys(PHRASES)) {
+    const pe = validatePhrase(PHRASES[id]); if (pe.length) { fail++; lines.push(`FAIL phrase ${id}: ${pe.join("; ")}`); } else { pass++; lines.push(`pass phrase ${id}`); }
+    const st = STAGE_TAKE1[id], take = makeTake(st.t), f = computeFeatures(PHRASES[id], take), cue = buildCue(PHRASES[id], take, f);
+    const ve = validateTake(PHRASES[id], take, f, [cue]);
+    if (ve.length || cue.cause_class !== st.expect) { fail++; lines.push(`FAIL stage take 1 ${id}: cue ${cue.cause_class} (want ${st.expect}) ${ve.join("; ")}`); }
+    else { pass++; lines.push(`pass stage take 1 ${id} (${cue.cause_class}, on the beat ${onBeatCount(f)} of ${f.notes.length})`); }
+  }
+  return { pass, fail, lines };
+}
+
+// ---- Stored "Take 1" for the REPLAY, one per phrase, at the stage tempo 80 bpm (beat = 750 ms) ----
+// PLACEHOLDERS built by hand tonight with two planted errors each; Saturday replaces them with the real captured take 1
+// (pitch-v1: "take 1, recorded Saturday, replayed through the real scoring code"). Never present these as a recorded take.
+const STAGE_BPM = 80;
+const stageTempoPct = (phrase) => r1((STAGE_BPM / phrase.bpm) * 100);
+const STAGE_TAKE1 = {
+  // Ode bars 1-2: rush from note 5 (K3, the planned cue) plus one short note (K5, outranked); on the beat 4 of 8
+  "ode-b1-2": { expect: "K3", t: { id: "take1-ode-b1-2", phrase_id: "ode-b1-2", instrument: "keyboard", input: "midi", small_goal_id: "sg-1", session_id: "s-stage",
+    bpm: STAGE_BPM, tempo_pct: r1((80 / 90) * 100), duration_ms: 6750,
+    rows: [[64, 125, 650, 80], [64, 845, 640, 79], [65, 1555, 660, 81], [67, 2265, 650, 80], [67, 2840, 600, 82], [65, 3515, 590, 80], [64, 4195, 300, 81], [62, 4880, 700, 79]] } },
+  // Twinkle bars 3-4: wrong first key E4 for F4 (K1) plus a short last note (K5, outranked)
+  "twinkle-b3-4": { expect: "K1", t: { id: "take1-twinkle-b3-4", phrase_id: "twinkle-b3-4", instrument: "keyboard", input: "midi", small_goal_id: "sg-1", session_id: "s-stage",
+    bpm: STAGE_BPM, tempo_pct: r1((80 / 90) * 100), duration_ms: 6750,
+    rows: [[64, 20, 660, 80], [65, 735, 680, 78], [64, 1530, 650, 82], [64, 2240, 670, 79], [62, 3020, 660, 81], [62, 3735, 650, 80], [60, 4510, 700, 76]] } },
+  // Ode bars 5-8: wrong first key D4 for E4 (K1) plus a short note in bar 7 (K5, outranked). K3 cannot fire on this phrase:
+  // its half-beat gap makes W 187.5 ms, so a 10% rush drifts out of the window and becomes X2 (open question)
+  "ode-b5-8": { expect: "K1", t: { id: "take1-ode-b5-8", phrase_id: "ode-b5-8", instrument: "keyboard", input: "midi", small_goal_id: "sg-1", session_id: "s-stage",
+    bpm: STAGE_BPM, tempo_pct: r1((80 / 90) * 100), duration_ms: 12750,
+    rows: [[62, 15, 660, 80], [64, 760, 650, 79], [65, 1510, 660, 81], [67, 2240, 650, 80], [67, 3010, 660, 82], [65, 3760, 650, 80], [64, 4490, 660, 81], [62, 5255, 650, 79],
+      [60, 6010, 660, 80], [60, 6740, 320, 78], [62, 7520, 650, 80], [64, 8240, 660, 81], [62, 9010, 1000, 80], [60, 10130, 330, 79], [60, 10505, 1400, 78]] } }
+};
+/* PURE-END */
+
+</script>
+<script>
+"use strict";
+/* ---- Browser part: audio, clock mapping, input adapters, stage flow, drawing (not run in Node) ---- */
+const $ = (id) => document.getElementById(id);
+// One-line switches. TAKE1_IS_CAPTURE: set true only after STAGE_TAKE1 holds the real Saturday capture (decisions-log; audit row 11).
+// SHOW_PLACEHOLDER_PLAN: keep false; a model answer is shown only if a real saved one exists, never a faked one (audit row 12, sheet A8).
+const TAKE1_IS_CAPTURE = false, SHOW_PLACEHOLDER_PLAN = false;
+const BANNER_CAPTURE = "TAKE 1 - REPLAY: recorded Saturday, scored now", BANNER_PLACEHOLDER = "PLACEHOLDER TAKE, replace with the Saturday capture";
+const S = { step: "goal", phraseId: DEFAULT_PHRASE_ID, take1: null, f1: null, cue1: null, last: null, history: [], rec: null, replay: null,
+  seq: 0, view: null, hint: null, t0: performance.now(), run: 0, raf: 0 };
+const newRun = () => ++S.run; // every start, reset, abort and phrase change takes a new token; a stale await sees a different token and stops
+const phrase = () => PHRASES[S.phraseId];
+const beatMsOf = (bpm) => 60000 / bpm;
+const isoLocal = () => { const d = new Date(), o = -d.getTimezoneOffset(), p = (n) => String(Math.floor(Math.abs(n))).padStart(2, "0");
+  return new Date(d.getTime() + o * 60000).toISOString().slice(0, 19) + (o >= 0 ? "+" : "-") + p(o / 60) + ":" + p(o % 60); };
+
+/* Audio: one AudioContext for the page's life (a rebuilt context would change the clock; contract s2) */
+let ac = null, master = null; const scheduled = new Set();
+async function audioOn() {
+  if (!ac) {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    ac = new AC({ latencyHint: "interactive" });
+    master = ac.createGain(); master.gain.value = 0.6; master.connect(ac.destination);
+    ac.onstatechange = () => { if (ac.state !== "running" && (S.rec || S.replay)) abortRun("Audio stopped (" + ac.state + "): this take does not count; start the count-in again."); debug(); };
+  }
+  if (ac.state !== "running") { try { await ac.resume(); } catch (e) { /* needs a user gesture */ } }
+  return ac.state === "running";
+}
+const hz = (m) => 440 * Math.pow(2, (m - 69) / 12);
+function track(o) { scheduled.add(o); o.onended = () => scheduled.delete(o); return o; }
+function voiceStart(midi, when, vel01) {
+  const o = track(ac.createOscillator()), g = ac.createGain(), peak = 0.12 + 0.18 * (vel01 == null ? 0.7 : vel01);
+  o.type = "triangle"; o.frequency.value = hz(midi);
+  g.gain.setValueAtTime(0.0001, when); g.gain.exponentialRampToValueAtTime(peak, when + 0.012);
+  g.gain.exponentialRampToValueAtTime(peak * 0.45, when + 0.4);
+  o.connect(g); g.connect(master); o.start(when); return { o, g };
+}
+function voiceStop(v, when) {
+  const g = v.g.gain;
+  if (g.cancelAndHoldAtTime) g.cancelAndHoldAtTime(when); else { g.cancelScheduledValues(when); g.setValueAtTime(Math.max(g.value, 0.0001), when); }
+  g.setTargetAtTime(0.0001, when, 0.05); try { v.o.stop(when + 0.4); } catch (e) { /* already stopped */ }
+}
+function clickAt(when, accent, quiet) {
+  const o = track(ac.createOscillator()), g = ac.createGain(), pk = quiet ? 0.07 : accent ? 0.35 : 0.22;
+  o.type = "square"; o.frequency.value = accent ? 1760 : 1320;
+  g.gain.setValueAtTime(0.0001, when); g.gain.exponentialRampToValueAtTime(pk, when + 0.002); g.gain.exponentialRampToValueAtTime(0.0001, when + 0.05);
+  o.connect(g); g.connect(master); o.start(when); o.stop(when + 0.07);
+}
+function stopAllSound() { scheduled.forEach((o) => { try { o.stop(); } catch (e) { /* not started */ } }); scheduled.clear(); }
+
+/* Clock mapping (contract s2): ctx_ms = contextTime x 1000 + (event_ms - performanceTime), pair sampled at take start and end */
+function sampleAnchor() {
+  const ts = ac.getOutputTimestamp ? ac.getOutputTimestamp() : null;
+  if (ts && ts.contextTime > 0 && ts.performanceTime > 0) {
+    const mappedNow = ts.contextTime + (performance.now() - ts.performanceTime) / 1000;
+    if (Math.abs(mappedNow - ac.currentTime) < 0.5) return { c: ts.contextTime, p: ts.performanceTime, method: "output_timestamp", corr: 0 };
+  }
+  return { c: ac.currentTime, p: performance.now(), method: "output_latency_estimate", corr: Math.round((ac.outputLatency || 0) * 1000) };
+}
+const toCtxS = (evMs, A) => A.c + (evMs - A.p) / 1000;
+function evMs(e) { const t = e && e.timeStamp, now = performance.now(); return Number.isFinite(t) && t > 0 && Math.abs(now - t) < 1000 ? t : now; }
+function audibleNowS() { // context time of the sample being heard now (for the playhead only)
+  const ts = ac.getOutputTimestamp ? ac.getOutputTimestamp() : null;
+  if (ts && ts.contextTime > 0 && ts.performanceTime > 0) return ts.contextTime + (performance.now() - ts.performanceTime) / 1000;
+  return ac.currentTime - (ac.outputLatency || 0) - (ac.baseLatency || 0);
+}
+
+/* Input: one path for MIDI, on-screen keys and letters; the input method is invisible to the scorer (contract rule 8) */
+const held = new Map(); let sustain = false; const sustained = [];
+// src identifies one press: "kbd", "ptr<id>" or "midi<port>c<channel>"; input is the contract enum ("midi" or "screen")
+function noteOn(midi, velInt, t, input, src) {
+  if (!ac) return;
+  const key = src + ":" + midi; if (held.has(key)) noteOff(midi, t, src);
+  const entry = { v: voiceStart(midi, ac.currentTime, velInt == null ? null : velInt / 127), rec: null };
+  if (S.rec) entry.rec = recOn(midi, velInt, t, input);
+  held.set(key, entry); lightKey(midi, true);
+}
+function noteOff(midi, t, src) {
+  const key = src + ":" + midi, e = held.get(key); if (!e) return; held.delete(key);
+  if (sustain && src.startsWith("midi")) sustained.push(e.v); else voiceStop(e.v, ac.currentTime);
+  if (e.rec && S.rec) recOff(e.rec, t);
+  if (![...held.keys()].some((k) => k.endsWith(":" + midi))) lightKey(midi, false);
+}
+function releaseAll(prefix) { const now = performance.now(); [...held.keys()].forEach((k) => { const [src, m] = k.split(":"); if (!prefix || src.startsWith(prefix)) noteOff(Number(m), now, src); });
+  if (!prefix) { sustain = false; sustained.splice(0).forEach((v) => voiceStop(v, ac.currentTime)); } }
+
+let midiAccess = null;
+async function connectMidi() {
+  await audioOn();
+  if (!navigator.requestMIDIAccess) { setMidi("No Web MIDI here: use on-screen keys or letters A S D F G H J K"); return; }
+  try { midiAccess = await navigator.requestMIDIAccess({ sysex: false }); bindMidi(); midiAccess.onstatechange = (e) => { bindMidi(); if (e.port && e.port.type === "input" && e.port.state === "disconnected") releaseAll("midi" + e.port.id); }; }
+  catch (err) { setMidi("MIDI blocked or denied: on-screen keys and letters still finish the same take"); }
+}
+function bindMidi() {
+  const names = []; midiAccess.inputs.forEach((inp) => { if (inp.state === "connected") { inp.onmidimessage = onMidi; names.push(inp.name || "MIDI input"); } });
+  setMidi(names.length ? "MIDI: " + names.join(", ") : "No MIDI keyboard seen: re-plug once, then use on-screen keys");
+}
+function setMidi(t) { $("midiState").textContent = t; }
+function onMidi(e) {
+  const d = e.data; if (!d || d.length < 2) return;
+  const st = d[0] & 0xf0, n = d[1], v = d.length > 2 ? d[2] : 0, t = evMs(e), src = "midi" + (e.target && e.target.id) + "c" + (d[0] & 0x0f);
+  if (st === 0x90 && v > 0) { if (ac && ac.state === "running") noteOn(n, v, t, "midi", src); else audioOn().then(() => noteOn(n, v, t, "midi", src)); }
+  else if (st === 0x80 || (st === 0x90 && v === 0)) noteOff(n, t, src);
+  else if (st === 0xb0 && n === 64) { sustain = v >= 64; if (!sustain) sustained.splice(0).forEach((x) => voiceStop(x, ac.currentTime)); }
+  else if (st === 0xb0 && (n === 120 || n === 123)) releaseAll();
+}
+const LETTERS = { a: 60, w: 61, s: 62, e: 63, d: 64, f: 65, t: 66, g: 67, y: 68, h: 69, u: 70, j: 71, k: 72 };
+const typing = (el) => el && (el.tagName === "TEXTAREA" || el.tagName === "INPUT" || el.tagName === "SELECT");
+document.addEventListener("keydown", (e) => {
+  if (e.repeat || e.ctrlKey || e.metaKey || e.altKey || typing(e.target)) return;
+  const m = LETTERS[(e.key || "").toLowerCase()]; if (m === undefined) return;
+  e.preventDefault(); const t = evMs(e);
+  if (ac && ac.state === "running") noteOn(m, null, t, "screen", "kbd"); else audioOn().then(() => noteOn(m, null, t, "screen", "kbd")); // first key starts audio
+});
+document.addEventListener("keyup", (e) => { const m = LETTERS[(e.key || "").toLowerCase()]; if (m !== undefined && ac) noteOff(m, evMs(e), "kbd"); });
+window.addEventListener("blur", () => { if (ac) releaseAll(); });
+
+/* On-screen keys C4 to C5 */
+const KEYS = [];
+function buildKeys() {
+  const kb = $("kb"), whites = [60, 62, 64, 65, 67, 69, 71, 72], blacks = { 61: 0, 63: 1, 66: 3, 68: 4, 70: 5 };
+  const letter = Object.fromEntries(Object.entries(LETTERS).map(([k, v]) => [v, k.toUpperCase()]));
+  const w = 100 / whites.length;
+  const add = (m, cls, left, width) => {
+    const el = document.createElement("div"); el.className = cls; el.style.left = left + "%"; el.style.width = width + "%";
+    el.textContent = letter[m] + " " + noteName(m); el.dataset.m = m; kb.appendChild(el); KEYS[m] = el;
+    el.addEventListener("pointerdown", (e) => { e.preventDefault(); el.setPointerCapture(e.pointerId); const t = evMs(e), src = "ptr" + e.pointerId;
+      if (ac && ac.state === "running") noteOn(m, null, t, "screen", src); else audioOn().then(() => noteOn(m, null, t, "screen", src)); });
+    const up = (e) => { if (ac) noteOff(m, evMs(e), "ptr" + e.pointerId); };
+    el.addEventListener("pointerup", up); el.addEventListener("pointercancel", up); el.addEventListener("lostpointercapture", up);
+  };
+  whites.forEach((m, k) => add(m, "wk", k * w, w));
+  Object.entries(blacks).forEach(([m, k]) => add(Number(m), "bk", (k + 1) * w - w * 0.3, w * 0.6));
+}
+function lightKey(m, on) { if (KEYS[m]) KEYS[m].classList.toggle("lit", on); }
+function hintKey(m) { KEYS.forEach((el) => el && el.classList.remove("hint")); if (m != null && KEYS[m]) KEYS[m].classList.add("hint"); }
+
+/* Recording a live take */
+function recOn(midi, velInt, t, input) {
+  const r = S.rec, raw = (toCtxS(t, r.A) - r.zero) * 1000; // unrounded during the take (contract s2)
+  if (raw - r.A.corr < -400 || raw > r.durMs) return null; // before the window or after the take: not part of it
+  const n = { pitch: midi, raw, off: null, vel: velInt, input }; r.notes.push(n); r.lastAct = performance.now(); return n;
+}
+function recOff(n, t) { const r = S.rec; n.off = (toCtxS(t, r.A) - r.zero) * 1000; r.lastAct = performance.now(); }
+async function startLive() {
+  if (S.rec || S.replay) return;
+  const run = newRun(); $("btnStart").disabled = true;
+  if (!(await audioOn()) || run !== S.run) { if (run === S.run) { $("btnStart").disabled = false; $("liveState").textContent = "Click once more: the browser has not started audio yet."; } return; }
+  const P = phrase(), bpm = currentBpm(), bS = 60 / bpm, beats = Math.max(...P.notes.map((n) => n.start_beat + n.dur_beats));
+  const first = ac.currentTime + 0.25, zero = first + 4 * bS;
+  for (let k = 0; k < 4; k++) clickAt(first + k * bS, k === 0, false);
+  for (let k = 0; k < Math.ceil(beats); k++) clickAt(zero + k * bS, false, true); // quiet guide clicks under the phrase
+  S.rec = { run, A: sampleAnchor(), zero, bpm, durMs: (beats + 1) * bS * 1000, lastExpMs: Math.max(...P.notes.map((n) => n.start_beat)) * bS * 1000, notes: [], lastAct: performance.now(), started_at: isoLocal() };
+  // retry once (the pair can be zero right after resume); only for the same run and before any note used the mapping
+  setTimeout(() => { if (S.rec && S.rec.run === run && !S.rec.notes.length && S.rec.A.method !== "output_timestamp") { const A2 = sampleAnchor(); if (A2.method === "output_timestamp") S.rec.A = A2; } }, 200);
+  $("btnStop").disabled = true; $("liveState").textContent = "Count-in...";
+  S.view = { bpm, notes: [], zero, live: true }; loop();
+}
+function currentBpm() { const v = Number($("bpm").value); return Number.isFinite(v) && v >= 40 && v <= 150 ? v : STAGE_BPM; }
+function finishLive() {
+  const r = S.rec; if (!r) return; S.rec = null;
+  const A2 = sampleAnchor(), endMs = Math.max(0, Math.min(r.durMs, (ac.currentTime - r.zero) * 1000));
+  releaseAll(); stopAllSound(); // a finished take stops sounding: held voices released, guide clicks cancelled
+  const corr = Math.max(-1500, Math.min(1500, r.A.corr)); // contract range; a larger estimate is clamped (flagged in the debug line)
+  const drift = A2.method === r.A.method ? Math.round((A2.c * 1000 - A2.p) - (r.A.c * 1000 - r.A.p)) : 0;
+  const P = phrase(), notes = r.notes.slice().sort((a, b) => a.raw - b.raw);
+  const rows = notes.map((n) => [n.pitch, Math.round(n.raw), Math.max(0, Math.round(Math.min(n.off === null ? endMs : n.off, endMs) - n.raw)), n.input === "midi" ? n.vel : null]);
+  const input = notes.length ? notes[0].input : midiAccess ? "midi" : "screen";
+  S.seq++;
+  const take = makeTake({ id: "t-" + String(S.seq).padStart(4, "0"), phrase_id: P.id, instrument: "keyboard", input, small_goal_id: "sg-1", session_id: "s-stage",
+    started_at: r.started_at, take_no: S.history.length + 1, is_retake_of: S.take1 ? S.take1.id : null, bpm: r.bpm,
+    tempo_pct: r1((r.bpm / P.bpm) * 100), duration_ms: Math.max(0, Math.round(endMs)), method: r.A.method, correction_ms: corr, clock_drift_ms: drift, rows });
+  if (corr !== r.A.corr) debug("latency estimate " + r.A.corr + " ms clamped to 1500");
+  scoreAndShowRetake(take);
+}
+function abortRun(msg) {
+  newRun(); cancelAnimationFrame(S.raf); S.rec = null; S.replay = null; stopAllSound(); if (ac) releaseAll();
+  $("btnReplay").disabled = false;
+  $("btnStart").disabled = false; $("btnStop").disabled = true; $("liveState").textContent = msg; debug(msg);
+}
+
+/* Stage flow */
+function show(step) {
+  S.step = step;
+  ["goal", "replay", "cue", "live", "proof", "handoff"].forEach((s) => $("card-" + s).classList.toggle("hidden", s !== step && !(step === "cue" && s === "replay")));
+  document.querySelectorAll("#steps span").forEach((el) => el.classList.toggle("on", el.dataset.s === step));
+}
+async function playReplay() {
+  if (S.rec || S.replay) return;
+  const run = newRun(); $("btnReplay").disabled = true;
+  const okA = await audioOn(); if (run !== S.run) return;
+  if (!okA) { $("btnReplay").disabled = false; debug("Audio not running yet: click again."); return; }
+  const P = phrase(), st = STAGE_TAKE1[P.id], take = makeTake(st.t), bS = 60 / take.bpm;
+  S.take1 = take; S.f1 = null; S.cue1 = null; S.history = []; S.last = null; hintKey(null);
+  show("replay");
+  const first = ac.currentTime + 0.25, zero = first + 4 * bS;
+  for (let k = 0; k < 4; k++) clickAt(first + k * bS, k === 0, false);
+  for (let k = 0; k < Math.ceil(take.duration_ms / 1000 / bS); k++) clickAt(zero + k * bS, false, true);
+  take.notes.forEach((n) => { const v = voiceStart(n.pitch_midi, zero + n.onset_raw_ms / 1000, n.velocity == null ? null : n.velocity / 127); voiceStop(v, zero + (n.onset_raw_ms + n.dur_ms) / 1000); });
+  S.replay = { run, zero, endS: zero + take.duration_ms / 1000 + 0.45 }; // after the last note's release tail
+  S.view = { bpm: take.bpm, zero, replayTake: take, live: false }; loop();
+}
+function finishReplay() {
+  S.replay = null; $("btnReplay").disabled = false; const P = phrase(), take = S.take1;
+  const f = computeFeatures(P, take, sessionMin()), cue = buildCue(P, take, f, S.history);
+  take.counts = takeCounts(take, cue);
+  S.f1 = f; S.cue1 = cue; S.history.push({ phrase_id: P.id, cause_class: cue.cause_class, counts: take.counts });
+  S.view = { bpm: take.bpm, features: f, take, live: false }; S.hint = cue.visual_hint; hintKey(cue.visual_hint.kind === "light_key" ? cue.visual_hint.midi : null);
+  $("cueCause").textContent = cue.cause_text + ".";
+  $("cueText").textContent = cue.cue_text;
+  $("cueBeat").textContent = `On the beat: ${onBeatCount(f)} of ${f.notes.length}`;
+  $("cueProof").textContent = cue.proof_n && cue.proof_metric !== "Notes on the beat" ? `${cue.proof_metric}: ${cue.proof_before} now` : "";
+  checkValid(P, take, f, cue, "take 1 (replay)");
+  show("cue"); draw();
+}
+const sessionMin = () => r1((performance.now() - S.t0) / 60000);
+function scoreAndShowRetake(take) {
+  const P = phrase(), f = computeFeatures(P, take, sessionMin()), cue = buildCue(P, take, f, S.history);
+  take.counts = takeCounts(take, cue);
+  S.history.push({ phrase_id: P.id, cause_class: cue.cause_class, counts: take.counts });
+  S.last = { take, f, cue }; S.view = { bpm: take.bpm, features: f, take, live: false };
+  checkValid(P, take, f, cue, "retake " + take.id);
+  const N = f.notes.length, after = onBeatCount(f), before = S.f1 ? onBeatCount(S.f1) : null;
+  $("proofBeat").textContent = before === null ? `On the beat: ${after} of ${N}` : `On the beat: ${before} of ${N}, then ${after} of ${N}`;
+  const m = S.cue1 && S.cue1.proof_n && take.counts ? measureProofAfter(S.cue1, P, f, take) : null;
+  $("proofCue").textContent = m && m.proof_metric !== "Notes on the beat" ? `${m.proof_metric}: ${m.proof_before}, then ${m.proof_after}` : !take.counts ? cue.cause_text + ". " + cue.cue_text : "";
+  const better = before !== null && after > before;
+  $("proofNext").textContent = cue.cause_class === "none" && (before === null || after >= before) ? cue.cause_text + "." :
+    before !== null && !better ? "Not yet. Same one fix, slower click. One thing until it works." : "";
+  S.lastCueNote = `retake cue ${cue.cause_class}, miss ${cue.miss_no}${cue.ceiling ? ", ceiling" : ""}`; debug(); // team view only
+  renderTable(P, S.f1, f);
+  $("btnStart").disabled = false; $("btnStop").disabled = true;
+  show("proof"); draw();
+}
+function renderTable(P, fa, fb) {
+  const cell = (r) => { if (!r) return "<td>-</td>"; if (r.status === "missed") return '<td class="bad">not played</td>';
+    const cls = r.status === "wrong" ? "bad" : Math.abs(r.onset_ms) <= TH.on_time_ms ? "ok" : "off";
+    return `<td class="${cls}">${r.onset_ms > 0 ? "+" : ""}${r.onset_ms}${r.status === "wrong" ? " (other key)" : ""}</td>`; };
+  let h = "<tr><th>Note</th><th>Take 1 (replay)</th><th>Retake (live)</th></tr>";
+  P.notes.forEach((n, i) => { h += `<tr><td>${i + 1} ${n.name}</td>${cell(fa && fa.notes[i])}${cell(fb.notes[i])}</tr>`; });
+  $("proofTable").innerHTML = h + `<tr><td colspan="3" class="muted">Thousandths of a second from the beat: minus = before it, plus = after it; on the beat = within ${TH.on_time_ms} (demo setting).</td></tr>`;
+}
+function checkValid(P, take, f, cue, label) {
+  const e = validateTake(P, take, f, [cue]);
+  S.lastValid = `${label}: validator ${e.length ? "ERRORS: " + e.join("; ") : "ok"}`; debug();
+}
+
+/* Live line drawing: ghost bars = phrase, played bars coloured by the scorer (or raw while live) */
+function loop() {
+  if (S.replay && audibleNowS() >= S.replay.endS + 0.1) finishReplay();
+  if (S.rec) {
+    const r = S.rec, nowMs = (ac.currentTime - r.zero) * 1000;
+    if (nowMs >= -50) { $("liveState").textContent = "Play now."; $("btnStop").disabled = false; }
+    const idle = r.notes.length && held.size === 0 && nowMs > r.lastExpMs && performance.now() - r.lastAct > 3000; // 3 s silence rule, only after the last expected note
+    if (nowMs >= r.durMs || idle) finishLive();
+    else $("liveCount").textContent = "On the beat so far: " + liveOnBeat(r);
+  }
+  draw();
+  cancelAnimationFrame(S.raf); if (S.replay || S.rec) S.raf = requestAnimationFrame(loop);
+}
+function liveOnBeat(r) { // provisional count from the same matcher the proof card uses
+  const P = phrase(), rows = r.notes.filter((x) => x.raw - r.A.corr >= -400).sort((a, b) => a.raw - b.raw).map((x) => [x.pitch, Math.round(x.raw), 1, null]);
+  const t = makeTake({ id: "t-prov", phrase_id: P.id, instrument: "keyboard", input: "screen", bpm: r.bpm, tempo_pct: 100, duration_ms: 0, correction_ms: r.A.corr, rows });
+  return onBeatCount(computeFeatures(P, t));
+}
+function draw() {
+  const cv = $("roll"), dpr = window.devicePixelRatio || 1, W = cv.clientWidth, H = cv.clientHeight;
+  if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
+  const g = cv.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
+  const css = getComputedStyle(document.documentElement), col = (v) => css.getPropertyValue(v).trim();
+  const P = phrase(), V = S.view || { bpm: currentBpm() }, bms = beatMsOf(V.bpm);
+  const beats = Math.max(...P.notes.map((n) => n.start_beat + n.dur_beats)) + 1, t0 = -bms, t1 = beats * bms;
+  const played = V.take ? V.take.notes.map((p) => p.pitch_midi) : V.replayTake ? V.replayTake.notes.map((p) => p.pitch_midi) : S.rec ? S.rec.notes.map((n) => n.pitch) : [];
+  const all = [...P.notes.map((n) => n.midi), ...played], lo = Math.min(...all) - 2, hi = Math.max(...all) + 2; // played notes stay inside the roll
+  const x = (ms) => 30 + ((ms - t0) / (t1 - t0)) * (W - 40), rowH = (H - 20) / (hi - lo + 1), y = (m) => 10 + (hi - m) * rowH;
+  g.font = "11px system-ui"; g.fillStyle = col("--muted");
+  for (let b = 0; b <= beats; b++) { g.strokeStyle = col("--line"); g.lineWidth = b % P.beats_per_bar === 0 ? 1.5 : 0.5; g.beginPath(); g.moveTo(x(b * bms), 6); g.lineTo(x(b * bms), H - 6); g.stroke(); }
+  for (let m = lo; m <= hi; m++) if ([0, 2, 4, 5, 7, 9, 11].includes(((m % 12) + 12) % 12)) g.fillText(noteName(m), 2, y(m) + rowH * 0.7);
+  P.notes.forEach((n, i) => { g.fillStyle = col("--ghost"); g.fillRect(x(n.start_beat * bms), y(n.midi) + 2, x((n.start_beat + n.dur_beats) * bms) - x(n.start_beat * bms) - 3, rowH - 4);
+    if (S.hint && S.hint.expected_i === i && S.step !== "goal") { g.strokeStyle = col("--warn"); g.lineWidth = 3; g.strokeRect(x(n.start_beat * bms) - 2, y(n.midi), x((n.start_beat + n.dur_beats) * bms) - x(n.start_beat * bms) + 1, rowH); } });
+  const bar = (pitch, on, dur, color) => { const a = Math.max(t0, Math.min(t1, on)), b = Math.max(a, Math.min(t1, on + dur)); g.fillStyle = color; g.fillRect(x(a), y(pitch) + rowH * 0.25, Math.max(3, x(b) - x(a)), rowH * 0.5); };
+  let head = null;
+  if (V.features && V.take) { // scored: colour by status and timing
+    const used = new Set();
+    V.features.notes.forEach((r) => { if (r.status === "missed") return; used.add(r.played_i); const p = V.take.notes[r.played_i];
+      bar(p.pitch_midi, p.onset_ms, p.dur_ms, r.status === "wrong" ? col("--bad") : Math.abs(r.onset_ms) <= TH.on_time_ms ? col("--ok") : col("--warn")); });
+    V.take.notes.forEach((p, k) => { if (!used.has(k)) bar(p.pitch_midi, p.onset_ms, p.dur_ms, col("--muted")); });
+  } else if (V.replayTake && ac) { head = (audibleNowS() - V.zero) * 1000;
+    V.replayTake.notes.forEach((p) => { if (p.onset_ms <= head) bar(p.pitch_midi, p.onset_ms, Math.min(p.dur_ms, head - p.onset_ms), col("--replay")); });
+  } else if (S.rec && ac) { const r = S.rec; head = (audibleNowS() - r.zero) * 1000;
+    r.notes.forEach((n) => bar(n.pitch, n.raw - r.A.corr, (n.off === null ? head : n.off) - n.raw, col("--accent")));
+  }
+  if (head !== null) { g.strokeStyle = col("--ink"); g.lineWidth = 2; g.beginPath(); g.moveTo(x(head), 4); g.lineTo(x(head), H - 4); g.stroke(); }
+}
+function debug(msg) {
+  const A = S.rec ? S.rec.A : null, L = S.last ? S.last.take.latency : S.take1 ? S.take1.latency : null;
+  $("debug").textContent = [ac ? `audio ${ac.state}, ${ac.sampleRate} Hz, base ${Math.round((ac.baseLatency || 0) * 1000)} ms, output ${Math.round((ac.outputLatency || 0) * 1000)} ms` : "audio not started (first click or key starts it)",
+    A ? `clock ${A.method}, correction ${A.corr} ms` : L ? `last take clock ${L.method}, correction ${L.correction_ms} ms, drift ${L.clock_drift_ms} ms${Math.abs(L.clock_drift_ms) > 5 ? " (over 5 ms: logged)" : ""}` : "",
+    S.lastValid || "", S.lastCueNote || "", msg || ""].filter(Boolean).join(" | ");
+}
+
+/* Wiring */
+function resetAll() { abortRun(""); S.take1 = S.f1 = S.cue1 = S.last = S.view = S.hint = null; S.history = []; hintKey(null); $("goal").value = ""; show("goal"); draw(); debug(); }
+function setPhrase(id) { S.phraseId = id; resetAll(); planExample(); }
+function planExample() { const P = phrase(); $("planExample").textContent = `Step 1: ${P.title}, steady beat, at ${STAGE_BPM} bpm. Step 2: the same phrase at full tempo. Step 3: the next phrase. (Placeholder wording written by hand.)`; }
+async function hearPhrase() {
+  if (S.rec || S.replay) return; const run = S.run; if (!(await audioOn()) || run !== S.run || S.rec || S.replay) return;
+  const P = phrase(), bS = 60 / currentBpm(), first = ac.currentTime + 0.2, zero = first + 4 * bS;
+  for (let k = 0; k < 4; k++) clickAt(first + k * bS, k === 0, false);
+  P.notes.forEach((n) => { const v = voiceStart(n.midi, zero + n.start_beat * bS, 0.7); voiceStop(v, zero + (n.start_beat + n.dur_beats) * bS * 0.95); });
+}
+function selfTest() { const r = runSelfTest(); $("selfOut").textContent = `Self-test: ${r.pass} pass, ${r.fail} fail\n` + r.lines.join("\n"); $("selfBox").open = true; return r; }
+window.addEventListener("DOMContentLoaded", () => {
+  const sel = $("phrase");
+  Object.values(PHRASES).forEach((p) => { const o = document.createElement("option"); o.value = p.id; o.textContent = p.title + (p.id === DEFAULT_PHRASE_ID ? " (freeze default)" : ""); sel.appendChild(o); });
+  sel.value = DEFAULT_PHRASE_ID; sel.addEventListener("change", () => setPhrase(sel.value));
+  $("bpm").value = STAGE_BPM; $("bpm").addEventListener("change", draw);
+  buildKeys(); planExample(); show("goal");
+  $("replayBanner").textContent = TAKE1_IS_CAPTURE ? BANNER_CAPTURE : BANNER_PLACEHOLDER;
+  if (SHOW_PLACEHOLDER_PLAN) $("planBox").classList.remove("hidden");
+  $("btnMidi").addEventListener("click", connectMidi);
+  $("btnHear").addEventListener("click", hearPhrase); $("btnHear2").addEventListener("click", hearPhrase);
+  $("btnSelf").addEventListener("click", selfTest);
+  $("btnReset").addEventListener("click", resetAll);
+  $("btnReplay").addEventListener("click", playReplay);
+  $("btnToLive").addEventListener("click", () => { show("live"); $("liveCount").textContent = "On the beat so far: 0"; $("liveState").textContent = "Press Start: four clicks, then play the phrase."; });
+  $("btnStart").addEventListener("click", startLive);
+  $("btnStop").addEventListener("click", () => { if (S.rec) finishLive(); });
+  $("btnAgain").addEventListener("click", () => { show("live"); $("liveCount").textContent = "On the beat so far: 0"; });
+  $("btnHandoff").addEventListener("click", () => show("handoff"));
+  $("btnBack").addEventListener("click", resetAll);
+  document.addEventListener("visibilitychange", () => { if (document.hidden && (S.rec || S.replay)) abortRun("Tab hidden: this take does not count; start again."); });
+  window.addEventListener("resize", draw);
+  draw(); debug();
+  if (location.hash === "#selftest") { const r = selfTest(); document.title = `SELFTEST ${r.pass} pass ${r.fail} fail`; document.body.dataset.selftest = `${r.pass}/${r.fail}`; }
+});
+</script>
+</body>
+</html>
