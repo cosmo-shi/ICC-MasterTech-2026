@@ -21,11 +21,15 @@ import { usePlayer } from "../ui/usePlayer.ts";
 import { type LiveEvent, Workspace } from "../ui/Workspace.tsx";
 import { FreeLesson } from "./FreeLesson.tsx";
 import { inputsToPhrase } from "../ai/coach.ts";
-import { coachFocus, skillsForActivity, supportFor } from "../ai/learner.ts";
+import { coachFocus, LESSON_INFOS, skillById, skillsForActivity, supportFor } from "../ai/learner.ts";
+import { CHECK_CARDS, type CheckKind, type SupportId, checkInOffer, rulesCheckInOffer } from "../ai/checkin.ts";
+import { CheckPanel, CheckResult as CheckResultCard } from "../ui/CheckPanel.tsx";
+import { freshRelated, restSpans } from "../music/versions.ts";
 import { activityById, instrumentFor, lessonFor } from "../data/curriculum.ts";
 import { useMyLearning } from "../ui/useAttempts.ts";
 import type { InstrumentId } from "../music/events.ts";
 import { LessonSummary } from "./LessonSummary.tsx";
+import { MakeStep } from "./MakeStep.tsx";
 import { LessonShell } from "./LessonShell.tsx";
 import { topicById } from "../data/theory.ts";
 import type { CapturedInput } from "../engine/checker.ts";
@@ -51,6 +55,7 @@ export function LessonScreen({ lessonId, go, view }: Props) {
         </button>
       </div>
     );
+  if (view === "make") return <MakeStep key={lessonId} lessonId={lessonId} go={go} />;
   if (view === "summary")
     return <LessonSummary key={lessonId} lessonId={lessonId} go={go} />;
   if (
@@ -63,7 +68,7 @@ export function LessonScreen({ lessonId, go, view }: Props) {
 
 function AssessedLesson({ lessonId, go }: Props) {
   const base = lessonById(lessonId)!;
-  const { prefs } = usePrefs();
+  const { prefs, set: setPref } = usePrefs();
   const act = activityById(lessonId);
   // Shared ideas (Rhythm basics) are practised on the instrument the learner picks; the
   // exercise, controls and score all change with it.
@@ -97,15 +102,89 @@ function AssessedLesson({ lessonId, go }: Props) {
   const [liveCount, setLiveCount] = useState(0);
   const [takeInputs, setTakeInputs] = useState<CapturedInput[]>([]);
   const [tries, setTries] = useState(0);
+  // "What's getting in the way?" checks, and the supports the learner chose.
+  const [missesInARow, setMissesInARow] = useState(0);
+  const [checking, setChecking] = useState<CheckKind | null>(null);
+  const [checkAnswer, setCheckAnswer] = useState<boolean | null>(null);
+  const [checksDone, setChecksDone] = useState<CheckKind[]>([]);
+  const [checkDeclined, setCheckDeclined] = useState(false);
+  const [playCheck, setPlayCheck] = useState(false);
+  const [autoHear, setAutoHear] = useState(false);
+  const [counting, setCounting] = useState(false);
+  const [fresh, setFresh] = useState<Phrase | null>(null);
+  const [lastTake, setLastTake] = useState<Phrase | null>(null);
+  const checkId = useRef("");
+  const largeBefore = useRef<boolean | null>(null);
   const recorder = useRef<Recorder | null>(null);
   const attemptId = useRef<string>("");
   const player = usePlayer();
   const listen = usePlayer();
 
   const target: Phrase = (
-    mode === "practice" ? lesson.practice : lesson.independent
+    mode === "practice" ? (fresh ?? lesson.practice) : lesson.independent
   )!;
-  const tempo = Math.round(lesson.tempoBpm * (slower ? 0.8 : 1));
+  const tempo = Math.round(lesson.tempoBpm * (playCheck ? 0.75 : slower ? 0.8 : 1));
+  const info = LESSON_INFOS.find((l) => l.id === lessonId);
+  // The learner model offers checks from evidence; with the model off, the rules baseline does.
+  const offer = prefs.aiEnabled ? checkInOffer(planning, info, true) : rulesCheckInOffer(missesInARow, info);
+  const checkSkill = offer?.skill ?? info?.skills[0] ?? "pulse";
+
+  function recordCheck(kind: CheckKind, right: boolean) {
+    const id = newId("chk");
+    checkId.current = id;
+    setChecksDone((d) => (d.includes(kind) ? d : [...d, kind]));
+    void store.put("attempts", {
+      id,
+      createdAt: stamp(),
+      activityId: lessonId,
+      activityVersion: base.version,
+      kind: "check",
+      instrument: inst,
+      tempoBpm: tempo,
+      support: { hintLevel: 0, heardExample: false, largeControls: prefs.large, simplified: prefs.simplified, aiEnabled: prefs.aiEnabled, slower: false },
+      inputs: [],
+      passed: false,
+      probe: { skill: checkSkill, check: kind, right, offeredBy: offer?.by ?? "rules" },
+    } satisfies AttemptRecord);
+  }
+  const noteSupport = (support: SupportId, taken: boolean) =>
+    store.all<AttemptRecord>("attempts").then((rows) => {
+      const r = rows.find((x) => x.id === checkId.current);
+      if (r?.probe) void store.put("attempts", { ...r, probe: { ...r.probe, support, supportTaken: taken } });
+    });
+  const restoreControls = () => {
+    if (largeBefore.current !== null) setPref("large", largeBefore.current);
+    largeBefore.current = null;
+  };
+  const openCheck = (k: CheckKind) => {
+    listen.stop();
+    setResult(null);
+    setDecision(null);
+    setCheckAnswer(null);
+    setPhase("ready");
+    if (k === "play") {
+      // Same music, easier controls: bigger keys or pads and a slower beat.
+      if (largeBefore.current === null) largeBefore.current = prefs.large;
+      setPref("large", true);
+      setChecking(null);
+      setPlayCheck(true);
+    } else setChecking(k);
+  };
+  const closeCheck = (support?: SupportId) => {
+    if (support) {
+      if (support === "hear-first") setAutoHear(true);
+      if (support === "count-aloud") setCounting(true);
+      if (support === "slower") setSlowerChoice(true);
+      if (support === "bigger-controls") largeBefore.current = null; // keep the bigger controls
+      // Then a fresh pattern with the same idea, so the support is tried on something new.
+      if (lesson.practice) setFresh(freshRelated(lesson.practice, tries + checksDone.length));
+    }
+    restoreControls();
+    setChecking(null);
+    setCheckAnswer(null);
+    setCheckDeclined(true);
+    setPhase("ready");
+  };
   const timed = lesson.assessment.checkTiming;
   const expected = soundingEvents(target);
   const totalBeats = target.totalTicks / TPQ;
@@ -129,6 +208,17 @@ function AssessedLesson({ lessonId, go }: Props) {
     recorder.current = null;
     rec.closeAll((totalBeats + 1) * (60000 / tempo));
     const res = checkAttempt(target, rec.inputs, lesson.assessment, tempo);
+    if (playCheck) {
+      // The playing check is one response about the controls: stored for the teacher, never evidence.
+      setPlayCheck(false);
+      setPhase("ready");
+      setChecking("play");
+      setCheckAnswer(res.passed);
+      recordCheck("play", res.passed);
+      return;
+    }
+    if (mode === "practice") setMissesInARow((m) => (res.passed ? 0 : m + 1));
+    setLastTake(inputsToPhrase(rec.inputs, target, tempo));
     const d = decide({
       target,
       inputs: rec.inputs,
@@ -160,6 +250,7 @@ function AssessedLesson({ lessonId, go }: Props) {
         simplified: prefs.simplified,
         aiEnabled: prefs.aiEnabled,
         slower,
+        counting: mode === "practice" && counting,
       },
       inputs: rec.inputs,
       summary: res.summary,
@@ -204,9 +295,21 @@ function AssessedLesson({ lessonId, go }: Props) {
     demoWatched,
     support,
     focusHint,
+    playCheck,
+    counting,
   ]);
 
+  // "Hear it before each try" (a support the learner chose) plays the music, then starts.
   const start = async () => {
+    if (autoHear && mode === "practice" && !playCheck) {
+      setHeardExample(true);
+      setDemoOn(false);
+      await listen.play([{ events: target.events }], tempo, { totalTicks: target.totalTicks, countInBeats: 0, onEnd: () => void begin() });
+      return;
+    }
+    await begin();
+  };
+  const begin = async () => {
     listen.stop();
     setDemoOn(false);
     setResult(null);
@@ -444,6 +547,8 @@ function AssessedLesson({ lessonId, go }: Props) {
               : "A new one. No hints this time."}
           </h1>
           {demoOn && <p className="lp-status" role="status">Watch the {inst === "drums" ? "drums" : "keys"} light up.</p>}
+          {playCheck && <p className="lp-status" role="status">Check: the same music with a slower beat and bigger controls.</p>}
+          {!playCheck && fresh && mode === "practice" && <p className="lp-status">A new pattern with the same idea.</p>}
           {mode === "practice" && hintLevel > 0 && (
             <ol className="hint-list" aria-live="polite">
               {hints.slice(0, hintLevel).map((h) => (
@@ -460,7 +565,10 @@ function AssessedLesson({ lessonId, go }: Props) {
               ))}
             </ol>
           )}
-          <div className="lp-music">{notation}</div>
+          <div className="lp-music">
+            {notation}
+            {counting && mode === "practice" && <BeatCount phrase={target} now={phase === "playing" ? beatNow : null} />}
+          </div>
           <div className="lp-row">
             {timed && (
               <BeatDots
@@ -515,6 +623,16 @@ function AssessedLesson({ lessonId, go }: Props) {
               >
                 Music
               </button>
+              {/* Access, not help: stays available when playing on your own. */}
+              <button
+                type="button"
+                className={`chip${prefs.large ? " is-on" : ""}`}
+                aria-pressed={prefs.large}
+                onClick={() => setPref("large", !prefs.large)}
+                disabled={busy || playCheck}
+              >
+                Bigger controls
+              </button>
             </div>
           </div>
         </div>
@@ -555,7 +673,53 @@ function AssessedLesson({ lessonId, go }: Props) {
     );
   }
 
-  const helped = mode === "practice" && (hintLevel > 0 || slower || demoWatched);
+  if (stage === "try" && checking) {
+    body = (
+      <div className="lp-center check-view">
+        <p className="kicker">Check · {CHECK_CARDS[checking].title}</p>
+        {checking !== "play" ? (
+          <CheckPanel
+            key={checking}
+            kind={checking}
+            skill={checkSkill}
+            target={lesson.practice ?? target}
+            take={lastTake}
+            tempo={Math.round(lesson.tempoBpm * 0.9)}
+            seed={tries}
+            onAnswer={(r) => {
+              setCheckAnswer(r);
+              recordCheck(checking, r);
+            }}
+          />
+        ) : (
+          <h2 className="check-q-title">{checkAnswer ? "That went better with easier controls." : "Still tricky with easier controls."}</h2>
+        )}
+        {checkAnswer !== null && (
+          <CheckResultCard
+            kind={checking}
+            right={checkAnswer}
+            onUse={(sp) => {
+              void noteSupport(sp, true);
+              closeCheck(sp);
+            }}
+            onSkip={() => {
+              void noteSupport("hear-first", false);
+              closeCheck();
+            }}
+            others={(["listen", "read", "play"] as const).filter((k) => !checksDone.includes(k))}
+            onOther={openCheck}
+          />
+        )}
+      </div>
+    );
+    foot = (
+      <button type="button" className="btn-quiet btn-block" onClick={() => closeCheck()}>
+        Back to the music
+      </button>
+    );
+  }
+
+  const helped = mode === "practice" && (hintLevel > 0 || slower || demoWatched || counting || autoHear);
   const sheet =
     stage === "try" && phase === "review" && result && decision ? (
       <section
@@ -601,6 +765,25 @@ function AssessedLesson({ lessonId, go }: Props) {
               <Icon name="ear" size={18} /> Hear the music
             </button>
           </div>
+          {!result.passed && mode === "practice" && offer && !checkDeclined && (
+            <div className="checkin" role="group" aria-labelledby="checkin-h">
+              <p id="checkin-h" className="checkin-q">
+                {skillById(offer.skill).name} has been tricky a few times. Find out what’s getting in the way?
+              </p>
+              <div className="checkin-cards">
+                {(["listen", "read", "play"] as const).map((k) => (
+                  <button key={k} type="button" className="checkin-card" onClick={() => openCheck(k)}>
+                    <Icon name={k === "listen" ? "ear" : k === "read" ? "notes" : inst === "drums" ? "drum" : "piano"} size={24} />
+                    <span className="checkin-title">{CHECK_CARDS[k].title}</span>
+                    <span className="checkin-about">{CHECK_CARDS[k].about}</span>
+                  </button>
+                ))}
+              </div>
+              <button type="button" className="btn-text" onClick={() => setCheckDeclined(true)}>
+                Not now
+              </button>
+            </div>
+          )}
           {!result.passed && mode === "practice" && (
             <div className="chips help-row" role="group" aria-label="Get help">
               <button
@@ -654,7 +837,7 @@ function AssessedLesson({ lessonId, go }: Props) {
               <button
                 type="button"
                 className="btn btn-big"
-                onClick={mode === "practice" ? goIndependent : toSummary}
+                onClick={mode === "practice" ? goIndependent : () => { recordChoice("make"); go(`#/lesson/${lesson.id}/make`); }}
               >
                 {mode === "practice" ? "Now on your own" : "Continue"}
               </button>
@@ -695,7 +878,7 @@ function AssessedLesson({ lessonId, go }: Props) {
   return (
     <LessonShell
       step={stepNo}
-      steps={5}
+      steps={6}
       stepKey={`${stage}-${mode}`}
       onClose={() => {
         player.stop();
@@ -720,5 +903,23 @@ function ToneMark({ tone }: { tone: "good" | "near" | "miss" }) {
       {tone === "good" && <path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />}
       {tone === "near" && <path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor" />}
     </svg>
+  );
+}
+
+/** Counting under the music: beat numbers, and "rest" on silent beats. A support the learner chose. */
+function BeatCount({ phrase, now }: { phrase: Phrase; now: number | null }) {
+  const spans = restSpans(phrase);
+  const beats = Math.round(phrase.totalTicks / TPQ);
+  return (
+    <ol className="beat-count" aria-label="Counting">
+      {Array.from({ length: beats }, (_, i) => {
+        const silent = spans.some(([a, b]) => a <= i * TPQ && (i + 1) * TPQ <= b);
+        return (
+          <li key={i} className={`${silent ? "is-rest" : ""}${now === i ? " is-now" : ""}`}>
+            {silent ? "rest" : String((i % 4) + 1)}
+          </li>
+        );
+      })}
+    </ol>
   );
 }

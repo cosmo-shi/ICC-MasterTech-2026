@@ -50,13 +50,13 @@ export function LessonSummary({ lessonId, go }: { lessonId: string; go: (r: stri
 
   return (
     <LessonShell
-      step={5}
-      steps={5}
+      step={6}
+      steps={6}
       stepKey="summary"
       onClose={() => go('#/learn')}
       foot={
         <div className="lp-foot-row">
-          <button type="button" className="btn-quiet" onClick={() => go(`#/play/make/${lessonId}`)}>
+          <button type="button" className="btn-quiet" onClick={() => go(`#/lesson/${lessonId}/make`)}>
             Make it yours
           </button>
           <button type="button" className="btn btn-big" onClick={() => go(nextRoute)}>

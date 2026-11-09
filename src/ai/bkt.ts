@@ -128,7 +128,8 @@ export function evidenceWeight(attempt: Pick<AttemptRecord, 'kind' | 'support'>)
   if (attempt.kind === 'independent') return WEIGHTS.independent;
   if (attempt.kind !== 'practice') return 0;
   let w = attempt.support.hintLevel >= 3 ? WEIGHTS.answerHint : WEIGHTS.practice;
-  if (attempt.support.slower || attempt.support.heardExample) w *= WEIGHTS.slowerOrHeard;
+  // Slower, heard or watched first, or counting shown: help, so the try counts for less.
+  if (attempt.support.slower || attempt.support.heardExample || attempt.support.counting) w *= WEIGHTS.slowerOrHeard;
   return w;
 }
 

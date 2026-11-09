@@ -44,7 +44,7 @@ export interface AttemptRecord {
   kind: 'practice' | 'independent' | 'mission' | 'mission-check' | 'check';
   instrument: InstrumentId;
   tempoBpm: number;
-  support: { hintLevel: number; heardExample: boolean; largeControls: boolean; simplified: boolean; aiEnabled: boolean; slower: boolean };
+  support: { hintLevel: number; heardExample: boolean; largeControls: boolean; simplified: boolean; aiEnabled: boolean; slower: boolean; counting?: boolean };
   inputs: CapturedInput[];
   summary?: CheckSummary;
   passed: boolean;
