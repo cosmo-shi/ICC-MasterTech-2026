@@ -136,7 +136,7 @@ export function decide(ctx: CoachContext): CoachDecision {
     evidence = [wrong.factId];
   } else if (restHit && (!hinted || hinted === 'rest')) {
     focus = 'rest';
-    observation = fill(o.rest, { beat: Math.floor(restHit.onsetBeats) + 1 });
+    observation = fill(o.rest, { beat: restHit.restBeat ?? Math.floor(restHit.onsetBeats) + 1 });
     evidence = [restHit.factId];
   } else if (missed && !hinted) {
     focus = 'missing';

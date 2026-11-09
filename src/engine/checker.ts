@@ -36,6 +36,8 @@ export interface ExtraFact {
   onsetBeats: number;
   inRest: boolean;
   restId?: string;
+  /** The written beat (1-based) of the rest it landed in, so feedback names the rest, not the nearby beat. */
+  restBeat?: number;
   playedLabel: string;
 }
 
@@ -221,6 +223,7 @@ export function checkAttempt(target: Phrase, inputs: CapturedInput[], a: Assessm
         onsetBeats: inp.onsetMs / beatMs,
         inRest: a.checkRestViolations && !!rest,
         restId: rest?.id,
+        restBeat: rest ? Math.floor(rest.onset / TPQ) + 1 : undefined,
         playedLabel: label(inp),
       });
       ii++;
