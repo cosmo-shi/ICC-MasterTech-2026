@@ -21,6 +21,7 @@ Not checked yet: a real screen reader (NVDA, VoiceOver), real tablets and Chrome
 
 ## Working
 
+- Live learner model plugged in (`carmen-learner-bkt` v1.0.0, Bayesian Knowledge Tracing, `src/ai/bktLearner.ts`) while the AI is on; it drives the existing next-step, lesson-summary and teacher-dashboard estimates, with automatic fallback to the built-in tracker. Settings fitted to simulated learners only (`docs/LEARNER_MODEL_CARD.md`). Checked by unit tests and in the browser; not with children.
 - Sampled piano (VCSL, 10 pitches × 2 layers) and seven sampled drums, with Web Audio, damper release, a voice limit and a Stop button.
 - Keyboard and drum pads by touch, mouse or computer keys; octave shift; simpler layout; bigger controls; note names; calm motion; strong contrast; volume.
 - Ten lessons (L00 to L09) in practice and "on my own" modes, with count-in, notation, listen first, slower tempo, a three-step hint ladder and learner-chosen next steps.
