@@ -27,9 +27,12 @@ Bayesian Knowledge Tracing per skill. For each observation (pass or fail, from c
 | Independent check (new pattern, hints hidden) | 1.0 |
 | Practice | 0.6 |
 | Practice with the answer hint | 0.2 |
-| Slower tempo or heard example | × 0.8 |
+| Slower tempo, heard example or counting shown | × 0.8 |
+| A check (listen, read, or play with easier controls) | 0 |
 
 A weighted observation moves the estimate only part of the way to the posterior. A skill is called **secure** only after at least one passed independent check, so assisted success is never shown as independent. Untimed pitch tasks give no timing observation. Explore and create activities are never used as evidence.
+
+**Checks.** When the same skill has missed twice or more, the latest try was a miss, and there are enough observations, the model offers three short checks that look at different possibilities: hearing the difference (the learner's own take beside a verified version of it with one declared change), reading the written music, and the same music with easier controls. The learner can pick one, none, or another. Each check is one response: it suggests a support the learner may take or turn down, and it is stored but never counted as evidence. The rules baseline offers the same checks after three misses in a row in one visit. A worked example on a seeded test profile is in `docs/MODEL_DECISIONS.md` (generated, not hand-edited).
 
 Pure TypeScript (`src/ai/bkt.ts`, `src/ai/tailor.ts`; the app's decision layer and teacher overrides are in `src/ai/learner.ts`), no runtime library, no network. It rebuilds from stored attempts each time they change, so the same attempts always give the same picture. A teacher can override any skill estimate ("Needs practice" / "Secure") or choose a child's next activity on the child's Teacher page; overrides are stored on the device, labelled as the teacher's, and the model's own estimate stays visible beside them.
 

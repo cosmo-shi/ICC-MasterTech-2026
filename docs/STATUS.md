@@ -76,6 +76,19 @@ momo asked for a real sign-up, a teacher area that a child can't get into, no di
 - **Checked:** `npm test` (127 pass), `npm run build`, `npm run lint` (0 errors). Playwright at 390 px and 1280 px in light and dark: welcome, who's playing, Learn, track tab, start sheet, lesson hear (with model suggestion), try with demo, feedback sheet, summary, Play, My music, teacher class and child. Not checked: real devices, real touch, audio latency, screen readers; axe not re-run on the new screens.
 - **Known gaps:** on a phone the full drum kit pushes the bass drum below the fold during a lesson; the model's settings are fitted to simulated learners only; new lessons and teacher moves are drafts.
 
+## Changed 9 November 2026, night (checks, making, and the model's decisions)
+
+- **Working: checks for a recurring difficulty.** After two misses on the same skill (enough tries, latest one a miss), the feedback offers three checks, each looking at a different possibility: **Listen** (the learner's own take beside a verified version of it with one declared change, e.g. the rest taps taken out), **Read** (one question about the written music), **Play** (the same music slower with bigger controls). The learner picks one, another, or none. Each result suggests one support (hear it first, counting under the music, bigger controls, slower) that the learner can use or turn down. Then a fresh related pattern (rests moved, notes reordered). Checks are stored as `kind: 'check'` and never counted as evidence (`src/ai/checkin.ts`, `src/ui/CheckPanel.tsx`).
+- **Working: verified versions of the learner's own music** (`src/music/versions.ts`): quiet rests, on the beat, written notes, written lengths. Each declares what it changed; `verifyVersion` checks that only declared things changed and the original is kept, before it plays.
+- **Working: access during "on your own".** Bigger controls stay available in independent checks; slower, heard and counting supports reduce how much a try counts.
+- **Working: Make your own** (`#/lesson/:id/make`, `src/music/maker.ts`). After an independent pass: one decision per beat using the lesson's idea (where the rests go, one or two sounds, which drum, which note, short or long), start from the lesson or from the learner's own last try, hear mine vs the lesson's, keep each version separately in My music, compare two versions with the changes in words.
+- **Working: model decisions shown.** `npm run decisions` writes `docs/MODEL_DECISIONS.md` from a seeded test profile: try → evidence → inference → action, beside the rules baseline, and with the model off. Teacher → child shows the same trace for that child's real tries, plus the checks they chose.
+- **Working: Learn.** Track tag, lesson title and step dots are separate (no "Drums · 1–5"). Switching tracks shows where to start there and why (or what to try first). Reasons say small counts in plain words.
+- **Working: desktop.** Feedback opens as a side panel beside the score and instrument from 1100 px.
+- **Fixed:** a tap just before a rest was named as the previous beat; notation captions unreadable at night.
+- **Checked:** `npm test` (153 pass), build, lint (0 errors). Playwright at 390 and 1280 px, light and dark: Learn, track switch, feedback with checks, listen check and result, read check, play check, Make with two versions, summary, Play, My music, teacher class and child.
+- **Not verified:** whether checks or supports help children; whether the model beats the rules for real learners (the seeded profile only illustrates states); check questions and supports are drafts pending a music educator; audio latency, real touch, screen readers.
+
 ## Draft
 
 - All lesson and project wording, sequencing and curriculum links. Not reviewed by a primary music teacher.
