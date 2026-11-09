@@ -76,6 +76,11 @@
   --key-press-edge: #d99000;
   --pad: #fff4ee;
   --pad-edge: #e8cfc6;
+  --drum-rim: #d9d2cf;
+  --drum-shell: #b8437a;
+  --cymbal: #e9bf5c;
+  --cymbal-groove: #d2a43f;
+  --cymbal-edge: #9c7424;
 
   --focus: #2a1736;
   --focus-halo: #ffc23d;
@@ -157,6 +162,11 @@
   --key-press-edge: #a87300;
   --pad: #252d43;
   --pad-edge: #0e1320;
+  --drum-rim: #8f8a99;
+  --drum-shell: #5a3a78;
+  --cymbal: #cfa64e;
+  --cymbal-groove: #b38c3a;
+  --cymbal-edge: #7a5a1c;
 
   --focus: #ffc94d;
   --focus-halo: #141a28;

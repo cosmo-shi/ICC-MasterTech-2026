@@ -761,7 +761,7 @@ code {
 }
 @media (min-width: 900px) {
   .workspace .kb {
-    height: clamp(260px, 50vh, 460px);
+    height: clamp(240px, calc(100vh - 490px), 460px);
   }
   .stage-lesson .workspace .kb,
   .stage-mission .workspace .kb {
@@ -877,11 +877,16 @@ code {
   display: grid;
   grid-template-columns: repeat(var(--white-count), 1fr);
   gap: var(--gap);
-  height: clamp(200px, calc(100svh - 536px), 400px);
+  height: clamp(200px, calc(100svh - 560px), 520px);
   padding-bottom: var(--edge);
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
+}
+@media (max-width: 600px) {
+  .kb {
+    height: clamp(200px, calc(100svh - 600px), 400px);
+  }
 }
 .stage-lesson .kb,
 .stage-mission .kb {
@@ -1042,6 +1047,211 @@ code {
 }
 .pad.is-down .pad-key {
   color: var(--on-sun);
+}
+
+
+/* The keyboard is a window onto C2–C7. The map above it shows where you are;
+   drag it (or tap it) to glide along, like sliding along a real piano bench. */
+.kb-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+  border-radius: 6px 6px 12px 12px;
+}
+.kb-scroll::-webkit-scrollbar {
+  display: none;
+}
+.kb-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+}
+.kb-oct {
+  flex: none;
+  width: 48px;
+  height: 40px;
+  border: 0;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: rgb(255 255 255 / 0.12);
+  color: var(--on-sky);
+}
+.kb-oct:disabled {
+  opacity: 0.35;
+}
+.kb-oct:active:not(:disabled) {
+  background: var(--sun);
+  color: var(--on-sun);
+}
+.kb-nav {
+  position: relative;
+  flex: 1;
+  height: 40px;
+  border-radius: 8px;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.kb-nav:active {
+  cursor: grabbing;
+}
+.kb-nav-keys {
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 calc(100% / var(--n) - 1px), var(--key-black) calc(100% / var(--n) - 1px) calc(100% / var(--n))),
+    var(--key-white);
+  opacity: 0.38;
+}
+.kb-nav-c {
+  position: absolute;
+  bottom: 3px;
+  transform: translateX(-50%);
+  font-size: 0.6875rem;
+  font-weight: 800;
+  color: var(--on-sky);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.kb-nav-c.is-middle {
+  color: var(--sun);
+}
+.kb-nav-window {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  border-radius: 9px;
+  border: 3px solid var(--sun);
+  background: rgb(255 194 61 / 0.16);
+  transition: left 60ms linear;
+  pointer-events: none;
+}
+.kb-nav:focus-visible {
+  outline: 3px solid var(--sun);
+  outline-offset: 3px;
+}
+@media (max-width: 420px) {
+  .kb-nav-c:not(.is-middle) {
+    display: none;
+  }
+}
+
+/* A real kit, seen from the stool. */
+.kit {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  max-height: clamp(240px, calc(100svh - 470px), 520px);
+  margin: 0 auto;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.kit-part {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--w);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border: 0;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 0;
+  color: var(--ink);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+  transition: transform 60ms, box-shadow 60ms, background 60ms;
+}
+.kit-part.drum {
+  background: radial-gradient(circle, var(--pad) 0 66%, rgb(42 23 54 / 0.08) 67% 69%, var(--pad) 70%);
+  box-shadow: 0 0 0 5px var(--drum-rim), 0 0 0 9px var(--drum-shell), 0 var(--edge) 0 9px var(--key-black-edge);
+}
+.kit-part.kit-kick {
+  box-shadow: 0 0 0 6px var(--drum-rim), 0 0 0 14px var(--drum-shell), 0 var(--edge) 0 14px var(--key-black-edge);
+}
+.kit-part.cymbal {
+  background: repeating-radial-gradient(circle, var(--cymbal) 0 6px, var(--cymbal-groove) 6px 7px);
+  box-shadow: 0 var(--edge) 0 var(--cymbal-edge);
+  color: #2a1736;
+}
+.kit-part.cymbal::before {
+  content: '';
+  position: absolute;
+  width: 16%;
+  height: 16%;
+  border-radius: 50%;
+  background: var(--cymbal-edge);
+}
+.kit-part.is-down {
+  transform: translate(-50%, -50%) scale(0.96);
+}
+.kit-part.drum.is-down {
+  background: var(--key-press);
+  color: var(--on-sun);
+}
+.kit-part.cymbal.is-down {
+  background: var(--key-press);
+}
+.kit-part.is-target {
+  outline: 3px solid var(--dusk-soft);
+  outline-offset: 12px;
+}
+.kit-name {
+  position: relative;
+  font-weight: 800;
+  font-size: clamp(0.75rem, 2.4vw, 1rem);
+  line-height: 1.1;
+  text-align: center;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgb(255 255 255 / 0.72);
+  color: #2a1736;
+}
+.kit .pad-key {
+  position: relative;
+  color: #2a1736;
+}
+@media (max-width: 560px) {
+  .kit .pad-key {
+    display: none;
+  }
+}
+.drum-view {
+  margin-left: auto;
+}
+@media (max-width: 600px) {
+  .kit {
+    aspect-ratio: 100 / 86;
+    max-height: none;
+  }
+  .kit-part {
+    left: var(--tx);
+    top: var(--ty);
+    width: var(--tw);
+  }
+}
+.has-dock .drum-view {
+  margin-left: auto;
+}
+@media (max-width: 600px) {
+  .kit {
+    aspect-ratio: 100 / 86;
+    max-height: none;
+  }
+  .kit-part {
+    left: var(--tx);
+    top: var(--ty);
+    width: var(--tw);
+  }
 }
 
 /* ---------- Beats ---------- */

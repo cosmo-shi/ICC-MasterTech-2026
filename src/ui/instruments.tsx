@@ -33,12 +33,17 @@ interface KeyboardProps {
   highlight?: ReadonlySet<number>;
   showNames: boolean;
   showKeyHints: boolean;
+  /** Where the computer-keyboard letters start (the first C on screen). */
+  hintsFrom?: number;
   onDown: (midi: number, t: number, src: InputSource) => void;
   onUp: (midi: number, t: number) => void;
   label: string;
+  style?: React.CSSProperties;
 }
 
-export function Keyboard({ low, whiteCount, down, highlight, showNames, showKeyHints, onDown, onUp, label }: KeyboardProps) {
+/** Piano keys. A finger (or mouse) can slide from key to key: each new key sounds as you
+ *  reach it and the last one stops, like a glissando on a real piano. */
+export function Keyboard({ low, whiteCount, down, highlight, showNames, showKeyHints, hintsFrom, onDown, onUp, label, style }: KeyboardProps) {
   const whites: number[] = [];
   let m = low;
   while (whites.length < whiteCount) {
@@ -52,9 +57,26 @@ export function Keyboard({ low, whiteCount, down, highlight, showNames, showKeyH
   }
   const pointerNotes = useRef(new Map<number, number>());
 
-  const press = (midi: number) => (e: React.PointerEvent) => {
+  const midiAt = (x: number, y: number): number | null => {
+    const el = document.elementFromPoint(x, y)?.closest('[data-midi]') as HTMLElement | null;
+    return el ? Number(el.dataset.midi) : null;
+  };
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    const midi = midiAt(e.clientX, e.clientY);
+    if (midi === null) return;
     e.preventDefault();
-    (e.currentTarget as HTMLElement).releasePointerCapture?.(e.pointerId);
+    // No pointer capture: on touch screens the browser captures to the first key, so let it go
+    // and follow the finger by position instead.
+    (e.target as HTMLElement).releasePointerCapture?.(e.pointerId);
+    pointerNotes.current.set(e.pointerId, midi);
+    onDown(midi, e.timeStamp, 'pointer');
+  };
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const was = pointerNotes.current.get(e.pointerId);
+    if (was === undefined) return;
+    const midi = midiAt(e.clientX, e.clientY);
+    if (midi === null || midi === was) return;
+    onUp(was, e.timeStamp);
     pointerNotes.current.set(e.pointerId, midi);
     onDown(midi, e.timeStamp, 'pointer');
   };
@@ -73,10 +95,21 @@ export function Keyboard({ low, whiteCount, down, highlight, showNames, showKeyH
     }
   };
 
-  const keyHint = (midi: number) => (showKeyHints ? offsetToKey(midi - low) : null);
+  const from = hintsFrom ?? low;
+  const keyHint = (midi: number) => (showKeyHints ? offsetToKey(midi - from) : null);
 
   return (
-    <div className="kb" role="group" aria-label={label} style={{ ['--white-count' as string]: whiteCount }}>
+    <div
+      className="kb"
+      role="group"
+      aria-label={label}
+      style={{ ['--white-count' as string]: whiteCount, ...style }}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={release}
+      onPointerCancel={release}
+      onPointerLeave={release}
+    >
       {whites.map((midi, i) => {
         const hint = keyHint(midi);
         const isC = midiToLetter(midi) === 'C';
@@ -84,14 +117,11 @@ export function Keyboard({ low, whiteCount, down, highlight, showNames, showKeyH
           <button
             key={midi}
             type="button"
+            data-midi={midi}
             className={`kb-key white n-${midiToLetter(midi).toLowerCase()}${down.has(midi) ? ' is-down' : ''}${highlight?.has(midi) ? ' is-target' : ''}`}
             style={{ ['--i' as string]: i }}
             aria-label={`${midiToName(midi)}${highlight?.has(midi) ? ', shown as a hint' : ''}`}
             aria-pressed={down.has(midi)}
-            onPointerDown={press(midi)}
-            onPointerUp={release}
-            onPointerCancel={release}
-            onPointerLeave={release}
             onKeyDown={keyAct(midi)}
             onKeyUp={keyAct(midi)}
           >
@@ -115,14 +145,11 @@ export function Keyboard({ low, whiteCount, down, highlight, showNames, showKeyH
           <button
             key={midi}
             type="button"
+            data-midi={midi}
             className={`kb-key black${down.has(midi) ? ' is-down' : ''}${highlight?.has(midi) ? ' is-target' : ''}`}
             style={{ ['--i' as string]: leftIndex }}
             aria-label={midiToName(midi).replace('♯', ' sharp ')}
             aria-pressed={down.has(midi)}
-            onPointerDown={press(midi)}
-            onPointerUp={release}
-            onPointerCancel={release}
-            onPointerLeave={release}
             onKeyDown={keyAct(midi)}
             onKeyUp={keyAct(midi)}
           >
@@ -223,6 +250,68 @@ export function Drums({ pads, down, highlight, showKeyHints, onHit }: DrumsProps
           )}
         </button>
       ))}
+    </div>
+  );
+}
+
+/* A drum kit laid out as the player sees it from the stool: cymbals on the left,
+   toms above, snare by the left knee, bass drum in front, floor tom on the right.
+   Centres and radii are in % of the kit's width. Wide screens use a 16:10 kit;
+   phones in portrait use a taller arrangement of the same kit (100:86). */
+type KitSpot = { x: number; y: number; r: number };
+const KIT: Partial<Record<DrumSound, { wide: KitSpot; tall: KitSpot; cymbal?: boolean }>> = {
+  crash: { wide: { x: 16, y: 14, r: 13 }, tall: { x: 17, y: 17, r: 15 }, cymbal: true },
+  hihat: { wide: { x: 12, y: 42, r: 10.5 }, tall: { x: 14, y: 50, r: 13 }, cymbal: true },
+  tomHigh: { wide: { x: 50, y: 13, r: 10 }, tall: { x: 50, y: 15, r: 13 } },
+  snare: { wide: { x: 37, y: 44, r: 12 }, tall: { x: 42, y: 46, r: 14 } },
+  kick: { wide: { x: 64, y: 40, r: 14 }, tall: { x: 70, y: 68, r: 17 } },
+  tomLow: { wide: { x: 88, y: 45, r: 10 }, tall: { x: 84, y: 30, r: 14 } },
+};
+const WIDE_H = 62.5;
+const TALL_H = 86;
+
+export function DrumKit({ pads, down, highlight, showKeyHints, onHit }: DrumsProps) {
+  return (
+    <div className="kit" role="group" aria-label={`Drum kit${showKeyHints ? '. Keys ' + pads.map((p) => p.key).join(', ') : ''}`}>
+      {pads.map((p) => {
+        const pos = KIT[p.sound];
+        if (!pos) return null;
+        const { wide: w, tall: t } = pos;
+        return (
+          <button
+            key={p.sound}
+            type="button"
+            className={`kit-part${pos.cymbal ? ' cymbal' : ' drum'} kit-${p.sound}${down.has(p.sound) ? ' is-down' : ''}${highlight?.has(p.sound) ? ' is-target' : ''}`}
+            style={{
+              ['--x' as string]: `${w.x}%`,
+              ['--y' as string]: `${(w.y / WIDE_H) * 100}%`,
+              ['--w' as string]: `${w.r * 2}%`,
+              ['--tx' as string]: `${t.x}%`,
+              ['--ty' as string]: `${(t.y / TALL_H) * 100}%`,
+              ['--tw' as string]: `${t.r * 2}%`,
+            }}
+            aria-label={p.name}
+            onPointerDown={(e) => {
+              e.preventDefault();
+              onHit(p.sound, e.timeStamp, 'pointer');
+            }}
+            onKeyDown={(e) => {
+              if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) {
+                e.preventDefault();
+                e.stopPropagation();
+                onHit(p.sound, e.timeStamp, 'key');
+              }
+            }}
+          >
+            <span className="kit-name">{p.name}</span>
+            {showKeyHints && (
+              <kbd className="pad-key" aria-hidden="true">
+                {p.key}
+              </kbd>
+            )}
+          </button>
+        );
+      })}
     </div>
   );
 }

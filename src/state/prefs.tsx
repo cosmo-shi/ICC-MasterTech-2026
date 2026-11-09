@@ -17,6 +17,7 @@ export interface Prefs {
   saveOnDevice: boolean;
   pathway: PathwayId | null;
   volume: number;
+  drumView: 'pads' | 'kit';
 }
 
 const DEFAULTS: Prefs = {
@@ -32,6 +33,7 @@ const DEFAULTS: Prefs = {
   saveOnDevice: false,
   pathway: null,
   volume: 0.7,
+  drumView: 'kit',
 };
 
 const KEY = 'carmen-prefs-v1';
