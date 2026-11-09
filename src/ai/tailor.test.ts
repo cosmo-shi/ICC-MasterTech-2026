@@ -17,6 +17,12 @@ describe('tailoring planner', () => {
     expect(reasonText(plan)).toBe('Your last 3 tries had a tap in a rest.');
   });
 
+  it('says small counts in plain words', () => {
+    const plan = { provenance: 'learner-model' as const, modelId: 'carmen-learner-bkt', modelVersion: '1.0.0', start: [] };
+    expect(reasonText({ ...plan, next: { lessonId: 'L02', reasonId: 'move-on', skill: 'pulse', count: 1, evidenceAttemptIds: [] } })).toBe('You played the beat well once. Ready for something new.');
+    expect(reasonText({ ...plan, next: { lessonId: 'L02', reasonId: 'practise-pulse', skill: 'pulse', count: 1, evidenceAttemptIds: [] } })).toBe('Your last try was off the beat.');
+  });
+
   it('moves forward when everything seen is going well', () => {
     const attempts = [...Array.from({ length: 6 }, () => attempt('L01')), attempt('L01', { kind: 'independent' })];
     const st = buildLearnerState(attempts, INFOS);

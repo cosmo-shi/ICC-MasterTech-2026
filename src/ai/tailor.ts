@@ -197,7 +197,9 @@ export function planNext(state: LearnerState, ctx: TailorContext): TailorPlan & 
 export function reasonText(plan: TailorPlan): string {
   if (!plan.next) return '';
   const t = skillsData.reasons[plan.next.reasonId] ?? '';
-  return t.replace('{count}', String(plan.next.count ?? '')).replace('{skill}', plan.next.skill ? skillLabel(plan.next.skill) : '');
+  const text = t.replace('{count}', String(plan.next.count ?? '')).replace('{skill}', plan.next.skill ? skillLabel(plan.next.skill) : '');
+  // Plain English for small counts.
+  return text.replace(/\b1 times\b/, 'once').replace(/\b2 times\b/, 'twice').replace(/Your last 1 tries were often/, 'Your last try was').replace(/Your last 1 tries/, 'Your last try');
 }
 
 export function suggestionLabel(id: SuggestionId): string {
