@@ -212,11 +212,10 @@ function AssessedLesson({ lessonId, go }: Props) {
 
   // Tips before starting, and the suggested next step after a try. Suggestions only.
   const tips = phase === 'ready' && !result ? startSuggestions(learner.state, lesson.id, tctx) : [];
-  const plan = phase === 'review' ? planNext(learner.state, learner.context({ currentLessonId: lesson.id })) : null;
+  const plan = phase === 'review' && result ? planNext(learner.state, learner.context({ currentLessonId: lesson.id, justPassed: result.passed })) : null;
   const suggestion = plan && plan.provenance === 'learner-model' && plan.next ? plan.next : null;
-  // When the suggestion is "this one again" or "on my own", it marks the existing button instead of adding a copy.
-  const suggestRetry = !!suggestion && suggestion.lessonId === lesson.id && suggestion.reasonId !== 'try-on-my-own';
-  const suggestOwn = !!suggestion && suggestion.lessonId === lesson.id && suggestion.reasonId === 'try-on-my-own';
+  // When the suggestion is "this one again", it marks the existing button instead of adding a copy.
+  const suggestRetry = !!suggestion && suggestion.lessonId === lesson.id;
   const suggestOther = !!suggestion && suggestion.lessonId !== lesson.id;
 
   // Keep what was suggested with this try, for the grown-ups view (once per try).
@@ -394,13 +393,13 @@ function AssessedLesson({ lessonId, go }: Props) {
                     </button>
                   )}
                   <details className="why">
-                    <summary>{suggestOther ? 'Why?' : `Why ${suggestRetry ? '“Try again”' : '“on my own”'} is suggested`}</summary>
+                    <summary>{suggestOther ? 'Why?' : 'Why “Try again” is suggested'}</summary>
                     <p className="note-text">{reasonText(plan!)} You can choose something else.</p>
                   </details>
                 </div>
               )}
               <div className="row wrap">
-                <button type="button" className={suggestOther || suggestOwn ? 'btn-quiet' : 'btn'} onClick={() => { recordChoice(suggestRetry ? `suggested:${suggestion!.reasonId}:${lesson.id}` : 'retry'); void start(); }}>
+                <button type="button" className={suggestOther ? 'btn-quiet' : 'btn'} onClick={() => { recordChoice(suggestRetry ? `suggested:${suggestion!.reasonId}:${lesson.id}` : 'retry'); void start(); }}>
                   {suggestRetry ? 'Suggested: try again' : 'Try again'}
                 </button>
                 {!slower && (
@@ -409,8 +408,8 @@ function AssessedLesson({ lessonId, go }: Props) {
                   </button>
                 )}
                 {mode === 'practice' && (
-                  <button type="button" className={suggestOwn ? 'btn' : 'btn-quiet'} onClick={() => { if (suggestOwn) recordChoice(`suggested:try-on-my-own:${lesson.id}`); goIndependent(); }}>
-                    {suggestOwn ? `Suggested: ${suggestionLabel('try-on-my-own').toLowerCase()}` : 'Try a new one on my own'}
+                  <button type="button" className="btn-quiet" onClick={goIndependent}>
+                    Try a new one on my own
                   </button>
                 )}
                 {nextInPath && nextInPath !== suggestion?.lessonId && (
@@ -422,7 +421,6 @@ function AssessedLesson({ lessonId, go }: Props) {
                   Just play
                 </button>
               </div>
-              {result.passed && mode === 'practice' && <p className="note-text">Ready for a new one on your own? It’s up to you.</p>}
             </div>
           </section>
         )}

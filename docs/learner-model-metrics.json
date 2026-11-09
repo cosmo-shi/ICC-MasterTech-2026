@@ -4,12 +4,12 @@
   "learners": 400,
   "attemptsPerLearner": 16,
   "model": {
-    "targetsWeakest": 0.543,
+    "targetsWeakest": 0.553,
     "calibrationMAE": 0.144,
     "logLikelihoodPerObservation": -0.374
   },
   "startingSettings": {
-    "targetsWeakest": 0.575,
+    "targetsWeakest": 0.588,
     "calibrationMAE": 0.166,
     "logLikelihoodPerObservation": -0.403
   },

@@ -25,12 +25,42 @@ describe('tailoring planner', () => {
     expect(plan.next?.reasonId).toBe('move-on');
   });
 
-  it('suggests trying it on their own when nearly there without an independent pass', () => {
+  it('after a pass, suggests a different activity from the lesson list, never this one or on my own', () => {
     const attempts = Array.from({ length: 8 }, () => attempt('L01'));
     const st = buildLearnerState(attempts, INFOS);
-    const plan = planNext(st, ctx({ currentLessonId: 'L01' }));
-    expect(plan.next).toMatchObject({ lessonId: 'L01', reasonId: 'try-on-my-own' });
-    expect(plan.start).toContain('try-on-my-own');
+    const plan = planNext(st, ctx({ currentLessonId: 'L01', justPassed: true }));
+    expect(plan.provenance).toBe('learner-model');
+    expect(plan.next?.lessonId).not.toBe('L01');
+    expect(INFOS.some((l) => l.id === plan.next?.lessonId)).toBe(true);
+    expect(JSON.stringify(plan)).not.toContain('on-my-own');
+  });
+
+  it('after a pass, sends practice of a weak skill to another lesson that trains it', () => {
+    const attempts = [attempt('L01'), ...[1, 2, 3].map(() => attempt('L02', {}, { restViolations: 1 })), attempt('L02')];
+    const st = buildLearnerState(attempts, INFOS);
+    const plan = planNext(st, ctx({ currentLessonId: 'L02', justPassed: true }));
+    expect(plan.next).toMatchObject({ lessonId: 'L03', reasonId: 'practise-rests' });
+  });
+
+  it('after a pass with no pathway, moves on to a lesson that builds on this one', () => {
+    const attempts = [attempt('L01'), attempt('L04'), ...[1, 2, 3].map(() => attempt('L05'))];
+    const st = buildLearnerState(attempts, INFOS);
+    const plan = planNext(st, ctx({ route: [], currentLessonId: 'L05', justPassed: true }));
+    expect(plan.next).toMatchObject({ lessonId: 'L06', reasonId: 'move-on' });
+  });
+
+  it('when everything is started, reviews the least-sure other lesson', () => {
+    const all = ['L01', 'L02', 'L03', 'L04', 'L05', 'L06', 'L07', 'L08'];
+    const attempts = all.flatMap((id) => Array.from({ length: 6 }, () => attempt(id)));
+    const st = buildLearnerState(attempts, INFOS);
+    const plan = planNext(st, ctx({ currentLessonId: 'L08', justPassed: true }));
+    expect(plan.next?.lessonId).toBeDefined();
+    expect(plan.next?.lessonId).not.toBe('L08');
+  });
+
+  it('rejects a plan that repeats the lesson just passed', () => {
+    const plan = { provenance: 'learner-model' as const, modelId: 'carmen-learner-bkt', modelVersion: '1.0.0', next: { lessonId: 'L01', reasonId: 'route' as const, evidenceAttemptIds: [] }, start: [] };
+    expect(validatePlan(plan, ctx({ currentLessonId: 'L01', justPassed: true }))).toContain('after a pass, suggest a different activity');
   });
 
   it('offers no start suggestions during an independent check', () => {

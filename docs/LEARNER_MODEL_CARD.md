@@ -6,7 +6,7 @@ Numbers below come from `docs/learner-model-metrics.json`, written by `npm run e
 Keep a running estimate, for each music skill, of how likely it is that the learner has it, using only the checker's facts from attempts on this device. The skills are `pulse` (the beat), `rests`, `subdivision` (two sounds in a beat), `pitch` (the right notes), `reading` (reading notes) and `duration` (holding notes). The lesson-to-skill map lives in `src/data/skills.json`.
 
 The estimate is used to **suggest**, never to decide:
-- the next activity (practise the weakest skill, try it on their own, or move on);
+- the next activity from the lesson list (practise the weakest skill, move on, or go over a lesson again). After a passed try it is always a different activity, never the same lesson again and never "try it on your own";
 - start tips ("Try it slower", "Listen first"), shown as buttons the learner may tap;
 - which fact the coach asks about first, only if the current attempt shows that fact.
 
@@ -43,7 +43,7 @@ Several fitted settings sit at their limits (slip 0.3 for two sounds in a beat a
 ## Evaluation (simulated learners only, different group from the fit)
 | | Fitted settings (in use) | Starting values | Fixed route (rules) |
 |---|---|---|---|
-| Next suggestion trains the truly weakest skill | 54.3% | 57.5% | 35.5% |
+| Next suggestion trains the truly weakest skill | 55.3% | 58.8% | 35.5% |
 | Mean error, predicted pass chance vs hidden level | 0.144 | 0.166 | — |
 | Log-likelihood per observation (higher is better) | -0.374 | -0.403 | — |
 
@@ -51,7 +51,7 @@ Starting guess alone (no updates): mean error 0.334.
 
 Tests (`src/ai/learner.fit.test.ts`, `src/ai/learner.eval.test.ts`) require the fitted settings to predict the test group at least as well as the starting values for every skill, the model to beat the fixed route and the starting guess, and the committed settings and metrics to match a fresh run exactly.
 
-**Interpretation.** Fitting made the estimates closer to the hidden levels and the predictions of each next try better. It made the choice of weakest skill slightly worse (54.3% vs 57.5%), because the fitted settings change the estimate more slowly. Both still beat the fixed route. None of this shows that real children's learning looks like the simulation, or that following the suggestions helps anyone learn. That needs a supervised trial with educators.
+**Interpretation.** Fitting made the estimates closer to the hidden levels and the predictions of each next try better. It made the choice of weakest skill slightly worse (55.3% vs 58.8%), because the fitted settings change the estimate more slowly. Both still beat the fixed route. None of this shows that real children's learning looks like the simulation, or that following the suggestions helps anyone learn. That needs a supervised trial with educators.
 
 ## Privacy
 Reads only attempt records already kept on this device (in memory when saving is off). Stores nothing new except the optional reset time. No identity, age, location or device identifiers are used. Nothing is sent anywhere. The AI off switch turns it off.

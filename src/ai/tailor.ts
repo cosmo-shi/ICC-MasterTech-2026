@@ -13,14 +13,13 @@ import {
   type LessonInfo,
   type SkillId,
   THRESHOLDS,
-  band,
   needsPractice,
   recentFails,
   recentPasses,
   skillLabel,
 } from './learner.ts';
 
-export type SuggestionId = 'slower' | 'listen-first' | 'try-on-my-own';
+export type SuggestionId = 'slower' | 'listen-first';
 export type ReasonId = keyof typeof skillsData.reasons;
 
 export interface TailorPlan {
@@ -39,6 +38,8 @@ export interface TailorContext {
   currentLessonId?: string;
   aiEnabled: boolean;
   independentCheck?: boolean;
+  /** The try just finished passed: suggest a different activity, never this one again. */
+  justPassed?: boolean;
   heardExample?: boolean;
   slower?: boolean;
 }
@@ -103,52 +104,60 @@ function modelPlan(state: LearnerState, ctx: TailorContext): TailorPlan | null {
   const base = { provenance: 'learner-model' as const, modelId: LEARNER_MODEL_ID, modelVersion: LEARNER_MODEL_VERSION };
   const start = ctx.currentLessonId ? startSuggestions(state, ctx.currentLessonId, ctx) : [];
   const coachFocus = ctx.currentLessonId ? coachFocusFor(state, ctx.currentLessonId, ctx) : undefined;
+  // After a pass, the suggestion is always a different activity from the lesson list.
+  const avoid = ctx.justPassed ? ctx.currentLessonId : undefined;
+  const skillsByWeakness = (Object.keys(state.skills) as SkillId[]).sort((a, b) => state.skills[a].p - state.skills[b].p);
 
-  // 1. Practise the weakest skill that has enough evidence.
-  const weakest = (Object.keys(state.skills) as SkillId[])
-    .filter((k) => needsPractice(state.skills[k]))
-    .sort((a, b) => state.skills[a].p - state.skills[b].p)[0];
-  if (weakest) {
-    const lesson = ctx.infos.filter((l) => l.skills.includes(weakest) && prerequisitesStarted(state, l)).sort((a, b) => a.order - b.order)[0];
-    if (lesson) {
-      const sk = state.skills[weakest];
-      return {
-        ...base,
-        next: { lessonId: lesson.id, reasonId: `practise-${weakest}` as ReasonId, skill: weakest, count: Math.max(1, recentFails(sk)), evidenceAttemptIds: sk.evidenceAttemptIds },
-        start,
-        coachFocus,
-      };
-    }
+  // 1. Practise the weakest skill that has enough evidence, in the earliest lesson that trains it.
+  for (const k of skillsByWeakness.filter((x) => needsPractice(state.skills[x]))) {
+    const lesson = ctx.infos
+      .filter((l) => l.id !== avoid && l.skills.includes(k) && prerequisitesStarted(state, l))
+      .sort((a, b) => a.order - b.order)[0];
+    if (!lesson) continue;
+    const sk = state.skills[k];
+    return {
+      ...base,
+      next: { lessonId: lesson.id, reasonId: `practise-${k}` as ReasonId, skill: k, count: Math.max(1, recentFails(sk)), evidenceAttemptIds: sk.evidenceAttemptIds },
+      start,
+      coachFocus,
+    };
   }
 
-  // 2. Nearly there on this lesson, with no independent pass yet: suggest trying it on their own.
-  if (ctx.currentLessonId && !ctx.independentCheck) {
-    const cur = ctx.infos.find((l) => l.id === ctx.currentLessonId);
-    const skills = cur?.skills ?? [];
-    const ready = skills.length > 0 && skills.every((k) => ['nearly', 'secure'].includes(band(state.skills[k])));
-    if (cur && ready && !state.lessons[cur.id]?.independentPassed) {
-      const skill = skills[0];
-      return {
-        ...base,
-        next: { lessonId: cur.id, reasonId: 'try-on-my-own', skill, evidenceAttemptIds: state.skills[skill].evidenceAttemptIds },
-        start: ['try-on-my-own'],
-        coachFocus,
-      };
-    }
-  }
-
-  // 3. Move on: the next unstarted lesson on the route (then in order) whose prerequisites are started.
-  const candidates = [...ctx.route.map((id) => ctx.infos.find((l) => l.id === id)).filter((l): l is LessonInfo => !!l), ...ctx.infos];
+  // 2. Move on: the next unstarted lesson whose prerequisites are started. Prefer, in order: the pathway
+  //    route, lessons that build on this one, other scored lessons, then explore and create activities.
+  const byOrder = [...ctx.infos].sort((a, b) => a.order - b.order);
+  const buildsOnThis = byOrder.filter((l) => !!ctx.currentLessonId && l.prerequisites.includes(ctx.currentLessonId));
+  const candidates = [
+    ...ctx.route.map((id) => ctx.infos.find((l) => l.id === id)).filter((l): l is LessonInfo => !!l),
+    ...buildsOnThis,
+    ...byOrder.filter((l) => l.skills.length > 0),
+    ...byOrder,
+  ];
   const next = candidates.find((l) => l.id !== ctx.currentLessonId && !started(state, l.id) && prerequisitesStarted(state, l));
-  if (!next) return null;
-  const strongest = (Object.keys(state.skills) as SkillId[])
-    .filter((k) => recentPasses(state.skills[k]) > 0)
-    .sort((a, b) => state.skills[b].p - state.skills[a].p)[0];
+  if (next) {
+    const strongest = (Object.keys(state.skills) as SkillId[])
+      .filter((k) => recentPasses(state.skills[k]) > 0)
+      .sort((a, b) => state.skills[b].p - state.skills[a].p)[0];
+    return {
+      ...base,
+      next: strongest
+        ? { lessonId: next.id, reasonId: 'move-on', skill: strongest, count: recentPasses(state.skills[strongest]), evidenceAttemptIds: state.skills[strongest].evidenceAttemptIds }
+        : { lessonId: next.id, reasonId: 'route', evidenceAttemptIds: [] },
+      start,
+      coachFocus,
+    };
+  }
+
+  // 3. Everything is started: go back to the other lesson whose skills the model is least sure about.
+  const review = ctx.infos
+    .filter((l) => l.id !== ctx.currentLessonId && l.skills.length > 0)
+    .map((l) => ({ l, p: Math.min(...l.skills.map((k) => state.skills[k].p)) }))
+    .sort((a, b) => a.p - b.p || a.l.order - b.l.order)[0];
+  if (!review) return null;
+  const skill = [...review.l.skills].sort((a, b) => state.skills[a].p - state.skills[b].p)[0];
   return {
     ...base,
-    next: strongest
-      ? { lessonId: next.id, reasonId: 'move-on', skill: strongest, count: recentPasses(state.skills[strongest]), evidenceAttemptIds: state.skills[strongest].evidenceAttemptIds }
-      : { lessonId: next.id, reasonId: 'route', evidenceAttemptIds: [] },
+    next: { lessonId: review.l.id, reasonId: 'review', skill, evidenceAttemptIds: state.skills[skill].evidenceAttemptIds },
     start,
     coachFocus,
   };
@@ -163,6 +172,7 @@ export function validatePlan(plan: TailorPlan, ctx: TailorContext): string[] {
   }
   for (const s of plan.start) if (!SUGGESTIONS.includes(s)) problems.push(`unknown suggestion ${s}`);
   if (ctx.independentCheck && plan.start.length) problems.push('no suggestions during an independent check');
+  if (ctx.justPassed && plan.provenance === 'learner-model' && plan.next?.lessonId === ctx.currentLessonId) problems.push('after a pass, suggest a different activity');
   if (plan.provenance === 'learner-model' && (plan.modelId !== LEARNER_MODEL_ID || plan.modelVersion !== LEARNER_MODEL_VERSION)) {
     problems.push('model provenance without the loaded learner model');
   }
@@ -193,7 +203,7 @@ export function suggestionLabel(id: SuggestionId): string {
 /** Short words for grown-ups: why a lesson was suggested. */
 export function reasonLabel(reasonId: string): string {
   if (reasonId.startsWith('practise-')) return `to practise ${skillLabel(reasonId.slice('practise-'.length) as SkillId)}`;
-  if (reasonId === 'try-on-my-own') return 'to try it on their own';
+  if (reasonId === 'review') return 'to go over it again';
   if (reasonId === 'move-on') return 'to move on';
   return 'next on the route';
 }

@@ -153,14 +153,13 @@
     "practise-pitch": "Your last {count} tries had a different note.",
     "practise-reading": "Reading the notes was tricky {count} times.",
     "practise-duration": "Your last {count} tries let a note go too soon or too late.",
-    "try-on-my-own": "You are nearly there with {skill}. Try it on your own.",
     "move-on": "You played {skill} well {count} times. Ready for something new.",
-    "route": "This is next on your route."
+    "route": "This is next on your route.",
+    "review": "Another go at {skill} will help it stick."
   },
   "suggestions": {
     "slower": "Try it slower",
-    "listen-first": "Listen first",
-    "try-on-my-own": "Try it on my own"
+    "listen-first": "Listen first"
   },
   "paramsSource": "Fitted by maximum likelihood to 800 simulated learners x 16 tries (seed 1) by npm run fit:learner. Simulated data only: not fitted to children. startingParams are the reviewed hand values."
 }
