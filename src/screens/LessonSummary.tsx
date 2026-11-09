@@ -1,10 +1,9 @@
-import { lessonStars, nextStep, skillsForActivity } from '../ai/learner.ts';
+import { lessonStars, nextFor, reasonText, skillsForActivity } from '../ai/learner.ts';
 import { lessonById } from '../data/catalog.ts';
-import { routeLessons } from '../data/route.ts';
-import { usePrefs } from '../state/prefs.tsx';
+import { activityById } from '../data/curriculum.ts';
 import { Icon } from '../ui/icons.tsx';
 import { useMyLearning } from '../ui/useAttempts.ts';
-import { Stars } from './LearnScreen.tsx';
+import { Stars, titleOf } from './LearnScreen.tsx';
 import { LessonShell } from './LessonShell.tsx';
 
 type Dim = 'pitch' | 'onset' | 'rest' | 'duration';
@@ -24,11 +23,10 @@ const STAR_TEXT = ['You haven’t tried this one yet.', 'You had a go. Try again
 
 export function LessonSummary({ lessonId, go }: { lessonId: string; go: (r: string) => void }) {
   const lesson = lessonById(lessonId)!;
-  const { prefs } = usePrefs();
-  const { attempts, evidence, estimates, model } = useMyLearning();
+  const { attempts, planning, overrides, context } = useMyLearning();
   const mine = attempts.filter((a) => a.activityId === lessonId && a.summary);
   const best = [...mine].sort((a, b) => (b.summary!.correctSound + b.summary!.onTime) - (a.summary!.correctSound + a.summary!.onTime) || b.createdAt - a.createdAt)[0];
-  const stars = lessonStars(evidence, lessonId);
+  const stars = lessonStars(attempts, lessonId);
   const a = lesson.assessment;
 
   const dims: { dim: Dim; x: number; y: number }[] = [];
@@ -42,12 +40,14 @@ export function LessonSummary({ lessonId, go }: { lessonId: string; go: (r: stri
   const ratio = (d: { x: number; y: number }) => (d.y ? d.x / d.y : 0);
   const well = [...dims].sort((p, q) => ratio(q) - ratio(p)).find((d) => ratio(d) >= 0.75);
   const work = [...dims].sort((p, q) => ratio(p) - ratio(q)).find((d) => ratio(d) < 1);
-  const step = nextStep(routeLessons(prefs.pathway).filter((id) => id !== lessonId || work), estimates);
-  const next = lessonById(step.activityId);
-  const after = lessonById(nextStep(routeLessons(prefs.pathway).filter((id) => id !== lessonId), estimates).activityId);
+  // The next activity comes from the learner model (or a teacher's pick, or the route).
+  const plan = nextFor(planning, overrides, context({ currentLessonId: lessonId, justPassed: stars >= 2 }));
+  const nextId = plan.next?.lessonId;
+  const nextAct = nextId ? activityById(nextId) : undefined;
+  const nextRoute = nextAct ? (nextAct.kind === 'lesson' ? `#/lesson/${nextAct.id}` : `#/mission/${nextAct.id}`) : '#/learn';
+  const why = plan.teacher ? 'Your teacher picked this.' : plan.provenance === 'learner-model' ? reasonText(plan) : '';
   const theory = skillsForActivity(lessonId)[0]?.theory;
 
-  const nextIsMake = step.activityId === lessonId;
   return (
     <LessonShell
       step={5}
@@ -56,11 +56,11 @@ export function LessonSummary({ lessonId, go }: { lessonId: string; go: (r: stri
       onClose={() => go('#/learn')}
       foot={
         <div className="lp-foot-row">
-          <button type="button" className="btn-quiet" onClick={() => go(nextIsMake && after ? `#/lesson/${after.id}` : `#/play/make/${lessonId}`)}>
-            {nextIsMake ? (after ? 'Next lesson' : 'Back to path') : 'Make it yours'}
+          <button type="button" className="btn-quiet" onClick={() => go(`#/play/make/${lessonId}`)}>
+            Make it yours
           </button>
-          <button type="button" className="btn btn-big" onClick={() => go(nextIsMake || !next ? `#/play/make/${lessonId}` : `#/lesson/${next.id}`)}>
-            {nextIsMake || !next ? 'Make it yours' : 'Next lesson'}
+          <button type="button" className="btn btn-big" onClick={() => go(nextRoute)}>
+            {nextAct ? 'Next' : 'Back to Learn'}
           </button>
         </div>
       }
@@ -107,11 +107,12 @@ export function LessonSummary({ lessonId, go }: { lessonId: string; go: (r: stri
             </div>
           </section>
         </div>
-        {!nextIsMake && next && (
-          <p className="up-next-line">
-            <span className="kicker">{model.kind === 'live' ? 'Carmen suggests' : 'Up next'}</span> {next.title}
-            {step.why === 'practise' ? ' (one more go will help)' : ''}
-          </p>
+        {nextAct && (
+          <div className="up-next-line">
+            <span className="kicker">Up next</span>
+            <span className="up-next-name">{titleOf(nextAct.id)}</span>
+            {why && <span className="up-next-why">{why}</span>}
+          </div>
         )}
       </div>
     </LessonShell>

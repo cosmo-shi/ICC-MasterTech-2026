@@ -1,11 +1,9 @@
-import { lessonStars, nextStep, skillById, skillsForActivity } from '../ai/learner.ts';
+import { lessonStars, nextFor, reasonText } from '../ai/learner.ts';
 import { useEffect, useRef, useState } from 'react';
 import { blurb, lessonById, missionById } from '../data/catalog.ts';
-import { routeLessons, UNITS } from '../data/route.ts';
-import { usePrefs } from '../state/prefs.tsx';
+import { type Activity, type TrackId, TRACKS, activityById, positionInTrack, trackActivities, trackById } from '../data/curriculum.ts';
 import { Icon, type IconName } from '../ui/icons.tsx';
 import { useMyLearning } from '../ui/useAttempts.ts';
-
 /** Three note heads: had a go, matched with practice, matched on your own. */
 export function Stars({ n, size = 18 }: { n: number; size?: number }) {
   return (
@@ -32,30 +30,57 @@ export function LearnTabs({ at, go }: { at: 'path' | 'theory'; go: (r: string) =
   );
 }
 
-const WHY: Record<string, (skill?: string) => string> = {
-  start: () => 'A good place to begin.',
-  next: () => 'Next on your pathway.',
-  practise: (s) => `${s ?? 'This'} is still settling. One more go will help.`,
-  make: () => 'You’ve been all along the pathway. Make something new!',
-};
+export const TRACK_ICON: Record<TrackId, IconName> = { foundations: 'click', piano: 'piano', drums: 'drum', create: 'music' };
+export const titleOf = (id: string) => lessonById(id)?.title ?? missionById(id)?.title ?? id;
+
+const READING: Record<Activity['reading'], string> = { none: 'Listen and copy', symbols: 'Rhythm symbols', stave: 'Notes on the stave' };
+const INPUT: Record<Activity['input'], string> = { tap: 'Tap in time', keys: 'Find the keys', hold: 'Hold keys down', make: 'Make your own' };
+
+/** Which instrument, in words a child can scan. Shared ideas say both. */
+export function InstrumentLine({ a }: { a: Activity }) {
+  if (a.instrument === 'either')
+    return (
+      <span className="inst-line">
+        <Icon name="drum" size={18} />
+        <Icon name="piano" size={18} />
+        Drums or piano
+      </span>
+    );
+  return (
+    <span className="inst-line">
+      <Icon name={a.instrument === 'drums' ? 'drum' : 'piano'} size={18} />
+      {a.instrument === 'drums' ? 'Drums' : 'Piano'}
+    </span>
+  );
+}
+
+function Level({ n }: { n: number }) {
+  return (
+    <span className="level-dots" role="img" aria-label={`Music level ${n} of 4`}>
+      {[1, 2, 3, 4].map((i) => (
+        <i key={i} className={i <= n ? 'on' : ''} />
+      ))}
+    </span>
+  );
+}
 
 const ZIG = [0, 1, 2, 1, 0, -1, -2, -1];
 
 export function LearnScreen({ go }: { go: (r: string) => void }) {
-  const { prefs } = usePrefs();
-  const { evidence, estimates, model } = useMyLearning();
-  const route = routeLessons(prefs.pathway);
-  const step = nextStep(route, estimates);
+  const { attempts, planning, overrides, context } = useMyLearning();
+  const plan = nextFor(planning, overrides, context());
+  const nextId = plan.next?.lessonId ?? 'L00';
+  const nextAct = activityById(nextId)!;
+  const [track, setTrack] = useState<TrackId>(nextAct.track);
   const [open, setOpen] = useState<string | null>(null);
-  const hereRef = useRef<HTMLButtonElement>(null);
-  useEffect(() => {
-    // After the page's own scroll-to-top, bring "you are here" into view.
-    const t = window.setTimeout(() => hereRef.current?.scrollIntoView?.({ block: 'center' }), 60);
-    return () => window.clearTimeout(t);
-  }, []);
-  let n = 0;
 
-  const openStop = open ? UNITS.flatMap((u) => u.stops).find((s) => s.id === open) : undefined;
+  const started = (id: string) => attempts.some((a) => a.activityId === id);
+  const starsFor = (a: Activity) => (a.kind === 'lesson' ? lessonStars(attempts, a.id) : started(a.id) ? 3 : 0);
+  const pos = positionInTrack(nextId)!;
+  // Shown only when it is evidence (the model ran on this child's tries) or a teacher's choice.
+  const why = plan.teacher ? 'Your teacher picked this for you.' : plan.provenance === 'learner-model' ? reasonText(plan) : '';
+  const nextStars = starsFor(nextAct);
+  const list = trackActivities(track);
 
   return (
     <div className="screen learn">
@@ -64,75 +89,81 @@ export function LearnScreen({ go }: { go: (r: string) => void }) {
         <LearnTabs at="path" go={go} />
       </div>
 
-      <ol className="path" aria-label="Your path">
-        {UNITS.map((u, ui) => (
-          <li key={u.id} className="path-unit">
-            <div className={`unit-banner u-${ui % 5}`}>
-              <span className="unit-kicker">Unit {ui + 1}</span>
-              <h2 className="unit-name">{u.title}</h2>
-              <p className="unit-about">{u.about}</p>
-            </div>
-            <ol className="nodes">
-              {u.stops.map((s) => {
-                const off = ZIG[n++ % ZIG.length];
-                const here = s.id === step.activityId;
-                const isLesson = s.kind === 'lesson';
-                const title = isLesson ? lessonById(s.id)?.title : missionById(s.id)?.title;
-                if (!title) return null;
-                const stars = isLesson ? lessonStars(evidence, s.id) : evidence.some((a) => a.activityId === s.id) ? 3 : 0;
-                const state = stars === 3 ? 'done' : stars > 0 ? 'started' : 'new';
-                return (
-                  <li key={s.id} className={`node-li${here ? ' is-here' : ''}`} style={{ '--off': off } as React.CSSProperties}>
-                    {here && (
-                      <span className="node-bubble" aria-hidden="true">
-                        {step.why === 'practise' ? 'Practise' : 'Start'}
-                      </span>
-                    )}
-                    <button
-                      ref={here ? hereRef : undefined}
-                      type="button"
-                      className={`node node-${state}${isLesson ? '' : ' node-project'}${here ? ' node-here' : ''}`}
-                      aria-label={`${title}. ${isLesson ? `${stars} of 3 stars` : stars ? 'Started' : 'Project'}${here ? '. Up next' : ''}`}
-                      aria-haspopup="dialog"
-                      onClick={() => setOpen(s.id)}
-                    >
-                      <Icon name={!isLesson ? 'music' : state === 'done' ? 'check' : skillIcon(s.id)} size={34} />
-                    </button>
-                    {isLesson && <Stars n={stars} size={14} />}
-                  </li>
-                );
-              })}
-            </ol>
-          </li>
-        ))}
-      </ol>
+      <section className={`resume tr-${nextAct.track}`} aria-labelledby="resume-h">
+        <p className="kicker">
+          {nextStars ? 'Carry on' : 'Up next'} · {pos.track.name} · Step {pos.index} of {pos.total}
+        </p>
+        <h2 id="resume-h" className="resume-title">
+          {titleOf(nextId)}
+        </h2>
+        <p className="resume-learn">{nextAct.learn}</p>
+        <InstrumentLine a={nextAct} />
+        {why && (
+          <p className="resume-why">
+            <Icon name="ear" size={18} /> {why}
+          </p>
+        )}
+        <button type="button" className="btn btn-big" onClick={() => go(nextAct.kind === 'lesson' ? `#/lesson/${nextId}` : `#/mission/${nextId}`)}>
+          {nextStars ? 'Keep going' : 'Start'}
+        </button>
+      </section>
 
-      {openStop && (
-        <StopSheet
-          id={openStop.id}
-          kind={openStop.kind}
-          stars={openStop.kind === 'lesson' ? lessonStars(evidence, openStop.id) : 0}
-          suggested={openStop.id === step.activityId ? (model.kind === 'live' ? 'Carmen picked this for you. ' : '') + WHY[step.why](step.skill ? skillById(step.skill).name : undefined) : undefined}
-          onClose={() => setOpen(null)}
-          go={go}
-        />
-      )}
+      <div className="track-tabs" role="tablist" aria-label="Tracks">
+        {TRACKS.map((t) => (
+          <button key={t.id} type="button" role="tab" aria-selected={track === t.id} aria-controls="track-panel" className={`track-tab tr-${t.id}`} onClick={() => setTrack(t.id)}>
+            <Icon name={TRACK_ICON[t.id]} size={22} />
+            <span>{t.name}</span>
+          </button>
+        ))}
+      </div>
+
+      <div id="track-panel" role="tabpanel" className={`track-panel tr-${track}`}>
+        <div className="track-banner">
+          <h2 className="track-name">{trackById(track).name}</h2>
+          <p className="track-about">{trackById(track).about}</p>
+        </div>
+        <ol className="nodes" aria-label={`${trackById(track).name} steps`}>
+          {list.map((a, i) => {
+            const here = a.id === nextId;
+            const stars = starsFor(a);
+            const state = stars === 3 ? 'done' : stars > 0 ? 'started' : 'new';
+            const project = a.kind === 'project';
+            return (
+              <li key={a.id} className={`node-li${here ? ' is-here' : ''}`} style={{ '--off': ZIG[i % ZIG.length] } as React.CSSProperties}>
+                {here && (
+                  <span className="node-bubble" aria-hidden="true">
+                    {stars ? 'Carry on' : 'Start'}
+                  </span>
+                )}
+                <button
+                  type="button"
+                  className={`node node-${state}${project ? ' node-project' : ''}${here ? ' node-here' : ''}`}
+                  aria-label={`Step ${i + 1}: ${titleOf(a.id)}. ${project ? (stars ? 'Started' : 'Project') : `${stars} of 3 stars`}${here ? '. Up next' : ''}`}
+                  aria-haspopup="dialog"
+                  onClick={() => setOpen(a.id)}
+                >
+                  <Icon name={state === 'done' ? 'check' : project ? 'music' : a.instrument === 'drums' ? 'drum' : a.instrument === 'keyboard' ? 'piano' : TRACK_ICON[a.track]} size={34} />
+                </button>
+                <span className="node-label">{titleOf(a.id)}</span>
+                {!project && <Stars n={stars} size={14} />}
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+
+      {open && <StopSheet id={open} stars={starsFor(activityById(open)!)} started={started} suggested={open === nextId ? why : ''} onClose={() => setOpen(null)} go={go} />}
     </div>
   );
 }
 
-function skillIcon(id: string): IconName {
-  const sk = skillsForActivity(id)[0]?.id;
-  if (sk === 'pulse' || sk === 'rests' || sk === 'quavers') return 'drum';
-  if (sk === 'reading' || sk === 'duration') return 'notes';
-  if (sk === 'explore') return 'sound';
-  return 'piano';
-}
-
-function StopSheet({ id, kind, stars, suggested, onClose, go }: { id: string; kind: 'lesson' | 'project'; stars: number; suggested?: string; onClose: () => void; go: (r: string) => void }) {
-  const l = kind === 'lesson' ? lessonById(id) : undefined;
-  const m = kind === 'project' ? missionById(id) : undefined;
-  const title = l?.title ?? m?.title ?? '';
+function StopSheet({ id, stars, started, suggested, onClose, go }: { id: string; stars: number; started: (id: string) => boolean; suggested: string; onClose: () => void; go: (r: string) => void }) {
+  const a = activityById(id)!;
+  const pos = positionInTrack(id)!;
+  const l = lessonById(id);
+  const m = missionById(id);
+  const after = trackActivities(a.track)[pos.index];
+  const first = a.prerequisites.filter((p) => !started(p)).map(titleOf);
   const btn = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     btn.current?.focus();
@@ -140,19 +171,46 @@ function StopSheet({ id, kind, stars, suggested, onClose, go }: { id: string; ki
     window.addEventListener('keydown', k);
     return () => window.removeEventListener('keydown', k);
   }, [onClose]);
+  const controls = Object.entries(a.controls)
+    .map(([inst, c]) => (a.instrument === 'either' ? `${inst === 'drums' ? 'Drums' : 'Piano'}: ${c}` : c))
+    .join(' · ');
   return (
     <div className="stop-sheet-wrap" onClick={onClose}>
-      <div className="stop-sheet" role="dialog" aria-modal="true" aria-labelledby="stop-h" onClick={(e) => e.stopPropagation()}>
-        <p className="kicker">{kind === 'project' ? 'Project with a partner part' : l?.goal}</p>
+      <div className={`stop-sheet tr-${a.track}`} role="dialog" aria-modal="true" aria-labelledby="stop-h" onClick={(e) => e.stopPropagation()}>
+        <p className="kicker">
+          {pos.track.name} · Step {pos.index} of {pos.total}
+          {a.kind === 'project' ? ' · Project' : ''}
+        </p>
         <h2 id="stop-h" className="stop-sheet-title">
-          {title}
+          {titleOf(id)}
         </h2>
-        <p className="stop-sheet-sub">{blurb(id, (l ?? m)!.objective)}</p>
-        {kind === 'lesson' && <Stars n={stars} size={28} />}
+        <p className="stop-sheet-sub">{blurb(id, (l ?? m)?.objective ?? a.learn)}</p>
+        {a.kind === 'lesson' && <Stars n={stars} size={28} />}
+        <dl className="stop-facts">
+          <div>
+            <dt>You’ll learn</dt>
+            <dd>{a.learn}</dd>
+          </div>
+          <div>
+            <dt>Play on</dt>
+            <dd>
+              <InstrumentLine a={a} />
+              <span className="facts-sub">{controls}</span>
+            </dd>
+          </div>
+          <div>
+            <dt>Music</dt>
+            <dd>
+              <Level n={a.level} /> <span className="facts-sub">{READING[a.reading]} · {INPUT[a.input]}</span>
+            </dd>
+          </div>
+        </dl>
+        {first.length > 0 && <p className="stop-sheet-note">Helps to try first: {first.join(', ')}</p>}
         {suggested && <p className="stop-sheet-why">{suggested}</p>}
-        <button ref={btn} type="button" className="btn btn-big btn-block" onClick={() => go(kind === 'lesson' ? `#/lesson/${id}` : `#/mission/${id}`)}>
+        <button ref={btn} type="button" className="btn btn-big btn-block" onClick={() => go(a.kind === 'lesson' ? `#/lesson/${id}` : `#/mission/${id}`)}>
           {stars === 3 ? 'Play again' : stars ? 'Keep going' : 'Start'}
         </button>
+        {after && <p className="stop-sheet-after">After this: {titleOf(after.id)}</p>}
         <button type="button" className="btn-text" onClick={onClose}>
           Not now
         </button>

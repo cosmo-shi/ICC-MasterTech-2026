@@ -1,10 +1,10 @@
 @import './styles/tokens.css';
 
-/* Carmen — "Songbook Horizon".
-   Layout rule: the landscape frames the app; a sheet of paper holds the work; the
+/* Carmen — "Soft Light" (palette sampled from momo's cat reference; tokens in styles/tokens.css).
+   Layout rule: a soft colour scene frames the app; a sheet of tinted paper holds the work; the
    instrument sits on that paper in its own dark case, like a real object on a desk.
-   Elevation rule: only playable things (keys, pads, Record) have a physical edge.
-   Everything else is flat on the paper and grouped by space, not by boxes. */
+   Elevation rule: only playable things (keys, pads, Record) and the main button have a physical
+   edge. Everything else is flat on the paper and grouped by space and tints, not boxes. */
 
 *,
 *::before,
@@ -84,7 +84,8 @@ code {
 .title,
 .h1 {
   font-family: var(--font-brand);
-  font-weight: 400;
+  font-weight: var(--w-display);
+  letter-spacing: -0.01em;
   font-size: var(--t-title);
   line-height: 1.05;
   letter-spacing: 0.005em;
@@ -145,6 +146,7 @@ code {
   align-items: center;
   gap: 0.25em;
   font-family: var(--font-brand);
+  font-weight: var(--w-display);
   line-height: 1;
   color: var(--on-sky);
 }
@@ -864,12 +866,12 @@ code {
   background: var(--key-black);
   border-radius: 20px;
   padding: 10px 8px 12px;
-  box-shadow: 0 10px 24px rgb(42 23 54 / 0.18);
+  box-shadow: 0 10px 24px rgb(35 38 74 / 0.18);
 }
 :root[data-theme='dark'] .kb-wrap,
 :root[data-theme='dark'] .pads-wrap {
-  background: #05080f;
-  box-shadow: inset 0 0 0 1px #2e3850;
+  background: var(--case);
+  box-shadow: inset 0 0 0 1px var(--hairline);
 }
 .kb {
   --gap: 3px;
@@ -961,7 +963,7 @@ code {
   color: var(--ink);
 }
 :root[data-theme='dark'] .kb-name {
-  color: #1b1424;
+  color: #23264a;
 }
 .kb-name sub {
   font-size: 0.6em;
@@ -969,13 +971,13 @@ code {
   color: var(--ink-soft);
 }
 :root[data-theme='dark'] .kb-name sub {
-  color: #5a5060;
+  color: #575b80;
 }
 .kb-hint {
   font-family: var(--font-ui);
   font-size: 0.6875rem;
   font-weight: 700;
-  color: #6b5a72;
+  color: var(--ink-soft);
 }
 .kb-key.black .kb-hint {
   color: rgb(255 255 255 / 0.55);
@@ -1000,7 +1002,7 @@ code {
   border: 0;
   min-height: clamp(124px, 24vh, 220px);
   border-radius: 18px;
-  background: radial-gradient(circle at 50% 46%, transparent 0 46%, rgb(42 23 54 / 0.06) 47% 48%, transparent 49%), var(--pad);
+  background: radial-gradient(circle at 50% 46%, transparent 0 46%, rgb(35 38 74 / 0.06) 47% 48%, transparent 49%), var(--pad);
   color: var(--ink);
   box-shadow: 0 var(--edge) 0 var(--pad-edge);
   display: flex;
@@ -1127,7 +1129,7 @@ code {
   bottom: -2px;
   border-radius: 9px;
   border: 3px solid var(--sun);
-  background: rgb(255 194 61 / 0.16);
+  background: rgb(248 151 119 / 0.18);
   transition: left 60ms linear;
   pointer-events: none;
 }
@@ -1172,7 +1174,7 @@ code {
   transition: transform 60ms, box-shadow 60ms, background 60ms;
 }
 .kit-part.drum {
-  background: radial-gradient(circle, var(--pad) 0 66%, rgb(42 23 54 / 0.08) 67% 69%, var(--pad) 70%);
+  background: radial-gradient(circle, var(--pad) 0 66%, rgb(35 38 74 / 0.08) 67% 69%, var(--pad) 70%);
   box-shadow: 0 0 0 5px var(--drum-rim), 0 0 0 9px var(--drum-shell), 0 var(--edge) 0 9px var(--key-black-edge);
 }
 .kit-part.kit-kick {
@@ -1181,7 +1183,7 @@ code {
 .kit-part.cymbal {
   background: repeating-radial-gradient(circle, var(--cymbal) 0 6px, var(--cymbal-groove) 6px 7px);
   box-shadow: 0 var(--edge) 0 var(--cymbal-edge);
-  color: #2a1736;
+  color: #23264a;
 }
 .kit-part.cymbal::before {
   content: '';
@@ -1214,11 +1216,11 @@ code {
   padding: 2px 6px;
   border-radius: 6px;
   background: rgb(255 255 255 / 0.72);
-  color: #2a1736;
+  color: #23264a;
 }
 .kit .pad-key {
   position: relative;
-  color: #2a1736;
+  color: #23264a;
 }
 @media (max-width: 560px) {
   .kit .pad-key {
@@ -1288,14 +1290,14 @@ code {
 /* ---------- Notation ---------- */
 .notation {
   margin: var(--s3) 0 0;
-  background: #fffdf9;
+  background: #fffdfb;
   border-radius: var(--r-md);
   padding: var(--s1) var(--s2);
   overflow-x: auto;
 }
 :root[data-theme='dark'] .notation {
   /* Music is printed on paper even at night, so the engraving keeps full contrast. */
-  background: #f1eadf;
+  background: #f3ede6;
 }
 .notation-svg {
   min-height: 132px;
@@ -1349,6 +1351,7 @@ code {
 }
 .status-big {
   font-family: var(--font-brand);
+  font-weight: var(--w-display);
   font-size: 1.5rem;
   color: var(--dusk);
 }
@@ -1407,7 +1410,8 @@ code {
 }
 .review > .h2 {
   font-family: var(--font-brand);
-  font-weight: 400;
+  font-weight: var(--w-display);
+  letter-spacing: -0.01em;
   font-size: 1.6rem;
 }
 
@@ -1646,6 +1650,7 @@ code {
 }
 .path-badge {
   font-family: var(--font-brand);
+  font-weight: var(--w-display);
   font-size: 1.5rem;
   line-height: 1;
   color: var(--dusk);
@@ -1847,6 +1852,7 @@ code {
   width: 100%;
 }
 .field input,
+.field select,
 .field-inline select {
   min-height: var(--target);
   padding: 0 var(--s3);
@@ -1863,7 +1869,7 @@ code {
   position: fixed;
   inset: 0;
   z-index: 60;
-  background: rgb(20 10 30 / 0.45);
+  background: rgb(18 20 40 / 0.45);
   display: flex;
   justify-content: flex-end;
   align-items: flex-end;
@@ -2167,19 +2173,20 @@ details > summary {
   border-radius: 50% 50% 50% 50% / 56% 56% 44% 44%;
   transform: rotate(-12deg);
   font-family: var(--font-brand);
+  font-weight: var(--w-display);
   line-height: 1;
-  color: #2a1736;
+  color: #23264a;
   background: var(--sun);
 }
 .avatar > * {
   transform: rotate(12deg);
 }
-.avatar.c-sun { background: #ffc23d; }
-.avatar.c-coral { background: #ff8f78; }
-.avatar.c-mint { background: #7fd8c3; }
-.avatar.c-lilac { background: #c9a7f0; }
-.avatar.c-sky { background: #8cc4ff; }
-.avatar.c-leaf { background: #b6dd78; }
+.avatar.c-sun { background: #f7c797; }
+.avatar.c-coral { background: #f89777; }
+.avatar.c-mint { background: #d6d7c7; }
+.avatar.c-lilac { background: #d798c7; }
+.avatar.c-sky { background: #67b8d6; }
+.avatar.c-leaf { background: #7897d7; }
 .avatar.c-new {
   background: var(--paper-sunk);
   color: var(--dusk);
@@ -2321,7 +2328,7 @@ details > summary {
   height: 48px;
   border-radius: 50%;
   cursor: pointer;
-  box-shadow: inset 0 0 0 2px rgb(42 23 54 / 0.12);
+  box-shadow: inset 0 0 0 2px rgb(35 38 74 / 0.12);
 }
 .colour-opt input {
   position: absolute;
@@ -2337,12 +2344,12 @@ details > summary {
   outline: 3px solid var(--focus);
   outline-offset: 5px;
 }
-.colour-opt.c-sun { background: #ffc23d; }
-.colour-opt.c-coral { background: #ff8f78; }
-.colour-opt.c-mint { background: #7fd8c3; }
-.colour-opt.c-lilac { background: #c9a7f0; }
-.colour-opt.c-sky { background: #8cc4ff; }
-.colour-opt.c-leaf { background: #b6dd78; }
+.colour-opt.c-sun { background: #f7c797; }
+.colour-opt.c-coral { background: #f89777; }
+.colour-opt.c-mint { background: #d6d7c7; }
+.colour-opt.c-lilac { background: #d798c7; }
+.colour-opt.c-sky { background: #67b8d6; }
+.colour-opt.c-leaf { background: #7897d7; }
 .entry-preview {
   display: flex;
   align-items: center;
@@ -2426,7 +2433,8 @@ details > summary {
 .up-next-title {
   margin: 0;
   font-family: var(--font-brand);
-  font-weight: 400;
+  font-weight: var(--w-display);
+  letter-spacing: -0.01em;
   font-size: clamp(1.6rem, 5vw, 2.1rem);
   line-height: 1.1;
 }
@@ -2541,7 +2549,7 @@ details > summary {
 }
 .stop.is-here .stop-node {
   background: var(--sun);
-  box-shadow: 0 0 0 6px rgb(255 194 61 / 0.3);
+  box-shadow: 0 0 0 6px rgb(248 151 119 / 0.3);
 }
 .stop-body {
   display: grid;
@@ -3283,7 +3291,8 @@ details > summary {
 }
 .entry-title {
   font-family: var(--font-brand);
-  font-weight: 400;
+  font-weight: var(--w-display);
+  letter-spacing: -0.01em;
   font-size: clamp(1.7rem, 6vw, 2.3rem);
   line-height: 1.15;
   margin: var(--s5) 0 var(--s5);
@@ -3510,7 +3519,8 @@ details > summary {
 .lp-title {
   margin: 0;
   font-family: var(--font-brand);
-  font-weight: 400;
+  font-weight: var(--w-display);
+  letter-spacing: -0.01em;
   font-size: clamp(1.7rem, 6vw, 2.3rem);
   line-height: 1.12;
   outline: none;
@@ -3670,7 +3680,8 @@ details > summary {
 .check-title {
   margin: 0;
   font-family: var(--font-brand);
-  font-weight: 400;
+  font-weight: var(--w-display);
+  letter-spacing: -0.01em;
   font-size: 1.8rem;
   color: var(--near);
 }
@@ -3800,7 +3811,8 @@ details > summary {
 .unit-name {
   margin: 0;
   font-family: var(--font-brand);
-  font-weight: 400;
+  font-weight: var(--w-display);
+  letter-spacing: -0.01em;
   font-size: 1.5rem;
   line-height: 1.15;
 }
@@ -3910,7 +3922,7 @@ details > summary {
   position: fixed;
   inset: 0;
   z-index: 60;
-  background: rgb(20 10 30 / 0.4);
+  background: rgb(18 20 40 / 0.4);
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -3937,7 +3949,8 @@ details > summary {
 .stop-sheet-title {
   margin: 0;
   font-family: var(--font-brand);
-  font-weight: 400;
+  font-weight: var(--w-display);
+  letter-spacing: -0.01em;
   font-size: 1.7rem;
 }
 [data-presentation='studio'] .stop-sheet-title {
@@ -4065,3 +4078,429 @@ details > summary {
 .entry-pick .avatar.c-new {
   background: var(--paper);
 }
+
+
+/* =====================================================================
+   Soft Light layer (9 Nov 2026): tracks, resume, lesson facts, feedback,
+   teacher review. Track hues set the world; ink shades carry words on them.
+   ===================================================================== */
+.tr-foundations { --tr: var(--tr-foundations); --tr-ink: var(--tr-foundations-ink); --tr-tint: var(--tr-foundations-tint); }
+.tr-piano { --tr: var(--tr-piano); --tr-ink: var(--tr-piano-ink); --tr-tint: var(--tr-piano-tint); }
+.tr-drums { --tr: var(--tr-drums); --tr-ink: var(--tr-drums-ink); --tr-tint: var(--tr-drums-tint); }
+.tr-create { --tr: var(--tr-create); --tr-ink: var(--tr-create-ink); --tr-tint: var(--tr-create-tint); }
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-big {
+  box-shadow: 0 var(--edge) 0 var(--sun-deep);
+}
+.btn-big:active {
+  box-shadow: 0 1px 0 var(--sun-deep);
+  transform: translateY(3px);
+}
+.h1 {
+  color: var(--ink);
+}
+
+/* Resume: where you are, what you'll learn, why this one. */
+.resume {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  gap: var(--s2);
+  justify-items: start;
+  padding: var(--s5);
+  border-radius: var(--r-lg);
+  background: var(--tr-tint);
+  margin: 0 auto;
+  width: min(100%, 640px);
+}
+.resume::after {
+  /* one soft note head in the track hue: the illustration motif, not a gradient */
+  content: '';
+  position: absolute;
+  right: -28px;
+  top: -24px;
+  width: 132px;
+  height: 100px;
+  border-radius: 50%;
+  background: var(--tr);
+  opacity: 0.35;
+  transform: rotate(-20deg);
+  pointer-events: none;
+}
+.resume .kicker {
+  color: var(--tr-ink);
+}
+.resume-title {
+  font-family: var(--font-brand);
+  font-weight: var(--w-display);
+  letter-spacing: -0.01em;
+  font-size: clamp(1.6rem, 5vw, 2.1rem);
+  line-height: 1.1;
+}
+[data-presentation='studio'] .resume-title {
+  font-weight: 800;
+}
+.resume-learn {
+  font-size: var(--t-do);
+  font-weight: 700;
+}
+.resume-why {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s2);
+  color: var(--ink-soft);
+  font-weight: 600;
+  max-width: 46ch;
+}
+.resume-why svg {
+  flex: none;
+  margin-top: 3px;
+  color: var(--tr-ink);
+}
+.resume .btn-big {
+  margin-top: var(--s2);
+  min-width: 180px;
+}
+.inst-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+/* Track tabs: four places, each with its own hue and icon (never colour alone). */
+.track-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s2);
+  width: min(100%, 640px);
+  margin: 0 auto;
+}
+.track-tab {
+  min-height: 64px;
+  border: 0;
+  border-radius: var(--r-md);
+  background: var(--paper-sunk);
+  color: var(--ink-soft);
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 2px;
+  font-weight: 700;
+  font-size: var(--t-support);
+  line-height: 1.15;
+  padding: var(--s2) var(--s1);
+  text-align: center;
+}
+.track-tab svg {
+  color: var(--tr-ink);
+}
+.track-tab[aria-selected='true'] {
+  background: var(--tr-tint);
+  color: var(--ink);
+  box-shadow: inset 0 -4px 0 var(--tr);
+}
+.track-panel {
+  width: min(100%, 560px);
+  margin: 0 auto;
+}
+.track-banner {
+  display: grid;
+  gap: 2px;
+  padding: var(--s4) var(--s5);
+  border-radius: var(--r-lg);
+  background: var(--tr);
+  color: #23264a;
+  margin-bottom: var(--s6);
+}
+:root[data-theme='dark'] .track-banner {
+  background: var(--tr-tint);
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tr) 40%, transparent);
+}
+.track-name {
+  font-family: var(--font-brand);
+  font-weight: var(--w-display);
+  letter-spacing: -0.01em;
+  font-size: 1.5rem;
+  line-height: 1.15;
+}
+.track-about {
+  font-weight: 600;
+  opacity: 0.88;
+}
+.track-panel .node {
+  background: var(--tr-tint);
+  color: var(--tr-ink);
+  box-shadow: 0 6px 0 color-mix(in srgb, var(--tr) 55%, transparent);
+}
+.track-panel .node-started {
+  background: var(--tr);
+  color: #23264a;
+  box-shadow: 0 6px 0 color-mix(in srgb, var(--tr) 60%, #23264a);
+}
+.track-panel .node-done {
+  background: var(--good);
+  color: var(--paper);
+  box-shadow: 0 6px 0 color-mix(in srgb, var(--good) 65%, #000);
+}
+.track-panel .node-here {
+  background: var(--sun);
+  color: var(--on-sun);
+  box-shadow: 0 6px 0 var(--sun-deep), 0 0 0 8px color-mix(in srgb, var(--sun) 28%, transparent);
+}
+.node-label {
+  max-width: 150px;
+  text-align: center;
+  font-size: var(--t-support);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--ink-soft);
+}
+.node-li.is-here .node-label {
+  color: var(--ink);
+}
+
+/* Stop sheet facts: what you'll learn, which instrument and controls, how much is going on. */
+.stop-sheet {
+  border-top: 6px solid var(--tr, var(--dusk));
+}
+.stop-sheet .kicker {
+  color: var(--tr-ink, var(--dusk));
+}
+.stop-facts {
+  width: 100%;
+  margin: var(--s2) 0 0;
+  display: grid;
+  gap: 0;
+  text-align: left;
+}
+.stop-facts > div {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: var(--s3);
+  padding: var(--s2) 0;
+  border-top: 1px solid var(--hairline);
+}
+.stop-facts dt {
+  font-size: var(--t-support);
+  font-weight: 800;
+  color: var(--ink-soft);
+}
+.stop-facts dd {
+  margin: 0;
+  font-weight: 600;
+  display: grid;
+  gap: 2px;
+}
+.facts-sub {
+  font-size: var(--t-support);
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+.level-dots {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+.level-dots i {
+  width: 12px;
+  height: 9px;
+  border-radius: 50%;
+  border: 2px solid var(--ink-soft);
+  transform: rotate(-20deg);
+}
+.level-dots i.on {
+  background: var(--ink-soft);
+}
+.stop-sheet-note,
+.stop-sheet-after {
+  font-size: var(--t-support);
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+/* Lesson: suggested support, instrument choice, demo. */
+.inst-switch {
+  margin-top: var(--s2);
+}
+.suggest {
+  width: min(100%, 460px);
+  margin-top: var(--s3);
+  padding: var(--s3) var(--s4);
+  border-radius: var(--r-md);
+  background: var(--dusk-soft);
+  text-align: left;
+  display: grid;
+  gap: var(--s1);
+}
+.suggest-why {
+  font-weight: 700;
+}
+.suggest-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+  color: var(--dusk);
+  font-weight: 700;
+}
+.suggest-list li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.chip.is-suggested {
+  box-shadow: inset 0 0 0 2px var(--dusk);
+}
+.lp-status {
+  font-weight: 700;
+  color: var(--dusk);
+}
+
+/* Feedback in the activity: result shape + words, help tag, one observation, compare, help. */
+.check-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  flex-wrap: wrap;
+}
+.tone-mark {
+  flex: none;
+}
+.tone-mark.tone-good { color: var(--good); }
+.tone-mark.tone-near { color: var(--near); }
+.tone-mark.tone-miss { color: var(--miss); }
+.help-tag {
+  margin-left: auto;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--paper-sunk);
+  color: var(--ink-soft);
+  font-size: var(--t-support);
+  font-weight: 800;
+}
+.help-tag.is-help {
+  background: var(--dusk-soft);
+  color: var(--dusk);
+}
+.check-sheet .coach {
+  margin-top: 0;
+}
+.check-sheet .coach-obs {
+  margin: 0;
+  background: none;
+  padding: 0;
+  font-size: var(--t-do);
+  font-weight: 700;
+  line-height: 1.35;
+}
+.check-sheet .reply {
+  margin-top: var(--s2);
+}
+.chip-example {
+  background: var(--sun-tint);
+  color: var(--ink);
+}
+.compare,
+.help-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+}
+.help-row {
+  padding-top: var(--s2);
+  border-top: 1px solid var(--hairline);
+}
+.up-next-line {
+  display: grid;
+  gap: 2px;
+  justify-items: center;
+  text-align: center;
+}
+.up-next-name {
+  font-weight: 800;
+  font-size: var(--t-do);
+}
+.up-next-line .up-next-why {
+  margin: 0;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+/* Teacher review: evidence first, the estimate as words and a shape, override beside it. */
+.next-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+  align-items: baseline;
+  margin-bottom: var(--s3);
+}
+.by {
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: var(--t-support);
+  font-weight: 800;
+  background: var(--paper-sunk);
+}
+.by-model { background: var(--dusk-soft); color: var(--dusk); }
+.by-teacher { background: var(--sun-tint); color: var(--ink); }
+.skill-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+}
+.skill-row {
+  display: grid;
+  gap: var(--s1);
+  padding: var(--s4) 0;
+  border-top: 1px solid var(--hairline);
+}
+.skill-row-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--s2);
+  align-items: center;
+}
+.skill-row .skill-name {
+  font-weight: 800;
+}
+.small-text {
+  font-size: var(--t-support);
+}
+.skill-evidence {
+  font-weight: 600;
+}
+.skill-tries {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: var(--t-support);
+  display: grid;
+  gap: 2px;
+}
+.mark-good { color: var(--good); font-weight: 800; }
+.mark-miss { color: var(--miss); font-weight: 800; }
+.seg-mini {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+  margin-top: var(--s1);
+}
+.seg-mini .chip {
+  min-height: 40px;
+  font-size: var(--t-support);
+}
+.st-nearly { color: var(--dusk); }
+.st-secure { color: var(--good); }
+.st-growing { color: var(--near); }
+.st-new { color: var(--ink-soft); }

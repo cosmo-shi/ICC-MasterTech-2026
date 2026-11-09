@@ -21,7 +21,10 @@ import { usePlayer } from "../ui/usePlayer.ts";
 import { type LiveEvent, Workspace } from "../ui/Workspace.tsx";
 import { FreeLesson } from "./FreeLesson.tsx";
 import { inputsToPhrase } from "../ai/coach.ts";
-import { skillsForActivity } from "../ai/learner.ts";
+import { coachFocus, skillsForActivity, supportFor } from "../ai/learner.ts";
+import { activityById, instrumentFor, lessonFor } from "../data/curriculum.ts";
+import { useMyLearning } from "../ui/useAttempts.ts";
+import type { InstrumentId } from "../music/events.ts";
 import { LessonSummary } from "./LessonSummary.tsx";
 import { LessonShell } from "./LessonShell.tsx";
 import { topicById } from "../data/theory.ts";
@@ -59,13 +62,28 @@ export function LessonScreen({ lessonId, go, view }: Props) {
 }
 
 function AssessedLesson({ lessonId, go }: Props) {
-  const lesson = lessonById(lessonId)!;
+  const base = lessonById(lessonId)!;
   const { prefs } = usePrefs();
+  const act = activityById(lessonId);
+  // Shared ideas (Rhythm basics) are practised on the instrument the learner picks; the
+  // exercise, controls and score all change with it.
+  const [inst, setInst] = useState<InstrumentId>(() => instrumentFor(lessonId, base.practice?.instrument ?? prefs.instrument));
+  const lesson = useMemo(() => lessonFor(base, inst), [base, inst]);
+  // Bayesian learner model: how much support to offer at the start, and which fact to talk about first.
+  const { planning, context } = useMyLearning();
+  const tctx = context({ currentLessonId: lessonId });
+  const support = supportFor(planning, lessonId, tctx);
+  const focusHint = coachFocus(planning, lessonId, tctx);
   const pathway = pathwayById(prefs.pathway);
   const [mode, setMode] = useState<Mode>("practice");
   const [stage, setStage] = useState<"hear" | "learn" | "try">("hear");
   const [phase, setPhase] = useState<Phase>("ready");
-  const [slower, setSlower] = useState(false);
+  const [slowerChoice, setSlowerChoice] = useState<boolean | null>(null);
+  // Starts slower when the model suggests it; the learner can always switch it off.
+  const slower = mode === "practice" && (slowerChoice ?? support.start.includes("slower"));
+  const setSlower = (f: (s: boolean) => boolean) => setSlowerChoice(f(slower));
+  const [demoOn, setDemoOn] = useState(false);
+  const [demoWatched, setDemoWatched] = useState(false);
   const [hintLevel, setHintLevel] = useState(0);
   const [heardExample, setHeardExample] = useState(false);
   const [result, setResult] = useState<CheckResult | null>(null);
@@ -93,29 +111,17 @@ function AssessedLesson({ lessonId, go }: Props) {
   const totalBeats = target.totalTicks / TPQ;
 
   // Hint level 2+ in practice shows the target keys/pads. Never in an independent check.
+  // A demonstration lights each key or drum as it sounds.
   const showTargets = mode === "practice" && hintLevel >= 2;
-  const highlightNotes = useMemo(
-    () =>
-      new Set(
-        showTargets
-          ? expected
-              .filter((e) => e.kind === "note")
-              .map((e) => (e as { midi: number }).midi)
-          : [],
-      ),
-    [showTargets, expected],
-  );
-  const highlightPads = useMemo(
-    () =>
-      new Set<DrumSound>(
-        showTargets
-          ? expected
-              .filter((e) => e.kind === "drum")
-              .map((e) => (e as { sound: DrumSound }).sound)
-          : [],
-      ),
-    [showTargets, expected],
-  );
+  const demoTick = demoOn ? listen.tick : null;
+  const lit =
+    demoTick != null
+      ? expected.filter((e) => e.onset <= demoTick && demoTick < e.onset + Math.max(120, e.duration * 0.8))
+      : showTargets
+        ? expected
+        : [];
+  const highlightNotes = new Set(lit.filter((e) => e.kind === "note").map((e) => (e as { midi: number }).midi));
+  const highlightPads = new Set<DrumSound>(lit.filter((e) => e.kind === "drum").map((e) => (e as { sound: DrumSound }).sound));
 
   const finish = useCallback(() => {
     const rec = recorder.current;
@@ -130,6 +136,7 @@ function AssessedLesson({ lessonId, go }: Props) {
       aiEnabled: prefs.aiEnabled,
       independentCheck: mode === "independent",
       tempoBpm: tempo,
+      focusHint: mode === "practice" ? focusHint : undefined,
     });
     setResult(res);
     setDecision(d);
@@ -148,7 +155,7 @@ function AssessedLesson({ lessonId, go }: Props) {
       tempoBpm: tempo,
       support: {
         hintLevel: mode === "independent" ? 0 : hintLevel,
-        heardExample,
+        heardExample: heardExample || demoWatched,
         largeControls: prefs.large,
         simplified: prefs.simplified,
         aiEnabled: prefs.aiEnabled,
@@ -172,6 +179,11 @@ function AssessedLesson({ lessonId, go }: Props) {
         replyOp: d.reply?.plan.params.op,
         verified: d.reply?.verification.verified,
         rejected: d.replyRejected,
+        tailor: {
+          provenance: support.start.length || support.demo || d.focusFromLearner ? "learner-model" : "rules",
+          focusFromLearner: d.focusFromLearner,
+          startTipUsed: [slower && support.start.includes("slower") ? "slower" : "", demoWatched && support.demo ? "demo" : ""].filter(Boolean).join(", ") || undefined,
+        },
       },
     };
     setSaveState("saving");
@@ -189,10 +201,14 @@ function AssessedLesson({ lessonId, go }: Props) {
     heardExample,
     slower,
     totalBeats,
+    demoWatched,
+    support,
+    focusHint,
   ]);
 
   const start = async () => {
     listen.stop();
+    setDemoOn(false);
     setResult(null);
     setDecision(null);
     setLiveCount(0);
@@ -244,14 +260,6 @@ function AssessedLesson({ lessonId, go }: Props) {
     };
   }, [mode]);
 
-  const reflect = (id: string | null) => {
-    if (!attemptId.current) return;
-    store.all<AttemptRecord>("attempts").then((rows) => {
-      const r = rows.find((x) => x.id === attemptId.current);
-      if (r) void store.put("attempts", { ...r, reflection: id ?? "skipped" });
-    });
-  };
-
   const recordChoice = (choice: string) => {
     store.all<AttemptRecord>("attempts").then((rows) => {
       const r = rows.find((x) => x.id === attemptId.current);
@@ -263,7 +271,18 @@ function AssessedLesson({ lessonId, go }: Props) {
     });
   };
 
+  const watchDemo = async () => {
+    setDemoOn(true);
+    setDemoWatched(true);
+    await listen.play([{ events: target.events }], tempo, {
+      totalTicks: target.totalTicks,
+      countInBeats: 0,
+      onEnd: () => setDemoOn(false),
+    });
+  };
+
   const hearExample = async () => {
+    setDemoOn(false);
     setHeardExample(true);
     await listen.play([{ events: target.events }], tempo, {
       totalTicks: target.totalTicks,
@@ -336,7 +355,30 @@ function AssessedLesson({ lessonId, go }: Props) {
           <Icon name={listen.playing ? "stop" : "ear"} size={56} />
         </button>
         <p className="lp-say">{lesson.instruction}</p>
+        {act?.crossInstrument && (
+          <div className="segmented inst-switch" role="radiogroup" aria-label="Play on">
+            {(["drums", "keyboard"] as const).map((i) => (
+              <button key={i} type="button" role="radio" aria-checked={inst === i} className="segment" onClick={() => { listen.stop(); setInst(i); }}>
+                <Icon name={i === "drums" ? "drum" : "piano"} size={20} /> {i === "drums" ? "Drums" : "Piano"}
+              </button>
+            ))}
+          </div>
+        )}
         <div className="lp-music">{notation}</div>
+        {(support.start.length > 0 || support.demo) && (
+          <div className="suggest" role="note">
+            <p className="suggest-why">{support.reason ?? "Some help to start with."}</p>
+            <ul className="suggest-list">
+              {support.start.includes("slower") && <li><Icon name="check" size={16} /> Starting slower</li>}
+              {support.demo && <li><Icon name="check" size={16} /> Watch it on the {inst === "drums" ? "drums" : "keys"} first</li>}
+            </ul>
+          </div>
+        )}
+        {support.ready && mode === "practice" && (
+          <button type="button" className="btn-text" onClick={() => { listen.stop(); goIndependent(); setStage("try"); }}>
+            You know this one. Go straight to on your own
+          </button>
+        )}
       </div>
     );
     foot = (
@@ -345,7 +387,9 @@ function AssessedLesson({ lessonId, go }: Props) {
         className="btn btn-big btn-block"
         onClick={() => {
           listen.stop();
-          setStage(topic || lesson.explanation ? "learn" : "try");
+          const next = topic || lesson.explanation ? "learn" : "try";
+          setStage(next);
+          if (next === "try" && support.demo && !demoWatched) void watchDemo();
         }}
       >
         Continue
@@ -379,7 +423,10 @@ function AssessedLesson({ lessonId, go }: Props) {
       <button
         type="button"
         className="btn btn-big btn-block"
-        onClick={() => setStage("try")}
+        onClick={() => {
+          setStage("try");
+          if (support.demo && !demoWatched) void watchDemo();
+        }}
       >
         I’m ready to try
       </button>
@@ -396,6 +443,7 @@ function AssessedLesson({ lessonId, go }: Props) {
               ? lesson.instruction
               : "A new one. No hints this time."}
           </h1>
+          {demoOn && <p className="lp-status" role="status">Watch the {inst === "drums" ? "drums" : "keys"} light up.</p>}
           {mode === "practice" && hintLevel > 0 && (
             <ol className="hint-list" aria-live="polite">
               {hints.slice(0, hintLevel).map((h) => (
@@ -434,9 +482,21 @@ function AssessedLesson({ lessonId, go }: Props) {
                 }
                 disabled={busy}
               >
-                <Icon name={listen.playing ? "stop" : "ear"} size={18} />{" "}
-                {listen.playing ? "Stop" : "Hear it"}
+                <Icon name={listen.playing && !demoOn ? "stop" : "ear"} size={18} />{" "}
+                {listen.playing && !demoOn ? "Stop" : "Hear it"}
               </button>
+              {mode === "practice" && (
+                <button
+                  type="button"
+                  className={`chip${demoOn ? " is-on" : ""}${support.demo && !demoWatched ? " is-suggested" : ""}`}
+                  aria-pressed={demoOn}
+                  onClick={() => (demoOn ? listen.stop() : void watchDemo())}
+                  disabled={busy}
+                >
+                  <Icon name="playback" size={18} /> Watch it
+                </button>
+              )}
+              {mode === "practice" && (
               <button
                 type="button"
                 className={`chip${slower ? " is-on" : ""}`}
@@ -446,6 +506,7 @@ function AssessedLesson({ lessonId, go }: Props) {
               >
                 Slower
               </button>
+              )}
               <button
                 type="button"
                 className={`chip${showNotation ? " is-on" : ""}`}
@@ -494,6 +555,7 @@ function AssessedLesson({ lessonId, go }: Props) {
     );
   }
 
+  const helped = mode === "practice" && (hintLevel > 0 || slower || demoWatched);
   const sheet =
     stage === "try" && phase === "review" && result && decision ? (
       <section
@@ -503,47 +565,78 @@ function AssessedLesson({ lessonId, go }: Props) {
         aria-modal="false"
       >
         <div className="check-inner">
-          <h2 id="review-h" className="check-title">
-            {result.passed
-              ? mode === "independent"
-                ? "You did it on your own!"
-                : "That matched!"
-              : tone === "near"
-                ? "Nearly!"
-                : "Not yet"}
-          </h2>
+          <div className="check-head">
+            <ToneMark tone={tone} />
+            <h2 id="review-h" className="check-title">
+              {result.passed
+                ? mode === "independent"
+                  ? "You did it on your own!"
+                  : "That matched!"
+                : tone === "near"
+                  ? "Nearly!"
+                  : "Not yet"}
+            </h2>
+            <span className={`help-tag${helped ? " is-help" : ""}`}>
+              {mode === "independent" ? "On your own" : helped ? "With help" : "Practice"}
+            </span>
+          </div>
           {saveState === "failed" && (
             <p className="support warn">This try couldn’t be saved.</p>
           )}
+          <CoachCard decision={decision} onChoice={recordChoice} />
           <FactList result={result} />
           <LiveStatus
             text={`${result.summary.correctSound} of ${result.summary.expected} sounds matched.`}
           />
-          <div className="chips">
+          <div className="compare" role="group" aria-label="Compare">
             <button
               type="button"
               className="chip"
-              onClick={() =>
-                listen.playing ? listen.stop() : void listenBack()
-              }
+              onClick={() => (listen.playing ? listen.stop() : void listenBack())}
               disabled={!takeInputs.length}
             >
-              <Icon name={listen.playing ? "stop" : "ear"} size={18} />{" "}
-              {listen.playing ? "Stop" : "Listen back"}
+              <Icon name={listen.playing ? "stop" : "playback"} size={18} /> Hear yours
             </button>
-            <button
-              type="button"
-              className="chip"
-              onClick={() => void hearExample()}
-            >
-              <span aria-hidden="true">▶ </span>Hear it again
+            <button type="button" className="chip" onClick={() => void hearExample()}>
+              <Icon name="ear" size={18} /> Hear the music
             </button>
           </div>
-          <CoachCard
-            decision={decision}
-            onChoice={recordChoice}
-            onReflect={mode === "practice" ? reflect : undefined}
-          />
+          {!result.passed && mode === "practice" && (
+            <div className="chips help-row" role="group" aria-label="Get help">
+              <button
+                type="button"
+                className={`chip${slower ? " is-on" : ""}`}
+                aria-pressed={slower}
+                onClick={() => setSlower((x) => !x)}
+              >
+                Slower
+              </button>
+              {hintLevel < 3 && (
+                <button
+                  type="button"
+                  className="chip"
+                  onClick={() => {
+                    recordChoice("hint");
+                    setHintLevel((h) => h + 1);
+                    setPhase("ready");
+                  }}
+                >
+                  <Icon name="hint" size={18} /> {hintLevel ? "Another hint" : "Hint"}
+                </button>
+              )}
+              <button
+                type="button"
+                className="chip"
+                onClick={() => {
+                  recordChoice("demo");
+                  setPhase("ready");
+                  void watchDemo();
+                }}
+              >
+                <Icon name="playback" size={18} /> Watch it
+              </button>
+            </div>
+          )}
         </div>
         <div className="check-foot">
           {result.passed ? (
@@ -563,16 +656,12 @@ function AssessedLesson({ lessonId, go }: Props) {
                 className="btn btn-big"
                 onClick={mode === "practice" ? goIndependent : toSummary}
               >
-                Continue
+                {mode === "practice" ? "Now on your own" : "Continue"}
               </button>
             </>
           ) : (
             <>
-              <button
-                type="button"
-                className="btn-quiet"
-                onClick={mode === "practice" ? toSummary : toSummary}
-              >
+              <button type="button" className="btn-quiet" onClick={toSummary}>
                 Finish for now
               </button>
               <button
@@ -619,5 +708,17 @@ function AssessedLesson({ lessonId, go }: Props) {
     >
       {body}
     </LessonShell>
+  );
+}
+
+/** A shape for each result, so it never relies on colour: tick, half circle, open circle. */
+function ToneMark({ tone }: { tone: "good" | "near" | "miss" }) {
+  return (
+    <svg className={`tone-mark tone-${tone}`} width="36" height="36" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <circle cx="12" cy="12" r="10" fill="currentColor" opacity={tone === "miss" ? 0 : 0.16} />
+      <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2" />
+      {tone === "good" && <path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />}
+      {tone === "near" && <path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor" />}
+    </svg>
   );
 }

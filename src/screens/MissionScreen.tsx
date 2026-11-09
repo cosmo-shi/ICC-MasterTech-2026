@@ -343,7 +343,7 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
                     <p className="note-text">Your timing has been tidied to the nearest half beat for the partner. Your exact playing is kept for your teacher.</p>
                     {analysis && (
                       <div className={`coach ${analysis.source === 'local-model' ? 'coach-ai' : 'coach-tips'} compact`}>
-                        <p className="coach-label">{analysis.source === 'local-model' ? 'Carmen listened to your timing, on this device' : 'A tip'}</p>
+                        
                         <p className="coach-obs">{coachText.observations[analysis.pattern]}</p>
                       </div>
                     )}
@@ -414,7 +414,7 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
           {params && paramsBy !== 'learner' && (
             <p className="note-text">
               {paramsBy === 'partner-model'
-                ? `Carmen listened to your timing and suggests: ${describeParams(params)}. You can pick something else.`
+                ? `Try this: ${describeParams(params)}. You can pick something else.`
                 : `Carmen suggests: ${describeParams(params)}. You can pick something else.`}
             </p>
           )}
@@ -478,7 +478,7 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
                     <li key={v}>✓ {v}</li>
                   ))}
                   <li>
-                    Who chose the change: {reply.plan.provenance === 'learner-directed' ? 'you' : reply.plan.provenance === 'local-model' ? 'Carmen, from how it heard your timing' : 'Carmen, using a set rule'}.
+                    {reply.plan.provenance === 'learner-directed' ? 'You chose this change.' : 'Carmen chose this change.'}
                   </li>
                 </ul>
               </details>

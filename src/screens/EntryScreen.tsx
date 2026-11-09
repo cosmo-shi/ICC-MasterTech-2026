@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { lessonById } from '../data/catalog.ts';
-import { routeLessons } from '../data/route.ts';
+import { START_AT } from '../data/curriculum.ts';
 import { type PathwayId, usePrefs } from '../state/prefs.tsx';
-import { PLAYER_COLOURS, type Player, type PlayerColour, players, teacher, usePlayers } from '../store/profiles.ts';
+import { COLOUR_NAMES, PLAYER_COLOURS, type Player, type PlayerColour, players, teacher, usePlayers } from '../store/profiles.ts';
 import { Band, Horizon, Icon, type IconName, Wordmark } from '../ui/icons.tsx';
 
 export function Avatar({ player, size = 48 }: { player: Pick<Player, 'name' | 'colour'>; size?: number }) {
@@ -53,7 +53,7 @@ export function EntryScreen({ onDone, go, canClose, initial }: { onDone: () => v
     onDone();
     go(route);
   };
-  const first = lessonById(routeLessons(start ?? 'F')[0]);
+  const first = lessonById(START_AT[start ?? 'F'].activity);
 
   const progress = { name: 1, look: 2, start: 3 } as Record<Step, number>;
   const back: Partial<Record<Step, Step>> = { name: list.length ? 'pick' : 'welcome', look: 'name', start: 'look', teacher: list.length ? 'pick' : 'welcome' };
@@ -145,7 +145,7 @@ export function EntryScreen({ onDone, go, canClose, initial }: { onDone: () => v
             </div>
             <div className="colour-row" role="radiogroup" aria-label="Colour">
               {PLAYER_COLOURS.map((c) => (
-                <button key={c} type="button" role="radio" aria-checked={colour === c} aria-label={c} className={`colour-opt c-${c}${colour === c ? ' is-on' : ''}`} onClick={() => setColour(c)} />
+                <button key={c} type="button" role="radio" aria-checked={colour === c} aria-label={COLOUR_NAMES[c]} className={`colour-opt c-${c}${colour === c ? ' is-on' : ''}`} onClick={() => setColour(c)} />
               ))}
             </div>
           </>

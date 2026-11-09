@@ -40,14 +40,12 @@ Every third-party file shipped with Carmen. Checked 9 November 2026.
 
 ## Fonts — SIL Open Font License 1.1
 
-- Bagel Fat One (wordmark and screen titles only), Copyright 2022 The Bagel Fat Project Authors. Source: Fontsource `@fontsource/bagel-fat-one` 5.3.0, file `bagel-fat-one-latin-400-normal.woff2`, used unmodified. Notice: `public/fonts/OFL-BagelFatOne.txt`.
-- Figtree (variable weight; headings, instructions, controls and body text), Copyright 2022 The Figtree Project Authors. Source: Fontsource `@fontsource-variable/figtree` 5.3.0, file `figtree-latin-wght-normal.woff2`, used unmodified. Notice: `public/fonts/OFL-Figtree.txt`.
-- Chosen for the "Songbook Horizon" identity (9 November 2026); they replace Lilita One and Nunito.
+- Nunito (variable weight 200–1000; every piece of text: wordmark and screen titles at 900, headings 800, controls 700, body 500), Copyright 2014 The Nunito Project Authors. Source: Fontsource `@fontsource-variable/nunito` 5.3.0, file `nunito-latin-wght-normal.woff2`, used unmodified. Notice: `public/fonts/OFL-Nunito.txt`.
+- Chosen 9 November 2026 for the "Soft Light" identity: rounded terminals, open counters and clear letter shapes (distinct I/l/1) that suit early readers. It replaces Bagel Fat One and Figtree.
 
 | File | SHA-256 |
 |---|---|
-| `public/fonts/BagelFatOne-Regular.woff2` | `115ac5b80f2bd487ab5d5af59dd374261b6e81d00eda8361dd70e671d5aa35e4` |
-| `public/fonts/Figtree-wght.woff2` | `4ba7d3d096695818fe0686be4f1e82c6b05134e18a22260336130335027462dd` |
+| `public/fonts/Nunito-wght.woff2` | `ba344451eab25b217a165363b1982048a5e5830a0daf36577973955a04cac793` |
 
 ## Lesson content
 

@@ -11,10 +11,11 @@ export interface PlayOptions {
   tailBeats?: number;
 }
 
-/** Schedules music and reports the current beat (negative during count-in). */
+/** Schedules music and reports the current beat (negative during count-in) and position in ticks. */
 export function usePlayer() {
   const [beat, setBeat] = useState<number | null>(null);
   const [playing, setPlaying] = useState(false);
+  const [tick, setTick] = useState<number | null>(null);
   const raf = useRef(0);
   const current = useRef<ScheduledPlayback | null>(null);
   const timer = useRef(0);
@@ -26,6 +27,7 @@ export function usePlayer() {
     current.current = null;
     setPlaying(false);
     setBeat(null);
+    setTick(null);
   }, []);
 
   useEffect(() => stop, [stop]);
@@ -42,8 +44,10 @@ export function usePlayer() {
       const beatMs = 60000 / tempoBpm;
       const totalBeats = opts.totalTicks / TPQ;
       const tick = () => {
-        const b = Math.floor((performance.now() - pb.beat0PerfMs) / beatMs);
+        const f = (performance.now() - pb.beat0PerfMs) / beatMs;
+        const b = Math.floor(f);
         setBeat(b < totalBeats ? b : null);
+        setTick(f >= 0 && f < totalBeats ? f * TPQ : null);
         if (b < totalBeats + (opts.tailBeats ?? 0)) raf.current = requestAnimationFrame(tick);
       };
       raf.current = requestAnimationFrame(tick);
@@ -52,6 +56,7 @@ export function usePlayer() {
         cancelAnimationFrame(raf.current);
         setPlaying(false);
         setBeat(null);
+        setTick(null);
         current.current = null;
         opts.onEnd?.();
       }, Math.max(0, endMs));
@@ -60,5 +65,5 @@ export function usePlayer() {
     [stop],
   );
 
-  return { play, stop, beat, playing };
+  return { play, stop, beat, tick, playing };
 }

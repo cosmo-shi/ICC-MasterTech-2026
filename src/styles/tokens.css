@@ -1,99 +1,132 @@
-/* Carmen design tokens — "Songbook Horizon" (9 Nov 2026).
-   The idea: the stave is the horizon. Carmen's world is a sunset landscape whose
-   hills are drawn with stave lines; the sun is a note head. Work happens on a sheet
-   of paper laid over that landscape. Dark mode is the same place after sunset.
+/* Carmen design tokens — "Soft Light" (9 Nov 2026, replaces Songbook Horizon).
+   Palette sampled from momo's cat reference (the printed hex labels on it are not its colours):
+     coral #F89777 · peach #F7C797 · mist #D6D7C7 · sky #67B8D6 · periwinkle #7897D7 · orchid #D798C7
+   Softness comes from tinted paper, generous round shapes, gentle depth and colour washes in
+   the places that set a scene (track banners, the header, illustrations). Work surfaces stay
+   calm and readable; nothing is blurred.
 
-   Colour has roles, not decoration:
-     sky/hills  — the environment only (header, backdrop, illustrations)
-     paper/ink  — where reading and playing happen
-     sun        — "now": the main action, the key you are pressing, the current beat
-     record     — recording only
-     dusk       — where you are: selected tab, selected option, links
-     good/near/miss — feedback, always with a word or symbol too
+   Colour has roles:
+     environment     — header scene and track illustrations only
+     paper / ink     — reading and playing
+     sun (coral)     — "now": the main action, the key you are pressing, the current beat
+     record          — recording only
+     dusk (periwinkle) — where you are: selected tab or option, links
+     good/near/miss  — feedback, always with a word and a shape
+     track hues      — Rhythm basics coral, Piano periwinkle, Drums sky, Create orchid
 */
 
 @font-face {
-  font-family: 'Bagel Fat One';
-  src: url('/fonts/BagelFatOne-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Figtree';
-  src: url('/fonts/Figtree-wght.woff2') format('woff2');
-  font-weight: 300 900;
+  font-family: 'Nunito';
+  src: url('/fonts/Nunito-wght.woff2') format('woff2');
+  font-weight: 200 1000;
   font-display: swap;
 }
 
 :root {
   color-scheme: light;
 
-  /* Environment */
-  --sky-top: #5b2e8c;
-  --sky-mid: #d4507a;
-  --sky-low: #ff9f5a;
-  --sun-disc: #ffc23d;
-  --hill-far: #ec7a8e;
-  --hill-mid: #b8437a;
-  --hill-near: #7a2e78;
-  --stave-line: rgb(255 255 255 / 0.42);
-  --on-sky: #ffffff;
-  --on-sky-soft: rgb(255 255 255 / 0.82);
+  /* The six swatches */
+  --sw-coral: #f89777;
+  --sw-peach: #f7c797;
+  --sw-mist: #d6d7c7;
+  --sw-sky: #67b8d6;
+  --sw-peri: #7897d7;
+  --sw-orchid: #d798c7;
+
+  /* Environment (header scene, banners) */
+  --sky-top: #9fb3e6;
+  --sky-mid: #e3b4d6;
+  --sky-low: #fad3b2;
+  --sun-disc: #f89777;
+  --hill-far: #f9dcc6;
+  --hill-mid: #ecbcd3;
+  --hill-near: #b9c3ee;
+  --stave-line: rgb(255 255 255 / 0.7);
+  --on-sky: #23264a;
+  --on-sky-soft: #3d4170;
 
   /* Paper and ink */
-  --paper: #fffcf8;
-  --paper-sunk: #f7eef2; /* recessed: note trail, inputs, quiet buttons */
+  --paper: #fffaf6;
+  --paper-sunk: #f6f0ee;
   --paper-raised: #ffffff;
-  --hairline: #eadde5;
-  --ink: #2a1736;
-  --ink-soft: #69566f;
-  --ink-faint: #9d8ca3; /* decorative only, never for text */
+  --hairline: #e9e1e2;
+  --ink: #23264a;
+  --ink-soft: #575b80;
+  --ink-faint: #a9abc6; /* decorative only, never for text */
 
   /* Roles */
-  --sun: #ffc23d;
-  --sun-deep: #d99000;
-  --on-sun: #2a1736;
-  --record: #d0391f;
-  --record-deep: #93240f;
+  --sun: #f89777;
+  --sun-deep: #d86f50;
+  --sun-tint: #fde5db;
+  --on-sun: #23264a;
+  --record: #c93a5c;
+  --record-deep: #8f2140;
   --on-record: #ffffff;
-  --dusk: #6a3593;
-  --dusk-soft: #efe4f7;
+  --dusk: #4a63b8;
+  --dusk-soft: #e6ecfa;
   --on-dusk: #ffffff;
 
-  --good: #0f7565;
-  --good-bg: #dcf2ec;
-  --near: #7d5100;
-  --near-bg: #fff0c9;
-  --miss: #a8264f;
-  --miss-bg: #fce2ea;
+  --good: #1b6f80;
+  --good-bg: #ddf0f5;
+  --near: #8a5713;
+  --near-bg: #fcebd7;
+  --miss: #b0345a;
+  --miss-bg: #f9e1ea;
+
+  /* Tracks: a hue for the world, a deep shade for words on it, a tint for surfaces. */
+  --tr-foundations: #f89777;
+  --tr-foundations-ink: #9c4227;
+  --tr-foundations-tint: #fde6dc;
+  --tr-piano: #7897d7;
+  --tr-piano-ink: #3b539f;
+  --tr-piano-tint: #e5ebf9;
+  --tr-drums: #67b8d6;
+  --tr-drums-ink: #1b6577;
+  --tr-drums-tint: #dcf0f6;
+  --tr-create: #d798c7;
+  --tr-create-ink: #8a3d7a;
+  --tr-create-tint: #f6e4f0;
 
   /* The instrument */
+  --case: #2b2e52;
   --key-white: #ffffff;
-  --key-white-edge: #dccbd6;
-  --key-black: #2a1736;
-  --key-black-edge: #120818;
-  --key-press: #ffd56b;
-  --key-press-edge: #d99000;
+  --key-white-edge: #d9d3dc;
+  --key-black: #2b2e52;
+  --key-black-edge: #15172e;
+  --key-press: #fbb79f;
+  --key-press-edge: #d86f50;
   --pad: #fff4ee;
-  --pad-edge: #e8cfc6;
-  --drum-rim: #d9d2cf;
-  --drum-shell: #b8437a;
-  --cymbal: #e9bf5c;
-  --cymbal-groove: #d2a43f;
-  --cymbal-edge: #9c7424;
+  --pad-edge: #e8d3cc;
+  --drum-rim: #dcd8d2;
+  --drum-shell: #7897d7;
+  --cymbal: #efcd98;
+  --cymbal-groove: #dcb373;
+  --cymbal-edge: #a8793c;
 
-  --focus: #2a1736;
-  --focus-halo: #ffc23d;
+  /* Score (always printed on paper) */
+  --score-ink: #23264a;
+  --score-now: #3e5bb5;
+  --score-good: #1b6f80;
+  --score-near: #8a5713;
+  --score-miss: #b0345a;
 
-  --shadow-sheet: 0 -10px 30px rgb(58 18 66 / 0.18);
-  --shadow-pop: 0 12px 32px rgb(42 23 54 / 0.22);
+  --focus: #23264a;
+  --focus-halo: #f89777;
 
-  /* Type roles */
-  --font-brand: 'Bagel Fat One', 'Figtree', system-ui, sans-serif;
-  --font-ui: 'Figtree', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --t-title: clamp(1.85rem, 5.5vw, 2.4rem); /* screen titles, brand face */
-  --t-head: 1.25rem; /* section headings */
-  --t-do: 1.2rem; /* the instruction for right now */
+  --shadow-soft: 0 1px 2px rgb(35 38 74 / 0.06), 0 6px 18px rgb(35 38 74 / 0.07);
+  --shadow-sheet: 0 -8px 28px rgb(35 38 74 / 0.14);
+  --shadow-pop: 0 12px 32px rgb(35 38 74 / 0.18);
+
+  /* Type: one family, Nunito. Weight and size give the roles. */
+  --font-brand: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-ui: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --w-display: 900; /* wordmark, screen titles, big feedback */
+  --w-head: 800;
+  --w-control: 700;
+  --w-body: 500;
+  --t-title: clamp(1.8rem, 5.5vw, 2.35rem);
+  --t-head: 1.25rem;
+  --t-do: 1.2rem;
   --t-body: 1.0625rem;
   --t-control: 1rem;
   --t-support: 0.9rem;
@@ -106,71 +139,87 @@
   --s5: 24px;
   --s6: 32px;
   --s7: 48px;
-  --r-sm: 10px;
-  --r-md: 16px;
+  --r-sm: 12px;
+  --r-md: 18px;
   --r-lg: 28px;
-  --edge: 4px; /* only playable things have a physical edge */
+  --edge: 4px; /* only playable things and the main button have a physical edge */
 
   --target: 48px;
   --motion: 140ms;
 }
 
-/* After sunset. Same place, same shapes; the lights change. */
+/* Night: the same room with the lights down. Same shapes, same type. */
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --sky-top: #0b1424;
-  --sky-mid: #18253f;
-  --sky-low: #3b3050;
-  --sun-disc: #ffd98a; /* the moon */
-  --hill-far: #2b3858;
-  --hill-mid: #212c47;
-  --hill-near: #182136;
-  --stave-line: rgb(255 255 255 / 0.16);
-  --on-sky: #f6f0e8;
-  --on-sky-soft: rgb(246 240 232 / 0.78);
+  --sky-top: #1b1f3f;
+  --sky-mid: #2e2753;
+  --sky-low: #4a3259;
+  --sun-disc: #f7c797;
+  --hill-far: #3b3567;
+  --hill-mid: #2d2b57;
+  --hill-near: #23274b;
+  --stave-line: rgb(255 255 255 / 0.18);
+  --on-sky: #f5eff1;
+  --on-sky-soft: #c9c8e0;
 
-  --paper: #141a28;
-  --paper-sunk: #1d2436;
-  --paper-raised: #222a3e;
-  --hairline: #2e3850;
-  --ink: #f4eee7;
-  --ink-soft: #b8afc0;
-  --ink-faint: #6f6a80;
+  --paper: #171a30;
+  --paper-sunk: #1f2340;
+  --paper-raised: #262b4c;
+  --hairline: #343a60;
+  --ink: #f5eff1;
+  --ink-soft: #bfc0da;
+  --ink-faint: #6e7299;
 
-  --sun: #ffc94d;
-  --sun-deep: #c48a12;
-  --on-sun: #1b1424;
-  --record: #ff6a52;
-  --record-deep: #c33f2b;
-  --on-record: #1b1424;
-  --dusk: #cdb1f2;
-  --dusk-soft: #2c2945;
-  --on-dusk: #1b1424;
+  --sun: #ff9f80;
+  --sun-deep: #c9694d;
+  --sun-tint: #3a2630;
+  --on-sun: #171a30;
+  --record: #ff7a95;
+  --record-deep: #c24764;
+  --on-record: #171a30;
+  --dusk: #a9bbf2;
+  --dusk-soft: #2a3260;
+  --on-dusk: #171a30;
 
-  --good: #6fdcc4;
-  --good-bg: #123a34;
-  --near: #ffd27a;
-  --near-bg: #3a2f14;
-  --miss: #ff9bb8;
-  --miss-bg: #3f1b2a;
+  --good: #7fd3e3;
+  --good-bg: #12333d;
+  --near: #f7c797;
+  --near-bg: #3a2e1e;
+  --miss: #f5a3c4;
+  --miss-bg: #3d1e33;
 
-  --key-white: #efe7db;
-  --key-white-edge: #8f8578;
-  --key-black: #080c15;
+  --tr-foundations: #ff9f80;
+  --tr-foundations-ink: #ffb9a2;
+  --tr-foundations-tint: #3a2630;
+  --tr-piano: #8ea8ea;
+  --tr-piano-ink: #b9c9f5;
+  --tr-piano-tint: #232c52;
+  --tr-drums: #74c4e2;
+  --tr-drums-ink: #a6dcef;
+  --tr-drums-tint: #173440;
+  --tr-create: #e0a6d1;
+  --tr-create-ink: #efc5e4;
+  --tr-create-tint: #35213a;
+
+  --case: #0f1124;
+  --key-white: #ece7ee;
+  --key-white-edge: #8c8aa3;
+  --key-black: #0b0d1d;
   --key-black-edge: #000000;
-  --key-press: #ffc94d;
-  --key-press-edge: #a87300;
-  --pad: #252d43;
-  --pad-edge: #0e1320;
-  --drum-rim: #8f8a99;
-  --drum-shell: #5a3a78;
-  --cymbal: #cfa64e;
-  --cymbal-groove: #b38c3a;
-  --cymbal-edge: #7a5a1c;
+  --key-press: #ff9f80;
+  --key-press-edge: #b45a40;
+  --pad: #262b4c;
+  --pad-edge: #10132a;
+  --drum-rim: #8e8ca3;
+  --drum-shell: #4a5a9c;
+  --cymbal: #d7b47c;
+  --cymbal-groove: #bd975c;
+  --cymbal-edge: #7e5a28;
 
-  --focus: #ffc94d;
-  --focus-halo: #141a28;
+  --focus: #ff9f80;
+  --focus-halo: #171a30;
 
+  --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.3), 0 6px 18px rgb(0 0 0 / 0.3);
   --shadow-sheet: 0 -10px 30px rgb(0 0 0 / 0.45);
   --shadow-pop: 0 12px 32px rgb(0 0 0 / 0.5);
 }
@@ -180,7 +229,7 @@
   --hairline: var(--ink);
   --key-white-edge: var(--ink);
   --paper-sunk: var(--paper);
-  --stave-line: rgb(255 255 255 / 0.7);
+  --stave-line: rgb(255 255 255 / 0.9);
 }
 
 [data-size='large'] {

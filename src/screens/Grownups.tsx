@@ -10,6 +10,7 @@ import type { Lesson } from '../music/lessons.ts';
 import { teacher } from '../store/profiles.ts';
 import { Icon, Wordmark } from '../ui/icons.tsx';
 import { ChildView, ClassView } from './TeacherDashboard.tsx';
+import learnerMetrics from '../../docs/learner-model-metrics.json';
 
 export function Grownups({ go }: { go: (h: string) => void }) {
   const { prefs, set, saveError } = usePrefs();
@@ -146,10 +147,11 @@ export function Grownups({ go }: { go: (h: string) => void }) {
             <section className="panel" aria-labelledby="lm-h">
               <h2 id="lm-h" className="h2">About the learner model</h2>
               <p>
-                A second, simpler model keeps a running estimate for each skill (Elo-style: each try nudges the estimate, and tries with more help count for less). It decides “Up next” on the pathway and the suggestions on the Class tab. A skill only shows as secure after the child matches a fresh pattern on their own. Open tasks (making your own music) are never judged.
+                A second model, Bayesian Knowledge Tracing, keeps one estimate per skill (beat, rests, two sounds in a beat, right notes, reading, holding notes) and updates it after every try. Tries with help count for less than tries on their own, and a skill is only called secure after a pass on their own. It is fitted to simulated learners, not children.
               </p>
+              <p>It changes three things a child sees: what “Up next” offers and the reason shown with it; whether a lesson starts slower or with a watch-it demonstration; and which fact the feedback mentions first. On each child’s page you can see the tries behind every estimate and override it, or choose their next activity yourself.</p>
               <p>
-                It is built so a stronger local model can be plugged in later without changing these screens. If a plugged-in model fails, Carmen falls back to the built-in one and says so.
+                On a separate group of {learnerMetrics.learners} simulated learners, its next suggestion trained the truly weakest skill {Math.round(learnerMetrics.model.targetsWeakest * 1000) / 10}% of the time; the fixed route managed {Math.round(learnerMetrics.rulesBaseline.targetsWeakest * 1000) / 10}%. This shows the software works as designed. It says nothing yet about real children’s learning.
               </p>
             </section>
           </>
@@ -233,7 +235,7 @@ export function Grownups({ go }: { go: (h: string) => void }) {
           <ul className="plain">
             <li>Lesson content adapts Open Music Theory (Shaffer, Hughes, Moseley and contributors; ed. Shaffer and Wharton), CC BY-SA 4.0. Changes: new child-facing wording, sequence and exercises.</li>
             <li>Piano and percussion sounds: Versilian Community Sample Library (VCSL), CC0.</li>
-            <li>Fonts: Bagel Fat One and Figtree, SIL Open Font License 1.1.</li>
+            <li>Font: Nunito, SIL Open Font License 1.1.</li>
             <li>Music notation: VexFlow (MIT) with the Bravura music font (SIL OFL).</li>
             <li>Background on the need: ABC Classic (2023), ACMF (2024), ABC Education (2023), ASME submission (2022), Limelight (2020), Music Australia (2026), ABC News (2026).</li>
           </ul>

@@ -176,13 +176,13 @@ export function NoteTrail({ trail, recording, clef, letters }: { trail: Trail; r
         }
         g.stroke();
         if (sharp) {
-          g.font = `700 ${Math.round(gap * 1.5)}px Figtree, system-ui, sans-serif`;
+          g.font = `700 ${Math.round(gap * 1.5)}px Nunito, system-ui, sans-serif`;
           g.textAlign = 'right';
           g.fillText('♯', x - rx * 1.3, y);
         }
         if (showLetters && label) {
           g.fillStyle = soft;
-          g.font = `700 ${Math.max(10, Math.round(gap * 1.1))}px Figtree, system-ui, sans-serif`;
+          g.font = `700 ${Math.max(10, Math.round(gap * 1.1))}px Nunito, system-ui, sans-serif`;
           g.textAlign = 'center';
           g.fillText(label, x, h - 8);
         }

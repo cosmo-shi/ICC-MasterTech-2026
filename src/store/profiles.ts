@@ -7,6 +7,8 @@ import type { PathwayId } from '../state/prefs.tsx';
 
 export const PLAYER_COLOURS = ['sun', 'coral', 'mint', 'lilac', 'sky', 'leaf'] as const;
 export type PlayerColour = (typeof PLAYER_COLOURS)[number];
+/** Ids are stored, so they stay; the names match the six palette swatches they now show. */
+export const COLOUR_NAMES: Record<PlayerColour, string> = { sun: 'Peach', coral: 'Coral', mint: 'Sage', lilac: 'Orchid', sky: 'Sky', leaf: 'Periwinkle' };
 
 export interface Player {
   id: string;

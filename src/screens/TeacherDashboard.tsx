@@ -1,32 +1,26 @@
 import { useMemo, useState } from 'react';
-import { estimateSkills, nextStep, SKILLS, type SkillEstimate, type SkillId, skillById, suggestGroups } from '../ai/learner.ts';
-import { LESSONS, MISSIONS } from '../data/catalog.ts';
-import { routeLessons } from '../data/route.ts';
+import { BAND_WORDS, type Band, learnerFrom, nextFor, reasonText, SKILLS, type SkillEstimate, type SkillId, skillById, suggestGroups, teacherOverrides, LESSON_INFOS, type TeacherOverrides } from '../ai/learner.ts';
+import { ACTIVITIES, routeFrom } from '../data/curriculum.ts';
 import { type AttemptRecord, type CompositionRecord, newId, stamp, store } from '../store/db.ts';
 import { type Player, players, usePlayers } from '../store/profiles.ts';
 import { Icon } from '../ui/icons.tsx';
-import { isNote, toEvidence, useAllRecords } from '../ui/useAttempts.ts';
+import { isNote, useAllRecords, useOverrides } from '../ui/useAttempts.ts';
 import { usePlayer } from '../ui/usePlayer.ts';
 import { Avatar } from './EntryScreen.tsx';
+import { titleOf } from './LearnScreen.tsx';
 import { usePrefs } from '../state/prefs.tsx';
 
-const titleOf = (id: string) => LESSONS.find((l) => l.id === id)?.title ?? MISSIONS.find((m) => m.id === id)?.title ?? id;
 const DAY = 864e5;
 
 /** What a teacher could try, per skill. Teacher-facing; drafts pending educator review. */
 const TEACHER_MOVES: Record<SkillId, string> = {
-  explore: 'Model one sound loud then soft; ask them to copy and then change it.',
   pulse: 'March or pat the beat together first, then play along at a slower tempo with the metronome.',
   rests: 'Say the rhythm aloud with a silent gesture (hands open) on each rest before playing.',
-  quavers: 'Chant “ta ta ti-ti ta” while patting the beat, then move it to the drum.',
-  direction: 'Sing or play two notes and show higher/lower with a hand; let the child lead.',
-  'note-names': 'Find the pairs of black keys together; C is always just to the left of a pair.',
+  subdivision: 'Chant “ta ta ti-ti ta” while patting the beat, then move it to the drum or key.',
+  pitch: 'Find the pairs of black keys together; C is always just to the left of a pair. Sing the notes before playing.',
   reading: 'Point to each note as you both say its letter, then play slowly without the metronome.',
   duration: 'Count the minim aloud (“1-2”) while holding the key down, then let them count.',
-  create: 'Ask them to play you their idea and say one thing they changed.',
 };
-
-const STATUS_WORD: Record<SkillEstimate['status'], string> = { 'not-yet': 'Not tried', starting: 'Starting', growing: 'Growing', secure: 'Secure' };
 
 export interface ChildLearning {
   player: Player;
@@ -34,78 +28,85 @@ export interface ChildLearning {
   notes: AttemptRecord[];
   pieces: CompositionRecord[];
   estimates: SkillEstimate[];
+  overrides: TeacherOverrides;
+  /** What the child is offered next, and why (model, teacher or route). */
+  next?: { id: string; why: string; by: 'model' | 'teacher' | 'route' };
   lastAt?: number;
 }
 
-export function useClassLearning(): { children: ChildLearning[]; unowned: number; modelName: string; modelKind: string; fellBack: boolean } {
+export function useClassLearning(): { children: ChildLearning[]; unowned: number } {
   const { attempts, pieces } = useAllRecords();
   const { players: list } = usePlayers();
+  const all = useOverrides();
+  const { prefs } = usePrefs();
   return useMemo(() => {
-    const children: ChildLearning[] = [];
-    const runs = list.map((p) => {
+    const children = list.map((p): ChildLearning => {
       const mine = attempts.filter((a) => a.profileId === p.id);
       const real = mine.filter((a) => !isNote(a));
-      return { p, mine, real, est: estimateSkills(real.map(toEvidence)) };
-    });
-    for (const { p, mine, real, est } of runs)
-      children.push({
+      const ovr = all[p.id] ?? { skills: {} };
+      const m = learnerFrom(real, ovr);
+      const plan = nextFor(m.planning, ovr, { infos: LESSON_INFOS, route: routeFrom(p.start ?? null), aiEnabled: prefs.aiEnabled });
+      const by = plan.teacher ? 'teacher' : plan.provenance === 'learner-model' ? 'model' : 'route';
+      return {
         player: p,
         attempts: real,
         notes: mine.filter(isNote),
         pieces: pieces.filter((c) => c.profileId === p.id),
-        estimates: est.estimates,
+        estimates: m.estimates,
+        overrides: ovr,
+        next: plan.next && { id: plan.next.lessonId, why: by === 'teacher' ? 'You chose this.' : by === 'model' ? reasonText(plan) : 'Next on their route.', by },
         lastAt: real[0]?.createdAt,
-      });
-    const m = runs[0]?.est.model;
+      };
+    });
     const unowned = attempts.filter((a) => !a.profileId && !isNote(a)).length;
-    return { children, unowned, modelName: m ? `${m.id} v${m.version}` : '', modelKind: m?.kind ?? 'baseline', fellBack: runs.some((r) => r.est.fellBack) };
-  }, [attempts, pieces, list]);
+    return { children, unowned };
+  }, [attempts, pieces, list, all, prefs.aiEnabled]);
 }
 
-/** Empty, half or full circle, so status never relies on colour alone. */
-function StatusDot({ s }: { s: SkillEstimate['status'] }) {
+/** Dash, empty, half, three-quarter or full circle, so the band never relies on colour alone. */
+function BandDot({ b }: { b: Band }) {
   return (
     <svg className="st-dot" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" focusable="false">
-      {s === 'not-yet' ? (
+      {b === 'new' ? (
         <path d="M3 6h6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
       ) : (
         <>
           <circle cx="6" cy="6" r="4.5" fill="none" stroke="currentColor" strokeWidth="1.6" />
-          {s === 'growing' && <path d="M6 1.5a4.5 4.5 0 0 1 0 9z" fill="currentColor" />}
-          {s === 'secure' && <circle cx="6" cy="6" r="4.5" fill="currentColor" />}
+          {b === 'nearly' && <path d="M6 1.5a4.5 4.5 0 0 1 0 9z" fill="currentColor" />}
+          {b === 'secure' && <circle cx="6" cy="6" r="4.5" fill="currentColor" />}
         </>
       )}
     </svg>
   );
 }
 
-function StatusCell({ e }: { e?: SkillEstimate }) {
-  const s = e?.status ?? 'not-yet';
+function BandCell({ e }: { e?: SkillEstimate }) {
+  const b = e?.band ?? 'new';
   return (
-    <span className={`st st-${s}`}>
-      <StatusDot s={s} /> {STATUS_WORD[s]}
+    <span className={`st st-${b}`}>
+      <BandDot b={e?.override === 'secure' ? 'secure' : b} /> {e?.override ? (e.override === 'secure' ? 'Secure (you)' : 'Practise (you)') : BAND_WORDS[b]}
     </span>
   );
 }
 
-/** Children who look stuck: a skill still "starting" after two or more tries, newest first. */
+/** Children the model says need practice on a skill after repeated tries. */
 function needsHand(c: ChildLearning) {
-  const step = nextStep(routeLessons(null), c.estimates);
-  if (step.why !== 'practise' || !step.skill) return null;
-  const e = c.estimates.find((x) => x.skill === step.skill)!;
-  const tries = c.attempts.filter((a) => skillById(step.skill!).lessons.includes(a.activityId));
+  const e = [...c.estimates].filter((x) => x.needsPractice && !x.uncertain).sort((x, y) => y.recentFails - x.recentFails)[0];
+  if (!e) return null;
+  const ids = new Set(e.evidenceAttemptIds);
+  const tries = c.attempts.filter((a) => ids.has(a.id));
   const hinted = tries.filter((a) => (a.support?.hintLevel ?? 0) >= 2).length;
-  return { skill: step.skill, evidence: e.evidence, hinted, lesson: step.activityId };
+  return { skill: e.skill, tries: e.observations, hinted, lesson: c.next?.id };
 }
 
 export function ClassView({ openChild }: { openChild: (id: string) => void }) {
-  const { children, unowned, modelName, modelKind, fellBack } = useClassLearning();
+  const { children, unowned } = useClassLearning();
   const [now] = useState(() => Date.now());
   const active = children.filter((c) => c.lastAt && now - c.lastAt < 7 * DAY).length;
   const stuck = children.map((c) => ({ c, n: needsHand(c) })).filter((x) => x.n);
   const groups = suggestGroups(children.map((c) => ({ id: c.player.id, estimates: c.estimates })));
   const byId = (id: string) => children.find((c) => c.player.id === id)!;
-  const shownSkills = SKILLS.filter((s) => s.id !== 'explore');
+  const shownSkills = SKILLS;
 
   if (!children.length)
     return (
@@ -139,7 +140,7 @@ export function ClassView({ openChild }: { openChild: (id: string) => void }) {
           Who might like a hand
         </h2>
         {stuck.length === 0 ? (
-          <p className="note-text">No one looks stuck right now. A child appears here when a skill is still starting after two or more tries.</p>
+          <p className="note-text">No one looks stuck right now. A child appears here when the model has two or more tries showing a skill still needs practice.</p>
         ) : (
           <ul className="hand-list">
             {stuck.map(({ c, n }) => (
@@ -149,12 +150,12 @@ export function ClassView({ openChild }: { openChild: (id: string) => void }) {
                   <span>
                     <span className="hand-name">{c.player.name}</span>
                     <span className="hand-skill">
-                      {skillById(n!.skill).name} · {n!.evidence} tries{n!.hinted ? `, ${n!.hinted} with clues shown` : ''}
+                      {skillById(n!.skill).name} · {n!.tries} tries{n!.hinted ? `, ${n!.hinted} with clues shown` : ''}
                     </span>
                   </span>
                 </button>
                 <p className="hand-move">
-                  <strong>Try:</strong> {TEACHER_MOVES[n!.skill]} <span className="muted">Lesson: {titleOf(n!.lesson)}.</span>
+                  <strong>Try:</strong> {TEACHER_MOVES[n!.skill]} {n!.lesson && <span className="muted">Offered next: {titleOf(n!.lesson)}.</span>}
                 </p>
               </li>
             ))}
@@ -192,7 +193,7 @@ export function ClassView({ openChild }: { openChild: (id: string) => void }) {
           Skills across the class
         </h2>
         <p className="note-text">
-          <StatusDot s="not-yet" /> not tried · <StatusDot s="starting" /> starting · <StatusDot s="growing" /> growing · <StatusDot s="secure" /> secure (shown on their own, with no hints). Select a name to see their work.
+          <BandDot b="new" /> not enough tries yet · <BandDot b="growing" /> still learning · <BandDot b="nearly" /> nearly there · <BandDot b="secure" /> secure on their own. Bands come from the evidence, not a score. Select a name to see the tries behind them and to change them.
         </p>
         <div className="table-wrap" tabIndex={0} role="region" aria-label="Skills table (scrolls sideways)">
           <table className="skill-grid">
@@ -216,7 +217,7 @@ export function ClassView({ openChild }: { openChild: (id: string) => void }) {
                   </th>
                   {shownSkills.map((s) => (
                     <td key={s.id}>
-                      <StatusCell e={c.estimates.find((e) => e.skill === s.id)} />
+                      <BandCell e={c.estimates.find((e) => e.skill === s.id)} />
                     </td>
                   ))}
                 </tr>
@@ -226,7 +227,7 @@ export function ClassView({ openChild }: { openChild: (id: string) => void }) {
         </div>
       </section>
       <p className="note-text provenance">
-        Worked out on this device by the {modelKind === 'live' ? 'plugged-in learner model' : 'built-in learner model'} ({modelName}){fellBack ? ', after the plugged-in model failed' : ''}, from tries on this device only. These are suggestions for you to check, not grades.
+        Worked out on this device by Bayesian Knowledge Tracing (one estimate per skill, updated after each try; settings fitted to simulated learners, not to children). Tries with help count for less than tries on their own. These are suggestions for you to check and change, not grades.
         {unowned > 0 && ` ${unowned} guest tries are not included.`}
       </p>
     </div>
@@ -252,6 +253,7 @@ export function ChildView({ childId, setChild }: { childId: string | null; setCh
   const [rename, setRename] = useState<string | null>(null);
   const [confirmRemove, setConfirmRemove] = useState(false);
   const player = usePlayer();
+  const setOverride = (o: TeacherOverrides) => c && teacherOverrides.set(c.player.id, o);
   if (!c) return <p className="note-text">No players on this device yet.</p>;
 
   const addNote = async () => {
@@ -301,26 +303,85 @@ export function ChildView({ childId, setChild }: { childId: string | null; setCh
         </div>
       </header>
 
+      <section className="dash-block" aria-labelledby="nx-h">
+        <h3 id="nx-h" className="h3">
+          What {c.player.name} sees next
+        </h3>
+        {c.next && (
+          <p className="next-line">
+            <strong>{titleOf(c.next.id)}</strong> <span className={`by by-${c.next.by}`}>{c.next.by === 'model' ? 'Suggested by the learner model' : c.next.by === 'teacher' ? 'Your choice' : 'Route order (not enough evidence yet)'}</span>
+            <span className="muted"> {c.next.why}</span>
+          </p>
+        )}
+        <label className="field">
+          Choose their next activity
+          <select value={c.overrides.next ?? ''} onChange={(e) => setOverride({ ...c.overrides, next: e.target.value || undefined })}>
+            <option value="">Let the model suggest</option>
+            {ACTIVITIES.map((a) => (
+              <option key={a.id} value={a.id}>
+                {titleOf(a.id)}
+              </option>
+            ))}
+          </select>
+        </label>
+      </section>
+
       <section className="dash-block" aria-labelledby="cs-h">
         <h3 id="cs-h" className="h3">
-          Skills
+          Skills: evidence and your review
         </h3>
-        <ul className="skill-bars">
+        <p className="note-text">Known facts are the tries listed. The band is the model’s estimate from them; you can override it, and your choice changes what {c.player.name} is offered.</p>
+        <ul className="skill-rows">
           {SKILLS.map((s) => {
             const e = c.estimates.find((x) => x.skill === s.id)!;
+            const ids = new Set(e.evidenceAttemptIds);
+            const tries = c.attempts.filter((a) => ids.has(a.id)).slice(0, 4);
             return (
-              <li key={s.id} className="skill-bar">
-                <span className="skill-name">
-                  {s.name}
-                  <span className="muted"> · {s.teacher}</span>
-                </span>
-                <span className="bar" aria-hidden="true">
-                  <span className={`bar-fill st-${e.status}`} style={{ width: `${e.evidence ? Math.round(e.level * 100) : 0}%` }} />
-                </span>
-                <span className="skill-st">
-                  <StatusCell e={e} /> {e.evidence ? `(${e.evidence} tries)` : ''}
-                </span>
-                {(e.status === 'starting' || e.status === 'growing') && <span className="skill-move">Try: {TEACHER_MOVES[s.id]}</span>}
+              <li key={s.id} className="skill-row">
+                <div className="skill-row-head">
+                  <span className="skill-name">{s.name}</span>
+                  <BandCell e={e} />
+                </div>
+                <p className="muted small-text">{s.teacher}</p>
+                <p className="skill-evidence">
+                  {e.observations === 0
+                    ? 'No tries that show this yet.'
+                    : `${e.observations} ${e.observations === 1 ? 'try' : 'tries'}: ${e.independent} on their own, ${e.assisted} in practice or with help${e.recentFails ? `; ${e.recentFails} of the latest were tricky` : ''}.`}
+                  {e.uncertain && e.observations > 0 && ' Too few tries to be sure.'}
+                  {e.override && ` Model alone says: ${BAND_WORDS[e.band].toLowerCase()}.`}
+                </p>
+                {tries.length > 0 && (
+                  <ul className="skill-tries">
+                    {tries.map((a) => (
+                      <li key={a.id}>
+                        <span className={a.passed ? 'mark-good' : 'mark-miss'} aria-hidden="true">
+                          {a.passed ? '✓' : '○'}
+                        </span>{' '}
+                        {titleOf(a.activityId)} · {supportText(a)} · {a.passed ? 'matched' : 'not yet'} <span className="muted">{new Date(a.createdAt).toLocaleDateString()}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {e.needsPractice && <p className="skill-move">Try: {TEACHER_MOVES[s.id]}</p>}
+                <div className="seg-mini" role="radiogroup" aria-label={`Your review of ${s.name}`}>
+                  {([undefined, 'practise', 'secure'] as const).map((v) => (
+                    <button
+                      key={v ?? 'model'}
+                      type="button"
+                      role="radio"
+                      aria-checked={e.override === v}
+                      className="chip"
+                      onClick={() => {
+                        const skills = { ...c.overrides.skills };
+                        if (v) skills[s.id] = v;
+                        else delete skills[s.id];
+                        setOverride({ ...c.overrides, skills });
+                      }}
+                    >
+                      {v === undefined ? 'Use the model' : v === 'practise' ? 'Needs practice' : 'Secure'}
+                    </button>
+                  ))}
+                </div>
               </li>
             );
           })}
@@ -378,7 +439,10 @@ export function ChildView({ childId, setChild }: { childId: string | null; setCh
                       {a.summary ? `${a.summary.correctSound}/${a.summary.expected} sounds, ${a.summary.onTime} on time${a.summary.restViolations ? `, ${a.summary.restViolations} in rests` : ''}` : a.passed ? 'completed' : '—'}
                       {prefs.badges && a.passed && (a.kind === 'independent' || a.kind === 'mission-check') ? ' ★' : ''}
                     </td>
-                    <td>{a.coach ? `${a.coach.label}${a.coach.pattern ? `: ${a.coach.pattern}` : ''}` : '—'}</td>
+                    <td>
+                      {a.coach ? `${a.coach.label}${a.coach.pattern ? `: ${a.coach.pattern}` : ''}` : '—'}
+                      {a.coach?.tailor?.startTipUsed ? ` · started with “${a.coach.tailor.startTipUsed}”` : ''}
+                    </td>
                   </tr>
                 ))}
               </tbody>
