@@ -189,3 +189,11 @@ export function reasonText(plan: TailorPlan): string {
 export function suggestionLabel(id: SuggestionId): string {
   return skillsData.suggestions[id];
 }
+
+/** Short words for grown-ups: why a lesson was suggested. */
+export function reasonLabel(reasonId: string): string {
+  if (reasonId.startsWith('practise-')) return `to practise ${skillLabel(reasonId.slice('practise-'.length) as SkillId)}`;
+  if (reasonId === 'try-on-my-own') return 'to try it on their own';
+  if (reasonId === 'move-on') return 'to move on';
+  return 'next on the route';
+}

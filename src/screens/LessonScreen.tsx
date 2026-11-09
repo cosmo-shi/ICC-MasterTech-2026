@@ -214,6 +214,10 @@ function AssessedLesson({ lessonId, go }: Props) {
   const tips = phase === 'ready' && !result ? startSuggestions(learner.state, lesson.id, tctx) : [];
   const plan = phase === 'review' ? planNext(learner.state, learner.context({ currentLessonId: lesson.id })) : null;
   const suggestion = plan && plan.provenance === 'learner-model' && plan.next ? plan.next : null;
+  // When the suggestion is "this one again" or "on my own", it marks the existing button instead of adding a copy.
+  const suggestRetry = !!suggestion && suggestion.lessonId === lesson.id && suggestion.reasonId !== 'try-on-my-own';
+  const suggestOwn = !!suggestion && suggestion.lessonId === lesson.id && suggestion.reasonId === 'try-on-my-own';
+  const suggestOther = !!suggestion && suggestion.lessonId !== lesson.id;
 
   // Keep what was suggested with this try, for the grown-ups view (once per try).
   useEffect(() => {
@@ -384,32 +388,20 @@ function AssessedLesson({ lessonId, go }: Props) {
               <h3 className="h3">What next?</h3>
               {suggestion && (
                 <div className="suggest-next">
-                  <button
-                    type="button"
-                    className="btn"
-                    onClick={() => {
-                      recordChoice(`suggested:${suggestion.reasonId}:${suggestion.lessonId}`);
-                      if (suggestion.lessonId !== lesson.id) go(`#/lesson/${suggestion.lessonId}`);
-                      else if (suggestion.reasonId === 'try-on-my-own') goIndependent();
-                      else void start();
-                    }}
-                  >
-                    Suggested:{' '}
-                    {suggestion.lessonId !== lesson.id
-                      ? lessonById(suggestion.lessonId)?.title
-                      : suggestion.reasonId === 'try-on-my-own'
-                        ? suggestionLabel('try-on-my-own')
-                        : 'Practise this one again'}
-                  </button>
+                  {suggestOther && (
+                    <button type="button" className="btn" onClick={() => { recordChoice(`suggested:${suggestion.reasonId}:${suggestion.lessonId}`); go(`#/lesson/${suggestion.lessonId}`); }}>
+                      Suggested: {lessonById(suggestion.lessonId)?.title}
+                    </button>
+                  )}
                   <details className="why">
-                    <summary>Why?</summary>
+                    <summary>{suggestOther ? 'Why?' : `Why ${suggestRetry ? '“Try again”' : '“on my own”'} is suggested`}</summary>
                     <p className="note-text">{reasonText(plan!)} You can choose something else.</p>
                   </details>
                 </div>
               )}
               <div className="row wrap">
-                <button type="button" className="btn" onClick={() => { recordChoice('retry'); void start(); }}>
-                  Try again
+                <button type="button" className={suggestOther || suggestOwn ? 'btn-quiet' : 'btn'} onClick={() => { recordChoice(suggestRetry ? `suggested:${suggestion!.reasonId}:${lesson.id}` : 'retry'); void start(); }}>
+                  {suggestRetry ? 'Suggested: try again' : 'Try again'}
                 </button>
                 {!slower && (
                   <button type="button" className="btn-quiet" onClick={() => { recordChoice('slower'); setSlower(true); setPhase('ready'); }}>
@@ -417,8 +409,8 @@ function AssessedLesson({ lessonId, go }: Props) {
                   </button>
                 )}
                 {mode === 'practice' && (
-                  <button type="button" className="btn-quiet" onClick={goIndependent}>
-                    Try a new one on my own
+                  <button type="button" className={suggestOwn ? 'btn' : 'btn-quiet'} onClick={() => { if (suggestOwn) recordChoice(`suggested:try-on-my-own:${lesson.id}`); goIndependent(); }}>
+                    {suggestOwn ? `Suggested: ${suggestionLabel('try-on-my-own').toLowerCase()}` : 'Try a new one on my own'}
                   </button>
                 )}
                 {nextInPath && nextInPath !== suggestion?.lessonId && (

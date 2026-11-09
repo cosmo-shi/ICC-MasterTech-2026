@@ -10,6 +10,7 @@ import { SoundCheck } from '../ui/SoundCheck.tsx';
 import type { Lesson } from '../music/lessons.ts';
 import { useLearner, resetLearningPicture } from '../ai/useLearner.ts';
 import { LEARNER_MODEL_ID, LEARNER_MODEL_VERSION, SKILLS, band, skillLabel } from '../ai/learner.ts';
+import { reasonLabel } from '../ai/tailor.ts';
 import learnerMetrics from '../../docs/learner-model-metrics.json';
 
 const titleOf = (id: string) => LESSONS.find((l) => l.id === id)?.title ?? MISSIONS.find((m) => m.id === id)?.title ?? id;
@@ -514,11 +515,11 @@ function LearningPicture({ attempts }: { attempts: AttemptRecord[] }) {
       )}
       {last?.coach?.tailor && (
         <p className="note-text">
-          Last suggestion: {titleOf(last.coach.tailor.nextLessonId!)} ({last.coach.tailor.reasonId}).
+          Last suggestion: {titleOf(last.coach.tailor.nextLessonId!)}, {reasonLabel(last.coach.tailor.reasonId ?? '')}.
         </p>
       )}
       <p className="note-text">
-        Checked on made-up learners only: it picked the weakest skill {Math.round(learnerMetrics.model.targetsWeakest * 100)}% of the time, against {Math.round(learnerMetrics.rulesBaseline.targetsWeakest * 100)}% for the fixed route. That
+        Checked on made-up learners only: it picked the weakest skill {Math.round(learnerMetrics.model.targetsWeakest * 1000) / 10}% of the time, against {Math.round(learnerMetrics.rulesBaseline.targetsWeakest * 1000) / 10}% for the fixed route. That
         shows the software works, not that children learn more. See <code>docs/LEARNER_MODEL_CARD.md</code>.
       </p>
       {confirm ? (

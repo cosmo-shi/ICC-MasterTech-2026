@@ -166,8 +166,9 @@ export function buildLearnerState(attempts: AttemptRecord[], lessons: LessonInfo
   const sorted = [...attempts].sort((a, b) => a.createdAt - b.createdAt);
   for (const a of sorted) {
     const lesson = byId.get(a.activityId);
-    // Only real tries count: teacher notes and records without checker facts are skipped.
-    if (!lesson || !a.summary) continue;
+    // Only real tries count: teacher notes, records without checker facts and tries where
+    // nothing was played (the coach marks those "insufficient") are skipped.
+    if (!lesson || !a.summary || a.coach?.focus === 'insufficient') continue;
     const prog = (state.lessons[a.activityId] ??= { attempts: 0, passed: false, independentPassed: false });
     prog.attempts += 1;
     if (a.passed) prog.passed = true;

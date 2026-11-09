@@ -75,4 +75,9 @@ describe('learner state', () => {
     expect(st.lessons.L03).toBeUndefined();
     expect(st.attemptsUsed).toBe(0);
   });
+
+  it('skips tries where nothing was played', () => {
+    const empty = attempt('L01', { coach: { focus: 'insufficient', label: 'Coach tips', patternSource: 'none' } }, { onTime: 0, missed: 8 });
+    expect(buildLearnerState([empty], INFOS).attemptsUsed).toBe(0);
+  });
 });
