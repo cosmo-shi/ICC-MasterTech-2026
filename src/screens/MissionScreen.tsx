@@ -270,7 +270,7 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
       case 'section_order':
         return 'Play B first, then A';
       case 'add_part':
-        return p.part === 'pulse' ? 'Add a steady click' : p.part === 'backbeat' ? 'Add a snare on beats 2 and 4' : 'Add a long low note';
+        return p.part === 'pulse' ? 'Add a metronome beat' : p.part === 'backbeat' ? 'Add a snare on beats 2 and 4' : 'Add a long low note';
       default:
         return 'Echo';
     }
@@ -325,7 +325,7 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
             <div className="row wrap">
               {recState !== 'countin' && recState !== 'recording' ? (
                 <button type="button" className="btn btn-coral btn-big" onClick={record}>
-                  <span aria-hidden="true">● </span>{phrase ? 'Record again' : 'Record (4 clicks first)'}
+                  <span aria-hidden="true">● </span>{phrase ? 'Record again' : 'Record (4 beats first)'}
                 </button>
               ) : (
                 <p className="status-big" role="status">
@@ -336,7 +336,7 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
             {phrase && (
               <>
                 {soundingInPhrase.length === 0 ? (
-                  <p className="note-text">No sounds were recorded. Try again and play while the clicks go.</p>
+                  <p className="note-text">No sounds were recorded. Try again and play along with the metronome.</p>
                 ) : (
                   <>
                     <Notation phrase={phrase} />
@@ -400,7 +400,7 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
               {op === 'add_part' &&
                 (['pulse', 'backbeat', 'drone'] as const).map((p) => (
                   <ChoiceChip key={p} on={params?.op === 'add_part' && params.part === p} onClick={() => { setParams({ op: 'add_part', part: p, tempoScale: 1 }); setParamsBy('learner'); }}>
-                    {p === 'pulse' ? 'A steady click' : p === 'backbeat' ? 'Snare on 2 and 4' : 'A long low note'}
+                    {p === 'pulse' ? 'A metronome beat' : p === 'backbeat' ? 'Snare on 2 and 4' : 'A long low note'}
                   </ChoiceChip>
                 ))}
               {(op === 'add_part' || op === 'dynamics' || op === 'section_order') && (

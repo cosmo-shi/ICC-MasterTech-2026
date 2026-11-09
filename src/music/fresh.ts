@@ -114,7 +114,7 @@ export function freshTask(op: ReplyParams['op'], r: () => number = Math.random):
           id: 'which-part',
           question: 'Which part did the partner add?',
           options: [
-            { id: 'pulse', label: 'A steady click on every beat' },
+            { id: 'pulse', label: 'A steady metronome beat' },
             { id: 'backbeat', label: 'A snare on beats 2 and 4' },
             { id: 'drone', label: 'A long low note' },
           ],

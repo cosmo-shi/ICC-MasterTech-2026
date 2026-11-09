@@ -26,8 +26,8 @@
     "passed": "Every sound matched. {onTime} of {total} landed on the beat."
   },
   "replies": {
-    "pulse-with-mine": "Hear your own taps with a steady click under them.",
-    "pulse-slower": "Hear your taps again, a little slower, with a steady click.",
+    "pulse-with-mine": "Hear your own taps with the metronome under them.",
+    "pulse-slower": "Hear your taps again, a little slower, with the metronome.",
     "target-slower": "Hear the pattern slowly, then try with it.",
     "target-echo": "Hear the music once more.",
     "mine-with-rest": "Hear your pattern with that beat left quiet.",

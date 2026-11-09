@@ -60,7 +60,7 @@ export function CoachCard({ decision, onChoice, onReflect }: Props) {
                   {r.verification.verified.map((v) => (
                     <li key={v}>✓ {v}</li>
                   ))}
-                  {r.render.tracks.length > 1 && <li>The click is Carmen’s part, not yours.</li>}
+                  {r.render.tracks.length > 1 && <li>The metronome beat is Carmen’s part, not yours.</li>}
                 </ul>
               </details>
             </div>

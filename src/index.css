@@ -637,13 +637,13 @@ code {
 .trail {
   display: block;
   width: 100%;
-  height: 64px;
+  height: 96px;
   border-radius: var(--r-md);
   background: var(--paper-sunk);
 }
 @media (min-width: 900px) {
   .trail {
-    height: 104px;
+    height: 124px;
   }
 }
 .ws-bar {
@@ -809,7 +809,7 @@ code {
 }
 @media (max-width: 600px) {
   .trail {
-    height: 48px;
+    height: 84px;
   }
 }
 .status-line {
@@ -877,7 +877,7 @@ code {
   display: grid;
   grid-template-columns: repeat(var(--white-count), 1fr);
   gap: var(--gap);
-  height: clamp(200px, calc(100svh - 500px), 400px);
+  height: clamp(200px, calc(100svh - 536px), 400px);
   padding-bottom: var(--edge);
   touch-action: none;
   user-select: none;

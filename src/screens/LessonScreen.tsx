@@ -263,7 +263,7 @@ function AssessedLesson({ lessonId, go }: Props) {
                 </button>
               </>
             )}
-            {phase === 'countin' && <p className="status-big" role="status">Get ready… 4 clicks</p>}
+            {phase === 'countin' && <p className="status-big" role="status">Get ready… 4 beats</p>}
             {phase === 'playing' && (
               <>
                 <p className="status-big" role="status">

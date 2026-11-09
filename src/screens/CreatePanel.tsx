@@ -118,7 +118,7 @@ export function CreatePanel({ instrument, activityId, onSaved }: Props) {
         <span className="rec-dot" aria-hidden="true" />
         <span className="rec-text">
           <span className="rec-label">{recording ? (state === 'countin' ? 'Get ready' : 'Stop') : phrase ? 'Record again' : 'Record'}</span>
-          <span className="rec-sub">{state === 'countin' ? 'Four clicks, then play' : state === 'recording' ? 'Recording…' : click ? `Click at ${tempo}` : 'Tap to start'}</span>
+          <span className="rec-sub">{state === 'countin' ? '4 beats, then play' : state === 'recording' ? 'Recording…' : click ? `Metronome ${tempo}` : 'Tap to start'}</span>
         </span>
       </button>
       <button
@@ -135,13 +135,13 @@ export function CreatePanel({ instrument, activityId, onSaved }: Props) {
         <Icon name="undo" size={22} />
         <span>Undo</span>
       </button>
-      <button type="button" className="tool tool-toggle" aria-pressed={click} disabled={recording} onClick={() => setClick((c) => !c)} aria-label="Steady click while recording">
+      <button type="button" className="tool tool-toggle" aria-pressed={click} disabled={recording} onClick={() => setClick((c) => !c)} aria-label="Metronome while recording">
         <Icon name="click" size={22} />
-        <span>Click</span>
+        <span>Metronome</span>
       </button>
       {click && !recording && (
         <label className="speed">
-          Click speed
+          Speed
           <input type="range" min={60} max={140} step={5} value={tempo} onChange={(e) => setTempo(Number(e.target.value))} aria-valuetext={`${tempo} beats a minute`} />
           <span>{tempo}</span>
         </label>

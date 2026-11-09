@@ -75,17 +75,14 @@ export function Workspace({ instrument, onEvent, highlightNotes, highlightPads, 
   const pads = useMemo(() => (prefs.simplified ? PADS.filter((p) => SIMPLE_PADS.includes(p.sound)) : PADS), [prefs.simplified]);
   const [trailStore] = useState(() => new Trail());
   const held = useRef(new Map<number, TrailNote>());
-  const lowRef = useRef(low);
-  useEffect(() => {
-    lowRef.current = low;
-  }, [low]);
-  const trailDown = useCallback((y: number, t: number, key?: number) => {
-    const tr = trailStore;
-    const n: TrailNote = { y: Math.max(0, Math.min(1, y)), start: t, end: key === undefined ? t + 120 : undefined };
-    tr.notes.push(n);
-    if (key !== undefined) held.current.set(key, n);
-    tr.wake();
-  }, [trailStore]);
+  const trailDown = useCallback(
+    (n: TrailNote) => {
+      trailStore.notes.push(n);
+      if (n.midi !== undefined) held.current.set(n.midi, n);
+      trailStore.wake();
+    },
+    [trailStore],
+  );
   const trailUp = useCallback((key: number, t: number) => {
     const n = held.current.get(key);
     if (n) n.end = t;
@@ -101,7 +98,7 @@ export function Workspace({ instrument, onEvent, highlightNotes, highlightPads, 
       if (!audio.running) void audio.start();
       audio.noteOn(midi, 0.7);
       setDownNotes((s) => new Set(s).add(midi));
-      trailDown((midi - lowRef.current) / 24, performance.now(), midi);
+      trailDown({ midi, start: performance.now() });
       onEvent?.({ type: 'down', midi, t, source });
     },
     [onEvent, trailDown],
@@ -125,8 +122,8 @@ export function Workspace({ instrument, onEvent, highlightNotes, highlightPads, 
       if (!audio.running) void audio.start();
       audio.drum(sound, 0.7);
       setDownPads((s) => new Set(s).add(sound));
-      const i = pads.findIndex((p) => p.sound === sound);
-      trailDown(pads.length > 1 ? 1 - i / (pads.length - 1) : 0.5, performance.now());
+      const now = performance.now();
+      trailDown({ sound, start: now, end: now + 100 });
       window.setTimeout(() => setDownPads((s) => {
         const n = new Set(s);
         n.delete(sound);
@@ -134,7 +131,7 @@ export function Workspace({ instrument, onEvent, highlightNotes, highlightPads, 
       }), 140);
       onEvent?.({ type: 'down', sound, t, source });
     },
-    [onEvent, pads, trailDown],
+    [onEvent, trailDown],
   );
 
   // Release everything if the page loses focus, so no note gets stuck.
@@ -192,7 +189,7 @@ export function Workspace({ instrument, onEvent, highlightNotes, highlightPads, 
   return (
     <section className={`workspace ws-${instrument}${dock ? ' has-dock' : ''}`} aria-label={label ?? (instrument === 'keyboard' ? 'Keyboard' : 'Drums')}>
       <StartSound compact />
-      {trail && <NoteTrail trail={trailStore} recording={recording} />}
+      {trail && <NoteTrail trail={trailStore} recording={recording} clef={instrument === 'drums' ? 'drums' : low < 60 ? 'bass' : 'treble'} letters={prefs.noteNames} />}
       {(dock || octave) && (
         <div className="ws-bar">
           {dock}
