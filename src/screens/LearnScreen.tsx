@@ -3,6 +3,8 @@ import { LESSONS, MISSIONS, PATHWAYS, blurb, missionById, pathwayById } from '..
 import { usePrefs } from '../state/prefs.tsx';
 import { Icon, type IconName } from '../ui/icons.tsx';
 import { type AttemptRecord, store } from '../store/db.ts';
+import { useLearner } from '../ai/useLearner.ts';
+import { planNext, reasonText } from '../ai/tailor.ts';
 
 const GOAL_ORDER = ['Explore', 'Rhythm', 'Notes', 'Reading music', 'Rhythm and notes', 'Create'];
 
@@ -26,6 +28,12 @@ export function LearnScreen({ go }: { go: (r: string) => void }) {
   };
 
   const mission = pathway ? missionById(pathway.missionId) : undefined;
+
+  // On-device learner model: a suggestion only. Everything stays open.
+  const learner = useLearner();
+  const [notNow, setNotNow] = useState(false);
+  const plan = planNext(learner.state, learner.context());
+  const suggested = plan.provenance === 'learner-model' && plan.next ? LESSONS.find((l) => l.id === plan.next!.lessonId) : undefined;
 
   return (
     <div className="screen learn">
@@ -57,6 +65,26 @@ export function LearnScreen({ go }: { go: (r: string) => void }) {
           ))}
         </div>
       </section>
+
+      {suggested && !notNow && (
+        <section className="panel route suggest" aria-labelledby="suggest-h">
+          <h2 id="suggest-h" className="h2">
+            Suggested for you
+          </h2>
+          <button type="button" className="route-item" onClick={() => go(`#/lesson/${suggested.id}`)}>
+            <span className="route-title">{suggested.title}</span>
+            <span className="route-sub">{blurb(suggested.id, suggested.objective)}</span>
+            {status(suggested.id) && <span className="route-status">{status(suggested.id)}</span>}
+          </button>
+          <details className="why">
+            <summary>Why?</summary>
+            <p className="note-text">{reasonText(plan)} This comes from your tries on this device. You can still pick anything.</p>
+          </details>
+          <button type="button" className="btn-quiet small" onClick={() => setNotNow(true)}>
+            Not now
+          </button>
+        </section>
+      )}
 
       {pathway && mission && (
         <section className="panel route" aria-labelledby="route-h">

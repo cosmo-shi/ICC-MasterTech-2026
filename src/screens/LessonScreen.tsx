@@ -15,6 +15,9 @@ import { Notation, describePhrase } from '../ui/Notation.tsx';
 import { usePlayer } from '../ui/usePlayer.ts';
 import { type LiveEvent, Workspace } from '../ui/Workspace.tsx';
 import { FreeLesson } from './FreeLesson.tsx';
+import { useLearner } from '../ai/useLearner.ts';
+import { LEARNER_MODEL_VERSION } from '../ai/learner.ts';
+import { coachFocusFor, planNext, reasonText, startSuggestions, suggestionLabel } from '../ai/tailor.ts';
 
 type Phase = 'ready' | 'countin' | 'playing' | 'review';
 type Mode = 'practice' | 'independent';
@@ -56,6 +59,9 @@ function AssessedLesson({ lessonId, go }: Props) {
   const attemptId = useRef<string>('');
   const player = usePlayer();
   const listen = usePlayer();
+  const learner = useLearner();
+  const tipUsed = useRef<string | undefined>(undefined);
+  const tailorSaved = useRef<string>('');
 
   const target: Phrase = (mode === 'practice' ? lesson.practice : lesson.independent)!;
   const tempo = Math.round(lesson.tempoBpm * (slower ? 0.8 : 1));
@@ -68,13 +74,21 @@ function AssessedLesson({ lessonId, go }: Props) {
   const highlightNotes = useMemo(() => new Set(showTargets ? expected.filter((e) => e.kind === 'note').map((e) => (e as { midi: number }).midi) : []), [showTargets, expected]);
   const highlightPads = useMemo(() => new Set<DrumSound>(showTargets ? expected.filter((e) => e.kind === 'drum').map((e) => (e as { sound: DrumSound }).sound) : []), [showTargets, expected]);
 
+  // The learner model (on this device) may pick which fact the coach asks about first.
+  const tctx = learner.context({ currentLessonId: lesson.id, independentCheck: mode === 'independent', heardExample, slower });
+  const focusNow = coachFocusFor(learner.state, lesson.id, tctx);
+  const focusHint = useRef(focusNow);
+  useEffect(() => {
+    focusHint.current = focusNow;
+  }, [focusNow]);
+
   const finish = useCallback(() => {
     const rec = recorder.current;
     if (!rec) return;
     recorder.current = null;
     rec.closeAll((totalBeats + 1) * (60000 / tempo));
     const res = checkAttempt(target, rec.inputs, lesson.assessment, tempo);
-    const d = decide({ target, inputs: rec.inputs, result: res, aiEnabled: prefs.aiEnabled, independentCheck: mode === 'independent', tempoBpm: tempo });
+    const d = decide({ target, inputs: rec.inputs, result: res, aiEnabled: prefs.aiEnabled, independentCheck: mode === 'independent', tempoBpm: tempo, focusHint: focusHint.current });
     setResult(res);
     setDecision(d);
     setPhase('review');
@@ -107,8 +121,12 @@ function AssessedLesson({ lessonId, go }: Props) {
         replyOp: d.reply?.plan.params.op,
         verified: d.reply?.verification.verified,
         rejected: d.replyRejected,
+        tailor: prefs.aiEnabled
+          ? { provenance: 'learner-model', modelVersion: LEARNER_MODEL_VERSION, focusFromLearner: d.focusFromLearner, startTipUsed: tipUsed.current }
+          : { provenance: 'rules' },
       },
     };
+    tipUsed.current = undefined;
     setSaveState('saving');
     store.put('attempts', record).then(
       () => setSaveState('saved'),
@@ -192,6 +210,22 @@ function AssessedLesson({ lessonId, go }: Props) {
   const ix = LESSONS.findIndex((l) => l.id === lesson.id);
   const nextInPath = pathway?.recommended.find((id) => id !== lesson.id && LESSONS.findIndex((l) => l.id === id) > ix) ?? LESSONS[ix + 1]?.id;
 
+  // Tips before starting, and the suggested next step after a try. Suggestions only.
+  const tips = phase === 'ready' && !result ? startSuggestions(learner.state, lesson.id, tctx) : [];
+  const plan = phase === 'review' ? planNext(learner.state, learner.context({ currentLessonId: lesson.id })) : null;
+  const suggestion = plan && plan.provenance === 'learner-model' && plan.next ? plan.next : null;
+
+  // Keep what was suggested with this try, for the grown-ups view (once per try).
+  useEffect(() => {
+    if (!suggestion || !attemptId.current || tailorSaved.current === attemptId.current || saveState !== 'saved') return;
+    tailorSaved.current = attemptId.current;
+    const id = attemptId.current;
+    store.all<AttemptRecord>('attempts').then((rows) => {
+      const r = rows.find((x) => x.id === id);
+      if (r?.coach) void store.put('attempts', { ...r, coach: { ...r.coach, tailor: { ...(r.coach.tailor ?? { provenance: 'learner-model' }), nextLessonId: suggestion.lessonId, reasonId: suggestion.reasonId } } });
+    });
+  }, [suggestion, saveState]);
+
   const hints = lesson.hints;
   const goIndependent = () => {
     recordChoice('independent-check');
@@ -251,6 +285,22 @@ function AssessedLesson({ lessonId, go }: Props) {
           </div>
 
           {timed && <BeatDots beats={phase === 'countin' ? 4 : totalBeats} current={phase === 'countin' ? 4 + (beatNow ?? -4) : beatNow ?? -1} countIn={phase === 'countin'} />}
+
+          {tips.length > 0 && (
+            <div className="row wrap tips" role="note" aria-label="Tips from your tries">
+              <span className="note-text">From your tries:</span>
+              {tips.includes('slower') && (
+                <button type="button" className="btn-quiet small" onClick={() => { tipUsed.current = 'slower'; setSlower(true); }}>
+                  {suggestionLabel('slower')}
+                </button>
+              )}
+              {tips.includes('listen-first') && (
+                <button type="button" className="btn-quiet small" onClick={() => { tipUsed.current = 'listen-first'; void hearExample(); }}>
+                  {suggestionLabel('listen-first')}
+                </button>
+              )}
+            </div>
+          )}
 
           <div className="row wrap action-row">
             {phase !== 'countin' && phase !== 'playing' && (
@@ -332,6 +382,31 @@ function AssessedLesson({ lessonId, go }: Props) {
             <CoachCard decision={decision} onChoice={recordChoice} onReflect={mode === 'practice' ? reflect : undefined} />
             <div className="next">
               <h3 className="h3">What next?</h3>
+              {suggestion && (
+                <div className="suggest-next">
+                  <button
+                    type="button"
+                    className="btn"
+                    onClick={() => {
+                      recordChoice(`suggested:${suggestion.reasonId}:${suggestion.lessonId}`);
+                      if (suggestion.lessonId !== lesson.id) go(`#/lesson/${suggestion.lessonId}`);
+                      else if (suggestion.reasonId === 'try-on-my-own') goIndependent();
+                      else void start();
+                    }}
+                  >
+                    Suggested:{' '}
+                    {suggestion.lessonId !== lesson.id
+                      ? lessonById(suggestion.lessonId)?.title
+                      : suggestion.reasonId === 'try-on-my-own'
+                        ? suggestionLabel('try-on-my-own')
+                        : 'Practise this one again'}
+                  </button>
+                  <details className="why">
+                    <summary>Why?</summary>
+                    <p className="note-text">{reasonText(plan!)} You can choose something else.</p>
+                  </details>
+                </div>
+              )}
               <div className="row wrap">
                 <button type="button" className="btn" onClick={() => { recordChoice('retry'); void start(); }}>
                   Try again
@@ -346,7 +421,7 @@ function AssessedLesson({ lessonId, go }: Props) {
                     Try a new one on my own
                   </button>
                 )}
-                {nextInPath && (
+                {nextInPath && nextInPath !== suggestion?.lessonId && (
                   <button type="button" className="btn-quiet" onClick={() => { recordChoice(`next:${nextInPath}`); go(`#/lesson/${nextInPath}`); }}>
                     Next: {lessonById(nextInPath)?.title}
                   </button>

@@ -1948,3 +1948,47 @@ details > summary {
   transition: none !important;
   animation: none !important;
 }
+
+/* ---------- Learner model suggestions (on-device; suggestions only) ---------- */
+.suggest {
+  display: grid;
+  gap: var(--s3);
+}
+
+.suggest .btn-quiet.small {
+  justify-self: start;
+}
+
+.why {
+  color: var(--ink-soft);
+}
+
+.why > summary {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target);
+  cursor: pointer;
+  color: var(--dusk);
+  font-weight: 600;
+}
+
+.why > summary:focus-visible {
+  outline-offset: 2px;
+}
+
+.why > p {
+  margin-top: var(--s1);
+}
+
+.tips {
+  align-items: center;
+  gap: var(--s2);
+  margin-block: var(--s2);
+}
+
+.suggest-next {
+  display: grid;
+  gap: var(--s2);
+  justify-items: start;
+  margin-bottom: var(--s4);
+}

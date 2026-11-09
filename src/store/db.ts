@@ -23,6 +23,15 @@ export interface CoachRecord {
   verified?: string[];
   rejected?: string[];
   learnerChoice?: string;
+  /** On-device learner model: what it suggested and whether it chose the coach's focus. */
+  tailor?: {
+    provenance: 'learner-model' | 'rules';
+    modelVersion?: string;
+    focusFromLearner?: boolean;
+    startTipUsed?: string;
+    nextLessonId?: string;
+    reasonId?: string;
+  };
 }
 
 export interface AttemptRecord {
