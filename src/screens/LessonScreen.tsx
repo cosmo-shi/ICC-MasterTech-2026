@@ -3,7 +3,8 @@ import { audio } from '../audio/engine.ts';
 import { type CoachDecision, decide } from '../ai/coach.ts';
 import { lessonById, pathwayById, LESSONS } from '../data/catalog.ts';
 import { Icon } from '../ui/icons.tsx';
-import { checkAttempt, type CheckResult } from '../engine/checker.ts';
+import { checkAttempt, type CapturedInput, type CheckResult } from '../engine/checker.ts';
+import { liveMarks } from '../engine/live.ts';
 import { Recorder } from '../music/capture.ts';
 import { type DrumSound, type Phrase, soundingEvents, TPQ } from '../music/events.ts';
 import { usePrefs } from '../state/prefs.tsx';
@@ -55,6 +56,7 @@ function AssessedLesson({ lessonId, go }: Props) {
   const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'failed'>('idle');
   const [showNotation, setShowNotation] = useState(pathway ? pathway.showNotationByDefault || lesson.showStave : true);
   const [liveCount, setLiveCount] = useState(0);
+  const [liveInputs, setLiveInputs] = useState<CapturedInput[]>([]);
   const recorder = useRef<Recorder | null>(null);
   const attemptId = useRef<string>('');
   const player = usePlayer();
@@ -139,6 +141,7 @@ function AssessedLesson({ lessonId, go }: Props) {
     setResult(null);
     setDecision(null);
     setLiveCount(0);
+    setLiveInputs([]);
     setSaveState('idle');
     if (!audio.running) await audio.start();
     if (timed) {
@@ -166,6 +169,7 @@ function AssessedLesson({ lessonId, go }: Props) {
       if (!rec) return;
       const inp = rec.handle(e);
       if (inp) {
+        setLiveInputs(rec.inputs.slice());
         setLiveCount((c) => {
           const n = c + 1;
           // Untimed pitch tasks finish after the expected number of notes (with a short pause for release).
@@ -204,7 +208,13 @@ function AssessedLesson({ lessonId, go }: Props) {
     await listen.play([{ events: target.events }], tempo, { totalTicks: target.totalTicks, countInBeats: timed ? 4 : 0, click: timed });
   };
 
-  const marks = result ? result.facts.map(factMark) : undefined;
+  // While playing, the music marks each note as it happens (right, wrong, early, late, missed).
+  // After the try, it shows the checker's result.
+  const liveBeat = phase === 'playing' && timed ? player.beat : null;
+  const marks = useMemo(() => {
+    if (phase === 'playing') return liveMarks(target, liveInputs, lesson.assessment, tempo, timed ? (liveBeat ?? 0) * (60000 / tempo) : null);
+    return result ? result.facts.map(factMark) : undefined;
+  }, [phase, target, liveInputs, lesson.assessment, tempo, timed, liveBeat, result]);
   const activeIndex = phase === 'playing' && !timed ? liveCount : undefined;
   const beatNow = player.beat ?? listen.beat;
   const ix = LESSONS.findIndex((l) => l.id === lesson.id);

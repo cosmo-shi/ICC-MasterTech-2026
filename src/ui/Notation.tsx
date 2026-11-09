@@ -5,6 +5,11 @@ import { midiToLetter } from '../music/theory.ts';
 import { DRUM_STAVE, accidentalFor, drumSoundsIn, noteKey } from '../music/notationKeys.ts';
 import { PADS } from './instruments.tsx';
 
+// Symbols under marked notes, so right/wrong is never shown by colour alone.
+const MARK_SYMBOL: Record<string, string> = { ok: '✓', wrong: '✗', missed: '○', early: '←', late: '→' };
+const MARK_WORD: Record<string, string> = { ok: 'right', wrong: 'wrong note', missed: 'missed', early: 'early', late: 'late' };
+const MARK_TONE: Record<string, string> = { ok: 'good', wrong: 'miss', missed: 'miss', early: 'near', late: 'near' };
+
 const DUR: Record<number, string> = { 240: '8', 480: 'q', 720: 'qd', 960: 'h', 1440: 'hd', 1920: 'w' };
 const DUR_WORD: Record<number, string> = { 240: 'quaver', 480: 'crotchet', 960: 'minim', 1920: 'semibreve' };
 
@@ -24,7 +29,7 @@ export function describePhrase(p: Phrase): string {
 interface Props {
   phrase: Phrase;
   activeIndex?: number;
-  marks?: (string | null)[]; // per sounding event: 'ok' | 'wrong' | 'missed' | 'early' | 'late'
+  marks?: (string | null)[]; // per sounding event: 'ok' | 'wrong' | 'missed' | 'early' | 'late' (live while playing, then the checker's)
   hidePitchNames?: boolean;
 }
 
@@ -46,7 +51,11 @@ export function Notation({ phrase, activeIndex, marks }: Props) {
         const bars = Math.max(1, Math.round(phrase.totalTicks / (TPQ * 4)));
         const width = Math.max(280, Math.min(el.clientWidth || 560, 760));
         const renderer = new VF.Renderer(el, VF.Renderer.Backends.SVG);
-        renderer.resize(width, 140);
+        renderer.resize(width, 160);
+        // Colours come from the theme tokens, so Day and Night both work.
+        const css = getComputedStyle(el);
+        const tok = (name: string, fallback: string) => css.getPropertyValue(name).trim() || fallback;
+        const COLOUR = { ink: tok('--ink', '#2a1736'), now: tok('--dusk', '#6a3593'), good: tok('--good', '#0f7565'), near: tok('--near', '#7d5100'), miss: tok('--miss', '#a8264f') };
         const ctx = renderer.getContext();
         const barW = (width - 12) / bars;
         let soundingIdx = 0;
@@ -72,10 +81,17 @@ export function Notation({ phrase, activeIndex, marks }: Props) {
             if (dots) VF.Dot.buildAndAttach([n], { all: true });
             if (e.kind === 'note' && accidentalFor(e.midi)) n.addModifier(new VF.Accidental('#'), 0);
             if (e.kind !== 'rest') {
-              const mark = marks?.[soundingIdx];
+              const mark = marks?.[soundingIdx] ?? null;
               const active = soundingIdx === activeIndex;
-              const colour = active ? '#3658D4' : mark === 'wrong' || mark === 'missed' ? '#B23A1B' : mark === 'early' || mark === 'late' ? '#8A5A00' : '#2B2341';
+              // A played note shows its result; the note to play now is highlighted.
+              const colour = mark ? COLOUR[MARK_TONE[mark] as 'good' | 'near' | 'miss'] ?? COLOUR.ink : active ? COLOUR.now : COLOUR.ink;
               n.setStyle({ fillStyle: colour, strokeStyle: colour });
+              if (mark && MARK_SYMBOL[mark]) {
+                const ann = new VF.Annotation(MARK_SYMBOL[mark]).setVerticalJustification(VF.Annotation.VerticalJustify.BOTTOM);
+                ann.setStyle({ fillStyle: colour, strokeStyle: colour });
+                ann.setFont('sans-serif', 15, 'bold');
+                n.addModifier(ann, 0);
+              }
               soundingIdx++;
             }
             return n;
@@ -109,6 +125,15 @@ export function Notation({ phrase, activeIndex, marks }: Props) {
         </p>
       )}
       <figcaption className="sr-only">Music: {describePhrase(phrase)}</figcaption>
+      {marks && marks.some((m) => m) && (
+        <p className="mark-key" aria-hidden="true">
+          {[...new Set(marks.filter((m): m is string => !!m && !!MARK_SYMBOL[m]))].map((m) => (
+            <span key={m} className={`mark-key-${MARK_TONE[m]}`}>
+              {MARK_SYMBOL[m]} {MARK_WORD[m]}
+            </span>
+          ))}
+        </p>
+      )}
       {failed && <p className="note-text">The music picture could not be drawn. The notes are: {describePhrase(phrase)}.</p>}
     </figure>
   );

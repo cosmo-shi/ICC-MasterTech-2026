@@ -145,6 +145,21 @@ function align(
   return steps.reverse();
 }
 
+/**
+ * Whether the exact sound counts: pitch for keyboard tasks that check it, and which drum when a pattern
+ * uses more than one kind of drum (the music then asks for a particular drum). A one-drum pulse lesson
+ * accepts any drum.
+ */
+export function soundMattersFor(expected: SoundingEvent[], a: Assessment): boolean {
+  const drumKinds = new Set(expected.filter((e) => e.kind === 'drum').map((e) => (e as { sound: DrumSound }).sound));
+  return a.checkPitch || drumKinds.size > 1;
+}
+
+/** Whether one input is the sound an expected event asks for. */
+export function sameSound(e: SoundingEvent, inp: CapturedInput): boolean {
+  return soundMatches(e, inp);
+}
+
 export function checkAttempt(target: Phrase, inputs: CapturedInput[], a: Assessment, tempoBpm = target.tempoBpm): CheckResult {
   const expected = soundingEvents(target);
   const sorted = [...inputs].sort((x, y) => x.onsetMs - y.onsetMs);
@@ -152,10 +167,7 @@ export function checkAttempt(target: Phrase, inputs: CapturedInput[], a: Assessm
   const timed = a.checkTiming;
   const onTimeMs = Math.min(a.onTimeWindow.beats * beatMs, a.onTimeWindow.maxMs);
   const durTolMs = Math.min(a.durationTolerance.beats * beatMs, a.durationTolerance.maxMs);
-  // Which drum counts when a pattern uses more than one kind of drum (for example snare and bass drum),
-  // because the music then asks for a particular drum. A one-drum pulse lesson accepts any drum.
-  const drumKinds = new Set(expected.filter((e) => e.kind === 'drum').map((e) => (e as { sound: DrumSound }).sound));
-  const soundMatters = a.checkPitch || drumKinds.size > 1;
+  const soundMatters = soundMattersFor(expected, a);
   const candidate = candidateWindowMs(expected, tempoBpm, onTimeMs);
 
   const matchCost = (e: SoundingEvent, inp: CapturedInput): number => {

@@ -2033,3 +2033,16 @@ details > summary {
   display: grid;
   gap: var(--s3);
 }
+
+/* Key under the music when notes are marked: symbol + word, never colour alone. */
+.mark-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s1) var(--s3);
+  margin: var(--s1) 0 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+.mark-key-good { color: var(--good); }
+.mark-key-near { color: var(--near); }
+.mark-key-miss { color: var(--miss); }

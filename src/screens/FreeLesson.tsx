@@ -97,6 +97,7 @@ export function FreeLesson({ lesson, go }: { lesson: Lesson; go: (r: string) => 
               {done && <p className="note-text">It’s in My music. There’s no right or wrong here.</p>}
             </>
           )}
+          {isCreate && (
           <div className="hints">
             {hint < lesson.hints.length ? (
               <button type="button" className="btn-quiet small" onClick={() => setHint((h) => h + 1)}>
@@ -111,6 +112,7 @@ export function FreeLesson({ lesson, go }: { lesson: Lesson; go: (r: string) => 
               ))}
             </ol>
           </div>
+          )}
           <div className="row wrap">
             <button type="button" className="btn-quiet" onClick={() => go('#/learn')}>
               Choose another activity
