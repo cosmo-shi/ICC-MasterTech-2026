@@ -51,6 +51,18 @@ Checked with Playwright on phone (390 px), tablet (820 px) and desktop (1280 px)
 - **Draft:** teacher moves per skill, unit order and Music words wording. **Future:** encrypted class export file; Web MIDI keyboards; the live learner model.
 - **Known gaps:** on a portrait tablet the lesson task card pushes the instrument below the fold; the first key press before "Turn sound on" shifts the layout slightly.
 
+## Changed 9 November 2026, later (feels like an app, not a website)
+
+momo asked for a real sign-up, a teacher area that a child can't get into, no disclaimer lines, and lessons that work like a learning app rather than a long page.
+
+- **Working: sign-up.** Full-screen steps with a progress bar and one button at the bottom: Welcome, name, colour, where to start (a content choice, not an age), then "Hi Mia!" and straight into the first lesson. Returning players see "Who's playing?". The player is created on the last tap.
+- **Working: teacher sign-in.** "Grown-ups" is now "Teacher" at `#/teacher` (old `#/grownups` links redirect). No tab in the child's app; reached from "Teacher" on Who's playing or in Settings. A 4-digit PIN is set the first time (typed twice) and stored only as a salted SHA-256 hash in this browser; the space unlocks for the browser session and "Exit" locks it. This keeps children out on a shared tablet. It is not an online account and not strong security: anyone who can clear site data can reset it.
+- **Working: lesson player.** Lessons take the whole screen: close (X), progress bar, one step per screen (Hear, Learn, Try, On your own), hint light at the top right, and a check sheet that slides up after each try (each sound, listen back, Carmen's tip, Try again or Continue). The score screen shows note-head stars, what went well, one thing to practise and the next lesson. Explore and "make a musical answer" lessons use the same frame.
+- **Working: Learn path.** A winding path of big lesson circles with unit banners and a "Start" bubble on the next step; tapping a circle opens a small start sheet. Music words stays as the second tab.
+- **Changed:** disclaimer lines removed from learner screens (sign-up, score, Music words, save drawer, My music). The honest note about saving stays only when saving is off. Privacy and data facts remain in the Teacher space.
+- **Fixed:** the offline service worker served an old cached page, which is likely why the sign-up page didn't show on the preview. Pages now load network-first and the app reloads once when a new version takes over. Browsers that still hold the old worker may need one or two reloads.
+- **Checked:** `npm test` (52 pass), `npm run build`, `npm run lint` (0 errors), axe-core on 11 routes plus welcome, picker, name, start, PIN, start sheet and check sheet in Day and Night at 390 px and 1280 px: no violations, no console errors. Playwright walked the whole flow at 390, 820 and 1280 px. Screen-by-screen flow map: https://claude.ai/artifact/SRswsA35znSGQ4TDmfonLe. Not checked: real devices, real touch, audio latency, screen readers.
+
 ## Draft
 
 - All lesson and project wording, sequencing and curriculum links. Not reviewed by a primary music teacher.
