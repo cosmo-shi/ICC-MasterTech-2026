@@ -1,0 +1,36 @@
+{
+  "id": "drums",
+  "name": "Drums",
+  "type": "drums",
+  "pads": [
+    {
+      "id": "kick",
+      "label": "Kick",
+      "sound": { "engine": "membrane", "note": "C1", "decay": 0.45, "pitchDecay": 0.05, "octaves": 6, "volume": -4 }
+    },
+    {
+      "id": "snare",
+      "label": "Snare",
+      "sound": { "engine": "noise", "noise": "white", "decay": 0.18, "volume": -10 }
+    },
+    {
+      "id": "hihat",
+      "label": "Hi-hat",
+      "sound": { "engine": "metal", "frequency": 250, "decay": 0.06, "resonance": 4000, "volume": -22 }
+    },
+    {
+      "id": "tom",
+      "label": "Tom",
+      "sound": { "engine": "membrane", "note": "G2", "decay": 0.4, "pitchDecay": 0.08, "octaves": 3, "volume": -6 }
+    },
+    {
+      "id": "crash",
+      "label": "Crash",
+      "sound": { "engine": "metal", "frequency": 300, "decay": 1.4, "resonance": 3000, "volume": -18 }
+    }
+  ],
+  "order": ["kick", "snare", "hihat", "tom", "crash"],
+  "simplifiedPads": ["kick", "snare", "hihat", "crash"],
+  "laptopKeys": { "KeyA": "kick", "KeyS": "snare", "KeyD": "hihat", "KeyF": "tom", "KeyG": "crash" },
+  "metronome": { "minBpm": 40, "maxBpm": 160, "startBpm": 80, "beatsPerBar": 4 }
+}
