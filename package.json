@@ -11,7 +11,8 @@
     "test": "vitest run",
     "train": "node tools/train.ts",
     "eval:learner": "node tools/eval-learner.mjs",
-    "fit:learner": "node tools/fit-learner.mjs"
+    "fit:learner": "node tools/fit-learner.mjs",
+    "decisions": "node tools/decisions.mjs"
   },
   "dependencies": {
     "react": "^19.3.1",

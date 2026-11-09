@@ -115,9 +115,13 @@ function modelPlan(state: LearnerState, ctx: TailorContext): TailorPlan | null {
       .sort((a, b) => a.order - b.order)[0];
     if (!lesson) continue;
     const sk = state.skills[k];
+    // Say "your last tries…" only while the latest try on this skill was a miss; after a pass, it's a review.
+    const stillMissing = sk.recent[sk.recent.length - 1] === false;
     return {
       ...base,
-      next: { lessonId: lesson.id, reasonId: `practise-${k}` as ReasonId, skill: k, count: Math.max(1, recentFails(sk)), evidenceAttemptIds: sk.evidenceAttemptIds },
+      next: stillMissing
+        ? { lessonId: lesson.id, reasonId: `practise-${k}` as ReasonId, skill: k, count: Math.max(1, recentFails(sk)), evidenceAttemptIds: sk.evidenceAttemptIds }
+        : { lessonId: lesson.id, reasonId: 'review', skill: k, evidenceAttemptIds: sk.evidenceAttemptIds },
       start,
       coachFocus,
     };

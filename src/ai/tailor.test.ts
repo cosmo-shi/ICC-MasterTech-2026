@@ -39,7 +39,8 @@ describe('tailoring planner', () => {
     const attempts = [attempt('L01'), ...[1, 2, 3].map(() => attempt('L02', {}, { restViolations: 1 })), attempt('L02')];
     const st = buildLearnerState(attempts, INFOS);
     const plan = planNext(st, ctx({ currentLessonId: 'L02', justPassed: true }));
-    expect(plan.next).toMatchObject({ lessonId: 'L03', reasonId: 'practise-rests' });
+    // The latest rests try passed, so the reason is a review, not "your last tries had a tap in a rest".
+    expect(plan.next).toMatchObject({ lessonId: 'L03', reasonId: 'review', skill: 'rests' });
   });
 
   it('after a pass with no pathway, moves on to a lesson that builds on this one', () => {

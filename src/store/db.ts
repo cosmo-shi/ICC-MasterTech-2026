@@ -40,7 +40,8 @@ export interface AttemptRecord {
   createdAt: number;
   activityId: string; // lesson id (L01) or mission id
   activityVersion: string;
-  kind: 'practice' | 'independent' | 'mission' | 'mission-check';
+  /** 'check' = a short "what's getting in the way?" check: never used as evidence of a skill. */
+  kind: 'practice' | 'independent' | 'mission' | 'mission-check' | 'check';
   instrument: InstrumentId;
   tempoBpm: number;
   support: { hintLevel: number; heardExample: boolean; largeControls: boolean; simplified: boolean; aiEnabled: boolean; slower: boolean };
@@ -51,6 +52,8 @@ export interface AttemptRecord {
   coach?: CoachRecord;
   reflection?: string;
   note?: string;
+  /** For kind 'check': which check, on which skill, the single response, and what the learner chose next. */
+  probe?: { skill: string; check: 'listen' | 'read' | 'play'; right: boolean; offeredBy: 'learner-model' | 'rules'; support?: string; supportTaken?: boolean };
   /** The local player this belongs to (see profiles.ts). Missing = a guest or older record. */
   profileId?: string;
 }
