@@ -6,7 +6,6 @@ import { validatePhrase } from './lessons.ts';
 import { DRUM_STAVE, VEX_DURATION, accidentalFor, barTicks, clefFor, noteKey, stavePosition } from './notationKeys.ts';
 
 const n = (id: string, midi: number, onset: number, duration = TPQ): MusicEvent => ({ id, kind: 'note', midi, onset, duration, velocity: 0.7 });
-const phrase = (events: MusicEvent[], bars = 1): Phrase => ({ id: 'p', instrument: 'keyboard', meter: [4, 4], totalTicks: bars * 4 * TPQ, tempoBpm: 90, events });
 
 describe('piano notes on the stave', () => {
   it('writes middle C as c/4 and keeps octaves right at the B–C boundary', () => {
