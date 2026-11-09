@@ -25,6 +25,7 @@ Not checked yet: a real screen reader (NVDA, VoiceOver), real tablets and Chrome
 - Keyboard and drum pads by touch, mouse or computer keys; octave shift; simpler layout; bigger controls; note names; calm motion; strong contrast; volume.
 - Ten lessons (L00 to L09) in practice and "on my own" modes, with count-in, notation, listen first, slower tempo, a three-step hint ladder and learner-chosen next steps.
 - Deterministic checker for sound, timing, length and rests, with a clear fact for each note.
+- On-device learner model (`carmen-learner-bkt` v1.0.0, Bayesian Knowledge Tracing per skill): suggests the next activity, start tips and the coach's first question from this device's attempts. Suggestions only; validated plans with a route fallback; "Learning picture" in Grown-ups. Checked by unit tests and a seeded simulation (`npm run eval:learner`, `docs/LEARNER_MODEL_CARD.md`): picks the weakest skill 57.5% of the time vs 35.5% for the fixed route. Checked in the browser with Playwright only, not with learners.
 - Five pathways (Foundation, Years 1–2, 3–4, 5–6, older learners) as a content choice, never stored as age, each with a recommended route and its own partner project.
 - Five partner projects: record an idea, choose the change (or let the partner suggest one), predict, hear a verified partner version, keep yours or theirs, then a fresh independent task with no hints.
 - Coach: asks a question first, then gives one measured observation, and offers a checked musical reply. It never replies during an independent check.
@@ -35,6 +36,8 @@ Not checked yet: a real screen reader (NVDA, VoiceOver), real tablets and Chrome
 - Identity "Songbook Horizon" (2026-11-09, replaces Colour Bars): sunset landscape whose hills are stave lines, note-head sun, paper sheet for the work, instrument in a dark case; colour by role (sun = now, red = record, dusk = selected); Bagel Fat One for brand and titles, Figtree for the rest; one icon/illustration family; "what you played" note trail above the instrument; sticker tap-timeline feedback in lessons; optional Night mode (Day / Night / Same as device). Learner wording shortened; curriculum and class-talk notes in Grown-ups; learners see "Carmen · listened to your timing" only when the on-device model ran, otherwise "Carmen · tip". Checked with Playwright at 360 px and 1280 px in Day and Night (Play, drums, Learn, a lesson including feedback, a partner project, My music, Settings, Grown-ups): no console errors, no sideways scroll. Colour contrast checked by calculation for every text/background pair, not by an automated audit. Not checked: real devices, screen readers, audio latency, real multitouch.
 
 ## Draft
+
+- Skill map, learner model settings and "why" wording (`src/data/skills.json`). Reviewed starting values, not fitted to children.
 
 - All lesson and project wording, sequencing and curriculum links. Not reviewed by a primary music teacher.
 - Coach questions and observations (`src/data/coach.json`) and the "More detail" notes (`src/data/detail.ts`).
@@ -47,6 +50,8 @@ Not checked yet: a real screen reader (NVDA, VoiceOver), real tablets and Chrome
 - Teacher review of content: needs a primary music teacher.
 
 ## Future
+
+- Fit the learner model's settings to real, consented practice data, and check whether its suggestions help, with educators.
 
 - Device latency calibration (so "late" is not the device).
 - Real-child timing data, collected with consent, to re-check the model.

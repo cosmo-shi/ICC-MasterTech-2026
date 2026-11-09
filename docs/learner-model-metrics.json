@@ -1,0 +1,16 @@
+{
+  "seed": 20261109,
+  "learners": 400,
+  "attemptsPerLearner": 16,
+  "model": {
+    "targetsWeakest": 0.575,
+    "calibrationMAE": 0.166
+  },
+  "rulesBaseline": {
+    "targetsWeakest": 0.355
+  },
+  "priorOnly": {
+    "calibrationMAE": 0.334
+  },
+  "note": "Simulated learners only. Shows the software works as designed; not evidence about children or learning."
+}
