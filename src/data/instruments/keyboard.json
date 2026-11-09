@@ -1,0 +1,43 @@
+{
+  "id": "keyboard",
+  "name": "Keyboard",
+  "type": "keyboard",
+  "range": { "from": "C4", "to": "C6" },
+  "simplifiedRange": { "from": "C4", "to": "C5" },
+  "sound": {
+    "engine": "synth",
+    "oscillator": "triangle",
+    "envelope": { "attack": 0.005, "decay": 0.4, "sustain": 0.25, "release": 1.0 },
+    "volume": -8,
+    "maxPolyphony": 16
+  },
+  "samples": null,
+  "laptopKeys": {
+    "KeyZ": "C4",
+    "KeyS": "C#4",
+    "KeyX": "D4",
+    "KeyD": "D#4",
+    "KeyC": "E4",
+    "KeyV": "F4",
+    "KeyG": "F#4",
+    "KeyB": "G4",
+    "KeyH": "G#4",
+    "KeyN": "A4",
+    "KeyJ": "A#4",
+    "KeyM": "B4",
+    "KeyQ": "C5",
+    "Digit2": "C#5",
+    "KeyW": "D5",
+    "Digit3": "D#5",
+    "KeyE": "E5",
+    "KeyR": "F5",
+    "Digit5": "F#5",
+    "KeyT": "G5",
+    "Digit6": "G#5",
+    "KeyY": "A5",
+    "Digit7": "A#5",
+    "KeyU": "B5",
+    "KeyI": "C6"
+  },
+  "metronome": { "minBpm": 40, "maxBpm": 160, "startBpm": 80, "beatsPerBar": 4 }
+}
