@@ -41,7 +41,6 @@ Not checked yet: a real screen reader (NVDA, VoiceOver), real tablets and Chrome
 
 ## Blocked
 
-- Pushing to GitHub: the session gets 403 on `cosmo-shi/ICC-MasterTech-2026`. Commits are on local `sc` until access is fixed. Nothing goes to `main`.
 - Teacher review of content: needs a primary music teacher.
 
 ## Future
