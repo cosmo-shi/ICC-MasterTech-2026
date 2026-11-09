@@ -1,0 +1,119 @@
+/* Metronome panel. Colours and sizes from src/styles/tokens.css only. */
+
+.metro {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+}
+
+html.high-contrast .metro {
+  border-color: var(--color-line-strong);
+}
+
+.metro__title {
+  font-size: var(--text-lg);
+}
+
+.metro__tempo {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.metro__step {
+  width: var(--target-comfort);
+  padding: 0;
+  font-size: var(--text-xl);
+}
+
+.metro__step:disabled {
+  opacity: 0.45;
+  cursor: default;
+  transform: none;
+}
+
+.metro__bpm {
+  display: grid;
+  justify-items: center;
+  margin: 0;
+  max-width: none;
+  text-align: center;
+}
+
+.metro__bpm-number {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.metro__bpm-unit {
+  color: var(--color-ink-muted);
+  font-size: var(--text-sm);
+}
+
+/* Tempo slider: a big thumb that is easy to drag. */
+.metro__slider {
+  width: 100%;
+  height: var(--target-min);
+  margin: 0;
+  background: transparent;
+  accent-color: var(--color-accent);
+  cursor: pointer;
+}
+
+.metro__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.metro__beat {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.metro__dots {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Off: small hollow ring. On: bigger filled dot (shape AND colour change). */
+.metro__dot {
+  width: 14px;
+  height: 14px;
+  border: var(--border-width) solid var(--color-line-strong);
+  border-radius: 50%;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.metro__dot.is-on {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  transform: scale(1.6);
+}
+
+.metro__beat-text {
+  margin: 0;
+  min-width: 7.5em;
+  font-weight: var(--weight-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.metro__toggle {
+  min-width: 6.5rem;
+  min-height: var(--target-min);
+}
+
+.metro__toggle:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
