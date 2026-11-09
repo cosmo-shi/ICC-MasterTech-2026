@@ -1302,6 +1302,13 @@ code {
 .notation-svg {
   min-height: 132px;
 }
+/* The score is always printed paper, so its words use print ink in both modes. */
+.notation .drum-key,
+.notation .note-text {
+  color: #23264a;
+  font-size: var(--t-support);
+  margin: 0 0 var(--s1);
+}
 .notation-svg svg {
   max-width: 100%;
   height: auto;
@@ -4504,3 +4511,422 @@ details > summary {
 .st-secure { color: var(--good); }
 .st-growing { color: var(--near); }
 .st-new { color: var(--ink-soft); }
+
+/* ---------- Track label, separate progress, per-track pick ---------- */
+.resume-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s2);
+}
+.track-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px 3px 8px;
+  border-radius: 999px;
+  background: var(--tr-tint);
+  color: var(--tr-ink);
+  font-size: var(--t-support);
+  font-weight: 800;
+}
+.resume .track-tag {
+  background: var(--paper);
+}
+:root[data-theme='dark'] .resume .track-tag {
+  background: var(--paper-raised);
+}
+.resume-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2) var(--s5);
+  align-items: center;
+}
+.track-progress {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  font-size: var(--t-support);
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+.tp-dots {
+  display: inline-flex;
+  gap: 4px;
+}
+.tp-dots i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--tr-ink, var(--ink-soft));
+  opacity: 0.55;
+}
+.tp-dots i.is-done {
+  background: var(--tr-ink, var(--ink-soft));
+}
+.tp-dots i.is-here {
+  width: 22px;
+  border-radius: 6px;
+  background: var(--sun);
+  border-color: var(--sun-deep);
+  opacity: 1;
+}
+.track-pick {
+  width: 100%;
+  margin: calc(var(--s4) * -1) 0 var(--s6);
+  display: grid;
+  gap: 2px;
+  justify-items: start;
+  text-align: left;
+  padding: var(--s3) var(--s4);
+  border: 0;
+  border-radius: var(--r-md);
+  background: var(--tr-tint);
+  color: var(--ink);
+}
+.track-pick .kicker {
+  color: var(--tr-ink);
+}
+.track-pick-title {
+  font-weight: 800;
+  font-size: var(--t-do);
+}
+.track-pick-why {
+  color: var(--ink-soft);
+  font-weight: 600;
+  font-size: var(--t-support);
+}
+
+/* ---------- Checks: what's getting in the way ---------- */
+.checkin {
+  display: grid;
+  gap: var(--s2);
+  padding: var(--s3) var(--s4);
+  border-radius: var(--r-md);
+  background: var(--dusk-soft);
+}
+.checkin-q {
+  font-weight: 800;
+}
+.checkin-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s2);
+}
+.checkin-card {
+  border: 0;
+  border-radius: var(--r-sm);
+  background: var(--paper);
+  color: var(--ink);
+  padding: var(--s3) var(--s2);
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  text-align: center;
+  min-height: 96px;
+  box-shadow: 0 2px 0 var(--hairline);
+}
+.checkin-card svg {
+  color: var(--dusk);
+}
+.checkin-title {
+  font-weight: 800;
+}
+.checkin-about {
+  font-size: 0.8rem;
+  line-height: 1.25;
+  color: var(--ink-soft);
+}
+.checkin .btn-text {
+  justify-self: start;
+}
+.check-view {
+  gap: var(--s4);
+}
+.check-q {
+  width: 100%;
+  display: grid;
+  gap: var(--s4);
+  justify-items: center;
+}
+.check-q-title {
+  font-size: var(--t-head);
+  font-weight: 800;
+  text-wrap: balance;
+}
+.ab {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s3);
+}
+.ab-opt {
+  display: grid;
+  justify-items: center;
+  gap: var(--s2);
+  padding: var(--s4) var(--s3);
+  border-radius: var(--r-md);
+  background: var(--paper-sunk);
+}
+.ab-opt.is-answer {
+  background: var(--good-bg);
+  box-shadow: inset 0 0 0 2px var(--good);
+}
+.ab-play {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--sun);
+  color: var(--on-sun);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 var(--edge) 0 var(--sun-deep);
+}
+.ab-name {
+  font-weight: 800;
+}
+.ab-says {
+  font-size: var(--t-support);
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+.read-opts {
+  justify-content: center;
+}
+.chip.is-answer {
+  box-shadow: inset 0 0 0 2px var(--good);
+}
+.chip.is-answer::after {
+  content: ' ✓';
+}
+.chip.is-wrong {
+  box-shadow: inset 0 0 0 2px var(--miss);
+}
+.check-result {
+  width: 100%;
+  display: grid;
+  gap: var(--s3);
+  text-align: left;
+}
+.check-result-says {
+  font-size: var(--t-do);
+  font-weight: 800;
+  text-align: center;
+}
+.suggest-card {
+  display: grid;
+  gap: var(--s1);
+  padding: var(--s4);
+  border-radius: var(--r-md);
+  background: var(--dusk-soft);
+}
+.suggest-name {
+  font-size: var(--t-head);
+  font-weight: 800;
+}
+.suggest-card .row {
+  margin-top: var(--s2);
+}
+.beat-count {
+  list-style: none;
+  margin: var(--s2) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  grid-auto-flow: column;
+  gap: 4px;
+}
+.beat-count li {
+  text-align: center;
+  padding: 4px 0;
+  border-radius: 8px;
+  background: var(--paper-sunk);
+  font-weight: 800;
+}
+.beat-count li.is-rest {
+  color: var(--ink-soft);
+  font-weight: 600;
+  font-style: italic;
+}
+.beat-count li.is-now {
+  background: var(--sun);
+  color: var(--on-sun);
+}
+.check-sheet .reply,
+.check-sheet .coach-obs {
+  margin-left: 0;
+}
+
+/* ---------- Make your own ---------- */
+.make {
+  width: min(100%, 860px);
+  margin: 0 auto;
+  display: grid;
+  gap: var(--s4);
+}
+.make-head {
+  display: grid;
+  gap: var(--s2);
+  justify-items: start;
+}
+.make-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--beats, 4), minmax(0, 1fr));
+  gap: var(--s2);
+}
+.make-beat {
+  display: grid;
+  gap: var(--s1);
+  align-content: start;
+  padding: var(--s2);
+  border-radius: var(--r-sm);
+  background: var(--paper-sunk);
+}
+.make-beat.is-held {
+  background: transparent;
+  box-shadow: inset 0 0 0 2px var(--hairline);
+}
+.make-beat-n {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--ink-soft);
+  text-align: center;
+}
+.make-held {
+  text-align: center;
+  color: var(--ink-soft);
+  font-style: italic;
+  padding: var(--s3) 0;
+}
+.make-choices {
+  display: grid;
+  gap: 4px;
+}
+.make-choice {
+  min-height: 44px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--paper);
+  color: var(--ink);
+  font-weight: 700;
+  font-size: var(--t-support);
+  padding: 0 4px;
+}
+.make-choice.is-on {
+  background: var(--sun);
+  color: var(--on-sun);
+  box-shadow: 0 3px 0 var(--sun-deep);
+}
+.make-choice.is-on::before {
+  content: '✓ ';
+}
+.make-choice.is-rest.is-on {
+  background: var(--ink-soft);
+  color: var(--paper);
+  box-shadow: 0 3px 0 var(--ink);
+}
+.make-changed {
+  font-size: var(--t-support);
+}
+.versions {
+  display: grid;
+  gap: var(--s2);
+  padding-top: var(--s3);
+  border-top: 1px solid var(--hairline);
+}
+.version-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2) var(--s4);
+}
+.version-list li {
+  display: flex;
+  align-items: center;
+  gap: var(--s1);
+}
+.compare-box {
+  display: grid;
+  gap: var(--s2);
+  padding: var(--s3) var(--s4);
+  border-radius: var(--r-md);
+  background: var(--tr-create-tint);
+}
+.make-q {
+  font-weight: 800;
+}
+
+/* ---------- Desktop lesson: feedback beside the score, not over it ---------- */
+@media (min-width: 1100px) {
+  .lp.has-sheet {
+    width: 100%;
+    margin: 0;
+    padding-right: 440px;
+  }
+  .lp.has-sheet .lp-try {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .lp.has-sheet .lp-instrument {
+    margin-top: var(--s3);
+  }
+  .check-sheet {
+    left: auto;
+    top: 0;
+    width: 420px;
+    max-height: none;
+    border-radius: var(--r-lg) 0 0 var(--r-lg);
+    border-top: 0;
+    border-left: 6px solid var(--near);
+    box-shadow: -8px 0 28px rgb(35 38 74 / 0.12);
+  }
+  .check-sheet.tone-good {
+    border-left-color: var(--good);
+  }
+  .check-sheet.tone-miss {
+    border-left-color: var(--miss);
+  }
+  .check-inner {
+    flex: 1;
+    padding-top: var(--s5);
+  }
+  .check-foot .btn-big {
+    max-width: none;
+  }
+}
+@media (min-width: 900px) {
+  .lp-task .lp-music .notation {
+    padding: var(--s3);
+  }
+}
+.trace td,
+.trace th {
+  vertical-align: top;
+  font-size: var(--t-support);
+}
+.trace tr.is-diff th[scope='row'] {
+  box-shadow: inset 4px 0 0 var(--dusk);
+}
+.trace-est {
+  display: block;
+}
+.h4 {
+  margin: var(--s4) 0 var(--s1);
+  font-size: var(--t-body);
+  font-weight: 800;
+}
+.chip.is-on.is-answer::after {
+  content: none;
+}
+.ab-opt .chip {
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--hairline, rgba(0, 0, 0, 0.12));
+  min-width: 112px;
+}

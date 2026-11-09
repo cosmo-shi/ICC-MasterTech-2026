@@ -67,6 +67,33 @@ function Level({ n }: { n: number }) {
 
 const ZIG = [0, 1, 2, 1, 0, -1, -2, -1];
 
+/** Track name as a label with its icon: one fact, not squeezed into a sentence. */
+export function TrackTag({ id }: { id: TrackId }) {
+  return (
+    <span className={`track-tag tr-${id}`}>
+      <Icon name={TRACK_ICON[id]} size={16} /> {trackById(id).name}
+    </span>
+  );
+}
+
+/** Progress through a track, separate from the title: a dot per step, and the words. */
+export function TrackProgress({ id, at, done }: { id: string; at: number; done: (id: string) => boolean }) {
+  const a = activityById(id)!;
+  const list = trackActivities(a.track);
+  return (
+    <span className="track-progress">
+      <span className="tp-dots" aria-hidden="true">
+        {list.map((x, i) => (
+          <i key={x.id} className={i + 1 === at ? 'is-here' : done(x.id) ? 'is-done' : ''} />
+        ))}
+      </span>
+      <span className="tp-words">
+        Step {at} of {list.length}
+      </span>
+    </span>
+  );
+}
+
 export function LearnScreen({ go }: { go: (r: string) => void }) {
   const { attempts, planning, overrides, context } = useMyLearning();
   const plan = nextFor(planning, overrides, context());
@@ -91,14 +118,18 @@ export function LearnScreen({ go }: { go: (r: string) => void }) {
       </div>
 
       <section className={`resume tr-${nextAct.track}`} aria-labelledby="resume-h">
-        <p className="kicker">
-          {nextStars ? 'Carry on' : 'Up next'} · {pos.track.name} · Step {pos.index} of {pos.total}
-        </p>
+        <div className="resume-top">
+          <span className="kicker">{nextStars ? 'Carry on' : 'Up next'}</span>
+          <TrackTag id={nextAct.track} />
+        </div>
         <h2 id="resume-h" className="resume-title">
           {titleOf(nextId)}
         </h2>
         <p className="resume-learn">{nextAct.learn}</p>
-        <InstrumentLine a={nextAct} />
+        <div className="resume-facts">
+          <InstrumentLine a={nextAct} />
+          <TrackProgress id={nextId} at={pos.index} done={(x) => starsFor(activityById(x)!) === 3} />
+        </div>
         {why && (
           <p className="resume-why">
             <Icon name="ear" size={18} /> {why}
@@ -123,6 +154,7 @@ export function LearnScreen({ go }: { go: (r: string) => void }) {
           <h2 className="track-name">{trackById(track).name}</h2>
           <p className="track-about">{trackById(track).about}</p>
         </div>
+        {track !== nextAct.track && <TrackPick list={list} starsFor={starsFor} started={started} onOpen={setOpen} />}
         <ol className="nodes" aria-label={`${trackById(track).name} steps`}>
           {list.map((a, i) => {
             const here = a.id === nextId;
@@ -153,12 +185,12 @@ export function LearnScreen({ go }: { go: (r: string) => void }) {
         </ol>
       </div>
 
-      {open && <StopSheet id={open} stars={starsFor(activityById(open)!)} started={started} suggested={open === nextId ? why : ''} onClose={() => setOpen(null)} go={go} />}
+      {open && <StopSheet id={open} stars={starsFor(activityById(open)!)} started={started} onClose={() => setOpen(null)} go={go} />}
     </div>
   );
 }
 
-function StopSheet({ id, stars, started, suggested, onClose, go }: { id: string; stars: number; started: (id: string) => boolean; suggested: string; onClose: () => void; go: (r: string) => void }) {
+function StopSheet({ id, stars, started, onClose, go }: { id: string; stars: number; started: (id: string) => boolean; onClose: () => void; go: (r: string) => void }) {
   const a = activityById(id)!;
   const pos = positionInTrack(id)!;
   const l = lessonById(id);
@@ -179,14 +211,15 @@ function StopSheet({ id, stars, started, suggested, onClose, go }: { id: string;
   return createPortal(
     <div className="stop-sheet-wrap" onClick={onClose}>
       <div className={`stop-sheet tr-${a.track}`} role="dialog" aria-modal="true" aria-labelledby="stop-h" onClick={(e) => e.stopPropagation()}>
-        <p className="kicker">
-          {pos.track.name} · Step {pos.index} of {pos.total}
-          {a.kind === 'project' ? ' · Project' : ''}
-        </p>
+        <div className="resume-top">
+          <TrackTag id={a.track} />
+          {a.kind === 'project' && <span className="kicker">Project</span>}
+        </div>
         <h2 id="stop-h" className="stop-sheet-title">
           {titleOf(id)}
         </h2>
         <p className="stop-sheet-sub">{blurb(id, (l ?? m)?.objective ?? a.learn)}</p>
+        <TrackProgress id={id} at={pos.index} done={(x) => started(x)} />
         {a.kind === 'lesson' && <Stars n={stars} size={28} />}
         <dl className="stop-facts">
           <div>
@@ -208,8 +241,7 @@ function StopSheet({ id, stars, started, suggested, onClose, go }: { id: string;
           </div>
         </dl>
         {first.length > 0 && <p className="stop-sheet-note">Helps to try first: {first.join(', ')}</p>}
-        {suggested && <p className="stop-sheet-why">{suggested}</p>}
-        <button ref={btn} type="button" className="btn btn-big btn-block" onClick={() => go(a.kind === 'lesson' ? `#/lesson/${id}` : `#/mission/${id}`)}>
+                <button ref={btn} type="button" className="btn btn-big btn-block" onClick={() => go(a.kind === 'lesson' ? `#/lesson/${id}` : `#/mission/${id}`)}>
           {stars === 3 ? 'Play again' : stars ? 'Keep going' : 'Start'}
         </button>
         {after && <p className="stop-sheet-after">After this: {titleOf(after.id)}</p>}
@@ -219,5 +251,30 @@ function StopSheet({ id, stars, started, suggested, onClose, go }: { id: string;
       </div>
     </div>,
     document.body,
+  );
+}
+
+/** When you switch tracks: where to begin in this one, and why, in one plain line. */
+function TrackPick({ list, starsFor, started, onOpen }: { list: Activity[]; starsFor: (a: Activity) => number; started: (id: string) => boolean; onOpen: (id: string) => void }) {
+  const ready = list.find((a) => starsFor(a) < 3 && a.prerequisites.every(started));
+  const pick = ready ?? list.find((a) => starsFor(a) < 3) ?? list[0];
+  const stars = starsFor(pick);
+  const missing = pick.prerequisites.filter((p) => !started(p));
+  // Nothing here is ready yet: point to what it builds on, and say why.
+  if (!ready && missing.length && !stars)
+    return (
+      <button type="button" className="track-pick" onClick={() => onOpen(missing[0])}>
+        <span className="kicker">Try this first</span>
+        <span className="track-pick-title">{titleOf(missing[0])}</span>
+        <span className="track-pick-why">{titleOf(pick.id)} builds on it.</span>
+      </button>
+    );
+  const why = stars ? 'You started this one.' : pick === list[0] ? 'The first step here.' : 'You’ve tried what it builds on.';
+  return (
+    <button type="button" className="track-pick" onClick={() => onOpen(pick.id)}>
+      <span className="kicker">{stars ? 'Carry on here' : 'Start here'}</span>
+      <span className="track-pick-title">{titleOf(pick.id)}</span>
+      <span className="track-pick-why">{why}</span>
+    </button>
   );
 }

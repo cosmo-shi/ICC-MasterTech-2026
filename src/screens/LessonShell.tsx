@@ -27,7 +27,7 @@ export function LessonShell({
     body.current?.querySelector<HTMLElement>('h1')?.focus({ preventScroll: true });
   }, [stepKey]);
   return (
-    <div className="lp">
+    <div className={`lp${sheet ? " has-sheet" : ""}`}>
       <header className="lp-bar">
         <button type="button" className="icon-btn quiet" aria-label="Close lesson" onClick={onClose}>
           <Icon name="close" size={24} />

@@ -9,6 +9,8 @@ import { usePlayer } from '../ui/usePlayer.ts';
 import { Avatar } from './EntryScreen.tsx';
 import { titleOf } from './LearnScreen.tsx';
 import { usePrefs } from '../state/prefs.tsx';
+import { traceLearner } from '../ai/trace.ts';
+import { SUPPORTS, type SupportId } from '../ai/checkin.ts';
 
 const DAY = 864e5;
 
@@ -235,6 +237,7 @@ export function ClassView({ openChild }: { openChild: (id: string) => void }) {
 }
 
 function supportText(a: AttemptRecord): string {
+  if (a.kind === 'check') return `Check: ${a.probe?.check ?? ''}`;
   if (a.kind === 'independent' || a.kind === 'mission-check') return 'On their own';
   const s: string[] = [];
   if (a.support.hintLevel === 3) s.push('answer shown');
@@ -388,6 +391,8 @@ export function ChildView({ childId, setChild }: { childId: string | null; setCh
         </ul>
       </section>
 
+      <ModelTrace c={c} />
+
       <section className="dash-block" aria-labelledby="cp-h">
         <h3 id="cp-h" className="h3">
           Their music
@@ -515,5 +520,87 @@ export function ChildView({ childId, setChild }: { childId: string | null; setCh
         </div>
       </section>
     </div>
+  );
+}
+
+const CHECK_NAME = { listen: 'Listen', read: 'Read', play: 'Play' } as const;
+
+/** How the model used each try: evidence, the estimate before and after, and what it chose,
+ *  next to what the rules alone would have done. Checks are listed as single responses. */
+function ModelTrace({ c }: { c: ChildLearning }) {
+  const { prefs } = usePrefs();
+  const steps = useMemo(() => traceLearner(c.attempts, LESSON_INFOS, { route: routeFrom(c.player.start ?? null), aiEnabled: prefs.aiEnabled }), [c.attempts, c.player.start, prefs.aiEnabled]);
+  const checks = c.attempts.filter((a) => a.kind === 'check' && a.probe);
+  const recent = steps.slice(-6).reverse();
+  return (
+    <section className="dash-block" aria-labelledby="tr-h">
+      <h3 id="tr-h" className="h3">
+        How the model used {c.player.name}’s tries
+      </h3>
+      {recent.length === 0 ? (
+        <p className="note-text">No tries yet.</p>
+      ) : (
+        <div className="table-wrap" tabIndex={0} role="region" aria-label="Model trace (scrolls sideways)">
+          <table className="evidence trace">
+            <thead>
+              <tr>
+                <th scope="col">Try</th>
+                <th scope="col">Counts as</th>
+                <th scope="col">Evidence</th>
+                <th scope="col">Estimate (before → after)</th>
+                <th scope="col">Model chose</th>
+                <th scope="col">Rules alone</th>
+              </tr>
+            </thead>
+            <tbody>
+              {recent.map((st) => (
+                <tr key={st.attempt.id} className={st.differs ? 'is-diff' : ''}>
+                  <th scope="row">
+                    {titleOf(st.attempt.activityId)}
+                    <span className="muted"> {new Date(st.attempt.createdAt).toLocaleDateString()}</span>
+                  </th>
+                  <td>{st.why}</td>
+                  <td>{st.changes.length ? st.changes.map((x) => `${skillById(x.skill).name}: ${x.pass ? 'pass' : 'miss'}`).join('; ') : '—'}</td>
+                  <td>
+                    {st.changes.length
+                      ? st.changes.map((x) => (
+                          <span key={x.skill} className="trace-est">
+                            {skillById(x.skill).name}: {BAND_WORDS[x.bandBefore].toLowerCase()} → {BAND_WORDS[x.bandAfter].toLowerCase()}
+                            {x.uncertain ? ' (too few tries)' : ''}
+                          </span>
+                        ))
+                      : 'No change'}
+                  </td>
+                  <td>
+                    {st.model.checkIn ? 'Offer checks. ' : ''}
+                    {st.model.start.length ? `Start ${st.model.start.join(' and ')}. ` : ''}
+                    Next: {st.model.next ? titleOf(st.model.next) : '—'}
+                  </td>
+                  <td>
+                    {st.rules.checkIn ? 'Offer checks. ' : ''}Next: {st.rules.next ? titleOf(st.rules.next) : '—'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      <p className="note-text">Bands come from the model’s probability; rows where the model and the rules differ are marked. The rules baseline follows the route and offers checks after three misses in a row in one visit.</p>
+      <h4 className="h4">Checks {c.player.name} chose</h4>
+      {checks.length === 0 ? (
+        <p className="note-text">None yet. Checks are offered after a difficulty keeps coming back.</p>
+      ) : (
+        <ul className="plain">
+          {checks.slice(0, 8).map((a) => (
+            <li key={a.id}>
+              {CHECK_NAME[a.probe!.check]} check on {skillById(a.probe!.skill as SkillId)?.name ?? a.probe!.skill.toLowerCase()} ({titleOf(a.activityId)}): {a.probe!.right ? 'answered as expected' : 'answered differently'}
+              {a.probe!.support ? `; ${a.probe!.supportTaken ? 'took' : 'turned down'} “${SUPPORTS[a.probe!.support as SupportId]?.label ?? a.probe!.support}”` : ''}.{' '}
+              <span className="muted">Offered by {a.probe!.offeredBy === 'learner-model' ? 'the model' : 'the rules'}.</span>
+            </li>
+          ))}
+        </ul>
+      )}
+      <p className="note-text">Each check is one response. It suggests a support to try; it is not a diagnosis and is not counted as evidence of the skill.</p>
+    </section>
   );
 }

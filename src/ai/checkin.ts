@@ -54,6 +54,16 @@ const LISTEN_GOAL: Record<SkillId, string> = {
   duration: 'holds each note for its full length',
 };
 
+/** How a recurring difficulty is named to the learner (plain, about the music, not the child). */
+export const TRICKY: Record<SkillId, string> = {
+  rests: 'Keeping the rests quiet',
+  pulse: 'Staying with the beat',
+  subdivision: 'Fitting two sounds in a beat',
+  pitch: 'Finding the right notes',
+  reading: 'Reading the notes',
+  duration: 'Holding notes for their length',
+};
+
 export const CHECK_CARDS: Record<CheckKind, { title: string; about: string }> = {
   listen: { title: 'Listen', about: 'Hear two versions of your music and pick one.' },
   read: { title: 'Read', about: 'One question about the written music.' },

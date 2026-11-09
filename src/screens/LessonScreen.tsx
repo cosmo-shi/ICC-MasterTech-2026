@@ -21,8 +21,8 @@ import { usePlayer } from "../ui/usePlayer.ts";
 import { type LiveEvent, Workspace } from "../ui/Workspace.tsx";
 import { FreeLesson } from "./FreeLesson.tsx";
 import { inputsToPhrase } from "../ai/coach.ts";
-import { coachFocus, LESSON_INFOS, skillById, skillsForActivity, supportFor } from "../ai/learner.ts";
-import { CHECK_CARDS, type CheckKind, type SupportId, checkInOffer, rulesCheckInOffer } from "../ai/checkin.ts";
+import { coachFocus, LESSON_INFOS, skillsForActivity, supportFor } from "../ai/learner.ts";
+import { CHECK_CARDS, TRICKY, type CheckKind, type SupportId, checkInOffer, rulesCheckInOffer } from "../ai/checkin.ts";
 import { CheckPanel, CheckResult as CheckResultCard } from "../ui/CheckPanel.tsx";
 import { freshRelated, restSpans } from "../music/versions.ts";
 import { activityById, instrumentFor, lessonFor } from "../data/curriculum.ts";
@@ -668,7 +668,7 @@ function AssessedLesson({ lessonId, go }: Props) {
       </div>
     ) : (
       <button type="button" className="btn btn-big btn-block" onClick={start}>
-        {tries ? "Start again" : "Start"}
+        {playCheck ? "Start the check" : tries ? "Start again" : "Start"}
       </button>
     );
   }
@@ -768,7 +768,7 @@ function AssessedLesson({ lessonId, go }: Props) {
           {!result.passed && mode === "practice" && offer && !checkDeclined && (
             <div className="checkin" role="group" aria-labelledby="checkin-h">
               <p id="checkin-h" className="checkin-q">
-                {skillById(offer.skill).name} has been tricky a few times. Find out what’s getting in the way?
+                {TRICKY[offer.skill]} has been tricky a few times. Want to find out what’s getting in the way?
               </p>
               <div className="checkin-cards">
                 {(["listen", "read", "play"] as const).map((k) => (
