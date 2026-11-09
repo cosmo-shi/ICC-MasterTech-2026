@@ -1,16 +1,16 @@
-# Team guide: building the music app together with Claude Code
+# Team guide: building Musica (the music app) together with Claude Code
 
 > **Branch `sc` note (9 Nov 2026):** on this branch, `SPEC.md` and `CLAUDE.md` follow context pack v2.0 and momo's decisions, not the Miro-first rules below. See SPEC.md section 3 for the resolved contradictions.
 
 For three people, beginner level. Uses the same tools as the last guide: Claude Code, the design skills, Vitest, Playwright, GitHub and Vercel. This guide adds what changes when three people share one project.
 
-Files that go with this guide: `SPEC.md` (what to build) and `CLAUDE.md` (rules Claude Code follows). Both come from the team's Miro requirements spec.
+Files that go with this guide: `SPEC.md` (what to build) and `CLAUDE.md` (rules Claude Code follows). Both come from the team's Miro requirements spec and the board. If the three files ever disagree, the Miro spec wins, then `SPEC.md`.
 
 ---
 
 ## 0. Decisions are settled: the Miro spec wins
 
-The team follows the Miro requirements spec for everything. That means three instruments (keyboard, drum pads, guitar), plain HTML, CSS and JavaScript in the browser, sounds from Tone.js or licensed sample libraries, lessons that unlock one after another, and a pre-written AI coach in the demo. `SPEC.md` section 2 lists each choice with its Miro reference. Any older chat note that disagrees is dropped.
+The team follows the Miro requirements spec for everything. That means two playable instruments (keyboard and drum pads, with guitar as a "Coming soon" tile by the team's later decision), plain HTML, CSS and JavaScript in the browser, sounds from Tone.js or licensed sample libraries, lessons that unlock one after another, a pre-written AI coach in the demo, and the team's own board extras TM-01 to TM-03 (listen and replay, a concept sentence, durations and a rest). `SPEC.md` section 2 lists each choice with its Miro reference. Any older chat note that disagrees is dropped.
 
 Also ask the organisers whether you may write code before the two build days. Installing tools is almost certainly fine. Writing the app may not be.
 
@@ -19,23 +19,23 @@ Also ask the organisers whether you may write code before the two build days. In
 ## 1. How a shared setup works (the idea in plain words)
 
 - There is **one copy of the project on GitHub**. Each of you has your own copy on your laptop.
-- Each of you runs **your own Claude Code** on your own laptop. There is no shared Claude Code session.
-- Claude Code reads the rules from files inside the project. If those files are in Git, **all three Claude Codes follow the same rules**. That is how you share your setup.
+- Persons A and B each run **their own Claude Code** on their own laptop. Person C works in the browser (see 3.8). There is no shared Claude Code session.
+- Claude Code reads the rules from files inside the project. If those files are in Git, **both Claude Codes follow the same rules**, and Person C reads the same file. That is how you share your setup.
 - You send your work to GitHub and take your teammates' work from GitHub. This is called pushing and pulling.
 
 ### What is shared through Git, and what stays personal
 
-| File or folder                  | What it does                                          | Shared?                                                |
-| ------------------------------- | ----------------------------------------------------- | ------------------------------------------------------ |
-| `CLAUDE.md`                   | Rules Claude Code reads every session                 | Yes, commit it                                         |
-| `SPEC.md`                     | The build list                                        | Yes, commit it                                         |
-| `ASSETS.md`                   | Every sound and image with its licence                | Yes, commit it                                         |
-| `.claude/skills/`             | The design and writing skills                         | Yes, if the install put them here (check in section 3) |
-| `.mcp.json`                   | Project tools such as Playwright                      | Yes, commit it                                         |
-| `.claude/settings.json`       | Team permissions (what Claude may run without asking) | Yes, commit it                                         |
-| `.claude/settings.local.json` | Your own overrides                                    | No, Claude Code keeps it out of Git                    |
-| `CLAUDE.local.md`             | Your own private notes to Claude                      | No, add it to `.gitignore`                           |
-| `.env` or `.env.local`      | Secrets                                               | No, never. The demo needs none                         |
+| File or folder                  | What it does                                              | Shared?                                                          |
+| ------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------- |
+| `CLAUDE.md`                   | Rules Claude Code reads every session                     | Yes, commit it                                                   |
+| `SPEC.md`                     | The build list                                            | Yes, commit it                                                   |
+| `ASSETS.md`                   | Every sample library or third-party file with its licence | Yes, commit it. Anyone adds a row in the same commit as the file |
+| `.claude/skills/`             | The design and writing skills                             | Yes, if the install put them here (check in section 3)           |
+| `.mcp.json`                   | Project tools such as Playwright                          | Yes, commit it                                                   |
+| `.claude/settings.json`       | Team permissions (what Claude may run without asking)     | Yes, commit it                                                   |
+| `.claude/settings.local.json` | Your own overrides                                        | No, Claude Code keeps it out of Git                              |
+| `CLAUDE.local.md`             | Your own private notes to Claude                          | No, add it to `.gitignore`                                     |
+| `.env` or `.env.local`      | Secrets                                                   | No, never. The demo needs none                                   |
 
 These locations come from the Claude Code settings documentation.
 
@@ -53,32 +53,38 @@ The three of you are on different plans, so the work is split by what each plan 
 
 ### Who owns which folder
 
-Most merge problems happen when two people edit the same file. Give each person their own folders.
+Most merge problems happen when two people edit the same file. Give each person their own folders. This table is the same one as in `SPEC.md` section 9 and `CLAUDE.md`.
 
-| Person                                                     | Owns                                                                                                                                                                                           | Milestones                                                                                                           |
-| ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| **A (Max): Instruments, notation, offline**          | `src/instruments/`, `src/components/notation/` (stave and rhythm grid), `src/screens/play*` and `src/screens/lesson*`, `public/audio/`, `src/data/instruments/`, the offline files | 2 (keyboard), 3 (drums), 4 (guitar), 6 (stave and lesson screen), 9 (instrument part), 10 (offline), then 11 if time |
-| **B (Pro): Shell, engine, coach**                    | the rest of `src/screens/`, the rest of `src/components/`, `src/engine/`, `src/coach/`, `src/settings/`, `public/images/`                                                          | 0, 1, 5, 7, 8, 9 (contrast and Lighthouse), then 12 if time                                                          |
-| **C (Free): Content, design, testing, presentation** | `src/data/lessons/` (the lesson files), `src/data/coach/` (the coach text), `src/data/mock/` (sample data and teacher guides), `docs/`, `ASSETS.md`, `README.md`                   | No code milestones. See 2.1                                                                                          |
+| Person                                                     | Owns                                                                                                                                                                                                                                                                                                                    |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **A (Max): instruments, notation, offline**          | `src/instruments/`, `src/components/notation/`, `src/screens/play-*`, `src/screens/lesson-*`, `src/screens/my-music.js`, `public/audio/`, `src/data/instruments/`. In Milestone 10 only: `public/manifest.webmanifest`, the service worker, and the PWA lines of `vite.config.js` and `index.html`. |
+| **B (Pro): shell, engine, coach**                    | the other files in `src/screens/`, the rest of `src/components/`, `src/engine/`, `src/coach/`, `src/settings/`, `src/styles/`, `public/images/`, `src/data/config.json`, and the first versions of `index.html` and `vite.config.js`.                                                               |
+| **C (Free): content, design, testing, presentation** | `src/data/lessons/`, `src/data/coach/`, `src/data/mock/` (including `guides/`), `docs/`, `README.md`.                                                                                                                                                                                                       |
+| **Shared**                                           | `ASSETS.md` (anyone adds a row for each file they add, in the same commit), `package.json` (dependency lines only), `SPEC.md`, `CLAUDE.md` (changed only in a commit of their own).                                                                                                                             |
 
-Shared files nobody edits casually: `package.json`, `CLAUDE.md`, `SPEC.md`, `src/data/config.json`. Change them in a small commit of their own and tell the others. (`ASSETS.md` belongs to C, but anyone who adds a file tells C.)
+One exception: B adds the first example file to `src/data/lessons/` in Milestone 5 and to `src/data/coach/` in Milestone 8, to fix the format. After that only C edits those folders.
 
-Person B builds Milestone 0 first and creates the routing file with **every screen already listed as a placeholder**. After that, nobody needs to edit the routing file. A fills in the instrument and lesson screens and B fills in the others.
+Tell the others when you change a shared file. C has no code milestones (see 2.1). Milestones by person (details in section 6): **A** 2, 3, 6, 9 (instrument part), 10, 11 (create mode). **B** 0, 1, 5, 7, 8, 9 (contrast), 11 (gamification), 12. **C** none; C writes the content those milestones read.
 
-Tell Claude Code who you are at the start of each session, for example: "I am Person B. I own src/engine, src/coach, src/settings and the screens other than play and lesson. Do not edit anything else."
+Person B builds Milestone 0 first and creates the routing file with **every screen already listed as a placeholder file** (names in `SPEC.md` section 9). After that, nobody needs to edit the routing file. A fills in the instrument, lesson and My Music screens and B fills in the others.
+
+Tell Claude Code who you are at the start of each session, for example: "I am Person B. I own the folders listed for B in CLAUDE.md. Do not edit anything else."
 
 ### 2.1 What Person C does on the Free plan
 
 C's work matters as much as the code, and most of it does not need Claude Code.
 
 1. **Write the lesson files and the coach text.** B defines the file format in Milestones 5 and 8 and writes one example file with placeholder text for each. C writes the real content in the same format, using the Claude chat on claude.ai:
-   - the note-reading lesson and the rhythm lesson in `src/data/lessons/` (goal sentence, success criteria, three hint levels, coach questions by mistake type)
-   - `src/data/coach/fallback.json`: pre-written questions and hints by mistake type and age band, plus the fixed redirect message (40 words or fewer for under-13s, a specific note or beat in every message, no generic praise)
+   - the note-reading lesson and the rhythm lesson in `src/data/lessons/`: goal sentence, one concept sentence (TM-02), success criteria and three hint levels. The rhythm lesson uses at least two note lengths and one rest, and its Level 2 clue shows the counting syllables, such as "1 and 2 and" (TM-03). No coach messages go in these files.
+   - `src/data/coach/fallback.json`: pre-written questions and hints by mistake type and age band, plus the fixed redirect message. Use {note}, {beat} and {count} where a message points at the attempt. Under-13 messages are 40 words or fewer after the placeholders are filled in, every message names a specific note, beat or count, and there is no generic praise.
    - sample class data and one-page teacher lesson guides in `src/data/mock/` (written for a teacher with no music training)
-2. **Design and Miro artefacts** (Miro spec section 6): personas, user stories, user flow, wireframes, data flow diagram, traceability matrix. Save exports in `docs/`.
+2. **Design and Miro artefacts** (Miro spec section 6): personas, user stories, user flow, wireframes, data flow diagram, traceability matrix. Save exports in `docs/`. Finish the wireframes for onboarding and the instrument list in the first hours of Day 1, because B builds those screens only once their wireframes are in `docs/`.
 3. **Design brief for A and B.** A one-page `docs/design-brief.md` (calm, spacious, colour-blind-safe palette, high contrast, large targets, tone for ages 8 to 14). A and B paste it into the design skills in Claude Code so the screens match.
 4. **Testing.** The test checklist, then running it on a real phone or tablet through the Vercel preview link (no install needed), and logging each bug as a GitHub issue with the requirement ID.
 5. **Presentation.** Pitch script, deck, demo script, the backup video. C leads Day 3.
+6. **Credits check.** Keep an eye on `ASSETS.md`: every row has a source, a licence and an attribution note. B builds the Credits screen from it.
+
+C has no Claude Code, so B runs the `unslop` skill over C's coach text and README at the polish stage (Milestone 12) and sends the result to C, who commits it.
 
 C can use the Free plan for all of this. See 3.8 for how C gets files into the repo without a terminal.
 
@@ -96,7 +102,7 @@ C can use the Free plan for all of this. See 3.8 for how C gets files into the r
 
 ### 3.1 Install the basics on every laptop
 
-Same as the last guide. Persons A and B need Node.js 22 or newer, Git, a GitHub account, and Claude Code. Person C needs a GitHub account only (see 3.8).
+Same as the last guide. Persons A and B need Node.js 22 or newer, Git, a GitHub account, and Claude Code (both are on plans that include it). Person C needs a GitHub account only (see 3.8).
 
 ```bash
 node -v      # should print v22 or higher
@@ -121,18 +127,19 @@ cd music-app
 npm install
 npm install tone
 npm install -D vitest
+npm pkg set scripts.test="vitest run"
 git init
 git add .
 git commit -m "Initial project"
 ```
 
-The `vanilla` template gives plain JavaScript with no React and no TypeScript, which is what the Miro spec asks for.
+The `vanilla` template gives plain JavaScript with no React and no TypeScript, which is what the Miro spec asks for. The `npm pkg set` line adds the `npm test` command that `CLAUDE.md` uses.
 
 Create an empty repository on GitHub, then follow the commands GitHub shows to push. Add your two teammates as collaborators (GitHub: Settings, Collaborators); this includes Person C, who needs write access to add files.
 
 ### 3.3 Add the team files (Person B)
 
-Copy `SPEC.md`, `CLAUDE.md` and this guide into the project folder next to `package.json`. Create an empty `ASSETS.md` with this table:
+Copy `SPEC.md`, `CLAUDE.md` and this guide into the project folder next to `package.json`. Create an empty `ASSETS.md` with this table. Anyone who adds a sample library or third-party file adds a row in the same commit:
 
 ```markdown
 | File | Source link | Licence | Attribution needed | Date checked | Added by |
@@ -208,7 +215,7 @@ Create `.claude/settings.json` with commands Claude may run without asking each 
 
 Anything not listed still asks you first, which is what you want while learning. Do not allow `git push` or deleting files here.
 
-Commit and push everything:
+Commit and push everything. This one-time setup commit goes straight to `main`; after it, nobody commits to `main`:
 
 ```bash
 git add .
@@ -237,13 +244,13 @@ Person C works in the browser.
 2. **Add a file:** click the branch button (it says `main`), type a new branch name such as `content-lessons-c`, and choose "Create branch". Open the folder (for example `src/data/lessons`), choose Add file, then Create new file (paste the text) or Upload files. Click Commit changes.
 3. **Change a file:** open it, click the pencil icon, edit, and commit to your branch.
 4. Click "Compare & pull request" and ask A or B to merge it. Never commit to `main`.
-5. **Write the content with Claude on claude.ai.** Paste `CLAUDE.md`, the relevant part of `SPEC.md` (sections 3 and 8) and B's example file, and ask for the whole file in one message. The Free plan allows only a small number of messages per five-hour window (reports estimate 15 to 40, which is not an official number), so ask for a full file at a time rather than many small questions. Check every file against the example's format before committing.
+5. **Write the content with Claude on claude.ai.** Paste `CLAUDE.md`, the relevant part of `SPEC.md` (sections 3, 4 and 8) and B's example file, and ask for the whole file in one message. The Free plan allows only a small number of messages per five-hour window (reports estimate 15 to 40, which is not an official number), so ask for a full file at a time rather than many small questions. Check every file against the example's format before committing.
 6. **Check your files.** B's tests (`npm test`) list the file and the field if something is missing. Ask A or B to run them after you merge, or run them yourself if you install Node.
 7. **Test on a phone.** Open the Vercel preview link B sets up in 3.6. No install needed.
 
 ---
 
-## 4. The daily loop for everyone (copy this)
+## 4. The daily loop for Persons A and B (copy this)
 
 Persons A and B follow this loop. Person C uses the browser steps in 3.8 instead.
 
@@ -252,7 +259,7 @@ Persons A and B follow this loop. Person C uses the browser steps in 3.8 instead
 ```bash
 git checkout main
 git pull
-git checkout -b m2-keyboard-justin      # milestone, topic, your name
+git checkout -b m2-keyboard-a      # milestone, topic, your person letter
 claude
 ```
 
@@ -263,7 +270,7 @@ claude
 ```bash
 git add .
 git commit -m "Keyboard plays notes with multitouch"
-git push -u origin m2-keyboard-justin
+git push -u origin m2-keyboard-a
 ```
 
 Then on GitHub press "Compare & pull request", ask one teammate to glance at it, and merge. Everyone runs `git pull` on `main` before the next session.
@@ -293,51 +300,47 @@ Your spec's section 6.5 gives the order: priorities, personas and stories, flow 
 
 ## 6. The milestones with prompts (paste one at a time, in plan mode)
 
-Each prompt assumes Claude Code has already read `CLAUDE.md` and `SPEC.md`.
+Each prompt assumes Claude Code has already read `CLAUDE.md` and `SPEC.md`. There are twelve milestones to build, 0 to 12; Milestone 4 is not used. Build a screen only after its wireframe is in `docs/`.
 
 ### Milestone 0: App shell (Person B, before anyone else starts)
 
-> Set up plain CSS and the folder layout from SPEC.md section 9. Create simple routing in plain JavaScript (hash-based) for every screen: Tap to start, Onboarding, Instrument list, Instrument play, Lesson goal, Lesson, Results, My Music, Settings, Teacher (mock), Community (mock), Privacy notice (mock), Credits. Every screen is a placeholder with its name. Build the "Tap to start sound" screen (FR-PLY-12) and a settings store that saves preferences on the device (FR-ACC-08). Phone-first, 360 px wide. Use impeccable and design-taste-frontend: calm, spacious, large tap targets, high contrast.
+> Set up plain CSS and the folder layout from SPEC.md section 9. Create simple routing in plain JavaScript (hash-based) with one placeholder file per screen, using the screen file names in SPEC.md section 9. Create src/styles/tokens.css with CSS variables for every colour and size, plus a second variable set for high contrast that is switched on by a class on the html element; every later screen uses these variables and never hard-codes a colour. Build a settings store that saves preferences on the device (FR-ACC-08). Build a small "Tap to start sound" banner (FR-PLY-12) that appears only when the browser still blocks audio and calls Tone.start() when tapped. The first-run flow is three taps: age band (that tap also calls Tone.start()), goal or Skip, instrument. Phone-first, 360 px wide. Use impeccable and design-taste-frontend: calm, spacious, large tap targets, high contrast.
 
-### Milestone 1: Onboarding and instrument list (B)
+### Milestone 1: Onboarding, instrument list and privacy reason screen (B)
 
-> Build onboarding: age band only (under 13, 13 to 17, 18 and over), then learning goal (read notes, learn rhythm, just play) with a Skip button. FR-ONB-01 to 05. Under 13 hides community and sharing. Then the instrument list with name, icon and a preview button (FR-INS-01), plus a "Coming soon" wind instruments tile that cannot be opened (FR-INS-04). A first-time student reaches a playable instrument in 3 taps or fewer. Draw icons as inline SVG or use a public icon set; log any third-party set in ASSETS.md.
+> Build onboarding: age band only (under 13, 13 to 17, 18 and over), then learning goal (read notes, learn rhythm, just play) with a Skip button, then the instrument list. FR-ONB-01 to 05. The age band tap also unlocks audio. Under 13 hides community and sharing. The instrument list shows name, icon and a preview button (FR-INS-01), plus "Coming soon" tiles for guitar and the wind instruments that cannot be opened (FR-INS-04). A first-time student reaches a sounding instrument in 3 taps or fewer; a returning student opens on the instrument list. Build the privacy reason screen (FR-PRV-02), reachable from Settings: the app does not use the microphone or camera. Draw icons as inline SVG or use a public icon set; log any third-party set in ASSETS.md.
 
-### Milestone 2: Audio engine and keyboard (A)
+### Milestone 2: Audio module and keyboard (A)
 
-> Using Tone.js, build an audio module that makes the sounds with Tone.js (generated in code, or licensed sample files if the team provides them) and unlocks on the first tap. Build the keyboard: two octaves, scrollable on small screens, note names show or hide, multitouch chords, laptop keys as input, metronome from 40 to 160 BPM with a flashing beat marker (FR-PLY-01, 02, 07, 08, 09, 10, 11). Read the keyboard layout from src/data/instruments/keyboard.json. If I want real samples instead, tell me which licensed library to use and how to log it.
+> Using Tone.js, build an audio module in src/instruments that makes the sounds with Tone.js (generated in code, or licensed sample files if the team provides them). Tone.start() may already have run from the onboarding tap or the banner; do not start it twice. Build the keyboard: two octaves, scrollable on small screens, note names show or hide, multitouch chords, laptop keys as input, and a metronome in src/instruments/metronome.js from 40 to 160 BPM with a flashing beat marker (FR-PLY-01, 02, 07, 08, 09, 10, 11). Read the keyboard layout from src/data/instruments/keyboard.json. Use the colour variables from src/styles/tokens.css. If I want real samples instead, tell me which licensed library to use and how to log it.
 
-*You do now (optional):* if the generated keyboard sound is not good enough, download a licensed piano sample set, put it in `public/audio/keyboard/` and add it to `ASSETS.md`.
+*You do now (optional):* if the generated keyboard sound is not good enough, download a licensed piano sample set, put it in `public/audio/keyboard/` and add a row to `ASSETS.md`.
 
 ### Milestone 3: Drum pads (A)
 
 > Build the drum pads: five pads labelled kick, snare, hi-hat, tom and crash, each playing its labelled sound, with multitouch so several pads can sound together (FR-PLY-03, FR-PLY-07). The pad layout comes from src/data/instruments/drums.json. Keep every pad at least 44 by 44 CSS pixels at the medium size setting. Use Tone.js sounds generated in code unless the team provides licensed samples. The four-pad simplified layout and drag-to-rearrange come in Milestone 9.
 
-*You do now (optional):* if you want real drum hits, download a licensed set and add it to `ASSETS.md`.
+*You do now (optional):* if you want real drum hits, download a licensed set and add a row to `ASSETS.md`.
 
-### Milestone 4: Guitar (A, cut first if time is short)
+### Milestone 4: Not used
 
-> Build the guitar: six strings, tap a string to play its pitch, swipe across strings to play a strummed chord in swipe direction, four chord buttons C, G, Am, F (FR-PLY-04, 05, 06). Layout from src/data/instruments/guitar.json. Use Tone.js sounds generated in code (for example its plucked-string synth) or licensed samples.
+Guitar is now a "Coming soon" tile, built in Milestone 1. The number is skipped so every other milestone keeps its number in all three files.
 
-*Tip:* ask Claude Code to try Tone.js's plucked-string synth first. It avoids the search for licensed guitar samples.
+### Milestone 5: Checking engine and lesson file format (B)
 
-### Milestone 5: Checking engine (B)
+> In src/engine, build attempt logging and checking in plain JavaScript. An attempt is a list of played notes with times. Compare to the target: correct or incorrect per note (FR-ASM-01), early, on time or late per beat with tolerance from src/data/config.json by difficulty (FR-ASM-02, 03), store the attempt so it can be replayed exactly (FR-ASM-04). A rest in the target expects no tap, and a tap on a rest counts as extra (TM-03). Write Vitest tests next to the code: a perfect attempt, one with 2 deliberate wrong notes that reports exactly 2 incorrect, one early, one late, one tap on a rest. No screens yet. Also define the lesson file format in src/data/lessons (the one exception to folder ownership): write one complete example lesson file with placeholder text (goal sentence, concept sentence, target notes or a rhythm pattern that includes a rest, success criteria, three hint levels). No coach messages in lesson files. Add a Vitest test that loads every file in src/data/lessons and fails with a message naming the file and the missing field. A teammate will write the real lessons from this example.
 
-> In src/engine, build attempt logging and checking in plain JavaScript. An attempt is a list of played notes with times. Compare to the target: correct or incorrect per note (FR-ASM-01), early, on time or late per beat with tolerance from src/data/config.json by difficulty (FR-ASM-02, 03), store the attempt so it can be replayed exactly (FR-ASM-04). Write Vitest tests: a perfect attempt, one with 2 deliberate wrong notes that reports exactly 2 incorrect, one early, one late. No screens yet. Also define the lesson file format in src/data/lessons: write one complete example lesson file with placeholder text (goal sentence, target notes or rhythm pattern, success criteria, three hint levels, pre-written coach questions by mistake type), and a Vitest test that loads every file in src/data/lessons and fails with a message naming the file and the missing field. A teammate will write the real lessons from this example.
+### Milestone 6: Stave, rhythm grid and the lesson screens (A; lesson content by C)
 
-### Milestone 6: Stave, rhythm grid and the lesson screen (A; lesson content by C)
+> Build a stave component in src/components/notation (five lines, treble clef) that shows target notes, highlights exactly one at a time, and shows the played note beside it within 100 ms (FR-LSN-03, 04, 05). Build a rhythm notation grid with a beat marker that draws note lengths and the rest symbol (TM-03). Build lesson-goal.js and lesson-play.js: they read the lesson files in src/data/lessons (the format comes from Milestone 5; if the real lessons are not merged yet, test with the example lesson) and show the one-sentence goal and the concept sentence first (FR-LSN-02, TM-02). Add a Listen button that plays the target before an attempt and can be pressed again to replay it (TM-01). In note-reading, the matching key stays unlit unless the student has asked for Level 2 or 3 help (FR-LSN-06). The rhythm lesson runs against the metronome (FR-LSN-07). Use the stave and notation from a public library if one fits; tell me which and why.
 
-> Build a stave component (five lines, treble clef) that shows target notes, highlights exactly one at a time, and shows the played note beside it within 100 ms (FR-LSN-03, 04, 05). Build a rhythm notation grid with a beat marker. Build the lesson screen that reads the lesson files in src/data/lessons (the format comes from Milestone 5; a teammate writes the real lessons, so test with the example lesson) and shows the one-sentence goal first (FR-LSN-01, 02, 07). In note-reading, the matching key stays unlit unless the student has asked for Level 2 or 3 help (FR-LSN-06). Use the stave and notation from a public library if one fits; tell me which and why.
+### Milestone 7: Hint ladder, results, Units screen and progress (B)
 
-### Milestone 7: Hint ladder and results (B)
+> Build the Help control with three levels: guiding question, clue, answer. Level 1 first; each higher level must be requested (FR-HNT-01, 02). Record the highest level used per lesson (FR-HNT-03). Help never lowers results (FR-HNT-04). Build the results screen with counts: notes correct out of total, beats early, on time and late (FR-PRG-01); last 5 attempts (FR-PRG-03); a Compare button that plays the attempt then the target (FR-ASM-05), and the attempt beside the target with mismatches marked (FR-ASM-06). Build units.js: units and lessons shown as locked, available or completed; the first lesson of each unit starts available; completing a lesson unlocks the next; any unlocked lesson can be chosen and completed ones replayed (FR-LSN-01, 08, 09); lessons completed out of total per unit (FR-PRG-02). Store progress by lesson, not by instrument, so switching instruments never loses it (FR-INS-03). Progress saves after every attempt (FR-PRG-04).
 
-> Build the Help control with three levels: guiding question, clue, answer. Level 1 first; each higher level must be requested (FR-HNT-01, 02). Record the highest level used per lesson (FR-HNT-03). Help never lowers results (FR-HNT-04). Build the results screen with counts: notes correct out of total, beats early, on time and late (FR-PRG-01); lessons completed per unit (FR-PRG-02); last 5 attempts (FR-PRG-03); a Compare button that plays the attempt then the target (FR-ASM-05), and the attempt beside the target with mismatches marked (FR-ASM-06). Progress saves after every attempt.
+### Milestone 8: The coach (B; text by C)
 
-### Milestone 8: The coach (B)
-
-> Build the coach in src/coach. After an attempt with errors, the first message is a question about what was different, with no answer in it (FR-AIC-01). Pick the question from src/data/coach/fallback.json by mistake type and age band. Every message names a specific note, beat or count (FR-AIC-02). Praise only when the lesson's success criteria are met and name what was done well (FR-AIC-03). Accept the student's answer by multiple choice or typed text (FR-AIC-04) and reply with the evidence, for example "beats 3 and 4 were early" (FR-AIC-05). Label every message "AI coach", add a flag button, add a switch that turns AI messages off (FR-AIC-08, 09, 12). Under-13 messages are 40 words or fewer. Off-topic typed text gets the fixed redirect. This is the pre-written coach; do not call any outside service. Also define the format of src/data/coach/fallback.json with a few placeholder entries per mistake type (wrong note, early, late, missed, extra) and age band plus the fixed redirect message, and a Vitest test that checks required fields and that under-13 entries are 40 words or fewer. A teammate will write the real text from this example.
-
-*Optional stretch, only if the team agrees and everything else is done:* a Vercel server function that calls a model with de-identified results and falls back to the pre-written coach if it fails. The key lives only in Vercel's environment settings, never in the code.
+> Build the coach in src/coach. After an attempt with errors, the first message is a question about what was different, with no answer in it (FR-AIC-01). Pick the question from src/data/coach/fallback.json by mistake type and age band, and fill in {note}, {beat} and {count} from the attempt, so every message names a specific note, beat or count (FR-AIC-02). Never show a raw placeholder. Praise only when the lesson's success criteria are met and name what was done well (FR-AIC-03). Accept the student's answer by multiple choice or typed text (FR-AIC-04) and reply with the evidence, for example "beats 3 and 4 were early" (FR-AIC-05). Label every message "AI coach", add a flag button, add a switch that turns AI messages off (FR-AIC-08, 09, 12). Under-13 messages are 40 words or fewer. Off-topic typed text gets the fixed redirect. This is the pre-written coach; do not call any outside service. Also define the format of src/data/coach/fallback.json with a few placeholder entries per mistake type (wrong note, early, late, missed, extra) and age band plus the fixed redirect message (the one exception to folder ownership), and a Vitest test that checks required fields, that only {note}, {beat} and {count} are used, and that under-13 entries are 40 words or fewer once the placeholders are filled in. A teammate will write the real text from this example.
 
 ### Milestone 9: Accessibility (A for the instrument part, B for contrast and Lighthouse)
 
@@ -345,25 +348,31 @@ Two prompts, because the instrument controls live in A's folders.
 
 **Person A:**
 
-> Add key, pad and string size small, medium and large (FR-ACC-01), a simplified layout of one octave or four drum pads (FR-ACC-02), drag-to-rearrange drum pads whose new positions stay after the app is reopened (FR-ACC-03), and colour-blind-safe note colours always shown with note names (FR-ACC-05). Save choices through the settings store from Milestone 0. Make sure the simplified layout can complete the first lesson. Touch only the instrument and notation folders.
+> Add key and pad size small, medium and large (FR-ACC-01), a simplified layout of one octave or four drum pads (FR-ACC-02), drag-to-rearrange drum pads whose new positions stay after the app is reopened (FR-ACC-03), and colour-blind-safe note colours always shown with note names (FR-ACC-05). Save choices through the settings store from Milestone 0 and take every colour from tokens.css. Make sure the simplified layout can complete the first lesson. Touch only the instrument and notation folders.
 
 **Person B:**
 
-> Add the high-contrast mode (FR-ACC-04) across every screen, and make sure all control preferences are saved on the device and applied on the next launch (FR-ACC-08). Run a Lighthouse accessibility check on every screen and fix what it finds. Check that no information is shown by colour alone.
+> Add the high-contrast mode (FR-ACC-04) by completing the high-contrast variable set in tokens.css so every screen changes, instruments included, and make sure all control preferences are saved on the device and applied on the next launch (FR-ACC-08). Run a Lighthouse accessibility check on every screen and fix what it finds. Check that no information is shown by colour alone. If an instrument file hard-codes a colour, tell Person A instead of editing it.
 
 ### Milestone 10: Offline and install (A)
 
-> Make the app a PWA that works with no network after first load: all instruments, free play, lessons and pre-written hints (FR-OFF-01, 02, 03). Add an online or offline indicator that updates within 5 seconds (FR-OFF-04). Keep the cached package under 50 MB and tell me its size.
+> Make the app a PWA that works with no network after first load: all instruments, free play, lessons and pre-written hints (FR-OFF-01, 02, 03). You may edit public/manifest.webmanifest, the service worker and the PWA lines of vite.config.js and index.html, and nothing else outside A's folders. Add an online or offline indicator that updates within 5 seconds (FR-OFF-04). Keep the cached package under 50 MB and tell me its size.
 
-### Milestone 11: Create mode and opt-in gamification (A, only if time allows)
+### Milestone 11: Create mode (A) and opt-in gamification (B, secondary), only if time allows
 
-> Free play on every instrument with no goal or results screen. Record up to 60 seconds, stopping automatically; play back, name, save and delete recordings on the device (FR-CMP-01 to 04). Gamification is off by default; badges tied to a lesson success criterion; no streaks, timers or penalties; badges are kept when switched off (FR-GAM-01, 02, 03, 05). Recordings contain only note events, never raw audio (FR-PRV-04).
+**Person A:**
+
+> Free play on every instrument with no goal or results screen. Record up to 60 seconds, stopping automatically; play back, name, save and delete recordings on the device, listed on my-music.js (FR-CMP-01 to 04). Recordings contain only note events, never raw audio (FR-PRV-04).
+
+**Person B:**
+
+> Secondary, after everything else: gamification is off by default and switched on in Settings (FR-GAM-01). Badges are tied to a lesson success criterion, for example "Reads every line of the treble stave" (FR-GAM-02). No streaks, timers or penalties anywhere (FR-GAM-03). Earned badges are kept when it is switched off (FR-GAM-05).
 
 ### Milestone 12: Mock screens and polish (B, only if time allows; content by C)
 
-> Build the teacher dashboard, class join code, community and mentor review, and privacy notice as mock screens with sample data in src/data/mock, each labelled "Demo data". No ranking or comparing students. Build the Credits screen from ASSETS.md. Sample data and the one-page lesson guides come from src/data/mock/ (written by a teammate): show the guide for each lesson on the teacher screen (FR-TCH-03).
+> Build the teacher dashboard, class join code, community and mentor review, and privacy notice as mock screens with sample data from src/data/mock, each labelled "Demo data". No ranking or comparing students. Build the Credits screen from ASSETS.md. Show the one-page guide for each lesson on the teacher screen from src/data/mock/guides (FR-TCH-03).
 
-Then the polish pass, one screen at a time: hallmark review, impeccable polish, taste skill only on screens that still look generic, then `/unslop` on coach text, onboarding text, README and the pitch script (keep Year 3 reading level and specific praise).
+Then the polish pass, one screen at a time: hallmark review, impeccable polish, taste skill only on screens that still look generic. Then `/unslop` on onboarding text and the pitch script. B runs it on C's coach text and README without editing them and sends the result to C to commit (keep Year 3 reading level and specific praise).
 
 ---
 
@@ -373,7 +382,7 @@ Then the polish pass, one screen at a time: hallmark review, impeccable polish, 
 2. **Playwright through Claude Code** for screenshots at 360, 768 and 1920 px and console errors. It cannot judge audio delay or real multitouch.
 3. **Real devices.** Run `npm run dev -- --host` and open the printed address on a phone on the same Wi-Fi, or open your Vercel preview link. Check: sound starts after one tap, two fingers play two sounds, nothing scrolls or zooms while playing.
 4. **Sound delay.** Test on the demo device in the first hours of Day 1. If rhythm checking feels unfair, widen the beginner tolerance in `src/data/config.json` (known risk in the Miro spec).
-5. **Checklist.** Ask Claude Code: "Turn SPEC.md section 11 and the acceptance criteria of every requirement in section 4 into test-checklist.md, one pass/fail row each." Person C can ask Claude on claude.ai for this instead, pasting in `SPEC.md`. Person C works through it on the demo phone after the Day 2 code freeze and logs each failure as a GitHub issue with the requirement ID.
+5. **Checklist.** Ask Claude Code: "Turn SPEC.md section 11 and the acceptance criteria of every requirement in section 4 into test-checklist.md, one pass/fail row each." Person C can ask Claude on claude.ai for this instead, pasting in `SPEC.md`. Include the TM-01 to TM-03 rows. Person C works through it on the demo phone after the Day 2 code freeze and logs each failure as a GitHub issue with the requirement ID.
 
 ---
 
@@ -381,14 +390,14 @@ Then the polish pass, one screen at a time: hallmark review, impeccable polish, 
 
 Days 1 and 2 are for building. Day 3 is only for presenting: no new code.
 
-| When              | A (Max)                                                                               | B (Pro)                                                                                                   | C (Free)                                                                                                        |
-| ----------------- | ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| Day 1, first hour | Check Tone.js sounds on the demo phone. Start Milestone 2                             | Milestone 0 first (everyone waits for it)                                                                 | Personas, user stories, user flow in Miro. Start the design brief                                               |
-| Day 1, rest       | Milestone 2, then Milestone 3 (drum pads), then Milestone 6 (stave and lesson screen) | Milestone 1, then Milestone 5 with the lesson file format and test                                        | Wireframes, data flow, traceability matrix. `ASSETS.md`. First test checklist. Pitch outline                  |
-| Day 2, morning    | Milestone 4 (guitar), Milestone 9 (instrument part), Milestone 10 (offline)           | Milestone 7 (hints, results), Milestone 8 (coach and fallback format), Milestone 9 (contrast, Lighthouse) | Write lesson files, coach text, sample data and teacher guides from B's examples; add them through GitHub (3.8) |
-| Day 2, afternoon  | Milestone 11 if time, then fixes                                                      | Milestone 12 if time, then fixes                                                                          | Run the test checklist on the demo phone, log bugs, record the backup video, finish the deck                    |
+| When              | A (Max)                                                                                                                                | B (Pro)                                                                                                                                | C (Free)                                                                                                                                                                   |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Day 1, first hour | Check Tone.js sounds on the demo phone. Start Milestone 2                                                                              | Milestone 0 first (everyone waits for it)                                                                                              | Personas, user stories, user flow in Miro. Start the design brief                                                                                                          |
+| Day 1, rest       | Milestone 2, then Milestone 3 (drum pads), then Milestone 6 (stave and lesson screens, needs Milestone 5 merged or the example lesson) | Milestone 1 once the onboarding and instrument list wireframes are in `docs/`, then Milestone 5 with the lesson file format and test | Wireframes first (onboarding and instrument list before anything else), data flow, traceability matrix. `ASSETS.md` check. First test checklist. Pitch outline           |
+| Day 2, morning    | Milestone 9 (instrument part), Milestone 10 (offline)                                                                                  | Milestone 7 (hints, results, Units), Milestone 8 (coach and fallback format), Milestone 9 (contrast, Lighthouse)                       | Write lesson files (with the concept sentence, a rest and counting syllables), coach text, sample data and teacher guides from B's examples; add them through GitHub (3.8) |
+| Day 2, afternoon  | Milestone 11 (create mode) if time, then fixes                                                                                         | Milestone 12 if time, then Milestone 11 (gamification, secondary) only if everything else is done, then fixes                          | Run the test checklist on the demo phone, log bugs, record the backup video, finish the deck                                                                               |
 
-**Day 2 midday decision point.** Check what is not done yet and use the cut order below to drop anything that will not be finished by mid-afternoon.
+**Day 2 midday decision point.** Check what is not done yet and use the cut order in `SPEC.md` section 13 (the only cut order) to drop anything that will not be finished by mid-afternoon.
 
 **Day 2 code freeze.** Agree a time, for example 4 hours before the end of the day. After the freeze, only bug fixes. Then:
 
@@ -403,9 +412,9 @@ Days 1 and 2 are for building. Day 3 is only for presenting: no new code.
 - Check the deployed link and the demo device (charged, sound on, airplane mode test).
 - Do not change code. Fix a bug only if a demo moment is broken, and tell the team first.
 
-**Cut order if time runs short:** guitar, optional live AI, Milestone 11 (create mode and gamification), then mock screens beyond the teacher dashboard (Milestone 12). Never cut: question-first coach, hint ladder, offline fallback, adaptable control sizes. These are your three demo moments.
+**Cut order:** it lives only in `SPEC.md` section 13, so the three files cannot disagree. Read it at the midday decision point. In short, the board extras (TM-01 to TM-03) go first, then gamification, then create mode.
 
-**Honest warning.** Only two of you can run Claude Code, so eleven code milestones fall on A and B in two days. That is tight. Create mode and gamification are Miro "must" items, so if they are cut, say so openly in the pitch. Two things help: C's content work removes writing from A and B, and an early finisher takes the next item from whoever is behind. If hackathon API credits turn up, C can run Claude Code too and take Milestone 12.
+**Honest warning.** Only two of you can run Claude Code, so twelve milestones (0 to 12, without 4) fall on A and B in two days: A carries 2, 3, 6, 9, 10 and 11, B carries 0, 1, 5, 7, 8, 9, 11 and 12. That is tight. Create mode and gamification are Miro "must" items, so if they are cut, say so openly in the pitch. Two things help: C's content work removes writing from A and B, and an early finisher takes the next item from whoever is behind. If hackathon API credits turn up, C can run Claude Code too and take Milestone 12.
 
 ---
 
@@ -413,9 +422,9 @@ Days 1 and 2 are for building. Day 3 is only for presenting: no new code.
 
 - 30-second story: a student with no instrument and no teacher can still learn music, and learns to think instead of being told.
 - Demo moment 1: miss a beat, the coach asks what was different before answering.
-- Demo moment 2: open three instruments from a web link, no sign-up, no cost.
+- Demo moment 2: open two instruments (keyboard and drums) from a web link, no sign-up, no cost; guitar shows as Coming soon.
 - Demo moment 3: airplane mode on mid-lesson, lesson and hints keep working.
-- Say honestly which screens use demo data (teacher, community) and that the coach is rule-based in the prototype.
+- Say honestly which screens use demo data (teacher, community), that guitar is a Coming soon tile, and that the coach is rule-based in the prototype. Say which items from `SPEC.md` section 13 were cut.
 - Use the traceability matrix from Miro to link each feature to the problem statement.
 - Have a recorded backup run ready in case venue Wi-Fi or sound fails.
 
@@ -430,12 +439,13 @@ Days 1 and 2 are for building. Day 3 is only for presenting: no new code.
 | Playwright not showing in `/mcp`                 | Check `.mcp.json` is in the repo and approve the tool when asked. Node must be 22 or newer                   |
 | "Merge conflict"                                   | Stop. Ask whose file it is. Show the conflict to that person before changing anything                          |
 | Two people edited the same file                    | Move the work into your own folders and split the file into smaller ones                                       |
-| Claude Code edits files outside your folders       | Say "touch only [folders]" again, and add the folder rule to `CLAUDE.md`                                     |
+| Claude Code edits files outside your folders       | Say "touch only [folders]" again. The folder table is already in `CLAUDE.md`; check it was pulled            |
 | Build breaks after a merge                         | Everyone runs `git pull`, then `npm install`, then `npm run build`                                       |
 | No sound on iPhone                                 | Audio must start after a tap; check the silent switch                                                          |
 | Page scrolls while playing                         | Add `touch-action: none` to the instrument area                                                              |
 | Notes lag                                          | Preload samples, keep the touch handler light, test on the real device                                         |
 | A file written by Person C breaks the app          | Run `npm test`. The data tests name the file and the missing field. C fixes it on the same branch            |
+| `npm test` says the script is missing            | Run `npm pkg set scripts.test="vitest run"` once (3.2) and commit `package.json`                           |
 | Claude Code says a usage limit is reached          | Wait for the five-hour reset, or swap tasks. See 2.2                                                           |
 | Person C is out of Free-plan messages              | Ask for whole files per message. Wait for the window to reset, or ask A or B to draft the file in their chat   |
 
@@ -446,6 +456,7 @@ Days 1 and 2 are for building. Day 3 is only for presenting: no new code.
 - **Checked against the Claude Code settings documentation:** `CLAUDE.md` in the project root and `.claude/settings.json` are shared through Git, `.claude/settings.local.json` and `CLAUDE.local.md` are personal, and project tools live in `.mcp.json`.
 - **Carried over from the last guide:** the skill install commands, the Playwright command and the Node 22 requirement. Skill commands come from each skill's own page and can change, so check their READMEs.
 - **Not tested:** whether the design skills and Playwright work well together, and whether your skill installs land in the project or your home folder. Section 3.4 shows how to check.
-- **Settled:** the team follows the Miro spec for everything; `SPEC.md` section 2 lists the choices.
+- **Settled:** the team follows the Miro spec for everything, except the 9 Nov decision to ship keyboard and drums only (guitar becomes Coming soon) and to treat gamification as secondary; `SPEC.md` section 2 lists the choices. TM-01 to TM-03 come from the team's own lines on the Miro board; check the wording against the board.
+- **Kept in step:** the folder table is the same in `SPEC.md` section 9, `CLAUDE.md` and section 2 of this guide; the cut order exists only in `SPEC.md` section 13.
 - **Checked for the plan split:** Anthropic's help pages say Claude Code is included with Pro and Max, that both have a five-hour session limit and a weekly limit shared with Claude chat, and that Max gives 5x or 20x more usage per session than Pro. That the Free plan has no Claude Code, and the 15 to 40 messages per window, come from a third-party summary, not an official page.
-- **Not checked:** which models each plan gets in Claude Code. Type `/model` in Claude Code to see yours.
+- **Not checked:** whether Vercel preview links open without a login on the demo phone (test it on Day 1), and which models each plan gets in Claude Code. Type `/model` in Claude Code to see yours.
