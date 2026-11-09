@@ -1,8 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { audio } from './audio/engine.ts';
 import { PrefsProvider, usePrefs } from './state/prefs.tsx';
-import { Motif } from './ui/common.tsx';
-import { Icon } from './ui/icons.tsx';
+import { Icon, Logo } from './ui/icons.tsx';
 import { PlayScreen } from './screens/PlayScreen.tsx';
 import { LearnScreen } from './screens/LearnScreen.tsx';
 import { LessonScreen } from './screens/LessonScreen.tsx';
@@ -30,12 +29,14 @@ const NAV = [
   { href: '#/play', label: 'Play', icon: 'play' },
   { href: '#/learn', label: 'Learn', icon: 'learn' },
   { href: '#/music', label: 'My music', icon: 'music' },
-  { href: '#/grownups', label: 'Grown-ups', icon: 'grownups' },
 ] as const;
 
 function Shell() {
   const [hash, go] = useHash();
-  const [controlsOpen, setControlsOpen] = useState(false);
+  // Settings belong to the page they were opened on, so they close when the page changes.
+  const [settingsAt, setSettingsAt] = useState<string | null>(null);
+  const settingsOpen = settingsAt === hash;
+  const setSettingsOpen = (open: boolean) => setSettingsAt(open ? hash : null);
   const { saveError } = usePrefs();
   const mainRef = useRef<HTMLElement>(null);
   const [, section, arg] = hash.split('/');
@@ -56,45 +57,50 @@ function Shell() {
   const current = section === 'lesson' || section === 'mission' ? '#/learn' : `#/${section || 'play'}`;
 
   return (
-    <>
+    <div className="app">
       <a href="#main" className="skip-link" onClick={(e) => { e.preventDefault(); mainRef.current?.focus(); }}>
         Skip to the music
       </a>
       <header className="topbar">
         <a className="brand" href="#/play" aria-label="Carmen, go to Play">
-          <Motif size={32} />
+          <Logo size={34} />
           <span className="brand-name">Carmen</span>
         </a>
-        <nav className="nav" aria-label="Main">
-          {NAV.map((n) => (
-            <a key={n.href} href={n.href} className="nav-link" aria-current={current === n.href ? 'page' : undefined}>
-              <Icon name={n.icon} size={22} />
-              {n.label}
-            </a>
-          ))}
-        </nav>
         <div className="top-actions">
-          <button type="button" className="btn-quiet" aria-expanded={controlsOpen} aria-controls="controls-sheet" onClick={() => setControlsOpen((o) => !o)}>
-            Controls
+          <button type="button" className="icon-btn" onClick={() => audio.stopAll()} aria-label="Stop all sound">
+            <Icon name="stop" size={22} />
           </button>
-          <button type="button" className="btn btn-stop" onClick={() => audio.stopAll()}>
-            <span aria-hidden="true">■ </span>Stop
+          <button type="button" className="icon-btn" aria-expanded={settingsOpen} aria-controls="controls-sheet" aria-label="Settings" onClick={() => setSettingsOpen(!settingsOpen)}>
+            <Icon name="gear" size={24} />
           </button>
         </div>
       </header>
-      {controlsOpen && <ControlsSheet onClose={() => setControlsOpen(false)} />}
-      {saveError && (
-        <p className="banner" role="alert">
-          {saveError}
-        </p>
-      )}
-      <main id="main" ref={mainRef} tabIndex={-1}>
+      <nav className="tabs" aria-label="Main">
+        {NAV.map((n) => (
+          <a key={n.href} href={n.href} className="tab-link" aria-current={current === n.href ? 'page' : undefined}>
+            <span className="tab-icon">
+              <Icon name={n.icon} size={24} />
+            </span>
+            {n.label}
+          </a>
+        ))}
+        <a href="#/grownups" className="tab-link tab-grownups" aria-current={current === '#/grownups' ? 'page' : undefined}>
+          <span className="tab-icon">
+            <Icon name="grownups" size={24} />
+          </span>
+          Grown-ups
+        </a>
+      </nav>
+      {settingsOpen && <ControlsSheet onClose={() => setSettingsOpen(false)} />}
+      <main id="main" ref={mainRef} tabIndex={-1} className={`stage stage-${section || 'play'}`}>
+        {saveError && (
+          <p className="banner" role="alert">
+            {saveError}
+          </p>
+        )}
         <Suspense fallback={<p className="lede">Loading…</p>}>{screen}</Suspense>
       </main>
-      <footer className="foot">
-        <p>Carmen keeps everything on this device. No account, no tracking. Lessons are drafts awaiting review by a music teacher.</p>
-      </footer>
-    </>
+    </div>
   );
 }
 

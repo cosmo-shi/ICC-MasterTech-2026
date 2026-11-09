@@ -52,7 +52,7 @@ export function SoundCheck({ compact }: { compact?: boolean }) {
           <div className="tips">
             <p className="tips-head">Things to try</p>
             <ul className="plain">
-              <li>Turn the device volume up, and the Volume slider in Controls.</li>
+              <li>Turn the device volume up, and the Volume slider in Settings.</li>
               <li>On a tablet or phone, check the silent switch or mute button.</li>
               <li>If headphones are plugged in, check they are on and in the ears.</li>
               <li>Then press “Play a test sound” again.</li>

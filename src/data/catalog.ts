@@ -133,3 +133,23 @@ export const PATHWAYS: Pathway[] = [
   },
 ];
 export const pathwayById = (id: PathwayId | null) => PATHWAYS.find((p) => p.id === id);
+
+/** One short, learner-facing line per activity. The formal objective stays in Grown-ups. */
+const BLURBS: Record<string, string> = {
+  L00: 'Make a sound, change it, stop it.',
+  L01: 'Tap a steady beat.',
+  L02: 'Play, then leave a quiet gap.',
+  L03: 'One sound or two in each beat.',
+  L04: 'Is the next note higher or lower?',
+  L05: 'Find C, D and E on the keys.',
+  L06: 'Read three notes and play them.',
+  L07: 'Hold a note for longer.',
+  L08: 'Read two bars with a rest.',
+  L09: 'Make up an answer to a tune.',
+  F_SOUND_STORY: 'Tell a story with loud and soft.',
+  P12_RHYTHMIC_CONVERSATION: 'Swap rhythms with a partner.',
+  P34_MELODIC_REPLY: 'Play a tune. Carmen answers higher or lower.',
+  P56_FORM_AND_TEXTURE: 'Make part A and part B, then pick the order.',
+  OLDER_EXTENSION: 'Add a partner part and decide what works.',
+};
+export const blurb = (id: string, fallback: string) => BLURBS[id] ?? fallback;

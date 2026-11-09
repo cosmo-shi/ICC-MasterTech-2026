@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { usePrefs } from '../state/prefs.tsx';
 import { type CompositionRecord, store } from '../store/db.ts';
-import { Motif } from '../ui/common.tsx';
 import { Icon } from '../ui/icons.tsx';
 import { usePlayer } from '../ui/usePlayer.ts';
 import { CreatePanel } from './CreatePanel.tsx';
@@ -26,67 +25,47 @@ export function PlayScreen({ go }: { go: (r: string) => void }) {
   const [instrument, setInstrument] = useState(prefs.instrument);
   const latest = useLatestPiece();
   const player = usePlayer();
-  const studio = prefs.pathway === 'older';
   return (
     <div className="screen play">
-      <header className="play-head">
-        <div className="hello">
-          {!studio && <Motif size={44} />}
-          <div>
-            <h1 className="h1">{studio ? 'Studio' : 'Make some music'}</h1>
-            <p className="lede">{studio ? 'Play freely and record an idea. Nothing here is marked.' : 'Tap the keys or pads. Nothing is marked here — just play.'}</p>
-          </div>
-        </div>
-        <div className="mode-switch big" role="group" aria-label="Choose an instrument">
+      <h1 className="sr-only">Play</h1>
+      <div className="play-bar">
+        <div className="seg-tabs" role="group" aria-label="Instrument">
           {(['keyboard', 'drums'] as const).map((i) => (
             <button
               key={i}
               type="button"
-              className={`seg${instrument === i ? ' is-on' : ''}`}
+              className="seg-tab"
               aria-pressed={instrument === i}
               onClick={() => {
                 setInstrument(i);
                 set('instrument', i);
               }}
             >
-              {i === 'keyboard' ? 'Keyboard' : 'Drums'}
+              <Icon name={i === 'keyboard' ? 'piano' : 'drum'} size={22} />
+              {i === 'keyboard' ? 'Piano' : 'Drums'}
             </button>
           ))}
         </div>
-      </header>
-      {latest && (
-        <section className="continue" aria-labelledby="continue-h">
-          <Icon name="saved" size={32} />
-          <div className="continue-text">
-            <h2 id="continue-h" className="continue-label">
-              Carry on from last time
-            </h2>
-            <p className="continue-title">{latest.title}</p>
-          </div>
-          <div className="row wrap">
+        {latest && (
+          <div className="last-piece">
             <button
               type="button"
-              className="btn-quiet"
+              className="last-play"
+              aria-label={player.playing ? `Stop ${latest.title}` : `Play your last piece, ${latest.title}`}
               onClick={() => (player.playing ? player.stop() : void player.play([{ events: latest.events }], latest.tempoBpm, { totalTicks: latest.totalTicks }))}
             >
-              {player.playing ? 'Stop' : <><span aria-hidden="true">▶ </span>Hear it</>}
+              <span className="last-icon">
+                <Icon name={player.playing ? 'stop' : 'playback'} size={18} />
+              </span>
+              <span className="last-title">{latest.title}</span>
             </button>
-            <button type="button" className="btn-quiet" onClick={() => go('#/music')}>
-              All my music
+            <button type="button" className="last-more" onClick={() => go('#/music')} aria-label="All my music">
+              <Icon name="forward" size={20} />
             </button>
           </div>
-        </section>
-      )}
+        )}
+      </div>
       <CreatePanel key={instrument} instrument={instrument} />
-      {!studio && (
-        <aside className="panel invite">
-          <h2 className="h3">Want to learn something?</h2>
-          <p>Choose a pathway: there are activities for Foundation through Year 6, and for older learners.</p>
-          <button type="button" className="btn" onClick={() => go('#/learn')}>
-            Go to Learn
-          </button>
-        </aside>
-      )}
     </div>
   );
 }

@@ -5,7 +5,7 @@ import { compileReply, type ReplyParams, type ReplyPlan, type ReplyRender, type 
 import { rulesPattern } from '../ai/rules.ts';
 import type { Pattern } from '../ai/features.ts';
 import coachText from '../data/coach.json';
-import { missionById, PATHWAYS } from '../data/catalog.ts';
+import { blurb, missionById, PATHWAYS } from '../data/catalog.ts';
 import { Recorder, clipAt, gridEvidence, quantise } from '../music/capture.ts';
 import { freshTask, type IndependentTask } from '../music/fresh.ts';
 import { type InstrumentId, type Phrase, TPQ, isSounding } from '../music/events.ts';
@@ -294,7 +294,7 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
         <div>
           <p className="eyebrow">{pathway?.label} · partner project</p>
           <h1 className="h1">{mission.title}</h1>
-          <p className="lede">{fewWords ? mission.steps[0] : mission.objective}</p>
+          <p className="lede">{fewWords ? mission.steps[0] : blurb(mission.id, mission.objective)}</p>
           {mission.band === 'F' && <p className="note-text">A grown-up can help with the buttons. The music choices are yours.</p>}
         </div>
       </header>
@@ -342,7 +342,7 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
                     <p className="note-text">Your timing has been tidied to the nearest half beat for the partner. Your exact playing is kept for your teacher.</p>
                     {analysis && (
                       <div className={`coach ${analysis.source === 'local-model' ? 'coach-ai' : 'coach-tips'} compact`}>
-                        <p className="coach-label">{analysis.source === 'local-model' ? 'AI coach' : 'Coach tips'}</p>
+                        <p className="coach-label">{analysis.source === 'local-model' ? 'Carmen listened to your timing, on this device' : 'A tip'}</p>
                         <p className="coach-obs">{coachText.observations[analysis.pattern]}</p>
                       </div>
                     )}
@@ -413,8 +413,8 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
           {params && paramsBy !== 'learner' && (
             <p className="note-text">
               {paramsBy === 'partner-model'
-                ? `The AI coach on this device heard your timing as “${analysis?.pattern}”, so the partner suggests: ${describeParams(params)}. You can pick something else.`
-                : `The partner suggests: ${describeParams(params)} (a fixed rule). You can pick something else.`}
+                ? `Carmen heard your timing as “${analysis?.pattern}”, so it suggests: ${describeParams(params)}. You can pick something else.`
+                : `Carmen suggests: ${describeParams(params)}. You can pick something else.`}
             </p>
           )}
           {params && (
@@ -477,7 +477,7 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
                     <li key={v}>✓ {v}</li>
                   ))}
                   <li>
-                    Who chose the change: {reply.plan.provenance === 'learner-directed' ? 'you' : reply.plan.provenance === 'local-model' ? 'the partner, using the AI timing result' : 'the partner, using a fixed rule'}.
+                    Who chose the change: {reply.plan.provenance === 'learner-directed' ? 'you' : reply.plan.provenance === 'local-model' ? 'Carmen, from how it heard your timing' : 'Carmen, using a set rule'}.
                   </li>
                 </ul>
               </details>
@@ -581,10 +581,6 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
         </section>
       )}
 
-      <aside className="panel context">
-        <h2 className="h3">Talk about it</h2>
-        <p>{mission.contextActivity}</p>
-      </aside>
     </div>
   );
 }

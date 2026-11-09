@@ -310,6 +310,19 @@ export function Grownups() {
           </ul>
         </details>
         <details>
+          <summary>Class talk for each project</summary>
+          <ul className="activity-notes">
+            {MISSIONS.map((m) => (
+              <li key={m.id}>
+                <p>
+                  <strong>{m.title}</strong>
+                </p>
+                <p>{m.contextActivity}</p>
+              </li>
+            ))}
+          </ul>
+        </details>
+        <details>
           <summary>Activity notes for teachers</summary>
           <ul className="activity-notes">
             {LESSONS.map((l) => (

@@ -20,9 +20,9 @@ export function CoachCard({ decision, onChoice, onReflect }: Props) {
     <section className={`coach ${isAI ? 'coach-ai' : 'coach-tips'}`} aria-labelledby="coach-title">
       <header className="coach-head">
         <h3 id="coach-title" className="coach-label">
-          {isAI ? 'AI coach' : 'Coach tips'}
+          {isAI ? 'Carmen listened' : 'A tip'}
         </h3>
-        <span className="coach-sub">{isAI ? 'A small model on this device looked at your timing' : decision.patternSource === 'rules' ? 'Fixed coaching rules on this device' : 'Fixed coaching rules'}</span>
+        <span className="coach-sub">{isAI ? 'Carmen’s timing helper heard this, on this device' : 'From Carmen’s tip list'}</span>
       </header>
 
       <p className="coach-q">{decision.question}</p>
@@ -96,7 +96,7 @@ export function CoachCard({ decision, onChoice, onReflect }: Props) {
           </div>
         </fieldset>
       )}
-      {reflected && reflected === 'controls' && <p className="note-text">You can make the keys bigger or simpler in Controls at the top.</p>}
+      {reflected && reflected === 'controls' && <p className="note-text">You can make the keys bigger or simpler in Settings (the gear at the top).</p>}
     </section>
   );
 }

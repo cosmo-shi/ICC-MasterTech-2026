@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 
 import { audio } from '../audio/engine.ts';
 import type { DrumSound, InstrumentId } from '../music/events.ts';
 import { usePrefs } from '../state/prefs.tsx';
+import { Icon } from './icons.tsx';
 import { Drums, Keyboard, PADS, SIMPLE_PADS, type InputSource, keyToOffset, useComputerKeys, useWhiteCount } from './instruments.tsx';
 
 export interface LiveEvent {
@@ -27,20 +28,19 @@ export function StartSound({ compact }: { compact?: boolean }) {
   return (
     <div className={`start-sound${compact ? ' compact' : ''}`} role="status">
       {status === 'loading' ? (
-        <p>Getting the instrument sounds ready…</p>
+        <p>Getting the sounds ready…</p>
       ) : status === 'error' ? (
         <>
-          <p>{error || 'Sound could not start.'} You can still look at the music.</p>
+          <p>Sound didn’t start. {error ?? ''}</p>
           <button type="button" className="btn" onClick={() => audio.start()}>
-            Try sound again
+            Try again
           </button>
         </>
       ) : (
         <>
           <button type="button" className="btn btn-big" onClick={() => audio.start()}>
-            Tap to start sound
+            <Icon name="sound" size={24} /> {audio.ctx ? 'Turn sound back on' : 'Turn sound on'}
           </button>
-          {audio.ctx && <p className="note-text">Sound paused. Your music is still here.</p>}
         </>
       )}
     </div>
@@ -154,12 +154,12 @@ export function Workspace({ instrument, onEvent, highlightNotes, highlightPads, 
       {instrument === 'keyboard' ? (
         <>
           <div className="octave-row">
-            <button type="button" className="btn-quiet small" disabled={low <= OCTAVE_STARTS[0]} onClick={() => setLow((l) => Math.max(OCTAVE_STARTS[0], l - 12))}>
-              <span aria-hidden="true">◀ </span>Lower
+            <button type="button" className="oct-btn" disabled={low <= OCTAVE_STARTS[0]} onClick={() => setLow((l) => Math.max(OCTAVE_STARTS[0], l - 12))} aria-label="Lower notes">
+              <Icon name="back" size={20} />
             </button>
-            <span className="octave-label">Starts on C{Math.floor(low / 12) - 1}{low === 60 ? ' (middle C)' : ''}</span>
-            <button type="button" className="btn-quiet small" disabled={low >= OCTAVE_STARTS[2]} onClick={() => setLow((l) => Math.min(OCTAVE_STARTS[2], l + 12))}>
-              Higher<span aria-hidden="true"> ▶</span>
+            <span className="octave-label">{low === 60 ? 'Middle C' : low < 60 ? 'Low notes' : 'High notes'}</span>
+            <button type="button" className="oct-btn" disabled={low >= OCTAVE_STARTS[2]} onClick={() => setLow((l) => Math.min(OCTAVE_STARTS[2], l + 12))} aria-label="Higher notes">
+              <Icon name="forward" size={20} />
             </button>
           </div>
           <div ref={ref} className="kb-wrap">
@@ -172,7 +172,7 @@ export function Workspace({ instrument, onEvent, highlightNotes, highlightPads, 
               showKeyHints={!prefs.simplified}
               onDown={noteDown}
               onUp={noteUp}
-              label="Piano keys. On a computer, keys A to K play the white notes."
+              label="Piano keys. On a computer keyboard, A to K play the white keys."
             />
           </div>
         </>

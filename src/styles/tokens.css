@@ -1,88 +1,92 @@
-/* Sound Workshop design tokens. Every colour and size comes from here. */
+/* Carmen design tokens — direction A, "Colour Bars" (art-direction reset, 9 Nov 2026).
+   Every colour and size comes from here. Each note letter has its own colour, used
+   wherever that note appears (keys, notation marks, logo). Colour never carries
+   meaning alone: letters and shapes always go with it. */
 
 @font-face {
-  font-family: 'Grandstander';
-  src: url('/fonts/Grandstander-wght.woff2') format('woff2');
-  font-weight: 100 900;
+  font-family: 'Lilita One';
+  src: url('/fonts/LilitaOne-Regular.woff2') format('woff2');
+  font-weight: 400;
   font-display: swap;
 }
 @font-face {
-  font-family: 'Atkinson Hyperlegible Next';
-  src: url('/fonts/AtkinsonHyperlegibleNext-wght.woff2') format('woff2');
-  font-weight: 200 800;
+  font-family: 'Nunito';
+  src: url('/fonts/Nunito-wght.woff2') format('woff2');
+  font-weight: 200 1000;
   font-display: swap;
 }
 
 :root {
-  --canvas: #fff8e8;
-  --paper: #fffdf6;
-  --ink: #2b2341;
-  --ink-soft: #675d75;
-  --cobalt: #3658d4;
-  --cobalt-deep: #2843a8;
-  --on-cobalt: #ffffff;
-  --coral: #ff7954;
-  --sunflower: #ffd65c;
-  --mint: #a7dfc3;
-  --lilac: #c4b4e8;
-  --line: #2b2341;
-  --line-soft: #d9cfbd;
-  --focus: #3658d4;
-  --ok: #1f7a4d; /* text-safe green on canvas (5.6:1) */
-  --warn-bg: #ffe9a8;
+  /* Surfaces */
+  --violet: #4a2bd1; /* brand ground */
+  --violet-deep: #2e1890;
+  --night: #1c1150; /* text, black keys, strong surfaces */
+  --stage: #eeeaff; /* where the instrument and work sit */
+  --card: #ffffff;
+  --card-edge: #d5ccf7; /* tactile bottom edge on light cards */
 
-  --key-white: #fffdf6;
-  --key-black: #2b2341;
-  --key-down: var(--sunflower);
-  --key-target: var(--mint);
+  --ink: #1c1150;
+  --ink-soft: #544b7d; /* 7.4:1 on --stage */
+  --on-violet: #ffffff;
+  --on-violet-soft: #ddd6ff;
 
-  --font-display: 'Grandstander', 'Atkinson Hyperlegible Next', system-ui, sans-serif;
-  --font-body: 'Atkinson Hyperlegible Next', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* Note colours (C D E F G A B) and their pressed edges */
+  --n-c: #f2453d;
+  --n-c-edge: #b42821;
+  --n-d: #ff8a1f;
+  --n-d-edge: #c85f00;
+  --n-e: #ffc629;
+  --n-e-edge: #c99400;
+  --n-f: #2fbf63;
+  --n-f-edge: #1c8b45;
+  --n-g: #16afc4;
+  --n-g-edge: #0d7f8f;
+  --n-a: #5b6cff;
+  --n-a-edge: #3a47c9;
+  --n-b: #c152e8;
+  --n-b-edge: #8e2cb3;
 
-  --text-body: 1.1875rem; /* 19px */
-  --text-small: 1rem;
-  --text-control: 1.125rem;
-  --text-h1: clamp(2rem, 5vw, 2.5rem);
-  --text-h2: clamp(1.5rem, 3.5vw, 1.875rem);
+  /* Roles */
+  --record: var(--n-c);
+  --record-edge: var(--n-c-edge);
+  --highlight: var(--n-e);
+  --highlight-edge: var(--n-e-edge);
+  --good-bg: #d5f6e2;
+  --good-ink: #0e6b33;
+  --nearly-bg: #fff0c7;
+  --nearly-ink: #6e4a00;
+  --miss-bg: #ffe0dd;
+  --miss-ink: #9c1f17;
+  --focus: #ffc629;
+  --focus-ring: #1c1150;
+
+  --font-display: 'Lilita One', 'Nunito', system-ui, sans-serif;
+  --font-body: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --text-body: 1.125rem; /* 18px */
+  --text-small: 0.9375rem;
+  --text-control: 1.0625rem;
+  --text-h1: clamp(1.9rem, 6vw, 2.5rem);
+  --text-h2: clamp(1.4rem, 4vw, 1.75rem);
 
   --target: 48px;
-  --target-large: 64px;
-  --radius: 18px;
-  --radius-pill: 999px;
-  --stroke: 2.5px;
-  --gap: 16px;
-  --gap-lg: 28px;
-  --shadow: 0 3px 0 var(--line);
-  --shadow-down: 0 1px 0 var(--line);
-  --motion: 160ms;
+  --radius: 22px;
+  --radius-sm: 14px;
+  --edge: 5px; /* tactile bottom edge */
+  --motion: 120ms;
 }
 
 [data-contrast='high'] {
-  --canvas: #ffffff;
-  --paper: #ffffff;
+  --violet: #2a128f;
+  --violet-deep: #170866;
+  --stage: #ffffff;
+  --card-edge: #1c1150;
   --ink: #000000;
-  --ink-soft: #1d1a24;
-  --cobalt: #1e3fb8;
-  --cobalt-deep: #142d85;
-  --line: #000000;
-  --line-soft: #000000;
-  --coral: #ffb199;
-  --sunflower: #ffe38a;
-  --mint: #c8efd9;
-  --lilac: #ddd2f5;
-  --key-black: #000000;
-  --stroke: 3px;
+  --ink-soft: #1c1150;
+  --night: #000000;
+  --on-violet-soft: #ffffff;
 }
 
 [data-size='large'] {
   --target: 64px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  :root {
-    --motion: 0ms;
-  }
-}
-[data-motion='reduced'] {
-  --motion: 0ms;
 }

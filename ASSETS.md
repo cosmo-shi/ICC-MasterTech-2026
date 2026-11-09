@@ -40,14 +40,14 @@ Every third-party file shipped with Carmen. Checked 9 November 2026.
 
 ## Fonts — SIL Open Font License 1.1
 
-- Grandstander (variable weight), Copyright 2020 The Grandstander Project Authors. Source: https://github.com/google/fonts/tree/main/ofl/grandstander. Notice: `public/fonts/OFL-Grandstander.txt`.
-- Atkinson Hyperlegible Next (variable weight), Copyright 2020-2024 The Atkinson Hyperlegible Next Project Authors. Source: https://github.com/google/fonts/tree/main/ofl/atkinsonhyperlegiblenext. Notice: `public/fonts/OFL-AtkinsonHyperlegibleNext.txt`.
-- Modification: subset to Latin plus music symbols and converted to WOFF2 (fontTools pyftsubset). No Reserved Font Names are declared in either licence.
+- Lilita One (headings), Copyright (c) 2011 Juan Montoreano, Reserved Font Name "Lilita One". Source: Fontsource `@fontsource/lilita-one` 5.3.0, file `lilita-one-latin-400-normal.woff2`, used unmodified. Notice: `public/fonts/OFL-LilitaOne.txt`.
+- Nunito (variable weight, everything else), Copyright 2014 The Nunito Project Authors. Source: Fontsource `@fontsource-variable/nunito` 5.3.0, file `nunito-latin-wght-normal.woff2`, used unmodified. Notice: `public/fonts/OFL-Nunito.txt`.
+- Chosen in the art-direction reset of 9 November 2026 (direction A, "Colour Bars"); they replace Grandstander and Atkinson Hyperlegible Next.
 
 | File | SHA-256 |
 |---|---|
-| `public/fonts/AtkinsonHyperlegibleNext-wght.woff2` | `a896eccbb63c501bf154f173d5a14b3e7ca40a234e9ce61abeb7a653f31cda59` |
-| `public/fonts/Grandstander-wght.woff2` | `22cd5a484d4e97e257c4dc6ba2ee3944929dc4aca27638111bc060e6862b1392` |
+| `public/fonts/LilitaOne-Regular.woff2` | `d2575d4fa3632580aafcbcdf6978b3b57e144b90cf5bd9c2c98194f28b869704` |
+| `public/fonts/Nunito-wght.woff2` | `ba344451eab25b217a165363b1982048a5e5830a0daf36577973955a04cac793` |
 
 ## Lesson content
 

@@ -26,7 +26,7 @@ Pure logic (music, checker, ai, verifier) lives in plain TS under `src/music`, `
 ## AI honesty
 - The on-device model is a small MLP trained on seeded synthetic attempts. It describes timing patterns; it does not diagnose, read emotion or judge creativity.
 - The model picks from approved plan IDs only. The verifier checks every reply before it plays.
-- Show "AI coach" only when the model actually ran. Otherwise show "Coach tips" (reviewed rules).
+- Learners see "Carmen listened" (or "heard your timing") only when the model actually ran; otherwise "A tip". No AI badges. Grown-ups shows the full provenance ("AI coach" vs "Coach tips").
 - Never claim educational effectiveness, curriculum certification, educator approval or "first/only".
 - Report metrics from `docs/MODEL_CARD.md`; regenerate them with `npm run train`, never hand-edit numbers.
 
@@ -36,13 +36,15 @@ Pure logic (music, checker, ai, verifier) lives in plain TS under `src/music`, `
 - Pitch, onset and duration are separate facts. Untimed pitch tasks get no timing penalty.
 - Australian terms: crotchet, quaver, minim, practise (verb).
 
-## Design (Sound Workshop)
-- Playful but calm. Instrument is the centre of every screen. No purple gradients, sparkles, glass, mascots, lesson-path maps or "AI" fonts.
-- Fonts: Grandstander (short headings only) and Atkinson Hyperlegible Next (everything else), self-hosted with OFL notices.
-- Tokens in `src/styles/tokens.css`: canvas #FFF8E8, ink #2B2341, cobalt #3658D4 (white text), coral #FF7954, sunflower #FFD65C, mint #A7DFC3, lilac #C4B4E8 (all with dark ink).
-- Targets ≥48 px (64 px large mode). Visible focus. Reduced motion respected. Never colour alone.
-- Icons: only the original set in `src/ui/icons.tsx` (rounded ink strokes, one accent). Decorative, always beside a text label.
-- Older pathway uses the quieter "studio" presentation (`data-presentation`), not a separate look. No character mascots.
+## Design (direction A, "Colour Bars", chosen 2026-11-09; replaces the cream Sound Workshop look)
+- Playful, welcoming, tactile. The instrument is the biggest thing on Play. No glossy 3D/clay, glass, sparkles or "AI" styling.
+- Violet ground (#4A2BD1), lavender stage (#EEEAFF), white cards with a solid bottom edge instead of outlines. One colour per note (C red … B violet) on keys and pads; tokens in `src/styles/tokens.css`.
+- Fonts: Lilita One (short headings only) and Nunito (everything else), self-hosted with OFL notices.
+- Phone: bottom tabs Play / Learn / My music, settings behind the gear. Desktop ≥900 px: sidebar with Grown-ups at the bottom.
+- Targets ≥48 px (64 px large mode). Visible focus. Reduced motion respected. Never colour alone (note letters stay on keys).
+- Icons and illustrations: only the originals in `src/ui/icons.tsx`. Decorative, always beside a text label.
+- Learner words: short and plain. Curriculum codes, objectives and class-talk notes live in Grown-ups only.
+- Older pathway uses the quieter "studio" presentation (`data-presentation`). No character mascots.
 - Design recovery and saved-work states as carefully as first screens: sound check, undo a take, honest save location, carry on from last time.
 
 ## Content and assets

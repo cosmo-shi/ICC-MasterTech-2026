@@ -109,69 +109,74 @@ export function CreatePanel({ instrument, activityId, onSaved }: Props) {
     }
   };
 
+  const recording = state === 'countin' || state === 'recording';
+  const hasTake = state === 'recorded' && !!phrase && phrase.events.length > 0;
+
   return (
     <div className="create">
-      <div className="row wrap">
-        {state === 'idle' || state === 'recorded' ? (
-          <button type="button" className="btn btn-coral" onClick={startRecording}>
-            <span aria-hidden="true">● </span>
-            {phrase ? 'Record a new take' : 'Record my music'}
+      <div className="transport" role="group" aria-label="Recording">
+        {recording ? (
+          <button type="button" className="rec is-on" onClick={stopRecording}>
+            <span className="rec-dot" aria-hidden="true" />
+            {state === 'countin' ? 'Get ready…' : 'Stop'}
           </button>
         ) : (
-          <button type="button" className="btn btn-coral" onClick={stopRecording}>
-            <span aria-hidden="true">■ </span>Stop recording
+          <button type="button" className="rec" onClick={startRecording}>
+            <span className="rec-dot" aria-hidden="true" />
+            {phrase ? 'Record again' : 'Record'}
           </button>
         )}
-        <label className="check">
-          <input type="checkbox" checked={click} onChange={(e) => setClick(e.target.checked)} disabled={state !== 'idle' && state !== 'recorded'} />
-          Play a steady click while I record
-        </label>
-        {click && (
-          <label className="field-inline">
-            Speed
-            <input type="range" min={60} max={140} step={5} value={tempo} onChange={(e) => setTempo(Number(e.target.value))} aria-valuetext={`${tempo} beats a minute`} />
-            <span>{tempo}</span>
-          </label>
-        )}
+        <button
+          type="button"
+          className="tbtn"
+          disabled={!hasTake || recording}
+          aria-label={player.playing ? 'Stop playback' : 'Play back'}
+          onClick={() => (player.playing ? player.stop() : phrase && void player.play([phrase], phrase.tempoBpm, { totalTicks: phrase.totalTicks }))}
+        >
+          <Icon name={player.playing ? 'stop' : 'playback'} size={26} />
+          <span className="tbtn-label">{player.playing ? 'Stop' : 'Play'}</span>
+        </button>
+        <button type="button" className="tbtn" disabled={!previous || recording} onClick={bringBack} aria-label="Undo: bring back my last take">
+          <Icon name="undo" size={26} />
+          <span className="tbtn-label">Undo</span>
+        </button>
+        <button type="button" className="tbtn" aria-pressed={click} disabled={recording} onClick={() => setClick((c) => !c)} aria-label="Steady click while recording">
+          <Icon name="click" size={26} />
+          <span className="tbtn-label">Click</span>
+        </button>
       </div>
+      {click && !recording && (
+        <label className="speed">
+          Click speed
+          <input type="range" min={60} max={140} step={5} value={tempo} onChange={(e) => setTempo(Number(e.target.value))} aria-valuetext={`${tempo} beats a minute`} />
+          <span>{tempo}</span>
+        </label>
+      )}
       <p className="status-line" role="status">
-        {state === 'countin' && 'Four clicks, then play…'}
-        {state === 'recording' && 'Recording the notes you play (not your voice). Up to one minute.'}
-        {state === 'recorded' && phrase && (phrase.events.length ? `Recorded ${phrase.events.length} sounds.` : 'No sounds were recorded. Press record and play some keys or pads.')}
+        {state === 'countin' && 'Four clicks, then play.'}
+        {state === 'recording' && 'Recording. Press Stop when you finish.'}
+        {state === 'recorded' && phrase && !phrase.events.length && 'Nothing recorded. Press Record, then play.'}
       </p>
       <Workspace instrument={instrument} onEvent={onEvent} />
-      {previous && state === 'recorded' && (
-        <div className="row wrap">
-          <button type="button" className="btn-quiet" onClick={bringBack}>
-            <Icon name="undo" size={22} /> Bring back my last take
-          </button>
-        </div>
-      )}
-      {state === 'recorded' && phrase && phrase.events.length > 0 && (
-        <div className="save-box">
-          <div className="row wrap">
-            <button type="button" className="btn-quiet" onClick={() => (player.playing ? player.stop() : void player.play([phrase], phrase.tempoBpm, { totalTicks: phrase.totalTicks }))}>
-              {player.playing ? 'Stop' : <><span aria-hidden="true">▶ </span>Play it back</>}
-            </button>
-          </div>
+      {hasTake && (
+        <div className="save-drawer">
           <label className="field">
-            Name (optional — no real names needed)
+            Name it
             <input type="text" value={title} maxLength={60} onChange={(e) => setTitle(e.target.value)} />
           </label>
-          <div className="row wrap">
-            <button type="button" className="btn" onClick={doSave} disabled={save === 'saving' || save === 'saved'}>
-              {save === 'saved' ? 'Kept in My music' : save === 'saving' ? 'Saving…' : 'Save my sound'}
-            </button>
-            {save === 'failed' && <p className="note-text">It could not be saved. Your recording is still here; try again.</p>}
-          </div>
-          <p className="note-text save-where" role="status">
-            {save === 'saved'
-              ? store.isPersistent
-                ? 'Saved in this browser on this device. It is not on other devices.'
-                : 'Kept in My music until this page is closed. A grown-up can turn on “Save on this device”.'
-              : store.isPersistent
-                ? 'Saving keeps it in this browser on this device.'
-                : 'Saving is off on this device, so it is kept only until the page is closed.'}
+          <button type="button" className="btn" onClick={doSave} disabled={save === 'saving' || save === 'saved'}>
+            {save === 'saved' ? 'Saved' : save === 'saving' ? 'Saving…' : 'Save'}
+          </button>
+          <p className="save-where" role="status">
+            {save === 'failed'
+              ? 'That didn’t save. Your take is still here, so try again.'
+              : save === 'saved'
+                ? store.isPersistent
+                  ? 'In My music on this device.'
+                  : 'In My music until you close Carmen.'
+                : store.isPersistent
+                  ? 'Saves to My music on this device.'
+                  : 'Saves to My music until you close Carmen.'}
           </p>
         </div>
       )}

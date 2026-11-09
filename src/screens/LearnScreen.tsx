@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { LESSONS, MISSIONS, PATHWAYS, missionById, pathwayById } from '../data/catalog.ts';
+import { LESSONS, MISSIONS, PATHWAYS, blurb, missionById, pathwayById } from '../data/catalog.ts';
 import { usePrefs } from '../state/prefs.tsx';
 import { Icon, type IconName } from '../ui/icons.tsx';
 import { type AttemptRecord, store } from '../store/db.ts';
@@ -34,7 +34,7 @@ export function LearnScreen({ go }: { go: (r: string) => void }) {
         <h2 id="path-h" className="h2">
           Pick a pathway
         </h2>
-        <p className="lede">Choose any pathway — they suggest a route, nothing is locked. You can change any time. This is not saved as your age.</p>
+        <p className="lede">Pick any one. Everything stays open, and you can switch whenever you like.</p>
         <div className="path-grid" role="radiogroup" aria-label="Pathway">
           {PATHWAYS.map((p) => (
             <button
@@ -61,7 +61,7 @@ export function LearnScreen({ go }: { go: (r: string) => void }) {
       {pathway && mission && (
         <section className="panel route" aria-labelledby="route-h">
           <h2 id="route-h" className="h2">
-            Suggested route · {pathway.label}
+            Your route · {pathway.label}
           </h2>
           <ol className="route-list">
             {pathway.recommended.map((id) => {
@@ -70,7 +70,7 @@ export function LearnScreen({ go }: { go: (r: string) => void }) {
                 <li key={id}>
                   <button type="button" className="route-item" onClick={() => go(`#/lesson/${id}`)}>
                     <span className="route-title">{l.title}</span>
-                    <span className="route-sub">{l.objective}</span>
+                    <span className="route-sub">{blurb(l.id, l.objective)}</span>
                     {status(id) && <span className="route-status">{status(id)}</span>}
                   </button>
                 </li>
@@ -79,7 +79,7 @@ export function LearnScreen({ go }: { go: (r: string) => void }) {
             <li>
               <button type="button" className="route-item is-mission" onClick={() => go(`#/mission/${mission.id}`)}>
                 <span className="route-title">{mission.title}</span>
-                <span className="route-sub">Make music with a partner that answers you. {mission.objective}</span>
+                <span className="route-sub">{blurb(mission.id, mission.objective)}</span>
                 {status(mission.id) && <span className="route-status">{status(mission.id)}</span>}
               </button>
             </li>
@@ -102,7 +102,7 @@ export function LearnScreen({ go }: { go: (r: string) => void }) {
                   <li key={l.id}>
                     <button type="button" className="card-btn" onClick={() => go(`#/lesson/${l.id}`)}>
                       <span className="card-title">{l.title}</span>
-                      <span className="card-sub">{l.objective}</span>
+                      <span className="card-sub">{blurb(l.id, l.objective)}</span>
                       <span className="card-meta">
                         {l.instruments.map((i) => (i === 'keyboard' ? 'Keyboard' : 'Drums')).join(' or ')}
                         {status(l.id) && ` · ${status(l.id)}`}
@@ -121,7 +121,7 @@ export function LearnScreen({ go }: { go: (r: string) => void }) {
               <li key={m.id}>
                 <button type="button" className="card-btn" onClick={() => go(`#/mission/${m.id}`)}>
                   <span className="card-title">{m.title}</span>
-                  <span className="card-sub">{m.objective}</span>
+                  <span className="card-sub">{blurb(m.id, m.objective)}</span>
                   <span className="card-meta">
                     {PATHWAYS.find((p) => p.missionId === m.id)?.label}
                     {status(m.id) && ` · ${status(m.id)}`}

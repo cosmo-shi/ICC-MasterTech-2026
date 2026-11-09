@@ -84,7 +84,7 @@ export function Keyboard({ low, whiteCount, down, highlight, showNames, showKeyH
           <button
             key={midi}
             type="button"
-            className={`kb-key white${down.has(midi) ? ' is-down' : ''}${highlight?.has(midi) ? ' is-target' : ''}`}
+            className={`kb-key white n-${midiToLetter(midi).toLowerCase()}${down.has(midi) ? ' is-down' : ''}${highlight?.has(midi) ? ' is-target' : ''}`}
             style={{ ['--i' as string]: i }}
             aria-label={`${midiToName(midi)}${highlight?.has(midi) ? ', shown as a hint' : ''}`}
             aria-pressed={down.has(midi)}

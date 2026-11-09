@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { usePrefs } from '../state/prefs.tsx';
 import { SoundCheck } from '../ui/SoundCheck.tsx';
+import { Icon } from '../ui/icons.tsx';
 
 export function ControlsSheet({ onClose }: { onClose: () => void }) {
   const { prefs, set } = usePrefs();
@@ -24,40 +25,50 @@ export function ControlsSheet({ onClose }: { onClose: () => void }) {
   );
 
   return (
-    <div id="controls-sheet" ref={ref} className="sheet" role="region" aria-label="Controls">
+    <div id="controls-sheet" ref={ref} className="sheet" role="dialog" aria-label="Settings">
       <div className="sheet-inner">
-        <h2 className="h3">Controls</h2>
-        <p className="note-text">Change these any time. They never count against you.</p>
-        <div className="toggles">
-          {toggle('large', 'Bigger keys and buttons', 'Easier to tap.')}
-          {toggle('simplified', 'Simpler layout', 'One octave of keys, four drum pads.')}
-          {toggle('noteNames', 'Show note names', 'Letters on the keys.')}
-          <label className="toggle">
-            <input type="checkbox" checked={prefs.motion === 'reduced'} onChange={(e) => set('motion', e.target.checked ? 'reduced' : 'system')} />
-            <span className="toggle-ui" aria-hidden="true" />
-            <span>
-              <span className="toggle-label">Calm motion</span>
-              <span className="toggle-help">No moving effects.</span>
-            </span>
-          </label>
-          <label className="toggle">
-            <input type="checkbox" checked={prefs.contrast === 'high'} onChange={(e) => set('contrast', e.target.checked ? 'high' : 'normal')} />
-            <span className="toggle-ui" aria-hidden="true" />
-            <span>
-              <span className="toggle-label">Strong contrast</span>
-              <span className="toggle-help">Darker lines and text.</span>
-            </span>
-          </label>
-          {toggle('aiEnabled', 'AI coach', 'A small model on this device looks at your timing. Off means fixed coaching tips only.')}
+        <div className="sheet-head">
+          <h2 className="h2">Settings</h2>
+          <button type="button" className="btn" onClick={onClose}>
+            Done
+          </button>
         </div>
-        <SoundCheck compact />
-        <label className="field-inline">
-          Volume
-          <input type="range" min={0} max={1} step={0.05} value={prefs.volume} onChange={(e) => set('volume', Number(e.target.value))} aria-valuetext={`${Math.round(prefs.volume * 100)} percent`} />
-        </label>
-        <button type="button" className="btn" onClick={onClose}>
-          Done
-        </button>
+        <section className="sheet-group" aria-label="Sound">
+          <h3 className="h3">Sound</h3>
+          <label className="field-inline">
+            Volume
+            <input type="range" min={0} max={1} step={0.05} value={prefs.volume} onChange={(e) => set('volume', Number(e.target.value))} aria-valuetext={`${Math.round(prefs.volume * 100)} percent`} />
+          </label>
+          <SoundCheck compact />
+        </section>
+        <section className="sheet-group" aria-label="Seeing and using Carmen">
+          <h3 className="h3">Seeing and using</h3>
+          <div className="toggles">
+            {toggle('large', 'Bigger keys', 'Easier to tap.')}
+            {toggle('simplified', 'Fewer keys', 'One octave, four drums.')}
+            {toggle('noteNames', 'Note letters', 'C, D, E… on the keys.')}
+            <label className="toggle">
+              <input type="checkbox" checked={prefs.motion === 'reduced'} onChange={(e) => set('motion', e.target.checked ? 'reduced' : 'system')} />
+              <span className="toggle-ui" aria-hidden="true" />
+              <span>
+                <span className="toggle-label">Less movement</span>
+                <span className="toggle-help">Keys don’t bounce.</span>
+              </span>
+            </label>
+            <label className="toggle">
+              <input type="checkbox" checked={prefs.contrast === 'high'} onChange={(e) => set('contrast', e.target.checked ? 'high' : 'normal')} />
+              <span className="toggle-ui" aria-hidden="true" />
+              <span>
+                <span className="toggle-label">Strong contrast</span>
+                <span className="toggle-help">Darker text and edges.</span>
+              </span>
+            </label>
+            {toggle('aiEnabled', 'Timing helper', 'Carmen’s model listens to your timing, on this device. Off: simple tips instead.')}
+          </div>
+        </section>
+        <a className="sheet-link" href="#/grownups">
+          <Icon name="grownups" size={22} /> For teachers and parents
+        </a>
       </div>
     </div>
   );

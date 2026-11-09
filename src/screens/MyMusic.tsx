@@ -39,15 +39,15 @@ export function MyMusic({ go }: { go: (r: string) => void }) {
         <Icon name={store.isPersistent ? 'saved' : 'music'} size={28} />
         <p>
           {store.isPersistent
-            ? 'Saved in this browser on this device. It is not on other devices, and clearing the browser’s data deletes it. Anyone using this browser can see it.'
-            : 'Saving is off, so this music is kept only until the page is closed. A grown-up can turn on “Save on this device” in Grown-ups.'}
+            ? 'Kept in this browser on this device only. Anyone using this browser can see it, and clearing browser data deletes it.'
+            : 'Saving is off, so this music goes when Carmen closes. A grown-up can turn saving on in Grown-ups.'}
         </p>
       </div>
       {error && <p className="note-text">{error}</p>}
       {items && items.length === 0 && (
         <div className="panel empty">
           <Icon name="empty" size={56} />
-          <p>Nothing here yet. Record something and press “Save my sound”.</p>
+          <p>Nothing here yet. Record on Play, then press Save.</p>
           <button type="button" className="btn" onClick={() => go('#/play')}>
             Make some music
           </button>

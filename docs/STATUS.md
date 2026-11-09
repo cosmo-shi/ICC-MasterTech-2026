@@ -32,6 +32,7 @@ Not checked yet: a real screen reader (NVDA, VoiceOver), real tablets and Chrome
 - Saving is off by default; when on, records stay in this browser (IndexedDB). No accounts, no network calls, no microphone or camera.
 - Offline after the first visit (built app only).
 - Design direction from `docs/carmen/UX_JOURNEY_AND_VISUAL_DIRECTION.md`: a sound check with tips when nothing is heard, "Sound paused" recovery, an original icon set for navigation and pathways, "Bring back my last take", "Carry on from last time", honest save-location wording, "More detail" notes (open by default for Years 5–6 and older), a quieter studio presentation for older learners, and a "Before a class" check with activity notes and preview links for teachers.
+- Art direction A, "Colour Bars" (2026-11-09): violet ground, a note colour on every key and pad, tactile card edges, Lilita One + Nunito, bottom tabs on phones and a sidebar on desktop, settings behind the gear, and a Record / Play / Undo / Click row above the instrument. Learner wording shortened; curriculum objectives and class-talk notes moved to Grown-ups. Learners see "Carmen listened" only when the on-device model ran, otherwise "A tip". Checked at 360 px and 1280 px in Playwright (no console errors, no sideways scroll); colour contrast checked by calculation, not by an automated audit. The design choice is pending momo's sign-off.
 
 ## Draft
 

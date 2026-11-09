@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { CheckResult, EventFact } from '../engine/checker.ts';
 import { midiToLetter } from '../music/theory.ts';
+import { Logo } from './icons.tsx';
 
 export function Pill({ tone = 'paper', children }: { tone?: 'paper' | 'mint' | 'lilac' | 'sunflower' | 'coral' | 'cobalt'; children: React.ReactNode }) {
   return <span className={`pill pill-${tone}`}>{children}</span>;
@@ -85,12 +86,7 @@ export function LiveStatus({ text }: { text: string }) {
   );
 }
 
-/** Small original motif: an arch over a dot (a "sound" landing). */
+/** Carmen's mark (kept as Motif for older call sites). */
 export function Motif({ size = 40 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 40 40" aria-hidden="true" focusable="false" className="motif">
-      <path d="M6 28 A14 14 0 0 1 34 28" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
-      <circle cx="20" cy="28" r="5" fill="var(--coral)" stroke="currentColor" strokeWidth="2.5" />
-    </svg>
-  );
+  return <Logo size={size} />;
 }

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { audio } from '../audio/engine.ts';
 import { type CoachDecision, decide } from '../ai/coach.ts';
-import { lessonById, pathwayById, LESSONS } from '../data/catalog.ts';
+import { blurb, lessonById, pathwayById, LESSONS } from '../data/catalog.ts';
 import { checkAttempt, type CheckResult } from '../engine/checker.ts';
 import { Recorder } from '../music/capture.ts';
 import { type DrumSound, type Phrase, soundingEvents, TPQ } from '../music/events.ts';
@@ -215,7 +215,7 @@ function AssessedLesson({ lessonId, go }: Props) {
             {lesson.goal} · {mode === 'practice' ? 'Practice' : 'On my own'}
           </p>
           <h1 className="h1">{lesson.title}</h1>
-          <p className="lede">{lesson.objective}</p>
+          <p className="lede">{blurb(lesson.id, lesson.objective)}</p>
         </div>
         <div className="mode-switch" role="group" aria-label="Activity mode">
           <button type="button" className={`seg${mode === 'practice' ? ' is-on' : ''}`} aria-pressed={mode === 'practice'} onClick={() => { setMode('practice'); setPhase('ready'); setResult(null); setDecision(null); }}>
