@@ -3,6 +3,7 @@
 This CLAUDE.md is for the `sc` branch only. Do not copy it to `main`; the team merges later.
 Read `SPEC.md` (build list, decisions, resolved contradictions) before every task.
 Product direction: `context-pack/MASTER_CONTEXT.md` (pack v2.0). Read the relevant section, not the whole pack, each time.
+UX, navigation, visual components and recovery states: also read `docs/carmen/UX_JOURNEY_AND_VISUAL_DIRECTION.md` (journeys, personas and Sound Workshop identity; personas and journeys are hypotheses, not research findings).
 AI work: also read `context-pack/specs/AI_MUSIC_INTERACTION.md` and `docs/MODEL_CARD.md`.
 Research and references stay in `context-pack/` and `docs/RESEARCH_REFERENCES.md`; do not paste research into code or this file.
 
@@ -40,6 +41,9 @@ Pure logic (music, checker, ai, verifier) lives in plain TS under `src/music`, `
 - Fonts: Grandstander (short headings only) and Atkinson Hyperlegible Next (everything else), self-hosted with OFL notices.
 - Tokens in `src/styles/tokens.css`: canvas #FFF8E8, ink #2B2341, cobalt #3658D4 (white text), coral #FF7954, sunflower #FFD65C, mint #A7DFC3, lilac #C4B4E8 (all with dark ink).
 - Targets ≥48 px (64 px large mode). Visible focus. Reduced motion respected. Never colour alone.
+- Icons: only the original set in `src/ui/icons.tsx` (rounded ink strokes, one accent). Decorative, always beside a text label.
+- Older pathway uses the quieter "studio" presentation (`data-presentation`), not a separate look. No character mascots.
+- Design recovery and saved-work states as carefully as first screens: sound check, undo a take, honest save location, carry on from last time.
 
 ## Content and assets
 - Lessons/pathways are drafts pending a primary music educator. Say so in the adult area.

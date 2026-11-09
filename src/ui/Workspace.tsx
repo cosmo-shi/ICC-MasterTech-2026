@@ -36,9 +36,12 @@ export function StartSound({ compact }: { compact?: boolean }) {
           </button>
         </>
       ) : (
-        <button type="button" className="btn btn-big" onClick={() => audio.start()}>
-          Tap to start sound
-        </button>
+        <>
+          <button type="button" className="btn btn-big" onClick={() => audio.start()}>
+            Tap to start sound
+          </button>
+          {audio.ctx && <p className="note-text">Sound paused. Your music is still here.</p>}
+        </>
       )}
     </div>
   );

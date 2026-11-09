@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { audio } from './audio/engine.ts';
 import { PrefsProvider, usePrefs } from './state/prefs.tsx';
 import { Motif } from './ui/common.tsx';
+import { Icon } from './ui/icons.tsx';
 import { PlayScreen } from './screens/PlayScreen.tsx';
 import { LearnScreen } from './screens/LearnScreen.tsx';
 import { LessonScreen } from './screens/LessonScreen.tsx';
@@ -26,11 +27,11 @@ function useHash(): [string, (h: string) => void] {
 }
 
 const NAV = [
-  { href: '#/play', label: 'Play' },
-  { href: '#/learn', label: 'Learn' },
-  { href: '#/music', label: 'My music' },
-  { href: '#/grownups', label: 'Grown-ups' },
-];
+  { href: '#/play', label: 'Play', icon: 'play' },
+  { href: '#/learn', label: 'Learn', icon: 'learn' },
+  { href: '#/music', label: 'My music', icon: 'music' },
+  { href: '#/grownups', label: 'Grown-ups', icon: 'grownups' },
+] as const;
 
 function Shell() {
   const [hash, go] = useHash();
@@ -67,6 +68,7 @@ function Shell() {
         <nav className="nav" aria-label="Main">
           {NAV.map((n) => (
             <a key={n.href} href={n.href} className="nav-link" aria-current={current === n.href ? 'page' : undefined}>
+              <Icon name={n.icon} size={22} />
               {n.label}
             </a>
           ))}

@@ -66,6 +66,8 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
     root.dataset.size = prefs.large ? 'large' : 'normal';
     root.dataset.contrast = prefs.contrast;
     root.dataset.motion = prefs.motion;
+    // Presentation only: older learners get a quieter, less decorated layout. Not stored as age.
+    root.dataset.presentation = prefs.pathway === 'older' ? 'studio' : 'workshop';
   }, [prefs]);
 
   useEffect(() => {

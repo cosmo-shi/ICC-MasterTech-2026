@@ -9,6 +9,7 @@ import { usePrefs } from '../state/prefs.tsx';
 import { type AttemptRecord, newId, stamp, store } from '../store/db.ts';
 import { CoachCard } from '../ui/CoachCard.tsx';
 import { BeatDots, FactList, LiveStatus, Pill, factMark } from '../ui/common.tsx';
+import { MoreDetail } from '../ui/MoreDetail.tsx';
 import { Notation, describePhrase } from '../ui/Notation.tsx';
 import { usePlayer } from '../ui/usePlayer.ts';
 import { type LiveEvent, Workspace } from '../ui/Workspace.tsx';
@@ -231,7 +232,12 @@ function AssessedLesson({ lessonId, go }: Props) {
           <h2 id="task-h" className="h3">
             {mode === 'practice' ? lesson.instruction : 'A new pattern. No hints this time — you can stop whenever you like.'}
           </h2>
-          {mode === 'practice' && <p>{lesson.explanation}</p>}
+          {mode === 'practice' && (
+            <>
+              <p>{lesson.explanation}</p>
+              <MoreDetail lessonId={lesson.id} />
+            </>
+          )}
 
           {showNotation ? (
             <Notation phrase={target} marks={marks} activeIndex={activeIndex} />

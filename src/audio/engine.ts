@@ -67,6 +67,8 @@ class AudioEngine {
         comp.threshold.value = -10;
         comp.ratio.value = 4;
         this.master.connect(comp).connect(this.ctx.destination);
+        // Tell the interface if the browser suspends sound (tab hidden, phone call, etc.).
+        this.ctx.onstatechange = () => this.emit();
       }
       if (this.ctx.state !== 'running') await this.ctx.resume();
       if (this.status === 'idle' || this.status === 'error') await this.load();

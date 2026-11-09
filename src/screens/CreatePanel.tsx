@@ -4,6 +4,7 @@ import { inputsToPhrase } from '../ai/coach.ts';
 import { Recorder } from '../music/capture.ts';
 import { type InstrumentId, type Phrase, TPQ } from '../music/events.ts';
 import { type CompositionRecord, newId, stamp, store } from '../store/db.ts';
+import { Icon } from '../ui/icons.tsx';
 import { usePlayer } from '../ui/usePlayer.ts';
 import { type LiveEvent, Workspace } from '../ui/Workspace.tsx';
 
@@ -21,6 +22,7 @@ export function CreatePanel({ instrument, activityId, onSaved }: Props) {
   const [click, setClick] = useState(false);
   const [tempo, setTempo] = useState(90);
   const [phrase, setPhrase] = useState<Phrase | null>(null);
+  const [previous, setPrevious] = useState<{ phrase: Phrase; title: string } | null>(null);
   const [title, setTitle] = useState('');
   const [save, setSave] = useState<'idle' | 'saving' | 'saved' | 'failed'>('idle');
   const rec = useRef<Recorder | null>(null);
@@ -49,6 +51,8 @@ export function CreatePanel({ instrument, activityId, onSaved }: Props) {
 
   const startRecording = async () => {
     if (!audio.running) await audio.start();
+    // Keep the last take so a new recording never loses it by accident.
+    if (phrase && phrase.events.length) setPrevious({ phrase, title });
     setPhrase(null);
     if (click) {
       setState('countin');
@@ -71,6 +75,16 @@ export function CreatePanel({ instrument, activityId, onSaved }: Props) {
   const onEvent = useCallback((e: LiveEvent) => {
     rec.current?.handle(e);
   }, []);
+
+  const bringBack = () => {
+    if (!previous) return;
+    player.stop();
+    setPhrase(previous.phrase);
+    setTitle(previous.title);
+    setPrevious(phrase && phrase.events.length ? { phrase, title } : null);
+    setState('recorded');
+    setSave('idle');
+  };
 
   const doSave = async () => {
     if (!phrase) return;
@@ -100,11 +114,12 @@ export function CreatePanel({ instrument, activityId, onSaved }: Props) {
       <div className="row wrap">
         {state === 'idle' || state === 'recorded' ? (
           <button type="button" className="btn btn-coral" onClick={startRecording}>
-            ● Record my music
+            <span aria-hidden="true">● </span>
+            {phrase ? 'Record a new take' : 'Record my music'}
           </button>
         ) : (
           <button type="button" className="btn btn-coral" onClick={stopRecording}>
-            ■ Stop recording
+            <span aria-hidden="true">■ </span>Stop recording
           </button>
         )}
         <label className="check">
@@ -122,10 +137,17 @@ export function CreatePanel({ instrument, activityId, onSaved }: Props) {
       <p className="status-line" role="status">
         {state === 'countin' && 'Four clicks, then play…'}
         {state === 'recording' && 'Recording the notes you play (not your voice). Up to one minute.'}
-        {state === 'recorded' && phrase && `Recorded ${phrase.events.length} sounds.`}
+        {state === 'recorded' && phrase && (phrase.events.length ? `Recorded ${phrase.events.length} sounds.` : 'No sounds were recorded. Press record and play some keys or pads.')}
       </p>
       <Workspace instrument={instrument} onEvent={onEvent} />
-      {state === 'recorded' && phrase && (
+      {previous && state === 'recorded' && (
+        <div className="row wrap">
+          <button type="button" className="btn-quiet" onClick={bringBack}>
+            <Icon name="undo" size={22} /> Bring back my last take
+          </button>
+        </div>
+      )}
+      {state === 'recorded' && phrase && phrase.events.length > 0 && (
         <div className="save-box">
           <div className="row wrap">
             <button type="button" className="btn-quiet" onClick={() => (player.playing ? player.stop() : void player.play([phrase], phrase.tempoBpm, { totalTicks: phrase.totalTicks }))}>
@@ -142,6 +164,15 @@ export function CreatePanel({ instrument, activityId, onSaved }: Props) {
             </button>
             {save === 'failed' && <p className="note-text">It could not be saved. Your recording is still here; try again.</p>}
           </div>
+          <p className="note-text save-where" role="status">
+            {save === 'saved'
+              ? store.isPersistent
+                ? 'Saved in this browser on this device. It is not on other devices.'
+                : 'Kept in My music until this page is closed. A grown-up can turn on “Save on this device”.'
+              : store.isPersistent
+                ? 'Saving keeps it in this browser on this device.'
+                : 'Saving is off on this device, so it is kept only until the page is closed.'}
+          </p>
         </div>
       )}
     </div>

@@ -31,11 +31,13 @@ Not checked yet: a real screen reader (NVDA, VoiceOver), real tablets and Chrome
 - Grown-ups view: evidence per activity split into independent and assisted, attempt details, teacher notes, privacy controls, delete everything, the model card summary and the self-check.
 - Saving is off by default; when on, records stay in this browser (IndexedDB). No accounts, no network calls, no microphone or camera.
 - Offline after the first visit (built app only).
+- Design direction from `docs/carmen/UX_JOURNEY_AND_VISUAL_DIRECTION.md`: a sound check with tips when nothing is heard, "Sound paused" recovery, an original icon set for navigation and pathways, "Bring back my last take", "Carry on from last time", honest save-location wording, "More detail" notes (open by default for Years 5–6 and older), a quieter studio presentation for older learners, and a "Before a class" check with activity notes and preview links for teachers.
 
 ## Draft
 
 - All lesson and project wording, sequencing and curriculum links. Not reviewed by a primary music teacher.
-- Coach questions and observations (`src/data/coach.json`).
+- Coach questions and observations (`src/data/coach.json`) and the "More detail" notes (`src/data/detail.ts`).
+- Personas and journeys in the design brief are hypotheses; none has been tested with learners or teachers.
 - Pathway differences beyond the recommended route, tempo, notation default and partner project. Not yet a full Foundation–Year 6 programme.
 - The timing model is trained only on synthetic attempts. Agreement on made-up data shows the software works; it says nothing about learning.
 

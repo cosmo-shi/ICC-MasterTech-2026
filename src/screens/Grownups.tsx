@@ -6,6 +6,8 @@ import type { SelfCheck } from '../ai/selfcheck.ts';
 import { usePrefs } from '../state/prefs.tsx';
 import { type AttemptRecord, type CompositionRecord, newId, stamp, store } from '../store/db.ts';
 import { Pill } from '../ui/common.tsx';
+import { SoundCheck } from '../ui/SoundCheck.tsx';
+import type { Lesson } from '../music/lessons.ts';
 
 const titleOf = (id: string) => LESSONS.find((l) => l.id === id)?.title ?? MISSIONS.find((m) => m.id === id)?.title ?? id;
 
@@ -205,6 +207,8 @@ export function Grownups() {
         </div>
       </section>
 
+      <ClassReadiness />
+
       <section className="panel" aria-labelledby="priv-h">
         <h2 id="priv-h" className="h2">
           Privacy and data
@@ -306,16 +310,35 @@ export function Grownups() {
           </ul>
         </details>
         <details>
-          <summary>Each activity's purpose</summary>
-          <ul className="plain">
+          <summary>Activity notes for teachers</summary>
+          <ul className="activity-notes">
             {LESSONS.map((l) => (
               <li key={l.id}>
-                <strong>{l.title}</strong>: {l.objective} <span className="muted">({l.reviewStatus.replace(/_/g, ' ')})</span>
+                <p>
+                  <strong>{l.title}</strong> · {l.goal} · {l.instruments.map((i) => (i === 'keyboard' ? 'keyboard' : 'drums')).join(' or ')}
+                </p>
+                <p>Learning intention: {l.objective}</p>
+                <p>What Carmen checks: {checksText(l)}</p>
+                {l.independent && <p>“On my own” uses a different pattern with hints hidden, so it is recorded separately from practice.</p>}
+                <p className="muted">
+                  Limits: draft content ({l.reviewStatus.replace(/_/g, ' ')}).{l.assessment.checkTiming ? ' Timing depends on the device’s sound delay, which is not calibrated yet.' : ''}
+                </p>
+                <a className="link" href={`#/lesson/${l.id}`}>
+                  Preview {l.title}
+                </a>
               </li>
             ))}
             {MISSIONS.map((m) => (
               <li key={m.id}>
-                <strong>{m.title}</strong>: {m.objective} Evidence: {m.independentEvidence} Not inferred: {m.doNotInfer}
+                <p>
+                  <strong>{m.title}</strong> · partner project
+                </p>
+                <p>Learning intention: {m.objective}</p>
+                <p>Evidence: {m.independentEvidence}</p>
+                <p className="muted">Not inferred: {m.doNotInfer}</p>
+                <a className="link" href={`#/mission/${m.id}`}>
+                  Preview {m.title}
+                </a>
               </li>
             ))}
           </ul>
@@ -364,5 +387,57 @@ function AiSelfCheck() {
             : `${res.samples} attempts. When it answered, it matched the true pattern ${pct(res.modelAgree)} of the time; it held back on ${pct(res.abstainRate)}. The fixed rules matched ${pct(res.rulesAgree)}. Average time per answer here: ${res.perAnswerMs < 0.01 ? 'under 0.01' : res.perAnswerMs.toFixed(2)} ms.`)}
       </p>
     </div>
+  );
+}
+
+function checksText(l: Lesson): string {
+  const a = l.assessment;
+  if (a.mode === 'free-exploration') return 'nothing; it is free play.';
+  if (a.mode === 'creative-completion') return 'only that a piece was made and saved. Creative work is never marked.';
+  const parts: string[] = [];
+  if (a.checkPitch) parts.push('which notes');
+  if (a.checkTiming) parts.push('when each sound starts');
+  if (a.checkDuration) parts.push('how long notes are held');
+  if (a.checkRestViolations) parts.push('silence in the rests');
+  return `${parts.join(', ')}, sound by sound.`;
+}
+
+/** Practical checks before a class: sound, saving and offline copy. Reads only this device. */
+function ClassReadiness() {
+  const supported = 'serviceWorker' in navigator;
+  const [offline, setOffline] = useState<'checking' | 'ready' | 'not-ready' | 'unsupported'>(supported ? 'checking' : 'unsupported');
+  useEffect(() => {
+    if (!supported) return;
+    let live = true;
+    void navigator.serviceWorker.getRegistration().then((r) => live && setOffline(r?.active ? 'ready' : 'not-ready'));
+    return () => {
+      live = false;
+    };
+  }, [supported]);
+  return (
+    <section className="panel" aria-labelledby="ready-h">
+      <h2 id="ready-h" className="h2">
+        Before a class
+      </h2>
+      <ul className="readiness">
+        <li>
+          <strong>Sound</strong>
+          <SoundCheck compact />
+        </li>
+        <li>
+          <strong>Saving</strong>
+          <span>{store.isPersistent ? 'On: work stays in this browser on this device.' : 'Off: work is kept only until the page is closed. Turn it on under Privacy and data if learners will come back to this device.'}</span>
+        </li>
+        <li>
+          <strong>Without internet</strong>
+          <span>
+            {offline === 'checking' && 'Checking…'}
+            {offline === 'ready' && 'Ready: this device has an offline copy of Carmen.'}
+            {offline === 'not-ready' && 'Not ready yet. Open Carmen once while online, then reload.'}
+            {offline === 'unsupported' && 'This browser cannot keep an offline copy.'}
+          </span>
+        </li>
+      </ul>
+    </section>
   );
 }

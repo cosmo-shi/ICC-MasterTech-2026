@@ -6,6 +6,7 @@ import { type AttemptRecord, newId, stamp, store } from '../store/db.ts';
 import { type LiveEvent, Workspace } from '../ui/Workspace.tsx';
 import { Recorder } from '../music/capture.ts';
 import { CreatePanel } from './CreatePanel.tsx';
+import { MoreDetail } from '../ui/MoreDetail.tsx';
 
 /** L00 (explore, no score) and L09 (make a musical answer: completion = a saved creation). */
 export function FreeLesson({ lesson, go }: { lesson: Lesson; go: (r: string) => void }) {
@@ -66,6 +67,7 @@ export function FreeLesson({ lesson, go }: { lesson: Lesson; go: (r: string) => 
       <div className="lesson-grid">
         <section className="panel task">
           <p>{lesson.explanation}</p>
+          <MoreDetail lessonId={lesson.id} />
           {!isCreate && (
             <>
               <p>

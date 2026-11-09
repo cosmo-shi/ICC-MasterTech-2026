@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { usePrefs } from '../state/prefs.tsx';
+import { SoundCheck } from '../ui/SoundCheck.tsx';
 
 export function ControlsSheet({ onClose }: { onClose: () => void }) {
   const { prefs, set } = usePrefs();
@@ -49,6 +50,7 @@ export function ControlsSheet({ onClose }: { onClose: () => void }) {
           </label>
           {toggle('aiEnabled', 'AI coach', 'A small model on this device looks at your timing. Off means fixed coaching tips only.')}
         </div>
+        <SoundCheck compact />
         <label className="field-inline">
           Volume
           <input type="range" min={0} max={1} step={0.05} value={prefs.volume} onChange={(e) => set('volume', Number(e.target.value))} aria-valuetext={`${Math.round(prefs.volume * 100)} percent`} />

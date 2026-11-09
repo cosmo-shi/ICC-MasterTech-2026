@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { type CompositionRecord, store } from '../store/db.ts';
+import { Icon } from '../ui/icons.tsx';
 import { usePlayer } from '../ui/usePlayer.ts';
 
 export function MyMusic({ go }: { go: (r: string) => void }) {
@@ -34,10 +35,18 @@ export function MyMusic({ go }: { go: (r: string) => void }) {
   return (
     <div className="screen mymusic">
       <h1 className="h1">My music</h1>
-      <p className="lede">{store.isPersistent ? 'Saved on this device only.' : 'Kept until you close this page. A grown-up can turn on saving on this device.'}</p>
+      <div className="save-status">
+        <Icon name={store.isPersistent ? 'saved' : 'music'} size={28} />
+        <p>
+          {store.isPersistent
+            ? 'Saved in this browser on this device. It is not on other devices, and clearing the browser’s data deletes it. Anyone using this browser can see it.'
+            : 'Saving is off, so this music is kept only until the page is closed. A grown-up can turn on “Save on this device” in Grown-ups.'}
+        </p>
+      </div>
       {error && <p className="note-text">{error}</p>}
       {items && items.length === 0 && (
         <div className="panel empty">
+          <Icon name="empty" size={56} />
           <p>Nothing here yet. Record something and press “Save my sound”.</p>
           <button type="button" className="btn" onClick={() => go('#/play')}>
             Make some music

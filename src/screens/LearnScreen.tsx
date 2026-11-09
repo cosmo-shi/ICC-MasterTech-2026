@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { LESSONS, MISSIONS, PATHWAYS, missionById, pathwayById } from '../data/catalog.ts';
 import { usePrefs } from '../state/prefs.tsx';
+import { Icon, type IconName } from '../ui/icons.tsx';
 import { type AttemptRecord, store } from '../store/db.ts';
 
 const GOAL_ORDER = ['Explore', 'Rhythm', 'Notes', 'Reading music', 'Rhythm and notes', 'Create'];
@@ -44,8 +45,11 @@ export function LearnScreen({ go }: { go: (r: string) => void }) {
               className={`path tone-${p.tone}${prefs.pathway === p.id ? ' is-on' : ''}`}
               onClick={() => set('pathway', p.id)}
             >
-              <span className="path-badge" aria-hidden="true">
-                {p.short}
+              <span className="path-top">
+                <span className="path-badge" aria-hidden="true">
+                  {p.short}
+                </span>
+                <Icon name={`path-${p.id}` as IconName} size={40} className="path-icon" />
               </span>
               <span className="path-label">{p.label}</span>
               <span className="path-text">{p.invitation}</span>
