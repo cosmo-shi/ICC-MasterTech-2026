@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { CoachDecision } from '../ai/coach.ts';
 import coachText from '../data/coach.json';
+import { Logo } from './icons.tsx';
 import { usePlayer } from './usePlayer.ts';
 
 interface Props {
@@ -19,10 +20,12 @@ export function CoachCard({ decision, onChoice, onReflect }: Props) {
   return (
     <section className={`coach ${isAI ? 'coach-ai' : 'coach-tips'}`} aria-labelledby="coach-title">
       <header className="coach-head">
+        <span className="coach-avatar" aria-hidden="true">
+          <Logo size={26} />
+        </span>
         <h3 id="coach-title" className="coach-label">
-          {isAI ? 'Carmen listened' : 'A tip'}
+          Carmen <span className="coach-sub">· {isAI ? 'listened to your timing' : 'tip'}</span>
         </h3>
-        <span className="coach-sub">{isAI ? 'Carmen’s timing helper heard this, on this device' : 'From Carmen’s tip list'}</span>
       </header>
 
       <p className="coach-q">{decision.question}</p>
@@ -52,23 +55,23 @@ export function CoachCard({ decision, onChoice, onReflect }: Props) {
                 {player.playing ? 'Stop' : <><span aria-hidden="true">▶ </span>{r.replyText}</>}
               </button>
               <details className="checked">
-                <summary>What the partner changed — checked before it played</summary>
+                <summary>What Carmen changed</summary>
                 <ul>
                   {r.verification.verified.map((v) => (
                     <li key={v}>✓ {v}</li>
                   ))}
-                  {r.render.tracks.length > 1 && <li>The steady click is the partner's part, not yours.</li>}
+                  {r.render.tracks.length > 1 && <li>The click is Carmen’s part, not yours.</li>}
                 </ul>
               </details>
             </div>
           )}
-          {decision.replyRejected && <p className="note-text">A reply was blocked because it failed a music check, so there is no reply this time.</p>}
+          {decision.replyRejected && <p className="note-text">Carmen’s answer didn’t pass its music check, so it won’t play this time.</p>}
         </>
       )}
 
       {onReflect && reflected === undefined && revealed && (
         <fieldset className="reflect">
-          <legend>Want to say how it went? (You can skip.)</legend>
+          <legend>How did that feel?</legend>
           <div className="chips">
             {coachText.reflections.map((x) => (
               <button

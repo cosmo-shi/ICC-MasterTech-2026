@@ -91,7 +91,7 @@ export function Grownups() {
           <Pill>{compositions.length} saved pieces</Pill>
         </p>
         {attempts.length === 0 && <p className="note-text">No activity yet on this device{store.isPersistent ? '' : ' in this session'}.</p>}
-        <div className="table-wrap">
+        <div className="table-wrap" tabIndex={0} role="region" aria-label="Evidence by activity">
           <table className="evidence">
             <caption className="sr-only">Evidence by activity</caption>
             <thead>

@@ -6,6 +6,7 @@ import { rulesPattern } from '../ai/rules.ts';
 import type { Pattern } from '../ai/features.ts';
 import coachText from '../data/coach.json';
 import { blurb, missionById, PATHWAYS } from '../data/catalog.ts';
+import { Icon } from '../ui/icons.tsx';
 import { Recorder, clipAt, gridEvidence, quantise } from '../music/capture.ts';
 import { freshTask, type IndependentTask } from '../music/fresh.ts';
 import { type InstrumentId, type Phrase, TPQ, isSounding } from '../music/events.ts';
@@ -287,12 +288,12 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
     <div className="screen mission">
       <nav className="crumbs" aria-label="Breadcrumb">
         <button type="button" className="link" onClick={() => go('#/learn')}>
-          ← Learn
+          <Icon name="back" size={18} /> Learn
         </button>
       </nav>
       <header className="lesson-head">
         <div>
-          <p className="eyebrow">{pathway?.label} · partner project</p>
+          <p className="eyebrow">Partner project</p>
           <h1 className="h1">{mission.title}</h1>
           <p className="lede">{fewWords ? mission.steps[0] : blurb(mission.id, mission.objective)}</p>
           {mission.band === 'F' && <p className="note-text">A grown-up can help with the buttons. The music choices are yours.</p>}
@@ -413,7 +414,7 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
           {params && paramsBy !== 'learner' && (
             <p className="note-text">
               {paramsBy === 'partner-model'
-                ? `Carmen heard your timing as “${analysis?.pattern}”, so it suggests: ${describeParams(params)}. You can pick something else.`
+                ? `Carmen listened to your timing and suggests: ${describeParams(params)}. You can pick something else.`
                 : `Carmen suggests: ${describeParams(params)}. You can pick something else.`}
             </p>
           )}
@@ -488,7 +489,7 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
               )}
               {(missionId === 'P56_FORM_AND_TEXTURE' || missionId === 'OLDER_EXTENSION') && (
                 <fieldset className="choice-set">
-                  <legend>Why would you choose one version? (optional)</legend>
+                  <legend>Which version would you keep, and why?</legend>
                   <div className="chips">
                     {['It starts stronger', 'It ends better', 'It surprises the listener', 'It keeps the beat clearer', 'Mine says what I meant'].map((r) => (
                       <ChoiceChip key={r} on={reason === r} onClick={() => setReason(r)}>
@@ -537,7 +538,7 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
       {step === 4 && (
         <section className="panel">
           <h2 className="h3">On my own: new music, no hints</h2>
-          <p>Listen, then answer. You can play each part as many times as you like, or stop at any time.</p>
+          <p>Listen, then answer. Play each part as often as you like.</p>
           {!task ? (
             <button type="button" className="btn btn-big" onClick={newTask}>
               Start

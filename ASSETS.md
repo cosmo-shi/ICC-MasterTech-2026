@@ -40,14 +40,14 @@ Every third-party file shipped with Carmen. Checked 9 November 2026.
 
 ## Fonts — SIL Open Font License 1.1
 
-- Lilita One (headings), Copyright (c) 2011 Juan Montoreano, Reserved Font Name "Lilita One". Source: Fontsource `@fontsource/lilita-one` 5.3.0, file `lilita-one-latin-400-normal.woff2`, used unmodified. Notice: `public/fonts/OFL-LilitaOne.txt`.
-- Nunito (variable weight, everything else), Copyright 2014 The Nunito Project Authors. Source: Fontsource `@fontsource-variable/nunito` 5.3.0, file `nunito-latin-wght-normal.woff2`, used unmodified. Notice: `public/fonts/OFL-Nunito.txt`.
-- Chosen in the art-direction reset of 9 November 2026 (direction A, "Colour Bars"); they replace Grandstander and Atkinson Hyperlegible Next.
+- Bagel Fat One (wordmark and screen titles only), Copyright 2022 The Bagel Fat Project Authors. Source: Fontsource `@fontsource/bagel-fat-one` 5.3.0, file `bagel-fat-one-latin-400-normal.woff2`, used unmodified. Notice: `public/fonts/OFL-BagelFatOne.txt`.
+- Figtree (variable weight; headings, instructions, controls and body text), Copyright 2022 The Figtree Project Authors. Source: Fontsource `@fontsource-variable/figtree` 5.3.0, file `figtree-latin-wght-normal.woff2`, used unmodified. Notice: `public/fonts/OFL-Figtree.txt`.
+- Chosen for the "Songbook Horizon" identity (9 November 2026); they replace Lilita One and Nunito.
 
 | File | SHA-256 |
 |---|---|
-| `public/fonts/LilitaOne-Regular.woff2` | `d2575d4fa3632580aafcbcdf6978b3b57e144b90cf5bd9c2c98194f28b869704` |
-| `public/fonts/Nunito-wght.woff2` | `ba344451eab25b217a165363b1982048a5e5830a0daf36577973955a04cac793` |
+| `public/fonts/BagelFatOne-Regular.woff2` | `115ac5b80f2bd487ab5d5af59dd374261b6e81d00eda8361dd70e671d5aa35e4` |
+| `public/fonts/Figtree-wght.woff2` | `4ba7d3d096695818fe0686be4f1e82c6b05134e18a22260336130335027462dd` |
 
 ## Lesson content
 

@@ -1,90 +1,176 @@
-/* Carmen design tokens — direction A, "Colour Bars" (art-direction reset, 9 Nov 2026).
-   Every colour and size comes from here. Each note letter has its own colour, used
-   wherever that note appears (keys, notation marks, logo). Colour never carries
-   meaning alone: letters and shapes always go with it. */
+/* Carmen design tokens — "Songbook Horizon" (9 Nov 2026).
+   The idea: the stave is the horizon. Carmen's world is a sunset landscape whose
+   hills are drawn with stave lines; the sun is a note head. Work happens on a sheet
+   of paper laid over that landscape. Dark mode is the same place after sunset.
+
+   Colour has roles, not decoration:
+     sky/hills  — the environment only (header, backdrop, illustrations)
+     paper/ink  — where reading and playing happen
+     sun        — "now": the main action, the key you are pressing, the current beat
+     record     — recording only
+     dusk       — where you are: selected tab, selected option, links
+     good/near/miss — feedback, always with a word or symbol too
+*/
 
 @font-face {
-  font-family: 'Lilita One';
-  src: url('/fonts/LilitaOne-Regular.woff2') format('woff2');
+  font-family: 'Bagel Fat One';
+  src: url('/fonts/BagelFatOne-Regular.woff2') format('woff2');
   font-weight: 400;
   font-display: swap;
 }
 @font-face {
-  font-family: 'Nunito';
-  src: url('/fonts/Nunito-wght.woff2') format('woff2');
-  font-weight: 200 1000;
+  font-family: 'Figtree';
+  src: url('/fonts/Figtree-wght.woff2') format('woff2');
+  font-weight: 300 900;
   font-display: swap;
 }
 
 :root {
-  /* Surfaces */
-  --violet: #4a2bd1; /* brand ground */
-  --violet-deep: #2e1890;
-  --night: #1c1150; /* text, black keys, strong surfaces */
-  --stage: #eeeaff; /* where the instrument and work sit */
-  --card: #ffffff;
-  --card-edge: #d5ccf7; /* tactile bottom edge on light cards */
+  color-scheme: light;
 
-  --ink: #1c1150;
-  --ink-soft: #544b7d; /* 7.4:1 on --stage */
-  --on-violet: #ffffff;
-  --on-violet-soft: #ddd6ff;
+  /* Environment */
+  --sky-top: #5b2e8c;
+  --sky-mid: #d4507a;
+  --sky-low: #ff9f5a;
+  --sun-disc: #ffc23d;
+  --hill-far: #ec7a8e;
+  --hill-mid: #b8437a;
+  --hill-near: #7a2e78;
+  --stave-line: rgb(255 255 255 / 0.42);
+  --on-sky: #ffffff;
+  --on-sky-soft: rgb(255 255 255 / 0.82);
 
-  /* Note colours (C D E F G A B) and their pressed edges */
-  --n-c: #f2453d;
-  --n-c-edge: #b42821;
-  --n-d: #ff8a1f;
-  --n-d-edge: #c85f00;
-  --n-e: #ffc629;
-  --n-e-edge: #c99400;
-  --n-f: #2fbf63;
-  --n-f-edge: #1c8b45;
-  --n-g: #16afc4;
-  --n-g-edge: #0d7f8f;
-  --n-a: #5b6cff;
-  --n-a-edge: #3a47c9;
-  --n-b: #c152e8;
-  --n-b-edge: #8e2cb3;
+  /* Paper and ink */
+  --paper: #fffcf8;
+  --paper-sunk: #f7eef2; /* recessed: note trail, inputs, quiet buttons */
+  --paper-raised: #ffffff;
+  --hairline: #eadde5;
+  --ink: #2a1736;
+  --ink-soft: #69566f;
+  --ink-faint: #9d8ca3; /* decorative only, never for text */
 
   /* Roles */
-  --record: var(--n-c);
-  --record-edge: var(--n-c-edge);
-  --highlight: var(--n-e);
-  --highlight-edge: var(--n-e-edge);
-  --good-bg: #d5f6e2;
-  --good-ink: #0e6b33;
-  --nearly-bg: #fff0c7;
-  --nearly-ink: #6e4a00;
-  --miss-bg: #ffe0dd;
-  --miss-ink: #9c1f17;
-  --focus: #ffc629;
-  --focus-ring: #1c1150;
+  --sun: #ffc23d;
+  --sun-deep: #d99000;
+  --on-sun: #2a1736;
+  --record: #d0391f;
+  --record-deep: #93240f;
+  --on-record: #ffffff;
+  --dusk: #6a3593;
+  --dusk-soft: #efe4f7;
+  --on-dusk: #ffffff;
 
-  --font-display: 'Lilita One', 'Nunito', system-ui, sans-serif;
-  --font-body: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --good: #0f7565;
+  --good-bg: #dcf2ec;
+  --near: #7d5100;
+  --near-bg: #fff0c9;
+  --miss: #a8264f;
+  --miss-bg: #fce2ea;
 
-  --text-body: 1.125rem; /* 18px */
-  --text-small: 0.9375rem;
-  --text-control: 1.0625rem;
-  --text-h1: clamp(1.9rem, 6vw, 2.5rem);
-  --text-h2: clamp(1.4rem, 4vw, 1.75rem);
+  /* The instrument */
+  --key-white: #ffffff;
+  --key-white-edge: #dccbd6;
+  --key-black: #2a1736;
+  --key-black-edge: #120818;
+  --key-press: #ffd56b;
+  --key-press-edge: #d99000;
+  --pad: #fff4ee;
+  --pad-edge: #e8cfc6;
+
+  --focus: #2a1736;
+  --focus-halo: #ffc23d;
+
+  --shadow-sheet: 0 -10px 30px rgb(58 18 66 / 0.18);
+  --shadow-pop: 0 12px 32px rgb(42 23 54 / 0.22);
+
+  /* Type roles */
+  --font-brand: 'Bagel Fat One', 'Figtree', system-ui, sans-serif;
+  --font-ui: 'Figtree', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --t-title: clamp(1.85rem, 5.5vw, 2.4rem); /* screen titles, brand face */
+  --t-head: 1.25rem; /* section headings */
+  --t-do: 1.2rem; /* the instruction for right now */
+  --t-body: 1.0625rem;
+  --t-control: 1rem;
+  --t-support: 0.9rem;
+
+  /* Space (4-point), shape, elevation */
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s5: 24px;
+  --s6: 32px;
+  --s7: 48px;
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 28px;
+  --edge: 4px; /* only playable things have a physical edge */
 
   --target: 48px;
-  --radius: 22px;
-  --radius-sm: 14px;
-  --edge: 5px; /* tactile bottom edge */
-  --motion: 120ms;
+  --motion: 140ms;
 }
 
-[data-contrast='high'] {
-  --violet: #2a128f;
-  --violet-deep: #170866;
-  --stage: #ffffff;
-  --card-edge: #1c1150;
-  --ink: #000000;
-  --ink-soft: #1c1150;
-  --night: #000000;
-  --on-violet-soft: #ffffff;
+/* After sunset. Same place, same shapes; the lights change. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --sky-top: #0b1424;
+  --sky-mid: #18253f;
+  --sky-low: #3b3050;
+  --sun-disc: #ffd98a; /* the moon */
+  --hill-far: #2b3858;
+  --hill-mid: #212c47;
+  --hill-near: #182136;
+  --stave-line: rgb(255 255 255 / 0.16);
+  --on-sky: #f6f0e8;
+  --on-sky-soft: rgb(246 240 232 / 0.78);
+
+  --paper: #141a28;
+  --paper-sunk: #1d2436;
+  --paper-raised: #222a3e;
+  --hairline: #2e3850;
+  --ink: #f4eee7;
+  --ink-soft: #b8afc0;
+  --ink-faint: #6f6a80;
+
+  --sun: #ffc94d;
+  --sun-deep: #c48a12;
+  --on-sun: #1b1424;
+  --record: #ff6a52;
+  --record-deep: #c33f2b;
+  --on-record: #1b1424;
+  --dusk: #cdb1f2;
+  --dusk-soft: #2c2945;
+  --on-dusk: #1b1424;
+
+  --good: #6fdcc4;
+  --good-bg: #123a34;
+  --near: #ffd27a;
+  --near-bg: #3a2f14;
+  --miss: #ff9bb8;
+  --miss-bg: #3f1b2a;
+
+  --key-white: #efe7db;
+  --key-white-edge: #8f8578;
+  --key-black: #080c15;
+  --key-black-edge: #000000;
+  --key-press: #ffc94d;
+  --key-press-edge: #a87300;
+  --pad: #252d43;
+  --pad-edge: #0e1320;
+
+  --focus: #ffc94d;
+  --focus-halo: #141a28;
+
+  --shadow-sheet: 0 -10px 30px rgb(0 0 0 / 0.45);
+  --shadow-pop: 0 12px 32px rgb(0 0 0 / 0.5);
+}
+
+:root[data-contrast='high'] {
+  --ink-soft: var(--ink);
+  --hairline: var(--ink);
+  --key-white-edge: var(--ink);
+  --paper-sunk: var(--paper);
+  --stave-line: rgb(255 255 255 / 0.7);
 }
 
 [data-size='large'] {

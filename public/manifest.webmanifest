@@ -4,7 +4,7 @@
   "description": "Make music and learn the basics on piano and drums. Everything stays on this device.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#4A2BD1",
-  "theme_color": "#4A2BD1",
+  "background_color": "#5b2e8c",
+  "theme_color": "#5b2e8c",
   "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
 }

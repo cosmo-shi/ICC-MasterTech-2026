@@ -11,6 +11,7 @@ export interface Prefs {
   noteNames: boolean;
   motion: 'system' | 'reduced';
   contrast: 'normal' | 'high';
+  theme: 'system' | 'light' | 'dark';
   aiEnabled: boolean;
   badges: boolean;
   saveOnDevice: boolean;
@@ -25,6 +26,7 @@ const DEFAULTS: Prefs = {
   noteNames: true,
   motion: 'system',
   contrast: 'normal',
+  theme: 'system',
   aiEnabled: true,
   badges: false,
   saveOnDevice: false,
@@ -69,6 +71,19 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
     // Presentation only: older learners get a quieter, less decorated layout. Not stored as age.
     root.dataset.presentation = prefs.pathway === 'older' ? 'studio' : 'workshop';
   }, [prefs]);
+
+  // Light, dark or follow the device. Dark is the same place after sunset, not a different look.
+  useEffect(() => {
+    const mq = window.matchMedia?.('(prefers-color-scheme: dark)');
+    const apply = () => {
+      const dark = prefs.theme === 'dark' || (prefs.theme === 'system' && !!mq?.matches);
+      document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0b1424' : '#5b2e8c');
+    };
+    apply();
+    mq?.addEventListener?.('change', apply);
+    return () => mq?.removeEventListener?.('change', apply);
+  }, [prefs.theme]);
 
   useEffect(() => {
     store.setPersistent(prefs.saveOnDevice).then(

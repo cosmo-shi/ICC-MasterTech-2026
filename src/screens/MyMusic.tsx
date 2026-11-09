@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { type CompositionRecord, store } from '../store/db.ts';
-import { Icon } from '../ui/icons.tsx';
+import { Band, Icon } from '../ui/icons.tsx';
 import { usePlayer } from '../ui/usePlayer.ts';
 
 export function MyMusic({ go }: { go: (r: string) => void }) {
@@ -46,8 +46,9 @@ export function MyMusic({ go }: { go: (r: string) => void }) {
       {error && <p className="note-text">{error}</p>}
       {items && items.length === 0 && (
         <div className="panel empty">
-          <Icon name="empty" size={56} />
-          <p>Nothing here yet. Record on Play, then press Save.</p>
+          <Band width={220} />
+          <p className="h2">Nothing saved yet</p>
+          <p className="support">Record something on Play, then press Save.</p>
           <button type="button" className="btn" onClick={() => go('#/play')}>
             Make some music
           </button>

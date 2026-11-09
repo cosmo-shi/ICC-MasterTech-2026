@@ -36,15 +36,16 @@ Pure logic (music, checker, ai, verifier) lives in plain TS under `src/music`, `
 - Pitch, onset and duration are separate facts. Untimed pitch tasks get no timing penalty.
 - Australian terms: crotchet, quaver, minim, practise (verb).
 
-## Design (direction A, "Colour Bars", chosen 2026-11-09; replaces the cream Sound Workshop look)
-- Playful, welcoming, tactile. The instrument is the biggest thing on Play. No glossy 3D/clay, glass, sparkles or "AI" styling.
-- Violet ground (#4A2BD1), lavender stage (#EEEAFF), white cards with a solid bottom edge instead of outlines. One colour per note (C red … B violet) on keys and pads; tokens in `src/styles/tokens.css`.
-- Fonts: Lilita One (short headings only) and Nunito (everything else), self-hosted with OFL notices.
-- Phone: bottom tabs Play / Learn / My music, settings behind the gear. Desktop ≥900 px: sidebar with Grown-ups at the bottom.
-- Targets ≥48 px (64 px large mode). Visible focus. Reduced motion respected. Never colour alone (note letters stay on keys).
-- Icons and illustrations: only the originals in `src/ui/icons.tsx`. Decorative, always beside a text label.
+## Design ("Songbook Horizon", chosen by momo 2026-11-09: direction C's warmth + B's playfulness; replaces Colour Bars and Sound Workshop)
+- Idea: the stave is the horizon. A sunset landscape whose hill crests are stave lines, with a note-head sun, frames every screen; the work sits on a sheet of paper over it. Dark mode is the same place after sunset (moon, night hills), not neon.
+- Colour has roles (tokens in `src/styles/tokens.css`): sky/hills = environment only; paper/ink = reading and playing; sun = "now" (main action, pressed key, current beat); record = recording only; dusk = where you are (selected tab/option, links); good/near/miss = feedback, always with words. No rainbow note colours.
+- Type roles: Bagel Fat One for the wordmark, screen titles and big feedback headings only; Figtree for everything else. Self-hosted with OFL notices.
+- Shape/space/elevation: 4-pt spacing (`--s1`…`--s7`), radii 10/16/28. Only playable things (keys, pads, Record) have a physical edge. Group by space and hairlines, not boxes, outlines or heavy shadows. The instrument sits in a dark case, centred, and is the biggest thing on Play.
+- Brand mark: note-head sun over two curved stave lines (`Logo`, `Wordmark`, `public/favicon.svg`). Icons, the mark, the `Horizon` scene and the `Band` children share one geometry: 24 grid, 2-unit round strokes, the tilted note head as the one filled motif. Keep familiar action icons (play, undo, stop, gear).
+- Phone: bottom tabs Play / Learn / My music, settings (incl. Day/Night/Same as device) behind the gear. Desktop ≥900 px: sidebar on the landscape, Grown-ups after a divider.
+- Targets ≥48 px (64 px large mode). Visible focus (ink outline + sun halo; sun outline at night). Reduced motion respected. Never colour alone.
 - Learner words: short and plain. Curriculum codes, objectives and class-talk notes live in Grown-ups only.
-- Older pathway uses the quieter "studio" presentation (`data-presentation`). No character mascots.
+- Older pathway uses the quieter "studio" presentation (`data-presentation`): no characters, titles in Figtree.
 - Design recovery and saved-work states as carefully as first screens: sound check, undo a take, honest save location, carry on from last time.
 
 ## Content and assets

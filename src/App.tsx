@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { audio } from './audio/engine.ts';
 import { PrefsProvider, usePrefs } from './state/prefs.tsx';
-import { Icon, Logo } from './ui/icons.tsx';
+import { Horizon, Icon, Wordmark } from './ui/icons.tsx';
 import { PlayScreen } from './screens/PlayScreen.tsx';
 import { LearnScreen } from './screens/LearnScreen.tsx';
 import { LessonScreen } from './screens/LessonScreen.tsx';
@@ -56,22 +56,26 @@ function Shell() {
 
   const current = section === 'lesson' || section === 'mission' ? '#/learn' : `#/${section || 'play'}`;
 
+  const scene = section === 'learn' || section === 'lesson' || section === 'mission' ? 'learn' : section === 'music' ? 'music' : section === 'grownups' ? 'quiet' : 'play';
+
   return (
-    <div className="app">
+    <div className={`app scene-${scene}`}>
       <a href="#main" className="skip-link" onClick={(e) => { e.preventDefault(); mainRef.current?.focus(); }}>
         Skip to the music
       </a>
+      <div className="backdrop" aria-hidden="true">
+        <Horizon scene={scene} />
+      </div>
       <header className="topbar">
         <a className="brand" href="#/play" aria-label="Carmen, go to Play">
-          <Logo size={34} />
-          <span className="brand-name">Carmen</span>
+          <Wordmark size={28} />
         </a>
         <div className="top-actions">
           <button type="button" className="icon-btn" onClick={() => audio.stopAll()} aria-label="Stop all sound">
-            <Icon name="stop" size={22} />
+            <Icon name="stop" size={20} />
           </button>
           <button type="button" className="icon-btn" aria-expanded={settingsOpen} aria-controls="controls-sheet" aria-label="Settings" onClick={() => setSettingsOpen(!settingsOpen)}>
-            <Icon name="gear" size={24} />
+            <Icon name="gear" size={22} />
           </button>
         </div>
       </header>
@@ -81,24 +85,24 @@ function Shell() {
             <span className="tab-icon">
               <Icon name={n.icon} size={24} />
             </span>
-            {n.label}
+            <span className="tab-label">{n.label}</span>
           </a>
         ))}
         <a href="#/grownups" className="tab-link tab-grownups" aria-current={current === '#/grownups' ? 'page' : undefined}>
           <span className="tab-icon">
             <Icon name="grownups" size={24} />
           </span>
-          Grown-ups
+          <span className="tab-label">Grown-ups</span>
         </a>
       </nav>
       {settingsOpen && <ControlsSheet onClose={() => setSettingsOpen(false)} />}
-      <main id="main" ref={mainRef} tabIndex={-1} className={`stage stage-${section || 'play'}`}>
+      <main id="main" ref={mainRef} tabIndex={-1} className={`sheet-main stage-${section || 'play'}`}>
         {saveError && (
           <p className="banner" role="alert">
             {saveError}
           </p>
         )}
-        <Suspense fallback={<p className="lede">Loading…</p>}>{screen}</Suspense>
+        <Suspense fallback={<p className="support">Loading…</p>}>{screen}</Suspense>
       </main>
     </div>
   );

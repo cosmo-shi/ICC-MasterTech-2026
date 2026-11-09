@@ -1,14 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { audio } from '../audio/engine.ts';
 import { type CoachDecision, decide } from '../ai/coach.ts';
-import { blurb, lessonById, pathwayById, LESSONS } from '../data/catalog.ts';
+import { lessonById, pathwayById, LESSONS } from '../data/catalog.ts';
+import { Icon } from '../ui/icons.tsx';
 import { checkAttempt, type CheckResult } from '../engine/checker.ts';
 import { Recorder } from '../music/capture.ts';
 import { type DrumSound, type Phrase, soundingEvents, TPQ } from '../music/events.ts';
 import { usePrefs } from '../state/prefs.tsx';
 import { type AttemptRecord, newId, stamp, store } from '../store/db.ts';
 import { CoachCard } from '../ui/CoachCard.tsx';
-import { BeatDots, FactList, LiveStatus, Pill, factMark } from '../ui/common.tsx';
+import { BeatDots, FactList, LiveStatus, factMark } from '../ui/common.tsx';
 import { MoreDetail } from '../ui/MoreDetail.tsx';
 import { Notation, describePhrase } from '../ui/Notation.tsx';
 import { usePlayer } from '../ui/usePlayer.ts';
@@ -206,16 +207,15 @@ function AssessedLesson({ lessonId, go }: Props) {
     <div className="screen lesson">
       <nav className="crumbs" aria-label="Breadcrumb">
         <button type="button" className="link" onClick={() => go('#/learn')}>
-          ← All activities
+          <Icon name="back" size={18} /> Learn
         </button>
       </nav>
       <header className="lesson-head">
         <div>
           <p className="eyebrow">
-            {lesson.goal} · {mode === 'practice' ? 'Practice' : 'On my own'}
+            {lesson.goal}
           </p>
           <h1 className="h1">{lesson.title}</h1>
-          <p className="lede">{blurb(lesson.id, lesson.objective)}</p>
         </div>
         <div className="mode-switch" role="group" aria-label="Activity mode">
           <button type="button" className={`seg${mode === 'practice' ? ' is-on' : ''}`} aria-pressed={mode === 'practice'} onClick={() => { setMode('practice'); setPhase('ready'); setResult(null); setDecision(null); }}>
@@ -230,11 +230,11 @@ function AssessedLesson({ lessonId, go }: Props) {
       <div className="lesson-grid">
         <section className="panel task" aria-labelledby="task-h">
           <h2 id="task-h" className="h3">
-            {mode === 'practice' ? lesson.instruction : 'A new pattern. No hints this time — you can stop whenever you like.'}
+            {mode === 'practice' ? lesson.instruction : 'A new pattern, on your own.'}
           </h2>
           {mode === 'practice' && (
             <>
-              <p>{lesson.explanation}</p>
+              <p className="support">{lesson.explanation}</p>
               <MoreDetail lessonId={lesson.id} />
             </>
           )}
@@ -246,7 +246,7 @@ function AssessedLesson({ lessonId, go }: Props) {
           )}
           <div className="row wrap">
             <button type="button" className="btn-quiet" onClick={() => setShowNotation((s) => !s)}>
-              {showNotation ? 'Hide the music picture' : 'Show the music picture'}
+              {showNotation ? 'Hide music' : 'Show music'}
             </button>
           </div>
 
@@ -259,11 +259,11 @@ function AssessedLesson({ lessonId, go }: Props) {
                   {listen.playing ? 'Stop' : <><span aria-hidden="true">▶ </span>Listen first</>}
                 </button>
                 <button type="button" className="btn btn-big" onClick={start}>
-                  {result ? 'Try again' : timed ? 'Start (4 clicks, then play)' : 'Start'}
+                  {result ? 'Try again' : 'Start'}
                 </button>
               </>
             )}
-            {phase === 'countin' && <p className="status-big" role="status">Get ready… listen to the clicks</p>}
+            {phase === 'countin' && <p className="status-big" role="status">Get ready… 4 clicks</p>}
             {phase === 'playing' && (
               <>
                 <p className="status-big" role="status">
@@ -280,14 +280,14 @@ function AssessedLesson({ lessonId, go }: Props) {
           </div>
           <label className="check">
             <input type="checkbox" checked={slower} onChange={(e) => setSlower(e.target.checked)} disabled={phase === 'countin' || phase === 'playing'} />
-            Slower ({Math.round(lesson.tempoBpm * 0.8)} beats a minute instead of {lesson.tempoBpm})
+            Slower ({Math.round(lesson.tempoBpm * 0.8)} beats a minute)
           </label>
 
           {mode === 'practice' && (
             <div className="hints" aria-live="polite">
               {hintLevel === 0 ? (
                 <button type="button" className="btn-quiet" onClick={() => setHintLevel(1)}>
-                  I'd like a hint
+                  Hint
                 </button>
               ) : (
                 <ol className="hint-list">
@@ -326,18 +326,12 @@ function AssessedLesson({ lessonId, go }: Props) {
             <h2 id="review-h" className="h2">
               {result.passed ? (mode === 'independent' ? 'You did it on your own' : 'That matched') : 'Here is what happened'}
             </h2>
-            <p className="pill-row">
-              <Pill tone={mode === 'independent' ? 'lilac' : 'paper'}>{mode === 'independent' ? 'On my own — no hints' : hintLevel ? `Practice with ${hintLevel === 3 ? 'the answer' : 'hints'}` : 'Practice'}</Pill>
-              {slower && <Pill>Slower tempo</Pill>}
-              <Pill tone={saveState === 'failed' ? 'coral' : 'paper'}>
-                {saveState === 'saving' ? 'Saving…' : saveState === 'saved' ? (store.isPersistent ? 'Saved on this device' : 'Kept until you close this page') : saveState === 'failed' ? 'Could not save' : ''}
-              </Pill>
-            </p>
+            {saveState === 'failed' && <p className="support warn">This try couldn’t be saved.</p>}
             <FactList result={result} />
             <LiveStatus text={`${result.summary.correctSound} of ${result.summary.expected} sounds matched.`} />
             <CoachCard decision={decision} onChoice={recordChoice} onReflect={mode === 'practice' ? reflect : undefined} />
             <div className="next">
-              <h3 className="h3">What next? You choose.</h3>
+              <h3 className="h3">What next?</h3>
               <div className="row wrap">
                 <button type="button" className="btn" onClick={() => { recordChoice('retry'); void start(); }}>
                   Try again
@@ -361,7 +355,7 @@ function AssessedLesson({ lessonId, go }: Props) {
                   Just play
                 </button>
               </div>
-              {result.passed && mode === 'practice' && <p className="note-text">Suggestion: try a new pattern on your own. It shows what you can do without help. You can say no.</p>}
+              {result.passed && mode === 'practice' && <p className="note-text">Ready for a new one on your own? It’s up to you.</p>}
             </div>
           </section>
         )}

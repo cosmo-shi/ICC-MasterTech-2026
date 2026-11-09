@@ -55,9 +55,8 @@ export function FactList({ result }: { result: CheckResult }) {
               <span className="fact-icon" aria-hidden="true">
                 {t.icon}
               </span>
-              <span className="fact-text">
-                {soundName(f.expectedLabel)} — {t.text}
-              </span>
+              <span className="fact-sound">{soundName(f.expectedLabel)}</span>
+              <span className="fact-text">{t.text}</span>
             </li>
           );
         })}

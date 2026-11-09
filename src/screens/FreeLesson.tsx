@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
+import { Icon } from '../ui/icons.tsx';
 import { audio } from '../audio/engine.ts';
 import type { Lesson } from '../music/lessons.ts';
 import { usePrefs } from '../state/prefs.tsx';
@@ -47,12 +48,12 @@ export function FreeLesson({ lesson, go }: { lesson: Lesson; go: (r: string) => 
     <div className="screen lesson">
       <nav className="crumbs" aria-label="Breadcrumb">
         <button type="button" className="link" onClick={() => go('#/learn')}>
-          ← All activities
+          <Icon name="back" size={18} /> Learn
         </button>
       </nav>
       <header className="lesson-head">
         <div>
-          <p className="eyebrow">{lesson.goal} · no score</p>
+          <p className="eyebrow">{lesson.goal}</p>
           <h1 className="h1">{lesson.title}</h1>
           <p className="lede">{lesson.instruction}</p>
         </div>
@@ -83,14 +84,14 @@ export function FreeLesson({ lesson, go }: { lesson: Lesson; go: (r: string) => 
                   </button>
                 )}
               </div>
-              {done && <p className="note-text">Nice exploring. Next you could try “Find the pulse”.</p>}
+              {done && <p className="note-text">Next, you could try “Find the pulse”.</p>}
             </>
           )}
           {isCreate && (
             <>
               <p>{lesson.creationPrompt}</p>
               <CreatePanel instrument={instrument} activityId={lesson.id} onSaved={() => complete('saved a creation')} />
-              {done && <p className="note-text">Your answer is kept in My music. It is yours — there is no right or wrong here.</p>}
+              {done && <p className="note-text">It’s in My music. There’s no right or wrong here.</p>}
             </>
           )}
           <div className="hints">

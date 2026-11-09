@@ -112,39 +112,33 @@ export function CreatePanel({ instrument, activityId, onSaved }: Props) {
   const recording = state === 'countin' || state === 'recording';
   const hasTake = state === 'recorded' && !!phrase && phrase.events.length > 0;
 
-  return (
-    <div className="create">
-      <div className="transport" role="group" aria-label="Recording">
-        {recording ? (
-          <button type="button" className="rec is-on" onClick={stopRecording}>
-            <span className="rec-dot" aria-hidden="true" />
-            {state === 'countin' ? 'Get ready…' : 'Stop'}
-          </button>
-        ) : (
-          <button type="button" className="rec" onClick={startRecording}>
-            <span className="rec-dot" aria-hidden="true" />
-            {phrase ? 'Record again' : 'Record'}
-          </button>
-        )}
-        <button
-          type="button"
-          className="tbtn"
-          disabled={!hasTake || recording}
-          aria-label={player.playing ? 'Stop playback' : 'Play back'}
-          onClick={() => (player.playing ? player.stop() : phrase && void player.play([phrase], phrase.tempoBpm, { totalTicks: phrase.totalTicks }))}
-        >
-          <Icon name={player.playing ? 'stop' : 'playback'} size={26} />
-          <span className="tbtn-label">{player.playing ? 'Stop' : 'Play'}</span>
-        </button>
-        <button type="button" className="tbtn" disabled={!previous || recording} onClick={bringBack} aria-label="Undo: bring back my last take">
-          <Icon name="undo" size={26} />
-          <span className="tbtn-label">Undo</span>
-        </button>
-        <button type="button" className="tbtn" aria-pressed={click} disabled={recording} onClick={() => setClick((c) => !c)} aria-label="Steady click while recording">
-          <Icon name="click" size={26} />
-          <span className="tbtn-label">Click</span>
-        </button>
-      </div>
+  const dock = (
+    <div className="dock" role="group" aria-label="Recording">
+      <button type="button" className={`rec${recording ? ' is-on' : ''}`} onClick={recording ? stopRecording : startRecording}>
+        <span className="rec-dot" aria-hidden="true" />
+        <span className="rec-text">
+          <span className="rec-label">{recording ? (state === 'countin' ? 'Get ready' : 'Stop') : phrase ? 'Record again' : 'Record'}</span>
+          <span className="rec-sub">{state === 'countin' ? 'Four clicks, then play' : state === 'recording' ? 'Recording…' : click ? `Click at ${tempo}` : 'Tap to start'}</span>
+        </span>
+      </button>
+      <button
+        type="button"
+        className="tool"
+        aria-label={player.playing ? 'Stop playback' : 'Play back my take'}
+        disabled={!hasTake || recording}
+        onClick={() => (player.playing ? player.stop() : phrase && void player.play([phrase], phrase.tempoBpm, { totalTicks: phrase.totalTicks }))}
+      >
+        <Icon name={player.playing ? 'stop' : 'playback'} size={22} />
+        <span>{player.playing ? 'Stop' : 'Play'}</span>
+      </button>
+      <button type="button" className="tool" disabled={!previous || recording} onClick={bringBack} aria-label="Undo: bring back my last take">
+        <Icon name="undo" size={22} />
+        <span>Undo</span>
+      </button>
+      <button type="button" className="tool tool-toggle" aria-pressed={click} disabled={recording} onClick={() => setClick((c) => !c)} aria-label="Steady click while recording">
+        <Icon name="click" size={22} />
+        <span>Click</span>
+      </button>
       {click && !recording && (
         <label className="speed">
           Click speed
@@ -152,12 +146,15 @@ export function CreatePanel({ instrument, activityId, onSaved }: Props) {
           <span>{tempo}</span>
         </label>
       )}
+    </div>
+  );
+
+  return (
+    <div className="create">
+      <Workspace instrument={instrument} onEvent={onEvent} trail recording={state === 'recording'} dock={dock} />
       <p className="status-line" role="status">
-        {state === 'countin' && 'Four clicks, then play.'}
-        {state === 'recording' && 'Recording. Press Stop when you finish.'}
         {state === 'recorded' && phrase && !phrase.events.length && 'Nothing recorded. Press Record, then play.'}
       </p>
-      <Workspace instrument={instrument} onEvent={onEvent} />
       {hasTake && (
         <div className="save-drawer">
           <label className="field">
