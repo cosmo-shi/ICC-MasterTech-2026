@@ -1,0 +1,101 @@
+/*
+  Drum pad styles. Every colour and size comes from src/styles/tokens.css.
+  Pressed: accent colour AND the pad shrinks and moves down, so "pressed"
+  is not shown by colour alone. High contrast follows the tokens.
+*/
+
+.drums {
+  --pad-min: max(var(--target-min), calc(var(--control-base) * var(--control-scale) * 2.4));
+  max-width: var(--content-max);
+  margin-inline: auto;
+}
+
+/* Phone: 2 columns. Wider: 3 columns (Kick Snare Hi-hat / Tom Crash). */
+.drum-pads {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  touch-action: none; /* touches hit pads, never scroll or zoom */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* An odd pad left alone on the last row fills the row (2-column phones). */
+.drum-pad:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 40rem) {
+  .drum-pads {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .drum-pad:last-child:nth-child(odd) {
+    grid-column: auto;
+  }
+}
+
+.drum-pad {
+  appearance: none;
+  margin: 0;
+  min-height: var(--pad-min);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  border: var(--border-width) solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-1);
+  font: inherit;
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  line-height: 1;
+  cursor: pointer;
+  touch-action: none;
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.drum-pad:hover {
+  border-color: var(--color-ink);
+}
+
+.drum-pad.is-down {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-on-accent);
+  box-shadow: none;
+  transform: translateY(2px) scale(0.97);
+}
+
+.drum-pad:focus-visible {
+  border-radius: var(--radius-md);
+}
+
+/* Laptop letter hints: only on devices with a mouse or trackpad. */
+.drum-pad__hint {
+  display: none;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-regular);
+  opacity: 0.75;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .drum-pad__hint {
+    display: block;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drum-pad.is-down {
+    transform: none;
+    box-shadow: inset 0 0 0 var(--border-width) var(--color-on-accent);
+  }
+}
