@@ -59,8 +59,14 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET' || new URL(req.url).origin !== self.location.origin) return;
+  // Pages: network first, so a new version shows on the next load; the cached copy is the offline fallback.
+  if (req.mode === 'navigate') {
+    e.respondWith(fetch(req).catch(() => caches.match('./', { ignoreVary: true })));
+    return;
+  }
+  // Built files have hashed names, so cache first is safe for them.
   e.respondWith(
-    caches.match(req, { ignoreSearch: true, ignoreVary: true }).then((hit) => hit || fetch(req).catch(() => (req.mode === 'navigate' ? caches.match('./') : Response.error()))),
+    caches.match(req, { ignoreSearch: true, ignoreVary: true }).then((hit) => hit || fetch(req).catch(() => Response.error())),
   );
 });
 `

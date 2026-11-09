@@ -110,13 +110,13 @@ export function ControlsSheet({ onClose, onSwitchPlayer }: { onClose: () => void
           <h3 id="save-h" className="group-h">
             Saving
           </h3>
-          {toggle(prefs.saveOnDevice, (v) => set('saveOnDevice', v), 'Keep my music on this device', prefs.saveOnDevice ? 'Kept in this browser until a grown-up deletes it.' : 'Off: forgotten when Carmen closes.')}
+          {toggle(prefs.saveOnDevice, (v) => set('saveOnDevice', v), 'Keep my music on this device', prefs.saveOnDevice ? 'Kept in this browser.' : 'Off: forgotten when Carmen closes.')}
           <a className="sheet-link" href="#/music">
             <Icon name="music" size={22} /> My music
           </a>
         </section>
-        <a className="sheet-link" href="#/grownups">
-          <Icon name="grownups" size={22} /> For teachers and parents
+        <a className="sheet-link" href="#/teacher">
+          <Icon name="lock" size={22} /> Teacher
         </a>
       </div>
     </div>

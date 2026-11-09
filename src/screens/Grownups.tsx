@@ -7,32 +7,27 @@ import { usePrefs } from '../state/prefs.tsx';
 import { store } from '../store/db.ts';
 import { SoundCheck } from '../ui/SoundCheck.tsx';
 import type { Lesson } from '../music/lessons.ts';
-import { grownupQuestion } from '../store/profiles.ts';
+import { teacher } from '../store/profiles.ts';
+import { Icon, Wordmark } from '../ui/icons.tsx';
 import { ChildView, ClassView } from './TeacherDashboard.tsx';
 
-export function Grownups() {
+export function Grownups({ go }: { go: (h: string) => void }) {
   const { prefs, set, saveError } = usePrefs();
   const [confirmClear, setConfirmClear] = useState(false);
   const [cleared, setCleared] = useState(false);
   const model = loadModel();
   const [tab, setTab] = useState<Tab>('class');
   const [childId, setChildId] = useState<string | null>(null);
-  const [unlocked, setUnlocked] = useState(() => {
-    try {
-      return sessionStorage.getItem('carmen-grownup-ok') === '1';
-    } catch {
-      return false;
-    }
-  });
-
-  if (!unlocked) return <GrownupGate onOpen={() => setUnlocked(true)} />;
-
   return (
     <div className="screen grownups">
-      <div className="learn-head">
-        <h1 className="h1">For grown-ups</h1>
-      </div>
-      <div className="dash-tabs" role="tablist" aria-label="Grown-ups">
+      <header className="teacher-bar">
+        <Wordmark size={24} />
+        <h1 className="teacher-title">Teacher</h1>
+        <button type="button" className="btn-quiet" onClick={() => { teacher.close(); go('#/play'); }}>
+          <Icon name="lock" size={18} /> Exit
+        </button>
+      </header>
+      <div className="dash-tabs" role="tablist" aria-label="Teacher">
         {TABS.map(([id, label]) => (
           <button key={id} type="button" role="tab" id={`tab-${id}`} aria-selected={tab === id} aria-controls="gu-panel" className={`dash-tab${tab === id ? ' is-on' : ''}`} onClick={() => setTab(id)}>
             {label}
@@ -41,10 +36,7 @@ export function Grownups() {
       </div>
       <div id="gu-panel" role="tabpanel" aria-labelledby={`tab-${tab}`}>
         {tab === 'class' && (
-          <>
-            <p className="lede">Carmen supports you; it does not replace you. These are suggestions from tries on this device, for you to check.</p>
-            <ClassView openChild={(id) => { setChildId(id); setTab('child'); }} />
-          </>
+          <ClassView openChild={(id) => { setChildId(id); setTab('child'); }} />
         )}
         {tab === 'child' && <ChildView childId={childId} setChild={setChildId} />}
         {tab === 'lessons' && (
@@ -256,55 +248,12 @@ export function Grownups() {
 
 const TABS = [
   ['class', 'Class'],
-  ['child', 'Each child'],
+  ['child', 'Students'],
   ['lessons', 'Lessons'],
-  ['ai', 'How the AI works'],
-  ['device', 'Device and privacy'],
+  ['ai', 'AI'],
+  ['device', 'Device'],
 ] as const;
 type Tab = (typeof TABS)[number][0];
-
-/** A light grown-up check: keeps young children out of the teacher view. It is not security. */
-function GrownupGate({ onOpen }: { onOpen: () => void }) {
-  const [q] = useState(() => grownupQuestion(Math.floor(Math.random() * 1000)));
-  const [val, setVal] = useState('');
-  const [wrong, setWrong] = useState(false);
-  return (
-    <div className="screen grownups gate">
-      <h1 className="h1">For grown-ups</h1>
-      <form
-        className="gate-form"
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (Number(val) === q.answer) {
-            try {
-              sessionStorage.setItem('carmen-grownup-ok', '1');
-            } catch {
-              /* fine */
-            }
-            onOpen();
-          } else setWrong(true);
-        }}
-      >
-        <label className="field">
-          <span>Grown-up check: what is {q.text}?</span>
-          <input inputMode="numeric" value={val} onChange={(e) => { setVal(e.target.value); setWrong(false); }} autoComplete="off" />
-        </label>
-        <button type="submit" className="btn">
-          Open
-        </button>
-        {wrong && (
-          <p className="note-text" role="alert">
-            That’s not it. Ask a teacher or a grown-up at home.
-          </p>
-        )}
-      </form>
-      <p className="note-text">This keeps the teacher view tidy. It is not a password, and nothing here leaves this device.</p>
-      <a className="link" href="#/play">
-        Back to Play
-      </a>
-    </div>
-  );
-}
 
 function AiSelfCheck() {
   const [res, setRes] = useState<SelfCheck | null>(null);

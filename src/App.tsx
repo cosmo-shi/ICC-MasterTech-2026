@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { audio } from './audio/engine.ts';
 import { PrefsProvider, usePrefs } from './state/prefs.tsx';
 import { Horizon, Icon, Wordmark } from './ui/icons.tsx';
@@ -8,7 +8,7 @@ import { LessonScreen } from './screens/LessonScreen.tsx';
 import { MyMusic } from './screens/MyMusic.tsx';
 import { ControlsSheet } from './screens/ControlsSheet.tsx';
 import { Avatar, EntryScreen } from './screens/EntryScreen.tsx';
-import { usePlayers } from './store/profiles.ts';
+import { players, teacher, usePlayers } from './store/profiles.ts';
 
 const MissionScreen = lazy(() => import('./screens/MissionScreen.tsx').then((m) => ({ default: m.MissionScreen })));
 const TheoryScreen = lazy(() => import('./screens/TheoryScreen.tsx').then((m) => ({ default: m.TheoryScreen })));
@@ -46,7 +46,12 @@ function Shell() {
   const who = usePlayers();
   const me = who.players.find((p) => p.id === who.current);
   const [switching, setSwitching] = useState(false);
-  const showEntry = switching || (!who.current && section !== 'grownups');
+  const teacherOpen = useSyncExternalStore(players.subscribe, teacher.isOpen, teacher.isOpen);
+  const showEntry = switching || (!who.current && section !== 'teacher' && section !== 'grownups');
+
+  useEffect(() => {
+    if (section === 'grownups') window.location.replace('#/teacher');
+  }, [section]);
 
   useEffect(() => {
     mainRef.current?.focus({ preventScroll: true });
@@ -59,12 +64,31 @@ function Shell() {
   else if (section === 'lesson' && arg) screen = <LessonScreen key={hash} lessonId={arg} view={sub} go={go} />;
   else if (section === 'mission' && arg) screen = <MissionScreen key={arg} missionId={arg} go={go} />;
   else if (section === 'music') screen = <MyMusic go={go} />;
-  else if (section === 'grownups') screen = <Grownups />;
+  else if (section === 'teacher' || section === 'grownups') screen = teacherOpen ? <Grownups go={go} /> : <EntryScreen initial="teacher" canClose onDone={() => undefined} go={go} />;
   else screen = <PlayScreen key={hash} go={go} makeFrom={arg === 'make' ? sub : undefined} />;
 
   const current = section === 'lesson' || section === 'mission' || section === 'theory' ? '#/learn' : `#/${section || 'play'}`;
 
-  const scene = section === 'learn' || section === 'lesson' || section === 'mission' || section === 'theory' ? 'learn' : section === 'music' ? 'music' : section === 'grownups' ? 'quiet' : 'play';
+  const scene = section === 'learn' || section === 'lesson' || section === 'mission' || section === 'theory' ? 'learn' : section === 'music' ? 'music' : section === 'teacher' ? 'quiet' : 'play';
+
+  const banner = saveError && (
+    <p className="banner" role="alert">
+      {saveError}
+    </p>
+  );
+
+  // Lessons and the teacher space take the whole screen: no tabs, one thing at a time.
+  if (section === 'lesson' || section === 'teacher' || section === 'grownups') {
+    return (
+      <div className={`app-full scene-${scene} full-${section}`}>
+        <main id="main" ref={mainRef} tabIndex={-1} className="full-main">
+          {banner}
+          <Suspense fallback={<p className="support">Loading…</p>}>{screen}</Suspense>
+        </main>
+        {showEntry && <EntryScreen canClose={!!who.current} onDone={() => setSwitching(false)} go={go} />}
+      </div>
+    );
+  }
 
   return (
     <div className={`app scene-${scene}`}>
@@ -100,21 +124,11 @@ function Shell() {
             <span className="tab-label">{n.label}</span>
           </a>
         ))}
-        <a href="#/grownups" className="tab-link tab-grownups" aria-current={current === '#/grownups' ? 'page' : undefined}>
-          <span className="tab-icon">
-            <Icon name="grownups" size={24} />
-          </span>
-          <span className="tab-label">Grown-ups</span>
-        </a>
       </nav>
-      {showEntry && <EntryScreen canClose={!!who.current} onDone={() => setSwitching(false)} />}
+      {showEntry && <EntryScreen canClose={!!who.current} onDone={() => setSwitching(false)} go={go} />}
       {settingsOpen && <ControlsSheet onClose={() => setSettingsOpen(false)} onSwitchPlayer={() => { setSettingsOpen(false); setSwitching(true); }} />}
       <main id="main" ref={mainRef} tabIndex={-1} className={`sheet-main stage-${section || 'play'}`}>
-        {saveError && (
-          <p className="banner" role="alert">
-            {saveError}
-          </p>
-        )}
+        {banner}
         <Suspense fallback={<p className="support">Loading…</p>}>{screen}</Suspense>
       </main>
     </div>

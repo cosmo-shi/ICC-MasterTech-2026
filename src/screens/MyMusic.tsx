@@ -41,14 +41,12 @@ export function MyMusic({ go }: { go: (r: string) => void }) {
   return (
     <div className="screen mymusic">
       <h1 className="h1">My music</h1>
-      <div className="save-status">
-        <Icon name={store.isPersistent ? 'saved' : 'music'} size={28} />
-        <p>
-          {store.isPersistent
-            ? 'Kept in this browser on this device only. Anyone using this browser can see it, and clearing browser data deletes it.'
-            : 'Saving is off, so this music goes when Carmen closes. A grown-up can turn saving on in Grown-ups.'}
-        </p>
-      </div>
+      {!store.isPersistent && (
+        <div className="save-status">
+          <Icon name="music" size={28} />
+          <p>Saving is off, so this music goes when Carmen closes.</p>
+        </div>
+      )}
       {error && <p className="note-text">{error}</p>}
       {items && items.length === 0 && (
         <div className="panel empty">

@@ -97,7 +97,6 @@ export function TheoryScreen({ topicId, go }: { topicId?: string; go: (r: string
         <h1 className="h1">Learn</h1>
         <LearnTabs at="theory" go={go} />
       </div>
-      <p className="lede">Every music word, with how it looks and how it sounds.</p>
       {THEORY_GROUPS.map((g) => (
         <section key={g} className="theory-group" aria-labelledby={`g-${g}`}>
           <h2 id={`g-${g}`} className="h3">

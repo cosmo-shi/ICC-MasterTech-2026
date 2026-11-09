@@ -7,14 +7,14 @@ import { type AttemptRecord, newId, stamp, store } from '../store/db.ts';
 import { type LiveEvent, Workspace } from '../ui/Workspace.tsx';
 import { Recorder } from '../music/capture.ts';
 import { CreatePanel } from './CreatePanel.tsx';
-import { MoreDetail } from '../ui/MoreDetail.tsx';
+import { LessonShell } from './LessonShell.tsx';
+import { Stars } from './LearnScreen.tsx';
 
 /** L00 (explore, no score) and L09 (make a musical answer: completion = a saved creation). */
 export function FreeLesson({ lesson, go }: { lesson: Lesson; go: (r: string) => void }) {
   const { prefs, set } = usePrefs();
   const [instrument, setInstrument] = useState(prefs.instrument);
   const [sounds, setSounds] = useState(0);
-  const [stopped, setStopped] = useState(false);
   const [done, setDone] = useState(false);
   const [recorder] = useState(() => new Recorder(performance.now()));
   const rec = useRef(recorder);
@@ -44,78 +44,62 @@ export function FreeLesson({ lesson, go }: { lesson: Lesson; go: (r: string) => 
     setDone(true);
   };
 
-  return (
-    <div className="screen lesson">
-      <nav className="crumbs" aria-label="Breadcrumb">
-        <button type="button" className="link" onClick={() => go('#/learn')}>
-          <Icon name="back" size={18} /> Learn
+  const instrumentPick = (
+    <div className="seg-row" role="group" aria-label="Instrument">
+      {(['keyboard', 'drums'] as const).map((i) => (
+        <button key={i} type="button" className={`seg${instrument === i ? ' is-on' : ''}`} aria-pressed={instrument === i} onClick={() => { setInstrument(i); set('instrument', i); }}>
+          <Icon name={i === 'keyboard' ? 'piano' : 'drum'} size={18} /> {i === 'keyboard' ? 'Keyboard' : 'Drums'}
         </button>
-      </nav>
-      <header className="lesson-head">
-        <div>
-          <p className="eyebrow">{lesson.goal}</p>
-          <h1 className="h1">{lesson.title}</h1>
-          <p className="lede">{lesson.instruction}</p>
-        </div>
-        <div className="mode-switch" role="group" aria-label="Instrument">
-          {(['keyboard', 'drums'] as const).map((i) => (
-            <button key={i} type="button" className={`seg${instrument === i ? ' is-on' : ''}`} aria-pressed={instrument === i} onClick={() => { setInstrument(i); set('instrument', i); }}>
-              {i === 'keyboard' ? 'Keyboard' : 'Drums'}
-            </button>
-          ))}
-        </div>
-      </header>
-      <div className="lesson-grid">
-        <section className="panel task">
-          <p>{lesson.explanation}</p>
-          <MoreDetail lessonId={lesson.id} />
-          {!isCreate && (
-            <>
-              <p>
-                Sounds played: <strong>{sounds}</strong>. {stopped ? 'You stopped the sound.' : 'The Stop button at the top turns every sound off.'}
-              </p>
-              <div className="row wrap">
-                <button type="button" className="btn-quiet" onClick={() => { audio.stopAll(); setStopped(true); }}>
-                  Stop all sound
-                </button>
-                {sounds > 0 && stopped && !done && (
-                  <button type="button" className="btn" onClick={() => complete('made and stopped a sound')}>
-                    I made a sound and stopped it
-                  </button>
-                )}
-              </div>
-              {done && <p className="note-text">Next, you could try “Find the pulse”.</p>}
-            </>
-          )}
-          {isCreate && (
-            <>
-              <p>{lesson.creationPrompt}</p>
-              <CreatePanel instrument={instrument} activityId={lesson.id} onSaved={() => complete('saved a creation')} />
-              {done && <p className="note-text">It’s in My music. There’s no right or wrong here.</p>}
-            </>
-          )}
-          <div className="hints">
-            {hint < lesson.hints.length ? (
-              <button type="button" className="btn-quiet small" onClick={() => setHint((h) => h + 1)}>
-                {hint === 0 ? 'I’d like an idea' : 'Another idea'}
-              </button>
-            ) : null}
-            <ol className="hint-list">
-              {lesson.hints.slice(0, hint).map((h) => (
-                <li key={h.level} className="hint">
-                  {h.text}
-                </li>
-              ))}
-            </ol>
-          </div>
-          <div className="row wrap">
-            <button type="button" className="btn-quiet" onClick={() => go('#/learn')}>
-              Choose another activity
-            </button>
-          </div>
-        </section>
-        <div className="instrument-col">{isCreate ? null : <Workspace instrument={instrument} onEvent={onEvent} />}</div>
-      </div>
+      ))}
     </div>
+  );
+  const side =
+    hint < lesson.hints.length ? (
+      <button type="button" className="icon-btn quiet" aria-label={hint ? 'Another idea' : 'I’d like an idea'} onClick={() => setHint((h) => h + 1)}>
+        <Icon name="hint" size={24} />
+      </button>
+    ) : null;
+
+  const foot = done ? (
+    <button type="button" className="btn btn-big btn-block" onClick={() => go('#/learn')}>
+      Continue
+    </button>
+  ) : isCreate ? null : (
+    <button type="button" className="btn btn-big btn-block" disabled={sounds === 0} onClick={() => { audio.stopAll(); void complete('made and stopped a sound'); }}>
+      {sounds === 0 ? 'Play any sound' : 'Stop the sound and finish'}
+    </button>
+  );
+
+  return (
+    <LessonShell step={done ? 5 : sounds > 0 ? 3 : 1} steps={5} stepKey={done ? 'done' : 'play'} onClose={() => go('#/learn')} side={side} foot={foot}>
+      {done ? (
+        <div className="lp-center">
+          <Stars n={3} size={48} />
+          <h1 className="lp-title" tabIndex={-1}>{isCreate ? 'Saved in My music' : 'You made a sound and stopped it'}</h1>
+          <p className="lp-say">{isCreate ? 'There’s no right or wrong here.' : 'Next on your path: finding the beat.'}</p>
+        </div>
+      ) : (
+        <div className="lp-try">
+          <div className="lp-task">
+            <p className="kicker">{lesson.goal}</p>
+            <h1 className="lp-title small" tabIndex={-1}>{isCreate ? lesson.creationPrompt : lesson.instruction}</h1>
+            {hint > 0 && (
+              <ol className="hint-list" aria-live="polite">
+                {lesson.hints.slice(0, hint).map((h) => (
+                  <li key={h.level} className="hint">
+                    {h.text}
+                  </li>
+                ))}
+              </ol>
+            )}
+            {instrumentPick}
+            {!isCreate && sounds > 0 && <p className="note-text" role="status">{sounds} {sounds === 1 ? 'sound' : 'sounds'}</p>}
+          </div>
+          <div className="lp-instrument">
+            {isCreate ? <CreatePanel instrument={instrument} activityId={lesson.id} onSaved={() => complete('saved a creation')} /> : <Workspace instrument={instrument} onEvent={onEvent} />}
+          </div>
+        </div>
+      )}
+    </LessonShell>
   );
 }

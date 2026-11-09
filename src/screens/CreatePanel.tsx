@@ -197,15 +197,7 @@ export function CreatePanel({ instrument, activityId, onSaved, idea, onBackToLes
             {save === 'saved' ? 'Saved' : save === 'saving' ? 'Saving…' : 'Save'}
           </button>
           <p className="save-where" role="status">
-            {save === 'failed'
-              ? 'That didn’t save. Your take is still here, so try again.'
-              : save === 'saved'
-                ? store.isPersistent
-                  ? 'In My music on this device.'
-                  : 'In My music until you close Carmen.'
-                : store.isPersistent
-                  ? 'Saves to My music on this device.'
-                  : 'Saves to My music until you close Carmen.'}
+            {save === 'failed' ? 'That didn’t save. Your take is still here, so try again.' : !store.isPersistent ? 'Saving is off: this goes when Carmen closes.' : ''}
           </p>
         </div>
       )}

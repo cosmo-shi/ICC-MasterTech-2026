@@ -3,6 +3,7 @@
 // browser only. Work is tagged with the player so a class can share tablets.
 
 import { useSyncExternalStore } from 'react';
+import type { PathwayId } from '../state/prefs.tsx';
 
 export const PLAYER_COLOURS = ['sun', 'coral', 'mint', 'lilac', 'sky', 'leaf'] as const;
 export type PlayerColour = (typeof PLAYER_COLOURS)[number];
@@ -12,6 +13,8 @@ export interface Player {
   name: string;
   colour: PlayerColour;
   createdAt: number;
+  /** Where they chose to start (a content choice, not an age). */
+  start?: PathwayId;
 }
 
 const KEY = 'carmen-players-v1';
@@ -64,10 +67,10 @@ export const players = {
   /** The current player's id, or undefined for a guest / nobody yet. */
   currentId: (): string | undefined => (state.current && state.current !== 'guest' ? state.current : undefined),
   current: (): Player | undefined => state.players.find((p) => p.id === state.current),
-  add(name: string, colour: PlayerColour): Player {
+  add(name: string, colour: PlayerColour, start?: PathwayId): Player {
     const clean = name.trim().replace(/\s+/g, ' ').slice(0, 20);
     const rnd = crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
-    const p: Player = { id: `p-${rnd}`, name: clean, colour, createdAt: Date.now() };
+    const p: Player = { id: `p-${rnd}`, name: clean, colour, createdAt: Date.now(), start };
     state = { players: [...state.players, p], current: p.id };
     save();
     emit();
@@ -94,15 +97,69 @@ export function usePlayers(): State {
   return useSyncExternalStore(players.subscribe, players.get, players.get);
 }
 
-/** A grown-up check: a sum a young child is unlikely to answer. Not security; it just keeps little fingers out. */
-export function grownupQuestion(seed: number): { text: string; answer: number } {
-  const a = 6 + (seed % 4);
-  const b = 7 + ((seed >> 3) % 3);
-  return { text: `${a} × ${b}`, answer: a * b };
-}
-
 /** Is this saved record the current player's? A guest sees only records with no owner. */
 export function mine(r: { profileId?: string }): boolean {
   const who = players.currentId();
   return who ? r.profileId === who : !r.profileId;
 }
+
+/* ---------- Teacher access ----------
+   A teacher sets a 4-digit PIN on this device. Only a salted SHA-256 hash is kept, in this
+   browser. It keeps children out of the teacher space; it is not an online account. */
+const PIN_KEY = 'carmen-teacher-pin-v1';
+const OPEN_KEY = 'carmen-teacher-open';
+
+async function hashPin(pin: string, salt: string): Promise<string> {
+  const bytes = new TextEncoder().encode(`${salt}:${pin}`);
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+export const teacher = {
+  hasPin(): boolean {
+    try {
+      return !!localStorage.getItem(PIN_KEY);
+    } catch {
+      return false;
+    }
+  },
+  async setPin(pin: string): Promise<void> {
+    const salt = [...crypto.getRandomValues(new Uint8Array(8))].map((b) => b.toString(16).padStart(2, '0')).join('');
+    localStorage.setItem(PIN_KEY, JSON.stringify({ salt, hash: await hashPin(pin, salt) }));
+    teacher.open();
+  },
+  async check(pin: string): Promise<boolean> {
+    try {
+      const { salt, hash } = JSON.parse(localStorage.getItem(PIN_KEY) ?? '{}') as { salt?: string; hash?: string };
+      if (!salt || !hash) return false;
+      const ok = (await hashPin(pin, salt)) === hash;
+      if (ok) teacher.open();
+      return ok;
+    } catch {
+      return false;
+    }
+  },
+  open() {
+    try {
+      sessionStorage.setItem(OPEN_KEY, '1');
+    } catch {
+      /* fine */
+    }
+    emit();
+  },
+  close() {
+    try {
+      sessionStorage.removeItem(OPEN_KEY);
+    } catch {
+      /* fine */
+    }
+    emit();
+  },
+  isOpen(): boolean {
+    try {
+      return sessionStorage.getItem(OPEN_KEY) === '1';
+    } catch {
+      return false;
+    }
+  },
+};

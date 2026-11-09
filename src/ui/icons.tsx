@@ -31,7 +31,11 @@ type IconName =
   | 'check'
   | 'notes'
   | 'ear'
-  | 'people';
+  | 'people'
+  | 'close'
+  | 'lock'
+  | 'hint'
+  | 'star';
 
 const S = { fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
 
@@ -137,6 +141,23 @@ function paths(name: IconName) {
           <path d="M16.5 14c2.2 0 3.8 1.5 4.2 4" {...S} />
         </>
       );
+    case 'close':
+      return <path d="M6.5 6.5l11 11M17.5 6.5l-11 11" {...S} strokeWidth={2.4} />;
+    case 'lock':
+      return (
+        <>
+          <rect x="5" y="11" width="14" height="9" rx="2.5" {...S} />
+          <path d="M8.5 11V8a3.5 3.5 0 0 1 7 0v3" {...S} />
+        </>
+      );
+    case 'hint': // a small light: an idea
+      return (
+        <>
+          <path d="M9 17h6M10 20h4M12 3.5a5.5 5.5 0 0 0-3.2 10c.7.5 1.2 1.3 1.2 2.2v.3h4v-.3c0-.9.5-1.7 1.2-2.2A5.5 5.5 0 0 0 12 3.5z" {...S} />
+        </>
+      );
+    case 'star':
+      return <Head x={12} y={12} scale={2.4} />;
     case 'back':
       return <path d="M14.5 5.5L8 12l6.5 6.5" {...S} strokeWidth={2.4} />;
     case 'forward':
