@@ -68,4 +68,11 @@ describe('learner state', () => {
     const a = [attempt('L01'), attempt('L02', {}, { restViolations: 1 }), attempt('L05', {}, { wrong: 2 })];
     expect(buildLearnerState([...a].reverse(), INFOS)).toEqual(buildLearnerState(a, INFOS));
   });
+
+  it('skips teacher notes and records without checker facts', () => {
+    const note = attempt('L03', { note: 'Teacher observation: x', summary: undefined });
+    const st = buildLearnerState([note], INFOS);
+    expect(st.lessons.L03).toBeUndefined();
+    expect(st.attemptsUsed).toBe(0);
+  });
 });

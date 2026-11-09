@@ -8,6 +8,9 @@ import { type AttemptRecord, type CompositionRecord, newId, stamp, store } from 
 import { Pill } from '../ui/common.tsx';
 import { SoundCheck } from '../ui/SoundCheck.tsx';
 import type { Lesson } from '../music/lessons.ts';
+import { useLearner, resetLearningPicture } from '../ai/useLearner.ts';
+import { LEARNER_MODEL_ID, LEARNER_MODEL_VERSION, SKILLS, band, skillLabel } from '../ai/learner.ts';
+import learnerMetrics from '../../docs/learner-model-metrics.json';
 
 const titleOf = (id: string) => LESSONS.find((l) => l.id === id)?.title ?? MISSIONS.find((m) => m.id === id)?.title ?? id;
 
@@ -206,6 +209,8 @@ export function Grownups() {
           </label>
         </div>
       </section>
+
+      <LearningPicture attempts={attempts} />
 
       <ClassReadiness />
 
@@ -451,6 +456,86 @@ function ClassReadiness() {
           </span>
         </li>
       </ul>
+    </section>
+  );
+}
+
+const BAND_WORDS = { new: 'Not enough tries yet', growing: 'Growing', nearly: 'Nearly there', secure: 'Secure (shown on their own)' } as const;
+
+/** The on-device learner model's picture: a guess from this device's attempts, not a test score. */
+function LearningPicture({ attempts }: { attempts: AttemptRecord[] }) {
+  const { state, aiEnabled, since } = useLearner();
+  const [confirm, setConfirm] = useState(false);
+  const last = attempts.find((a) => a.coach?.tailor?.nextLessonId);
+  return (
+    <section className="panel" aria-labelledby="picture-h">
+      <h2 id="picture-h" className="h2">
+        Learning picture (on this device)
+      </h2>
+      <p>
+        A guess from this device's attempts, <strong>not a test score</strong>. The on-device learner model (<code>{LEARNER_MODEL_ID}</code> v{LEARNER_MODEL_VERSION}, Bayesian Knowledge
+        Tracing) updates after every try. Tries with help count for less, and a skill is only called secure after a pass on their own. It only suggests what to try next: nothing is locked
+        and the learner can always choose.
+      </p>
+      {!aiEnabled && <p className="note-text">The AI coach is turned off, so suggestions follow the pathway route and this picture is not used.</p>}
+      {state.attemptsUsed === 0 ? (
+        <p className="note-text">No scored tries yet{since ? ' since the last reset' : ''}.</p>
+      ) : (
+        <div className="table-wrap" tabIndex={0} role="region" aria-label="Learning picture by skill">
+          <table className="evidence">
+            <caption className="sr-only">Learning picture by skill</caption>
+            <thead>
+              <tr>
+                <th scope="col">Skill</th>
+                <th scope="col">Picture</th>
+                <th scope="col">Estimate</th>
+                <th scope="col">On their own</th>
+                <th scope="col">With practice or help</th>
+              </tr>
+            </thead>
+            <tbody>
+              {SKILLS.filter((k) => state.skills[k].observations > 0).map((k) => {
+                const sk = state.skills[k];
+                return (
+                  <tr key={k}>
+                    <th scope="row">{skillLabel(k)}</th>
+                    <td>{BAND_WORDS[band(sk)]}</td>
+                    <td>{Math.round(sk.p * 100)}%</td>
+                    <td>
+                      {sk.independentPasses} of {sk.independent}
+                    </td>
+                    <td>{sk.assisted}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {last?.coach?.tailor && (
+        <p className="note-text">
+          Last suggestion: {titleOf(last.coach.tailor.nextLessonId!)} ({last.coach.tailor.reasonId}).
+        </p>
+      )}
+      <p className="note-text">
+        Checked on made-up learners only: it picked the weakest skill {Math.round(learnerMetrics.model.targetsWeakest * 100)}% of the time, against {Math.round(learnerMetrics.rulesBaseline.targetsWeakest * 100)}% for the fixed route. That
+        shows the software works, not that children learn more. See <code>docs/LEARNER_MODEL_CARD.md</code>.
+      </p>
+      {confirm ? (
+        <div className="row wrap">
+          <button type="button" className="btn" onClick={() => { resetLearningPicture(Date.now()); setConfirm(false); }}>
+            Yes, start the picture again
+          </button>
+          <button type="button" className="btn-quiet" onClick={() => setConfirm(false)}>
+            Cancel
+          </button>
+        </div>
+      ) : (
+        <button type="button" className="btn-quiet" onClick={() => setConfirm(true)}>
+          Reset learning picture
+        </button>
+      )}
+      <p className="note-text">Reset only starts the picture again from now. It does not delete any tries or music.</p>
     </section>
   );
 }

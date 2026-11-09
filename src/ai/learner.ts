@@ -166,7 +166,8 @@ export function buildLearnerState(attempts: AttemptRecord[], lessons: LessonInfo
   const sorted = [...attempts].sort((a, b) => a.createdAt - b.createdAt);
   for (const a of sorted) {
     const lesson = byId.get(a.activityId);
-    if (!lesson) continue;
+    // Only real tries count: teacher notes and records without checker facts are skipped.
+    if (!lesson || !a.summary) continue;
     const prog = (state.lessons[a.activityId] ??= { attempts: 0, passed: false, independentPassed: false });
     prog.attempts += 1;
     if (a.passed) prog.passed = true;
