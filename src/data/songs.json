@@ -1,0 +1,70 @@
+{
+  "status": "draft — opening phrases of traditional tunes, transcribed for the prototype; not yet reviewed by a primary music educator",
+  "licence": "Traditional melodies in the public domain. Only add songs whose melody is out of copyright.",
+  "songs": [
+    {
+      "id": "twinkle",
+      "title": "Twinkle, Twinkle, Little Star",
+      "aliases": ["twinkle twinkle", "twinkle", "little star", "abc song", "alphabet song", "baa baa black sheep"],
+      "source": "Traditional (French melody, 18th century)",
+      "tempoBpm": 90,
+      "notes": [["C4", 1], ["C4", 1], ["G4", 1], ["G4", 1], ["A4", 1], ["A4", 1], ["G4", 2]]
+    },
+    {
+      "id": "mary",
+      "title": "Mary Had a Little Lamb",
+      "aliases": ["mary had a little lamb", "little lamb", "mary"],
+      "source": "Traditional (19th century)",
+      "tempoBpm": 100,
+      "notes": [["E4", 1], ["D4", 1], ["C4", 1], ["D4", 1], ["E4", 1], ["E4", 1], ["E4", 2]]
+    },
+    {
+      "id": "hot-cross-buns",
+      "title": "Hot Cross Buns",
+      "aliases": ["hot cross buns", "hot cross bun"],
+      "source": "Traditional (English street cry)",
+      "tempoBpm": 90,
+      "notes": [["E4", 1], ["D4", 1], ["C4", 2], ["E4", 1], ["D4", 1], ["C4", 2]]
+    },
+    {
+      "id": "ode-to-joy",
+      "title": "Ode to Joy",
+      "aliases": ["ode to joy", "beethoven", "symphony 9", "joy"],
+      "source": "Ludwig van Beethoven, Symphony No. 9 (1824), public domain",
+      "tempoBpm": 100,
+      "notes": [["E4", 1], ["E4", 1], ["F4", 1], ["G4", 1], ["G4", 1], ["F4", 1], ["E4", 1], ["D4", 1]]
+    },
+    {
+      "id": "frere-jacques",
+      "title": "Frère Jacques",
+      "aliases": ["frere jacques", "are you sleeping", "brother john", "frère jacques"],
+      "source": "Traditional (French round)",
+      "tempoBpm": 100,
+      "notes": [["C4", 1], ["D4", 1], ["E4", 1], ["C4", 1], ["C4", 1], ["D4", 1], ["E4", 1], ["C4", 1]]
+    },
+    {
+      "id": "jingle-bells",
+      "title": "Jingle Bells",
+      "aliases": ["jingle bells", "jingle bell", "jingle"],
+      "source": "James Lord Pierpont (1857), public domain",
+      "tempoBpm": 110,
+      "notes": [["E4", 1], ["E4", 1], ["E4", 2], ["E4", 1], ["E4", 1], ["E4", 2]]
+    },
+    {
+      "id": "old-macdonald",
+      "title": "Old MacDonald Had a Farm",
+      "aliases": ["old macdonald", "old mcdonald", "old macdonald had a farm", "e i e i o"],
+      "source": "Traditional",
+      "tempoBpm": 100,
+      "notes": [["G4", 1], ["G4", 1], ["G4", 1], ["D4", 1], ["E4", 1], ["E4", 1], ["D4", 2]]
+    },
+    {
+      "id": "london-bridge",
+      "title": "London Bridge Is Falling Down",
+      "aliases": ["london bridge", "london bridge is falling down", "falling down"],
+      "source": "Traditional (English nursery rhyme)",
+      "tempoBpm": 100,
+      "notes": [["G4", 1], ["A4", 1], ["G4", 1], ["F4", 1], ["E4", 1], ["F4", 1], ["G4", 2]]
+    }
+  ]
+}

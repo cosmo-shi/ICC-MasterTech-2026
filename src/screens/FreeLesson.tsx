@@ -8,6 +8,7 @@ import { type LiveEvent, Workspace } from '../ui/Workspace.tsx';
 import { Recorder } from '../music/capture.ts';
 import { CreatePanel } from './CreatePanel.tsx';
 import { MoreDetail } from '../ui/MoreDetail.tsx';
+import { SongFinder } from '../ui/SongFinder.tsx';
 
 /** L00 (explore, no score) and L09 (make a musical answer: completion = a saved creation). */
 export function FreeLesson({ lesson, go }: { lesson: Lesson; go: (r: string) => void }) {
@@ -20,6 +21,7 @@ export function FreeLesson({ lesson, go }: { lesson: Lesson; go: (r: string) => 
   const rec = useRef(recorder);
   const isCreate = lesson.assessment.mode === 'creative-completion';
   const [hint, setHint] = useState(0);
+  const [songKeys, setSongKeys] = useState<ReadonlySet<number> | undefined>(undefined);
 
   const onEvent = useCallback((e: LiveEvent) => {
     rec.current.handle(e);
@@ -85,6 +87,7 @@ export function FreeLesson({ lesson, go }: { lesson: Lesson; go: (r: string) => 
                 )}
               </div>
               {done && <p className="note-text">Next, you could try “Find the pulse”.</p>}
+              {instrument === 'keyboard' && <SongFinder onShowKeys={setSongKeys} />}
             </>
           )}
           {isCreate && (
@@ -114,7 +117,7 @@ export function FreeLesson({ lesson, go }: { lesson: Lesson; go: (r: string) => 
             </button>
           </div>
         </section>
-        <div className="instrument-col">{isCreate ? null : <Workspace instrument={instrument} onEvent={onEvent} />}</div>
+        <div className="instrument-col">{isCreate ? null : <Workspace instrument={instrument} onEvent={onEvent} highlightNotes={songKeys} />}</div>
       </div>
     </div>
   );
