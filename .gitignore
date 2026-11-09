@@ -27,3 +27,4 @@ dist-ssr
 .env.*
 CLAUDE.local.md
 .claude/settings.local.json
+.playwright-mcp

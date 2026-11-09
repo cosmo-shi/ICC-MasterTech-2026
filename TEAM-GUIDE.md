@@ -1,7 +1,5 @@
 # Team guide: building Musica (the music app) together with Claude Code
 
-> **Branch `sc` note (9 Nov 2026):** on this branch, `SPEC.md` and `CLAUDE.md` follow context pack v2.0 and momo's decisions, not the Miro-first rules below. See SPEC.md section 3 for the resolved contradictions.
-
 For three people, beginner level. Uses the same tools as the last guide: Claude Code, the design skills, Vitest, Playwright, GitHub and Vercel. This guide adds what changes when three people share one project.
 
 Files that go with this guide: `SPEC.md` (what to build) and `CLAUDE.md` (rules Claude Code follows). Both come from the team's Miro requirements spec and the board. If the three files ever disagree, the Miro spec wins, then `SPEC.md`.
