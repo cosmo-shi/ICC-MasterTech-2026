@@ -1,0 +1,364 @@
+{
+  "modelId": "carmen-timing-pattern-mlp",
+  "version": "1.0.0",
+  "sha256": "46e26d78a0ea12eb1ab98cd2130e037b0548b4f3a01f40b49735190bac17c930",
+  "seed": 20261109,
+  "architecture": "MLP 12-16(tanh)-6(softmax)",
+  "parameters": 310,
+  "weightsBytes": 6478,
+  "data": {
+    "generator": "src/ai/synth.ts (seeded, synthetic)",
+    "split": "disjoint rhythm families: train 0-399, validation 10000-10099, test 20000-20099",
+    "trainSamples": 12000,
+    "valSamples": 3000,
+    "testSamples": 3000
+  },
+  "training": {
+    "epochs": 40,
+    "batch": 64,
+    "learningRate": 0.01,
+    "optimiser": "Adam",
+    "bestValAcc": 0.9597,
+    "history": [
+      {
+        "epoch": 1,
+        "trainLoss": 0.1844,
+        "valAcc": 0.948
+      },
+      {
+        "epoch": 2,
+        "trainLoss": 0.1634,
+        "valAcc": 0.9503
+      },
+      {
+        "epoch": 3,
+        "trainLoss": 0.1543,
+        "valAcc": 0.9533
+      },
+      {
+        "epoch": 4,
+        "trainLoss": 0.157,
+        "valAcc": 0.9527
+      },
+      {
+        "epoch": 5,
+        "trainLoss": 0.1464,
+        "valAcc": 0.9553
+      },
+      {
+        "epoch": 6,
+        "trainLoss": 0.1475,
+        "valAcc": 0.9547
+      },
+      {
+        "epoch": 7,
+        "trainLoss": 0.1461,
+        "valAcc": 0.9557
+      },
+      {
+        "epoch": 8,
+        "trainLoss": 0.1433,
+        "valAcc": 0.957
+      },
+      {
+        "epoch": 9,
+        "trainLoss": 0.1381,
+        "valAcc": 0.955
+      },
+      {
+        "epoch": 10,
+        "trainLoss": 0.138,
+        "valAcc": 0.955
+      },
+      {
+        "epoch": 11,
+        "trainLoss": 0.1425,
+        "valAcc": 0.959
+      },
+      {
+        "epoch": 12,
+        "trainLoss": 0.1404,
+        "valAcc": 0.957
+      },
+      {
+        "epoch": 13,
+        "trainLoss": 0.1374,
+        "valAcc": 0.956
+      },
+      {
+        "epoch": 14,
+        "trainLoss": 0.15,
+        "valAcc": 0.952
+      },
+      {
+        "epoch": 15,
+        "trainLoss": 0.1371,
+        "valAcc": 0.9567
+      },
+      {
+        "epoch": 16,
+        "trainLoss": 0.1432,
+        "valAcc": 0.954
+      },
+      {
+        "epoch": 17,
+        "trainLoss": 0.1358,
+        "valAcc": 0.956
+      },
+      {
+        "epoch": 18,
+        "trainLoss": 0.1375,
+        "valAcc": 0.9533
+      },
+      {
+        "epoch": 19,
+        "trainLoss": 0.1354,
+        "valAcc": 0.955
+      },
+      {
+        "epoch": 20,
+        "trainLoss": 0.134,
+        "valAcc": 0.956
+      },
+      {
+        "epoch": 21,
+        "trainLoss": 0.139,
+        "valAcc": 0.958
+      },
+      {
+        "epoch": 22,
+        "trainLoss": 0.1348,
+        "valAcc": 0.9557
+      },
+      {
+        "epoch": 23,
+        "trainLoss": 0.1384,
+        "valAcc": 0.955
+      },
+      {
+        "epoch": 24,
+        "trainLoss": 0.1359,
+        "valAcc": 0.956
+      },
+      {
+        "epoch": 25,
+        "trainLoss": 0.1437,
+        "valAcc": 0.9523
+      },
+      {
+        "epoch": 26,
+        "trainLoss": 0.1367,
+        "valAcc": 0.9553
+      },
+      {
+        "epoch": 27,
+        "trainLoss": 0.1343,
+        "valAcc": 0.9563
+      },
+      {
+        "epoch": 28,
+        "trainLoss": 0.1345,
+        "valAcc": 0.956
+      },
+      {
+        "epoch": 29,
+        "trainLoss": 0.1335,
+        "valAcc": 0.9557
+      },
+      {
+        "epoch": 30,
+        "trainLoss": 0.1418,
+        "valAcc": 0.9517
+      },
+      {
+        "epoch": 31,
+        "trainLoss": 0.1382,
+        "valAcc": 0.957
+      },
+      {
+        "epoch": 32,
+        "trainLoss": 0.1327,
+        "valAcc": 0.9553
+      },
+      {
+        "epoch": 33,
+        "trainLoss": 0.1341,
+        "valAcc": 0.959
+      },
+      {
+        "epoch": 34,
+        "trainLoss": 0.1409,
+        "valAcc": 0.955
+      },
+      {
+        "epoch": 35,
+        "trainLoss": 0.1453,
+        "valAcc": 0.955
+      },
+      {
+        "epoch": 36,
+        "trainLoss": 0.1387,
+        "valAcc": 0.9563
+      },
+      {
+        "epoch": 37,
+        "trainLoss": 0.1348,
+        "valAcc": 0.955
+      },
+      {
+        "epoch": 38,
+        "trainLoss": 0.1377,
+        "valAcc": 0.9577
+      },
+      {
+        "epoch": 39,
+        "trainLoss": 0.1327,
+        "valAcc": 0.9597
+      },
+      {
+        "epoch": 40,
+        "trainLoss": 0.1326,
+        "valAcc": 0.9557
+      }
+    ]
+  },
+  "heldOut": {
+    "model": {
+      "top1Accuracy": 0.953,
+      "abstainRate": 0.012,
+      "accuracyWhenAnswering": 0.9609,
+      "macroF1WithAbstainAsWrong": 0.9549,
+      "confusion": [
+        [
+          478,
+          2,
+          2,
+          3,
+          0,
+          11,
+          4
+        ],
+        [
+          3,
+          489,
+          0,
+          2,
+          0,
+          3,
+          3
+        ],
+        [
+          6,
+          0,
+          477,
+          0,
+          3,
+          5,
+          9
+        ],
+        [
+          0,
+          2,
+          0,
+          490,
+          0,
+          4,
+          4
+        ],
+        [
+          6,
+          0,
+          2,
+          0,
+          479,
+          5,
+          8
+        ],
+        [
+          30,
+          2,
+          8,
+          9,
+          8,
+          435,
+          8
+        ]
+      ]
+    },
+    "rulesBaseline": {
+      "accuracy": 0.8987,
+      "macroF1": 0.897,
+      "confusion": [
+        [
+          498,
+          1,
+          0,
+          0,
+          1,
+          0,
+          0
+        ],
+        [
+          25,
+          473,
+          0,
+          0,
+          2,
+          0,
+          0
+        ],
+        [
+          35,
+          0,
+          462,
+          2,
+          0,
+          1,
+          0
+        ],
+        [
+          13,
+          17,
+          0,
+          467,
+          0,
+          3,
+          0
+        ],
+        [
+          13,
+          0,
+          14,
+          0,
+          472,
+          1,
+          0
+        ],
+        [
+          96,
+          9,
+          10,
+          28,
+          33,
+          324,
+          0
+        ]
+      ]
+    },
+    "classes": [
+      "steady",
+      "early",
+      "late",
+      "speedingUp",
+      "slowingDown",
+      "uneven",
+      "abstain/insufficient"
+    ]
+  },
+  "latencyNode": {
+    "perInferenceMicroseconds": 0.93,
+    "perFeatureExtractionMicroseconds": 2.5,
+    "runs": 20000,
+    "node": "v22.23.4"
+  }
+}

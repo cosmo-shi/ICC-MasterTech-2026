@@ -1,0 +1,51 @@
+{
+  "status": "draft — written for the prototype, not yet reviewed by a primary music educator",
+  "questions": {
+    "sound": "Listen again. Which note sounded different?",
+    "rest": "Which beat was meant to stay quiet?",
+    "timing": "What did you notice about your taps and the beat?",
+    "duration": "Which sound needed to last longer?",
+    "missing": "Was there a sound you skipped?",
+    "passed": "What helped you play it this way?",
+    "insufficient": "Shall we listen once and try again?"
+  },
+  "observations": {
+    "wrongNote": "Note {count} was {played}. The music asked for {expected}.",
+    "wrongDrum": "Sound {count} was a different drum.",
+    "missed": "Sound {count} did not play.",
+    "rest": "There was a tap on beat {beat}, which is a rest.",
+    "extra": "There was an extra sound near beat {beat}.",
+    "duration": "Note {count} was let go after {held} beats. It lasts {want} beats.",
+    "steady": "Your taps stayed close to the beat.",
+    "early": "Most of your taps came a little before the beat.",
+    "late": "Most of your taps came a little after the beat.",
+    "speedingUp": "Your taps started with the beat, then got faster.",
+    "slowingDown": "Your taps started with the beat, then got slower.",
+    "uneven": "The spaces between your taps changed a lot.",
+    "insufficient": "There were not enough sounds to say much about the timing.",
+    "passed": "Every sound matched. {onTime} of {total} landed on the beat."
+  },
+  "replies": {
+    "pulse-with-mine": "Hear your own taps with a steady click under them.",
+    "pulse-slower": "Hear your taps again, a little slower, with a steady click.",
+    "target-slower": "Hear the pattern slowly, then try with it.",
+    "target-echo": "Hear the music once more.",
+    "mine-with-rest": "Hear your pattern with that beat left quiet.",
+    "mine-echo": "Hear exactly what you played."
+  },
+  "choices": {
+    "retry": "Try again",
+    "hear": "Hear the reply",
+    "slower": "Try it slower",
+    "check": "Try a new one on my own",
+    "another": "Choose another activity",
+    "create": "Make my own",
+    "skip": "Skip"
+  },
+  "reflections": [
+    { "id": "lost-beat", "text": "I lost the beat" },
+    { "id": "wrong-note", "text": "I chose the wrong note" },
+    { "id": "controls", "text": "The controls were tricky" },
+    { "id": "again", "text": "I want another try" }
+  ]
+}

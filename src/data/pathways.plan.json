@@ -1,0 +1,269 @@
+{
+  "schemaVersion": "2.0.0",
+  "asOf": "2026-11-09",
+  "scope": "Foundation-Year 6, with a secondary/adult extension",
+  "humanEducatorApproved": false,
+  "implemented": false,
+  "licence": "CC-BY-SA-4.0",
+  "domains": [
+    "pulse_rhythm_metre",
+    "pitch_melody",
+    "dynamics_expression",
+    "timbre_texture",
+    "form_composition",
+    "listening_context_culture",
+    "performance_with_others",
+    "representation_reflection"
+  ],
+  "bands": [
+    {
+      "id": "F",
+      "label": "Foundation",
+      "codes": [
+        "AC9AMUFE01",
+        "AC9AMUFD01",
+        "AC9AMUFC01",
+        "AC9AMUFP01"
+      ],
+      "sourceIds": [
+        "C03"
+      ],
+      "focus": [
+        "sound and silence",
+        "contrast",
+        "intentional musical play",
+        "sharing"
+      ],
+      "mission": "F_SOUND_STORY"
+    },
+    {
+      "id": "1-2",
+      "label": "Years 1-2",
+      "codes": [
+        "AC9AMU2E01",
+        "AC9AMU2E02",
+        "AC9AMU2D01",
+        "AC9AMU2C01",
+        "AC9AMU2P01"
+      ],
+      "sourceIds": [
+        "C04",
+        "C12"
+      ],
+      "focus": [
+        "beat and rhythm",
+        "short patterns",
+        "combining elements",
+        "informal performance"
+      ],
+      "mission": "P12_RHYTHMIC_CONVERSATION"
+    },
+    {
+      "id": "3-4",
+      "label": "Years 3-4",
+      "codes": [
+        "AC9AMU4E01",
+        "AC9AMU4E02",
+        "AC9AMU4D01",
+        "AC9AMU4C01",
+        "AC9AMU4P01"
+      ],
+      "sourceIds": [
+        "C02"
+      ],
+      "focus": [
+        "motif and contrast",
+        "musical purpose",
+        "rehearsal",
+        "learner-authored work"
+      ],
+      "mission": "P34_MELODIC_REPLY"
+    },
+    {
+      "id": "5-6",
+      "label": "Years 5-6",
+      "codes": [
+        "AC9AMU6E01",
+        "AC9AMU6E02",
+        "AC9AMU6D01",
+        "AC9AMU6C01",
+        "AC9AMU6P01"
+      ],
+      "sourceIds": [
+        "C05"
+      ],
+      "focus": [
+        "expressive decisions",
+        "compositional devices",
+        "documentation",
+        "refinement"
+      ],
+      "mission": "P56_FORM_AND_TEXTURE"
+    }
+  ],
+  "missions": [
+    {
+      "id": "F_SOUND_STORY",
+      "band": "F",
+      "objective": "Choose and compare expressive sound contrasts in a short original story.",
+      "instruments": [
+        "keyboard",
+        "drums"
+      ],
+      "operation": "dynamics",
+      "learnerControl": "Choose sounds and whether the partner's quieter/louder response fits the story.",
+      "steps": [
+        "Explore and stop sounds using comfortable controls.",
+        "Make a short sound idea; an adult can help with operation.",
+        "Choose which version to hear and indicate a preference or intention.",
+        "Hear a partner reply with a checked dynamics change.",
+        "Create a different sound story and share with a chosen listener."
+      ],
+      "independentEvidence": "A fresh intentional sound choice or accessible response; adult observation if not captured.",
+      "doNotInfer": "Reading ability, rhythmic precision or emotional state.",
+      "contextActivity": "Discuss when and where people use sound/music; use authorised examples supplied by the educator.",
+      "reviewStatus": "draft_pending_music_educator",
+      "humanEducatorApproved": false,
+      "implemented": false,
+      "sourceIds": [
+        "C03"
+      ],
+      "curriculumCoverage": "proposed_partial; not a complete band programme",
+      "goalId": "G_DYNAMICS_CONTRAST"
+    },
+    {
+      "id": "P12_RHYTHMIC_CONVERSATION",
+      "band": "1-2",
+      "objective": "Hear and use a rest within a repeating phrase while keeping its time structure.",
+      "instruments": [
+        "drums",
+        "keyboard"
+      ],
+      "operation": "replace_with_rest",
+      "learnerControl": "Choose a phrase and a sound position to leave silent.",
+      "steps": [
+        "Hear and make a short pattern.",
+        "Predict what happens if one sound is silent.",
+        "Hear a checked version and compare.",
+        "Choose listening, slower practice or a larger control if helpful.",
+        "Use a fresh pattern without teaching hints and share a rhythmic response."
+      ],
+      "independentEvidence": "Listening discrimination and actual played timing recorded separately; do not credit construction as live performance.",
+      "doNotInfer": "That a timing difference reveals the cause of difficulty.",
+      "contextActivity": "Discuss musical conversations and occasions for group music using appropriately sourced examples.",
+      "reviewStatus": "draft_pending_music_educator",
+      "humanEducatorApproved": false,
+      "implemented": false,
+      "sourceIds": [
+        "C04",
+        "C12"
+      ],
+      "curriculumCoverage": "proposed_partial; not a complete band programme",
+      "goalId": "G_REST"
+    },
+    {
+      "id": "P34_MELODIC_REPLY",
+      "band": "3-4",
+      "objective": "Recognise and control a melodic relationship while preserving a rhythmic pattern.",
+      "instruments": [
+        "keyboard"
+      ],
+      "operation": "transpose",
+      "learnerControl": "Choose an original phrase, direct a higher/lower reply and decide how to develop it.",
+      "steps": [
+        "Create a short melodic phrase.",
+        "Choose a supported transposition direction or compare two proposals.",
+        "Verify the reply keeps its time pattern and changes permitted pitches.",
+        "Describe or demonstrate what changed.",
+        "Rehearse and perform a fresh learner-created response with appropriate support."
+      ],
+      "independentEvidence": "A new comparison or controlled musical response without teaching hints; representation/input support retained.",
+      "doNotInfer": "Correct fingering or a universal aesthetic ranking.",
+      "contextActivity": "Explore a teacher-authorised example of musical purpose/context; First Nations material needs its own permissions and review.",
+      "reviewStatus": "draft_pending_music_educator",
+      "humanEducatorApproved": false,
+      "implemented": false,
+      "sourceIds": [
+        "C02"
+      ],
+      "curriculumCoverage": "proposed_partial; not a complete band programme",
+      "goalId": "G_PITCH_CONTRAST"
+    },
+    {
+      "id": "P56_FORM_AND_TEXTURE",
+      "band": "5-6",
+      "objective": "Organise motifs into a purposeful form and justify a structural decision.",
+      "instruments": [
+        "keyboard",
+        "drums"
+      ],
+      "operation": "section_order",
+      "learnerControl": "Own two musical ideas, choose their order and accept or reject a partner arrangement.",
+      "steps": [
+        "Compose two short ideas, A and B.",
+        "Predict an effect of changing section order.",
+        "Compare a checked ordering that preserves both ideas internally.",
+        "Revise the form and optionally add a separate labelled partner part.",
+        "Document, rehearse and explain a new arrangement for a chosen audience."
+      ],
+      "independentEvidence": "A fresh structural choice and explanation with authorship/support visible.",
+      "doNotInfer": "That adding texture changes only one perceptual property or demonstrates instrumental technique.",
+      "contextActivity": "Discuss how musical choices communicate meaning and sustain cultures; use authorised, contextual material.",
+      "reviewStatus": "draft_pending_music_educator",
+      "humanEducatorApproved": false,
+      "implemented": false,
+      "sourceIds": [
+        "C05"
+      ],
+      "curriculumCoverage": "proposed_partial; not a complete band programme",
+      "goalId": "G_SECTION_ORDER"
+    },
+    {
+      "id": "OLDER_EXTENSION",
+      "band": "older_extension",
+      "objective": "Investigate multiple interpretations or arrangements and defend an independent musical decision.",
+      "instruments": [
+        "keyboard",
+        "drums"
+      ],
+      "operation": "add_part",
+      "learnerControl": "Choose constraints, critique the partner and retain final authority.",
+      "steps": [
+        "Select or create original musical material.",
+        "Specify a clear arrangement goal and constraints.",
+        "Compare the model proposal with a learner-designed alternative.",
+        "Reject or revise, and explain the musical consequences.",
+        "Complete a new independent arrangement or analysis."
+      ],
+      "independentEvidence": "An independently justified decision; analytical depth can increase without raising motor demands.",
+      "doNotInfer": "Complete secondary/senior-course achievement or tertiary conservatoire equivalence.",
+      "contextActivity": "Research style/context with verified sources; no impersonation of named artists or restricted cultural material.",
+      "reviewStatus": "draft_pending_music_educator",
+      "humanEducatorApproved": false,
+      "implemented": false,
+      "sourceIds": [
+        "C06",
+        "C07",
+        "C11"
+      ],
+      "curriculumCoverage": "proposed_partial; not a complete band programme",
+      "goalId": "G_TEXTURE"
+    }
+  ],
+  "requirements": {
+    "ageIsNotAnAbilityGate": true,
+    "allBandsHaveDistinctExperiences": true,
+    "retainTenFoundationDrafts": true,
+    "preserveAccessInIndependentChecks": true,
+    "doNotInferDiagnosis": true,
+    "doNotGenerateCulturalAuthority": true
+  },
+  "coverageGaps": [
+    "Complete reviewed sequential content across all domains and bands",
+    "Authorised First Nations content and context for E02 descriptions",
+    "Appropriate vocal/physical/group performance experiences",
+    "Jurisdiction-specific secondary/senior mappings",
+    "Pilot evidence for all bands and relevant access needs"
+  ],
+  "sourceRegistry": "../references/sources.csv"
+}
