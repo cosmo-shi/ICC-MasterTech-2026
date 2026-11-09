@@ -2,13 +2,14 @@
   Instrument play screen: #/play/<instrument id>.
 
   The instrument's layout comes from src/data/instruments/<id>.json (NFR-MNT-01).
-  BUILDERS turns a layout "type" into an instrument. Milestone 3 adds "drums" here.
+  BUILDERS turns a layout "type" into an instrument (keyboard, drums).
 */
 import './play-instrument.css'
 import { el } from '../components/dom.js'
 import { getSettings, updateSettings, subscribe } from '../settings/settings.js'
-import { getVoice } from '../instruments/audio.js'
+import { getVoice, getDrumKit } from '../instruments/audio.js'
 import { createKeyboard } from '../instruments/keyboard.js'
+import { createDrumPads } from '../instruments/drums.js'
 import { createMetronomePanel } from '../instruments/metronome-panel.js'
 
 export let title = 'Play'
@@ -19,6 +20,12 @@ const BUILDERS = {
   keyboard: async (layout) => {
     const voice = await getVoice(layout.id, layout.sound, layout.samples)
     return createKeyboard({ layout, voice })
+  },
+  drums: async (layout) => {
+    const kit = await getDrumKit(layout.id, layout.pads)
+    // The student's saved pad order (Milestone 9) wins over the file's order.
+    const order = getSettings().padOrder || layout.order
+    return createDrumPads({ layout, kit, order })
   },
 }
 
@@ -81,9 +88,10 @@ export function render(params) {
         return
       }
 
-      const switches = [
-        settingSwitch({ key: 'showNoteNames', label: 'Note names', hint: 'Show the letter on each key.' }),
-      ]
+      const switches = []
+      if (layout.type === 'keyboard') {
+        switches.push(settingSwitch({ key: 'showNoteNames', label: 'Note names', hint: 'Show the letter on each key.' }))
+      }
       if (typeof navigator.vibrate === 'function') {
         switches.push(settingSwitch({ key: 'vibration', label: 'Vibrate on each beat', hint: 'The phone buzzes with the metronome.' }))
       }
@@ -102,7 +110,7 @@ export function render(params) {
       // Order on screen: name, metronome, instrument, then the switches,
       // so the keys are on the first screen of a phone.
       instrumentArea.replaceChildren(instrument.element)
-      screen.append(el('div', { class: 'wrap play__settings' }, switches))
+      if (switches.length) screen.append(el('div', { class: 'wrap play__settings' }, switches))
     })
     .catch((err) => {
       console.error('Could not open instrument', id, err)
