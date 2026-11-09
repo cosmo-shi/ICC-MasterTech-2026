@@ -1,0 +1,10 @@
+{
+  "name": "Carmen",
+  "short_name": "Carmen",
+  "description": "Make music and learn the basics on piano and drums. Everything stays on this device.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFF8E8",
+  "theme_color": "#FFF8E8",
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

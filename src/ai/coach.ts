@@ -163,7 +163,6 @@ export function decide(ctx: CoachContext): CoachDecision {
   const learner = inputsToPhrase(ctx.inputs, target, ctx.tempoBpm);
   let plan: ReplyPlan | undefined;
   let source: Phrase = target;
-  let replyText = '';
   const prov = patternSource === 'local-model' ? 'local-model' : 'rules';
   if (focus === 'timing' && pattern) {
     if (pattern === 'early' || pattern === 'late') {
@@ -181,7 +180,7 @@ export function decide(ctx: CoachContext): CoachDecision {
   } else {
     plan = { planId: 'target-echo', params: { op: 'echo', tempoScale: 1 }, source: 'target', provenance: 'rules', evidenceFactIds: evidence, templateId: 'target-echo' };
   }
-  replyText = coachText.replies[plan.templateId as keyof typeof coachText.replies];
+  const replyText = coachText.replies[plan.templateId as keyof typeof coachText.replies];
   const render = compileReply(plan, source);
   const verification = verifyReply(plan, source, render);
   if (verification.ok) decision.reply = { plan, render, verification, replyText, sourcePhrase: source };

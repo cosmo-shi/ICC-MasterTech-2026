@@ -1,0 +1,88 @@
+/* Sound Workshop design tokens. Every colour and size comes from here. */
+
+@font-face {
+  font-family: 'Grandstander';
+  src: url('/fonts/Grandstander-wght.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Atkinson Hyperlegible Next';
+  src: url('/fonts/AtkinsonHyperlegibleNext-wght.woff2') format('woff2');
+  font-weight: 200 800;
+  font-display: swap;
+}
+
+:root {
+  --canvas: #fff8e8;
+  --paper: #fffdf6;
+  --ink: #2b2341;
+  --ink-soft: #675d75;
+  --cobalt: #3658d4;
+  --cobalt-deep: #2843a8;
+  --on-cobalt: #ffffff;
+  --coral: #ff7954;
+  --sunflower: #ffd65c;
+  --mint: #a7dfc3;
+  --lilac: #c4b4e8;
+  --line: #2b2341;
+  --line-soft: #d9cfbd;
+  --focus: #3658d4;
+  --ok: #1f7a4d; /* text-safe green on canvas (5.6:1) */
+  --warn-bg: #ffe9a8;
+
+  --key-white: #fffdf6;
+  --key-black: #2b2341;
+  --key-down: var(--sunflower);
+  --key-target: var(--mint);
+
+  --font-display: 'Grandstander', 'Atkinson Hyperlegible Next', system-ui, sans-serif;
+  --font-body: 'Atkinson Hyperlegible Next', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --text-body: 1.1875rem; /* 19px */
+  --text-small: 1rem;
+  --text-control: 1.125rem;
+  --text-h1: clamp(2rem, 5vw, 2.5rem);
+  --text-h2: clamp(1.5rem, 3.5vw, 1.875rem);
+
+  --target: 48px;
+  --target-large: 64px;
+  --radius: 18px;
+  --radius-pill: 999px;
+  --stroke: 2.5px;
+  --gap: 16px;
+  --gap-lg: 28px;
+  --shadow: 0 3px 0 var(--line);
+  --shadow-down: 0 1px 0 var(--line);
+  --motion: 160ms;
+}
+
+[data-contrast='high'] {
+  --canvas: #ffffff;
+  --paper: #ffffff;
+  --ink: #000000;
+  --ink-soft: #1d1a24;
+  --cobalt: #1e3fb8;
+  --cobalt-deep: #142d85;
+  --line: #000000;
+  --line-soft: #000000;
+  --coral: #ffb199;
+  --sunflower: #ffe38a;
+  --mint: #c8efd9;
+  --lilac: #ddd2f5;
+  --key-black: #000000;
+  --stroke: 3px;
+}
+
+[data-size='large'] {
+  --target: 64px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion: 0ms;
+  }
+}
+[data-motion='reduced'] {
+  --motion: 0ms;
+}

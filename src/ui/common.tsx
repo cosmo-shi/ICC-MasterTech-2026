@@ -1,0 +1,96 @@
+import { useEffect, useState } from 'react';
+import type { CheckResult, EventFact } from '../engine/checker.ts';
+import { midiToLetter } from '../music/theory.ts';
+
+export function Pill({ tone = 'paper', children }: { tone?: 'paper' | 'mint' | 'lilac' | 'sunflower' | 'coral' | 'cobalt'; children: React.ReactNode }) {
+  return <span className={`pill pill-${tone}`}>{children}</span>;
+}
+
+/** Beat indicator: one dot per beat; current beat filled. Static (no animation) in reduced motion. */
+export function BeatDots({ beats, current, countIn }: { beats: number; current: number; countIn: boolean }) {
+  return (
+    <div className={`beats${countIn ? ' is-countin' : ''}`} aria-hidden="true">
+      {Array.from({ length: beats }, (_, i) => (
+        <span key={i} className={`beat${i === current ? ' is-now' : ''}${i % 4 === 0 ? ' is-bar' : ''}`}>
+          {countIn ? beats - i : i + 1}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function soundName(label?: string): string {
+  if (!label) return '';
+  if (label.startsWith('midi:')) return midiToLetter(Number(label.slice(5)));
+  const s = label.slice(5);
+  return s === 'kick' ? 'bass drum' : s === 'hihat' ? 'hi-hat' : s === 'tomHigh' ? 'high tom' : s === 'tomLow' ? 'low tom' : s;
+}
+
+function factText(f: EventFact): { icon: string; text: string; tone: string } {
+  if (f.status === 'missed') return { icon: '○', text: 'not played', tone: 'missed' };
+  if (f.status === 'wrong') return { icon: '✕', text: `played ${soundName(f.playedLabel)}`, tone: 'wrong' };
+  if (f.timing === 'early') return { icon: '◀', text: 'a bit early', tone: 'timing' };
+  if (f.timing === 'late') return { icon: '▶', text: 'a bit late', tone: 'timing' };
+  if (f.duration === 'short') return { icon: '—', text: 'let go early', tone: 'timing' };
+  if (f.duration === 'long') return { icon: '—', text: 'held too long', tone: 'timing' };
+  return { icon: '✓', text: f.timing ? 'on the beat' : 'matched', tone: 'ok' };
+}
+
+export function factMark(f: EventFact): string {
+  if (f.status !== 'match') return f.status;
+  if (f.timing === 'early' || f.timing === 'late') return f.timing;
+  return 'ok';
+}
+
+export function FactList({ result }: { result: CheckResult }) {
+  return (
+    <div className="facts">
+      <ol className="fact-row" aria-label="What happened, sound by sound">
+        {result.facts.map((f) => {
+          const t = factText(f);
+          return (
+            <li key={f.factId} className={`fact fact-${t.tone}`}>
+              <span className="fact-n">{f.index + 1}</span>
+              <span className="fact-icon" aria-hidden="true">
+                {t.icon}
+              </span>
+              <span className="fact-text">
+                {soundName(f.expectedLabel)} — {t.text}
+              </span>
+            </li>
+          );
+        })}
+      </ol>
+      {result.extras.length > 0 && (
+        <p className="fact-extra">
+          {result.extras.filter((x) => x.inRest).length > 0 && <>Tap in a rest: beat {result.extras.filter((x) => x.inRest).map((x) => Math.floor(x.onsetBeats) + 1).join(', ')}. </>}
+          {result.extras.filter((x) => !x.inRest).length > 0 && <>Extra sounds: {result.extras.filter((x) => !x.inRest).length}.</>}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/** Announces short status text to screen readers. */
+export function LiveStatus({ text }: { text: string }) {
+  const [shown, setShown] = useState('');
+  useEffect(() => {
+    const id = window.setTimeout(() => setShown(text), 50);
+    return () => window.clearTimeout(id);
+  }, [text]);
+  return (
+    <p className="sr-only" role="status" aria-live="polite">
+      {shown}
+    </p>
+  );
+}
+
+/** Small original motif: an arch over a dot (a "sound" landing). */
+export function Motif({ size = 40 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 40 40" aria-hidden="true" focusable="false" className="motif">
+      <path d="M6 28 A14 14 0 0 1 34 28" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+      <circle cx="20" cy="28" r="5" fill="var(--coral)" stroke="currentColor" strokeWidth="2.5" />
+    </svg>
+  );
+}

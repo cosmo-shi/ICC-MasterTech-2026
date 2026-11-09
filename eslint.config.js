@@ -6,7 +6,7 @@ import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist', '.agents', '.claude', 'context-pack', 'public/sw.js']),
+  globalIgnores(['dist', '.agents', '.claude', 'context-pack']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -15,6 +15,12 @@ export default defineConfig([
       reactHooks.configs.flat.recommended,
       reactRefresh.configs.vite,
     ],
+    rules: {
+      // React Compiler is not enabled in the build, so this advisory rule does not apply.
+      'react-hooks/preserve-manual-memoization': 'off',
+      // Fast refresh is a dev-only convenience; small helper exports beside components are fine.
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+    },
     languageOptions: {
       globals: globals.browser,
     },
