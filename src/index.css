@@ -1992,3 +1992,10 @@ details > summary {
   justify-items: start;
   margin-bottom: var(--s4);
 }
+
+/* Drum key under drum music: which place on the stave is which drum. */
+.drum-key {
+  margin: var(--s1) 0 0;
+  color: var(--ink-soft);
+  font-size: 0.9375rem;
+}
