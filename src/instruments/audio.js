@@ -1,5 +1,5 @@
 /*
-  Shared audio module for every instrument (keyboard now, drums in Milestone 3).
+  Shared audio module for every instrument (keyboard and drums).
 
   - Sound is made with Tone.js. By default it is generated in code (a synth).
     If an instrument's JSON lists licensed sample files, those are used instead.
@@ -111,10 +111,86 @@ export async function createVoice(sound, samples = null) {
   }
 }
 
-// One voice per instrument, kept so returning to a screen is instant.
+// ---------- Drum kit (Milestone 3) ----------
+
+// One synth per pad, built from the pad's "sound" settings in drums.json.
+function createDrumSynth(sound = {}) {
+  let synth
+  let play
+  if (sound.engine === 'membrane') {
+    synth = new Tone.MembraneSynth({
+      pitchDecay: sound.pitchDecay ?? 0.05,
+      octaves: sound.octaves ?? 6,
+      envelope: { attack: 0.001, decay: sound.decay ?? 0.4, sustain: 0, release: 0.1 },
+    })
+    play = (time, velocity) => synth.triggerAttackRelease(sound.note || 'C1', sound.decay ?? 0.4, time, velocity)
+  } else if (sound.engine === 'noise') {
+    synth = new Tone.NoiseSynth({
+      noise: { type: sound.noise || 'white' },
+      envelope: { attack: 0.001, decay: sound.decay ?? 0.2, sustain: 0, release: 0.05 },
+    })
+    play = (time, velocity) => synth.triggerAttackRelease(sound.decay ?? 0.2, time, velocity)
+  } else if (sound.engine === 'metal') {
+    synth = new Tone.MetalSynth({
+      envelope: { attack: 0.001, decay: sound.decay ?? 0.1, release: 0.05 },
+      harmonicity: sound.harmonicity ?? 5.1,
+      modulationIndex: sound.modulationIndex ?? 32,
+      resonance: sound.resonance ?? 4000,
+      octaves: sound.octaves ?? 1.5,
+    })
+    play = (time, velocity) => synth.triggerAttackRelease(sound.frequency ?? 250, sound.decay ?? 0.1, time, velocity)
+  } else {
+    throw new Error(`Unknown drum sound engine: ${sound.engine}`)
+  }
+  synth.toDestination()
+  synth.volume.value = sound.volume ?? -8
+  return { synth, play }
+}
+
+/*
+  A drum kit plays one-shot hits.
+    const kit = await createDrumKit(layout.pads)
+    kit.hit('snare')   // returns the audio-clock time of the hit
+  Each pad has its own synth, so different pads always sound together (FR-PLY-07).
+*/
+export async function createDrumKit(pads) {
+  await loadTone()
+  const drums = new Map()
+  for (const pad of pads) {
+    drums.set(pad.id, { ...createDrumSynth(pad.sound), last: -1 })
+  }
+
+  return {
+    hit(padId, velocity = 0.9) {
+      const drum = drums.get(padId)
+      if (!drum) return null
+      let time = Tone.immediate()
+      // Tone refuses two starts at the same instant on one synth: nudge a fast repeat by 1 ms.
+      if (time <= drum.last) time = drum.last + 0.001
+      drum.last = time
+      try {
+        drum.play(time, velocity)
+      } catch (err) {
+        console.warn('[audio] Drum hit skipped', padId, err)
+      }
+      return time
+    },
+    dispose() {
+      for (const drum of drums.values()) drum.synth.dispose()
+      drums.clear()
+    },
+  }
+}
+
+// One voice or kit per instrument, kept so returning to a screen is instant.
 const voices = new Map()
 
 export function getVoice(id, sound, samples) {
   if (!voices.has(id)) voices.set(id, createVoice(sound, samples))
+  return voices.get(id)
+}
+
+export function getDrumKit(id, pads) {
+  if (!voices.has(id)) voices.set(id, createDrumKit(pads))
   return voices.get(id)
 }
