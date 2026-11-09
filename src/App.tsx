@@ -9,6 +9,7 @@ import { MyMusic } from './screens/MyMusic.tsx';
 import { ControlsSheet } from './screens/ControlsSheet.tsx';
 import { Avatar, EntryScreen } from './screens/EntryScreen.tsx';
 import { players, teacher, usePlayers } from './store/profiles.ts';
+import { syncLearnerModel } from './ai/bktLearner.ts';
 
 const MissionScreen = lazy(() => import('./screens/MissionScreen.tsx').then((m) => ({ default: m.MissionScreen })));
 const TheoryScreen = lazy(() => import('./screens/TheoryScreen.tsx').then((m) => ({ default: m.TheoryScreen })));
@@ -40,7 +41,9 @@ function Shell() {
   const [settingsAt, setSettingsAt] = useState<string | null>(null);
   const settingsOpen = settingsAt === hash;
   const setSettingsOpen = (open: boolean) => setSettingsAt(open ? hash : null);
-  const { saveError } = usePrefs();
+  const { saveError, prefs } = usePrefs();
+  // Plug the on-device BKT learner model in while the AI is on (the built-in tracker when off).
+  syncLearnerModel(prefs.aiEnabled);
   const mainRef = useRef<HTMLElement>(null);
   const [, section, arg, sub] = hash.split('/');
   const who = usePlayers();

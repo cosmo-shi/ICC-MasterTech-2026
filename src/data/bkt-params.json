@@ -1,0 +1,15 @@
+{
+  "status": "draft — settings fitted to simulated learners only, not to children",
+  "source": "Fitted by maximum likelihood on carmen-b (npm run fit:learner): 800 simulated learners x 16 tries, seed 1, tested on a different simulated group. Mapped onto sc's skills: quavers uses the 'two sounds in a beat' fit; direction and note-names use the 'right notes' fit.",
+  "passIf": { "onset": 0.8, "pitch": 1, "rest": 1, "duration": 1 },
+  "weights": { "independent": 1, "practice": 0.6, "answerHint": 0.2 },
+  "skills": {
+    "pulse": { "pInit": 0.42, "pLearn": 0.04, "pSlip": 0.21, "pGuess": 0.35 },
+    "rests": { "pInit": 0.49, "pLearn": 0.02, "pSlip": 0.15, "pGuess": 0.32 },
+    "quavers": { "pInit": 0.22, "pLearn": 0.01, "pSlip": 0.3, "pGuess": 0.25 },
+    "direction": { "pInit": 0.48, "pLearn": 0.06, "pSlip": 0.26, "pGuess": 0.31 },
+    "note-names": { "pInit": 0.48, "pLearn": 0.06, "pSlip": 0.26, "pGuess": 0.31 },
+    "reading": { "pInit": 0.27, "pLearn": 0.15, "pSlip": 0.3, "pGuess": 0.23 },
+    "duration": { "pInit": 0.51, "pLearn": 0.04, "pSlip": 0.16, "pGuess": 0.32 }
+  }
+}
