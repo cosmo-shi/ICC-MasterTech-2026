@@ -36,10 +36,10 @@ Pure logic (music, checker, ai, verifier) lives in plain TS under `src/music`, `
 - Pitch, onset and duration are separate facts. Untimed pitch tasks get no timing penalty.
 - Australian terms: crotchet, quaver, minim, practise (verb).
 
-## Design ("Songbook Horizon", chosen by momo 2026-11-09: direction C's warmth + B's playfulness; replaces Colour Bars and Sound Workshop)
-- Idea: the stave is the horizon. A sunset landscape whose hill crests are stave lines, with a note-head sun, frames every screen; the work sits on a sheet of paper over it. Dark mode is the same place after sunset (moon, night hills), not neon.
-- Colour has roles (tokens in `src/styles/tokens.css`): sky/hills = environment only; paper/ink = reading and playing; sun = "now" (main action, pressed key, current beat); record = recording only; dusk = where you are (selected tab/option, links); good/near/miss = feedback, always with words. No rainbow note colours.
-- Type roles: Bagel Fat One for the wordmark, screen titles and big feedback headings only; Figtree for everything else. Self-hosted with OFL notices.
+## Design ("Soft Light", momo 2026-11-09 evening: cat-swatch palette; replaces Songbook Horizon colours and fonts)
+- Palette from the sampled cat swatches (coral, peach, mist, sky, periwinkle, orchid), with tints and deep ink shades; same roles in Night mode. Softness from tinted paper, round shapes and gentle depth, not blurred gradients; no cat mascot. The header keeps the sunset-and-stave scene.
+- Colour has roles (tokens in `src/styles/tokens.css`): sky/hills = environment only; paper/ink = reading and playing; sun (coral) = "now" (main action, pressed key, current beat); record = recording only; dusk (periwinkle) = where you are; good/near/miss = feedback, always with words and a shape; track hues: Rhythm basics coral, Piano periwinkle, Drums sky, Create orchid.
+- Type: Nunito only (self-hosted, OFL). Roles by weight: 900 wordmark/titles/big feedback, 800 headings, 700 controls, 500 body.
 - Shape/space/elevation: 4-pt spacing (`--s1`…`--s7`), radii 10/16/28. Only playable things (keys, pads, Record) have a physical edge. Group by space and hairlines, not boxes, outlines or heavy shadows. The instrument sits in a dark case, centred, and is the biggest thing on Play.
 - Brand mark: note-head sun over two curved stave lines (`Logo`, `Wordmark`, `public/favicon.svg`). Icons, the mark, the `Horizon` scene and the `Band` children share one geometry: 24 grid, 2-unit round strokes, the tilted note head as the one filled motif. Keep familiar action icons (play, undo, stop, gear).
 - Phone: bottom tabs Play / Learn / My music, settings (incl. Day/Night/Same as device) behind the gear. Desktop ≥900 px: sidebar on the landscape, Grown-ups after a divider.

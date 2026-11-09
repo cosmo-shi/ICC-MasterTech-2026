@@ -1,5 +1,6 @@
 import { lessonStars, nextFor, reasonText } from '../ai/learner.ts';
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { blurb, lessonById, missionById } from '../data/catalog.ts';
 import { type Activity, type TrackId, TRACKS, activityById, positionInTrack, trackActivities, trackById } from '../data/curriculum.ts';
 import { Icon, type IconName } from '../ui/icons.tsx';
@@ -174,7 +175,8 @@ function StopSheet({ id, stars, started, suggested, onClose, go }: { id: string;
   const controls = Object.entries(a.controls)
     .map(([inst, c]) => (a.instrument === 'either' ? `${inst === 'drums' ? 'Drums' : 'Piano'}: ${c}` : c))
     .join(' · ');
-  return (
+  // Portal: the page sheet is its own stacking layer, so this would sit under the tab bar.
+  return createPortal(
     <div className="stop-sheet-wrap" onClick={onClose}>
       <div className={`stop-sheet tr-${a.track}`} role="dialog" aria-modal="true" aria-labelledby="stop-h" onClick={(e) => e.stopPropagation()}>
         <p className="kicker">
@@ -215,6 +217,7 @@ function StopSheet({ id, stars, started, suggested, onClose, go }: { id: string;
           Not now
         </button>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
