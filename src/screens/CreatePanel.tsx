@@ -14,13 +14,16 @@ interface Props {
   instrument: InstrumentId;
   activityId?: string;
   onSaved?: (c: CompositionRecord) => void;
+  /** "Make it yours": a lesson's idea to start from. */
+  idea?: { title: string; phrase: Phrase };
+  onBackToLesson?: () => void;
 }
 
 /** Record as note events (never microphone audio), replay, name and save locally. No score. */
-export function CreatePanel({ instrument, activityId, onSaved }: Props) {
+export function CreatePanel({ instrument, activityId, onSaved, idea, onBackToLesson }: Props) {
   const [state, setState] = useState<'idle' | 'countin' | 'recording' | 'recorded'>('idle');
   const [click, setClick] = useState(false);
-  const [tempo, setTempo] = useState(90);
+  const [tempo, setTempo] = useState(idea ? idea.phrase.tempoBpm : 90);
   const [phrase, setPhrase] = useState<Phrase | null>(null);
   const [previous, setPrevious] = useState<{ phrase: Phrase; title: string } | null>(null);
   const [title, setTitle] = useState('');
@@ -149,8 +152,35 @@ export function CreatePanel({ instrument, activityId, onSaved }: Props) {
     </div>
   );
 
+  const ideaPlayer = player;
   return (
     <div className="create">
+      {idea && (
+        <section className="idea" aria-labelledby="idea-h">
+          <div>
+            <p className="kicker">Make it yours</p>
+            <h2 id="idea-h" className="h3 idea-title">
+              Start from “{idea.title}”
+            </h2>
+            <p className="support">Hear the idea, then record your own version. Change a note, change the rhythm, or add an ending.</p>
+          </div>
+          <div className="row wrap">
+            <button
+              type="button"
+              className="btn-quiet"
+              disabled={recording}
+              onClick={() => (ideaPlayer.playing ? ideaPlayer.stop() : void ideaPlayer.play([idea.phrase], idea.phrase.tempoBpm, { totalTicks: idea.phrase.totalTicks }))}
+            >
+              <Icon name={ideaPlayer.playing ? 'stop' : 'playback'} size={18} /> {ideaPlayer.playing ? 'Stop' : 'Hear the idea'}
+            </button>
+            {onBackToLesson && (
+              <button type="button" className="btn-quiet" onClick={onBackToLesson}>
+                Lesson summary
+              </button>
+            )}
+          </div>
+        </section>
+      )}
       <Workspace instrument={instrument} onEvent={onEvent} trail recording={state === 'recording'} dock={dock} />
       <p className="status-line" role="status">
         {state === 'recorded' && phrase && !phrase.events.length && 'Nothing recorded. Press Record, then play.'}

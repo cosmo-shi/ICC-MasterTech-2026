@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { audio } from '../audio/engine.ts';
 import { type CoachDecision, decide } from '../ai/coach.ts';
-import { lessonById, pathwayById, LESSONS } from '../data/catalog.ts';
+import { lessonById, pathwayById } from '../data/catalog.ts';
 import { Icon } from '../ui/icons.tsx';
 import { checkAttempt, type CheckResult } from '../engine/checker.ts';
 import { Recorder } from '../music/capture.ts';
@@ -15,6 +15,10 @@ import { Notation, describePhrase } from '../ui/Notation.tsx';
 import { usePlayer } from '../ui/usePlayer.ts';
 import { type LiveEvent, Workspace } from '../ui/Workspace.tsx';
 import { FreeLesson } from './FreeLesson.tsx';
+import { inputsToPhrase } from '../ai/coach.ts';
+import { skillsForActivity } from '../ai/learner.ts';
+import { LessonCycle, LessonSummary } from './LessonSummary.tsx';
+import type { CapturedInput } from '../engine/checker.ts';
 
 type Phase = 'ready' | 'countin' | 'playing' | 'review';
 type Mode = 'practice' | 'independent';
@@ -22,9 +26,11 @@ type Mode = 'practice' | 'independent';
 interface Props {
   lessonId: string;
   go: (route: string) => void;
+  /** 'summary' opens the end-of-lesson summary (for example after "Make it yours"). */
+  view?: string;
 }
 
-export function LessonScreen({ lessonId, go }: Props) {
+export function LessonScreen({ lessonId, go, view }: Props) {
   const lesson = lessonById(lessonId);
   if (!lesson) return (
       <div className="panel" role="alert">
@@ -34,6 +40,7 @@ export function LessonScreen({ lessonId, go }: Props) {
         </button>
       </div>
     );
+  if (view === 'summary') return <LessonSummary key={lessonId} lessonId={lessonId} go={go} />;
   if (lesson.assessment.mode === 'free-exploration' || lesson.assessment.mode === 'creative-completion') return <FreeLesson lesson={lesson} go={go} />;
   return <AssessedLesson key={lessonId} lessonId={lessonId} go={go} />;
 }
@@ -52,6 +59,9 @@ function AssessedLesson({ lessonId, go }: Props) {
   const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'failed'>('idle');
   const [showNotation, setShowNotation] = useState(pathway ? pathway.showNotationByDefault || lesson.showStave : true);
   const [liveCount, setLiveCount] = useState(0);
+  const [takeInputs, setTakeInputs] = useState<CapturedInput[]>([]);
+  const [listenedBack, setListenedBack] = useState(false);
+  const [tries, setTries] = useState(0);
   const recorder = useRef<Recorder | null>(null);
   const attemptId = useRef<string>('');
   const player = usePlayer();
@@ -78,6 +88,8 @@ function AssessedLesson({ lessonId, go }: Props) {
     setResult(res);
     setDecision(d);
     setPhase('review');
+    setTakeInputs(rec.inputs);
+    setTries((t) => t + 1);
     const id = newId('att');
     attemptId.current = id;
     const record: AttemptRecord = {
@@ -186,11 +198,17 @@ function AssessedLesson({ lessonId, go }: Props) {
     await listen.play([{ events: target.events }], tempo, { totalTicks: target.totalTicks, countInBeats: timed ? 4 : 0, click: timed });
   };
 
+  const listenBack = async () => {
+    setListenedBack(true);
+    listen.stop();
+    const take = inputsToPhrase(takeInputs, target, tempo);
+    await listen.play([{ events: take.events }], tempo, { totalTicks: target.totalTicks });
+  };
+  const theoryId = skillsForActivity(lesson.id)[0]?.theory;
+
   const marks = result ? result.facts.map(factMark) : undefined;
   const activeIndex = phase === 'playing' && !timed ? liveCount : undefined;
   const beatNow = player.beat ?? listen.beat;
-  const ix = LESSONS.findIndex((l) => l.id === lesson.id);
-  const nextInPath = pathway?.recommended.find((id) => id !== lesson.id && LESSONS.findIndex((l) => l.id === id) > ix) ?? LESSONS[ix + 1]?.id;
 
   const hints = lesson.hints;
   const goIndependent = () => {
@@ -227,6 +245,10 @@ function AssessedLesson({ lessonId, go }: Props) {
         </div>
       </header>
 
+      <LessonCycle
+        at={phase === 'review' ? 'listen' : phase === 'ready' && !heardExample && !result ? 'hear' : 'try'}
+        done={{ hear: heardExample, learn: heardExample || tries > 0, try: tries > 0, listen: listenedBack, make: false }}
+      />
       <div className="lesson-grid">
         <section className="panel task" aria-labelledby="task-h">
           <h2 id="task-h" className="h3">
@@ -236,6 +258,11 @@ function AssessedLesson({ lessonId, go }: Props) {
             <>
               <p className="support">{lesson.explanation}</p>
               <MoreDetail lessonId={lesson.id} />
+              {theoryId && (
+                <button type="button" className="link theory-link" onClick={() => go(`#/theory/${theoryId}`)}>
+                  <Icon name="notes" size={18} /> What does this mean? Music words
+                </button>
+              )}
             </>
           )}
 
@@ -327,6 +354,14 @@ function AssessedLesson({ lessonId, go }: Props) {
               {result.passed ? (mode === 'independent' ? 'You did it on your own' : 'That matched') : 'Here is what happened'}
             </h2>
             {saveState === 'failed' && <p className="support warn">This try couldn’t be saved.</p>}
+            <div className="row wrap listen-row">
+              <button type="button" className="btn-quiet" onClick={() => (listen.playing ? listen.stop() : void listenBack())} disabled={!takeInputs.length}>
+                <Icon name={listen.playing ? 'stop' : 'ear'} size={20} /> {listen.playing ? 'Stop' : 'Listen back to my take'}
+              </button>
+              <button type="button" className="btn-quiet" onClick={() => void hearExample()}>
+                <span aria-hidden="true">▶ </span>Hear the example again
+              </button>
+            </div>
             <FactList result={result} />
             <LiveStatus text={`${result.summary.correctSound} of ${result.summary.expected} sounds matched.`} />
             <CoachCard decision={decision} onChoice={recordChoice} onReflect={mode === 'practice' ? reflect : undefined} />
@@ -346,13 +381,11 @@ function AssessedLesson({ lessonId, go }: Props) {
                     Try a new one on my own
                   </button>
                 )}
-                {nextInPath && (
-                  <button type="button" className="btn-quiet" onClick={() => { recordChoice(`next:${nextInPath}`); go(`#/lesson/${nextInPath}`); }}>
-                    Next: {lessonById(nextInPath)?.title}
-                  </button>
-                )}
-                <button type="button" className="btn-quiet" onClick={() => go('#/play')}>
-                  Just play
+                <button type="button" className="btn-quiet" onClick={() => { recordChoice('make'); go(`#/play/make/${lesson.id}`); }}>
+                  Make it yours
+                </button>
+                <button type="button" className="btn btn-primary" onClick={() => { recordChoice('finish'); go(`#/lesson/${lesson.id}/summary`); }}>
+                  Finish lesson
                 </button>
               </div>
               {result.passed && mode === 'practice' && <p className="note-text">Ready for a new one on your own? It’s up to you.</p>}

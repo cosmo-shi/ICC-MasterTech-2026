@@ -3,6 +3,7 @@
 
 import type { CapturedInput, CheckSummary } from '../engine/checker.ts';
 import type { InstrumentId, MusicEvent } from '../music/events.ts';
+import { players } from './profiles.ts';
 
 export const SCHEMA_VERSION = 1;
 const DB_NAME = 'carmen-local';
@@ -41,6 +42,8 @@ export interface AttemptRecord {
   coach?: CoachRecord;
   reflection?: string;
   note?: string;
+  /** The local player this belongs to (see profiles.ts). Missing = a guest or older record. */
+  profileId?: string;
 }
 
 export interface CompositionRecord {
@@ -54,6 +57,7 @@ export interface CompositionRecord {
   origin: 'free-play' | 'lesson' | 'mission';
   activityId?: string;
   partner?: { op: string; accepted: boolean; provenance: string };
+  profileId?: string;
 }
 
 type StoreName = 'attempts' | 'compositions';
@@ -130,6 +134,9 @@ class LocalStore {
 
   /** Resolves only after the transaction commits. Never report "Saved" before this resolves. */
   async put(store: StoreName, value: unknown): Promise<void> {
+    // New work belongs to whoever is playing. Existing records keep their owner.
+    const who = players.currentId();
+    if (who && !(value as { profileId?: string }).profileId) value = { ...(value as object), profileId: who };
     const v = value as { id: string };
     this.mem[store].set(v.id, value);
     if (this.persistent) await this.tx(store, 'readwrite', (s) => s.put(value));

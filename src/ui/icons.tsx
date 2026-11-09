@@ -27,7 +27,11 @@ type IconName =
   | 'path-1-2'
   | 'path-3-4'
   | 'path-5-6'
-  | 'path-older';
+  | 'path-older'
+  | 'check'
+  | 'notes'
+  | 'ear'
+  | 'people';
 
 const S = { fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
 
@@ -108,6 +112,29 @@ function paths(name: IconName) {
         <>
           <ellipse cx="12" cy="9" rx="8" ry="3" {...S} />
           <path d="M4 9v7c0 1.7 3.6 3 8 3s8-1.3 8-3V9M8 12l-1 6.5M16 12l1 6.5" {...S} />
+        </>
+      );
+    case 'check':
+      return <path d="M5 12.5l4.5 4.5L19 7.5" {...S} strokeWidth={2.6} />;
+    case 'notes': // a stave with two notes: the music-words library
+      return (
+        <>
+          <path d="M3 7h18M3 11h18M3 15h18" {...S} strokeWidth={1.4} opacity={0.55} />
+          <Head x={8} y={15} />
+          <path d="M11 14.4V5" {...S} />
+          <Head x={15.5} y={11} />
+          <path d="M18.5 10.4V3.5" {...S} />
+        </>
+      );
+    case 'ear': // listen back
+      return <path d="M7 9.5a5 5 0 0 1 10 0c0 3-3 3.6-3 6.5a3 3 0 0 1-5.6 1.4M10 9.5a2 2 0 0 1 4 0" {...S} />;
+    case 'people':
+      return (
+        <>
+          <circle cx="9" cy="8.5" r="3" {...S} />
+          <path d="M3.5 19c.5-3.2 2.7-5 5.5-5s5 1.8 5.5 5" {...S} />
+          <circle cx="16.5" cy="9.5" r="2.4" {...S} />
+          <path d="M16.5 14c2.2 0 3.8 1.5 4.2 4" {...S} />
         </>
       );
     case 'back':
