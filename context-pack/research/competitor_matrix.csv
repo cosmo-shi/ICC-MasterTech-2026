@@ -1,0 +1,30 @@
+name,kind,availability_or_evidence,documented_overlap,source_ids,effect_on_claim,uncertainty
+GarageBand,product,public product documentation,"Touch instruments, recording and composition",U36,Digital instruments and creating music,Not a complete curriculum claim
+Ableton Learning Music,learning site,public learning site,Browser musical fundamentals and creation,U37,Instrument-free learning,No full paid-product audit
+Chrome Music Lab,learning site,public learning site,No-account experiments and Song Maker,U38,Low-barrier browser exploration,Not a sequential whole-school course claim
+Duolingo Music,product,public product documentation,"Keyboard-based listening, notation and rhythm lessons",U31,Lessons without a physical instrument,Older official announcement is not exhaustive current inventory
+Musicca,school/product,public product documentation,"Virtual instruments, adaptive exercises and teacher tracking",U32,Personalisation plus Teacher Mode,Actual comparative usability/learning untested
+MusiQuest,school/product,official indexed product plus curriculum PDF,"Composition-led learning, listening, assessment and exports",U30; M09,Creative learning and connected representations,Direct product fetch unreadable; not hands-on tested
+Charanga / YuStudio,school/product,public product documentation,"Teacher-guided projects, creation and assignments",U39,Creative primary teaching workflow,National mapping needs jurisdiction-specific review
+QuaverMusic,school/product,official government materials review,"Differentiation, primary scope and multiple assessment forms",U26,A broad primary suite with assessment,US review does not certify Australian alignment or effect
+EarMaster,product,public product documentation,"Adaptive questions, sing/clap-back and multiple interfaces",U08,Adaptive musical conversation and input choice,Vendor performance/exclusivity claims not adopted
+Musiah,product,public product documentation,AI expert teaching and prioritised performance feedback,U06,Pedagogically prioritised AI feedback,Physical MIDI keyboard requirement; efficacy marketing unverified
+Simply Piano,product,public product documentation,Tailored lessons and real-time feedback,U34,Adaptive guided practice,XR links observed but not treated as validated capabilities
+Yousician,product,official indexed documentation,Audio-based performance feedback and guided learning,U33,Real-time musical feedback,Direct fetch 403; evidence depth recorded
+MakeMusic Cloud,school/product,public product documentation,"Accompaniment, feedback, teacher sharing and optional scoring",U35,Ensemble-context practice and teacher insights,Not all input or developmental needs validated
+Soundtrap Education,school/product,public product documentation,"Classroom production, assignments and collaboration",U29,A collaborative school music workspace,Infrastructure and implementation costs not independently tested
+Moises / MusicFirst,school/product,official school offer plus vendor documentation,Learner-conditioned generated parts and classroom integration,U01; U02,"AI band, editable responses and school positioning","Actual outcomes, exact constraints and contracts untested"
+Metronaut,product,official help documentation,Performance-following accompaniment and feedback,U04,An accompanist that follows a learner,Interpret mode is not available on Web in reviewed docs
+Violy,product announcement,China-market announcement,Accompaniment follows instrumental performance,U05,AI accompaniment for children,No verified global release or current entitlement
+Soundverse Teaching Agent,product,public product documentation,"AI teaching, paths, quizzes and short musical examples",U07,Pedagogical music generation and explanations,Child suitability and exact example validity untested
+BandLab SongStarter,product,public product/help documentation,Editable generated musical ideas,U27; U28,Generative creative starting points,Public service age policy prevents assuming a primary-child route
+Maru,developer/product,private early-access documentation,Browser camera-to-musical-control mappings,U09,Gesture-controlled music in a browser,General availability and actual performance unverified
+AUMI,accessible instrument,official project documentation,Movement/gesture improvisation and configurable controls,U10,Embodied accessible music-making,Not evidence of Carmen learning transfer
+Open Orchestras / Clarion,programme/product,official programme documentation,"Customisable instrument, repertoire and teacher support",U40,Access plus a usable teaching programme,Not automatically available on every device
+MIROR / Continuator,research precedent,peer-reviewed project overview,"Child-centred imitation, variation, improvisation and movement",U11,Children learning through AI musical responses,"Historical research, not a currently verified school product"
+Somax2,research/software,official research software documentation,AI co-improvisation and live musical interaction,U12,Responsive AI musical partner,No ordinary-browser primary-school deployment established
+Piano Genie,research/demo,primary technical article,Learned limited-controller to piano mapping,U13,An AI instrument reduces control demands,Generated pitches do not establish learner pitch selection
+Hyperscore,research precedent,primary project overview,Graphical composition and musical representations,U41,Creating before conventional instrumental proficiency,Current commercial availability not audited
+EyeLa,research installation,2026 conference abstract,Accessible AR music/rhythm game with head/eye control,U14,AR plus accessible embodied music,Installation evidence; no general efficacy inference
+ANU intelligent AR instruments,research programme,2026 official project brief,Machine-learning musical interaction in spatial interfaces,U15,AI and AR musical interaction,Research opportunity; not an endorsed partnership
+Magenta RealTime 2,research/model tooling,June 2026 technical release and model docs,Local live music generation controlled by text/audio/MIDI,U18; U19; U20,Local interactive neural music generation,Documented Apple-Silicon route; not general school-browser readiness

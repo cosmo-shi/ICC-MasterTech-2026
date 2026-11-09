@@ -1,0 +1,50 @@
+{
+  "asOf": "2026-11-09",
+  "status": "preimplementation",
+  "allowedPositioning": [
+    "Carmen is being developed as an accessible music-learning environment across primary school.",
+    "The proposed AI loop uses learner-owned musical material, bounded response planning and independent checks."
+  ],
+  "rejectedNoveltyClaims": [
+    "first AI bandmate",
+    "only AI music teacher",
+    "first gesture-controlled instrument",
+    "first AI teaching examples",
+    "unique because it has Teacher Mode",
+    "proven independent learning",
+    "fully Australian-curriculum certified"
+  ],
+  "conditionalClaims": [
+    {
+      "claim": "real local musical AI",
+      "requires": [
+        "approved model actually loaded",
+        "inference materially affects a musical response",
+        "recorded benchmark/provenance"
+      ]
+    },
+    {
+      "claim": "works offline",
+      "requires": [
+        "verified resources present",
+        "offline reload and actual flow tested"
+      ]
+    },
+    {
+      "claim": "differentiated across primary",
+      "requires": [
+        "meaningfully distinct working pathways in all four bands"
+      ]
+    },
+    {
+      "claim": "competitive advantage",
+      "requires": [
+        "fair competitor comparison",
+        "learner/teacher benefit",
+        "budgeted repeat adoption"
+      ]
+    }
+  ],
+  "globalExclusivityEstablished": false,
+  "childEfficacyEstablished": false
+}

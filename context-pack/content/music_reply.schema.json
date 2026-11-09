@@ -1,0 +1,217 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://carmen.invalid/schemas/music-reply-plan-v2.json",
+  "title": "Carmen bounded musical reply plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "requestId",
+    "sourcePhraseHash",
+    "goalId",
+    "mode",
+    "provenance",
+    "operation",
+    "parameters",
+    "evidenceFactIds",
+    "feedbackTemplateId"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "2.0.0"
+    },
+    "requestId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "sourcePhraseHash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "goalId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "mode": {
+      "enum": [
+        "controlled_contrast",
+        "accompaniment"
+      ]
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "modelCardId"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "model",
+            "reviewed_rule",
+            "illustrative_fixture"
+          ]
+        },
+        "modelCardId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 128
+        }
+      }
+    },
+    "operation": {
+      "enum": [
+        "transpose",
+        "dynamics",
+        "replace_with_rest",
+        "section_order",
+        "add_part",
+        "echo"
+      ]
+    },
+    "parameters": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "semitones": {
+          "type": "integer",
+          "minimum": -12,
+          "maximum": 12
+        },
+        "velocity": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "eventId": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "sectionOrder": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 8,
+          "items": {
+            "type": "string",
+            "maxLength": 64
+          }
+        },
+        "partTemplateId": {
+          "type": "string",
+          "maxLength": 128
+        }
+      }
+    },
+    "evidenceFactIds": {
+      "type": "array",
+      "maxItems": 12,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "maxLength": 128
+      }
+    },
+    "feedbackTemplateId": {
+      "type": "string",
+      "maxLength": 128
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "transpose"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "parameters": {
+            "required": [
+              "semitones"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "dynamics"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "parameters": {
+            "required": [
+              "velocity"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "replace_with_rest"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "parameters": {
+            "required": [
+              "eventId"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "section_order"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "parameters": {
+            "required": [
+              "sectionOrder"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "add_part"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "parameters": {
+            "required": [
+              "partTemplateId"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "$comment": "Schema validation is necessary but insufficient. Runtime must check hashes, known IDs, loaded model provenance, permitted mode/operator, actual musical invariants and safety budgets. This file is a contract, not a model or implemented runtime."
+}

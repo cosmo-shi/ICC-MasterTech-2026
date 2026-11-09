@@ -1,0 +1,1560 @@
+{
+  "schemaVersion": "1.0.0",
+  "packId": "primary-foundations-draft",
+  "version": "1.0.0-draft",
+  "createdAt": "2026-11-08",
+  "licence": "CC-BY-SA-4.0",
+  "humanEducatorApproved": false,
+  "reviewStatus": "draft_pending_primary_music_educator",
+  "statusExplanation": "Sourced draft lesson content and original exercise patterns. No claim of child testing, curriculum endorsement, educator approval or implemented app functionality.",
+  "sourceRegistry": "content_sources.json",
+  "attribution": "See content_sources.json and LICENSE_CONTENT.md. Adapted concept explanations and newly authored activities; no third-party recordings or song transcriptions.",
+  "lessons": [
+    {
+      "version": "1.0.0-draft",
+      "suggestedAgeRange": [
+        7,
+        10
+      ],
+      "reviewStatus": "draft_pending_primary_music_educator",
+      "licence": "CC-BY-SA-4.0",
+      "curriculumMapping": {
+        "status": "orientation_only_not_formally_mapped",
+        "sourceId": "ACARA_ARTS",
+        "verifiedCodes": []
+      },
+      "contentNotes": "Original activity wording and symbolic patterns informed by the attributed open theory sources. Not a copied song or teacher-approved sequence.",
+      "id": "L00",
+      "title": "Make a sound",
+      "goal": "Explore",
+      "objective": "Make, stop and change a sound using comfortable controls.",
+      "prerequisites": [],
+      "supportedInstruments": [
+        "keyboard",
+        "drums"
+      ],
+      "sourceIds": [
+        "ACARA_ARTS"
+      ],
+      "instruction": "Choose a sound. Try it, then stop it.",
+      "explanation": "You can explore sounds and make your own music here.",
+      "assessment": {
+        "mode": "free-exploration",
+        "score": false
+      },
+      "practice": null,
+      "independent": null,
+      "hints": [
+        {
+          "level": "question",
+          "text": "Which sound would you like to try?"
+        },
+        {
+          "level": "clue",
+          "text": "Touch one key or pad. Stop turns all sounds off."
+        },
+        {
+          "level": "answer",
+          "text": "Choose a key or pad to hear it.",
+          "action": "play-demo"
+        }
+      ],
+      "strategyIds": [
+        "explore-controls",
+        "try-larger-controls"
+      ],
+      "creationPrompt": "Try a few sounds in an order you like."
+    },
+    {
+      "version": "1.0.0-draft",
+      "suggestedAgeRange": [
+        7,
+        10
+      ],
+      "reviewStatus": "draft_pending_primary_music_educator",
+      "licence": "CC-BY-SA-4.0",
+      "curriculumMapping": {
+        "status": "orientation_only_not_formally_mapped",
+        "sourceId": "ACARA_ARTS",
+        "verifiedCodes": []
+      },
+      "contentNotes": "Original activity wording and symbolic patterns informed by the attributed open theory sources. Not a copied song or teacher-approved sequence.",
+      "id": "L01",
+      "title": "Find the pulse",
+      "goal": "Rhythm",
+      "objective": "Play an even pulse with a short pattern.",
+      "prerequisites": [
+        "L00"
+      ],
+      "supportedInstruments": [
+        "drums"
+      ],
+      "sourceIds": [
+        "OMT_METER",
+        "AERO_SCAFFOLD"
+      ],
+      "instruction": "Listen, then tap with the beat.",
+      "explanation": "The pulse is the steady beat you can follow.",
+      "tempoBpm": 80,
+      "assessment": {
+        "mode": "timed-onsets",
+        "score": true,
+        "checkPitch": false,
+        "checkDuration": false,
+        "onTimeWindow": {
+          "beats": 0.2,
+          "maxMs": 150
+        }
+      },
+      "practice": {
+        "id": "L01-practice",
+        "instrument": "drums",
+        "totalBeats": 4,
+        "timeSignature": [
+          4,
+          4
+        ],
+        "beatUnit": "crotchet",
+        "events": [
+          {
+            "id": "L01-practice-e1",
+            "kind": "drum",
+            "onsetBeats": 0,
+            "durationBeats": 1,
+            "soundId": "kick",
+            "velocity": 0.7
+          },
+          {
+            "id": "L01-practice-e2",
+            "kind": "drum",
+            "onsetBeats": 1,
+            "durationBeats": 1,
+            "soundId": "kick",
+            "velocity": 0.7
+          },
+          {
+            "id": "L01-practice-e3",
+            "kind": "drum",
+            "onsetBeats": 2,
+            "durationBeats": 1,
+            "soundId": "kick",
+            "velocity": 0.7
+          },
+          {
+            "id": "L01-practice-e4",
+            "kind": "drum",
+            "onsetBeats": 3,
+            "durationBeats": 1,
+            "soundId": "kick",
+            "velocity": 0.7
+          }
+        ]
+      },
+      "independent": {
+        "id": "L01-independent",
+        "instrument": "drums",
+        "totalBeats": 8,
+        "timeSignature": [
+          4,
+          4
+        ],
+        "beatUnit": "crotchet",
+        "events": [
+          {
+            "id": "L01-independent-e1",
+            "kind": "drum",
+            "onsetBeats": 0,
+            "durationBeats": 1,
+            "soundId": "kick",
+            "velocity": 0.7
+          },
+          {
+            "id": "L01-independent-e2",
+            "kind": "drum",
+            "onsetBeats": 1,
+            "durationBeats": 1,
+            "soundId": "kick",
+            "velocity": 0.7
+          },
+          {
+            "id": "L01-independent-e3",
+            "kind": "drum",
+            "onsetBeats": 2,
+            "durationBeats": 1,
+            "soundId": "kick",
+            "velocity": 0.7
+          },
+          {
+            "id": "L01-independent-e4",
+            "kind": "drum",
+            "onsetBeats": 3,
+            "durationBeats": 1,
+            "soundId": "kick",
+            "velocity": 0.7
+          },
+          {
+            "id": "L01-independent-e5",
+            "kind": "drum",
+            "onsetBeats": 4,
+            "durationBeats": 1,
+            "soundId": "kick",
+            "velocity": 0.7
+          },
+          {
+            "id": "L01-independent-e6",
+            "kind": "drum",
+            "onsetBeats": 5,
+            "durationBeats": 1,
+            "soundId": "kick",
+            "velocity": 0.7
+          },
+          {
+            "id": "L01-independent-e7",
+            "kind": "drum",
+            "onsetBeats": 6,
+            "durationBeats": 1,
+            "soundId": "kick",
+            "velocity": 0.7
+          },
+          {
+            "id": "L01-independent-e8",
+            "kind": "drum",
+            "onsetBeats": 7,
+            "durationBeats": 1,
+            "soundId": "kick",
+            "velocity": 0.7
+          }
+        ]
+      },
+      "hints": [
+        {
+          "level": "question",
+          "text": "Did your taps stay with the beat?"
+        },
+        {
+          "level": "clue",
+          "text": "Listen for the same space between taps."
+        },
+        {
+          "level": "answer",
+          "text": "Hear the steady taps, then try with them.",
+          "action": "play-demo"
+        }
+      ],
+      "strategyIds": [
+        "hear-example",
+        "slower-pulse",
+        "listen-and-retry"
+      ],
+      "creationPrompt": "Make four even taps with your chosen drum sound."
+    },
+    {
+      "version": "1.0.0-draft",
+      "suggestedAgeRange": [
+        7,
+        10
+      ],
+      "reviewStatus": "draft_pending_primary_music_educator",
+      "licence": "CC-BY-SA-4.0",
+      "curriculumMapping": {
+        "status": "orientation_only_not_formally_mapped",
+        "sourceId": "ACARA_ARTS",
+        "verifiedCodes": []
+      },
+      "contentNotes": "Original activity wording and symbolic patterns informed by the attributed open theory sources. Not a copied song or teacher-approved sequence.",
+      "id": "L02",
+      "title": "Leave a space",
+      "goal": "Rhythm",
+      "objective": "Keep the pulse through a one-beat rest.",
+      "prerequisites": [
+        "L01"
+      ],
+      "supportedInstruments": [
+        "drums"
+      ],
+      "sourceIds": [
+        "OMT_RHYTHM"
+      ],
+      "instruction": "Play the sounds. Leave the rest quiet.",
+      "explanation": "A rest marks silence for its written length.",
+      "tempoBpm": 80,
+      "assessment": {
+        "mode": "timed-onsets",
+        "score": true,
+        "checkPitch": false,
+        "checkDuration": false,
+        "checkRestViolations": true,
+        "onTimeWindow": {
+          "beats": 0.2,
+          "maxMs": 150
+        }
+      },
+      "practice": {
+        "id": "L02-practice",
+        "instrument": "drums",
+        "totalBeats": 4,
+        "timeSignature": [
+          4,
+          4
+        ],
+        "beatUnit": "crotchet",
+        "events": [
+          {
+            "id": "L02-practice-e1",
+            "kind": "drum",
+            "onsetBeats": 0,
+            "durationBeats": 1,
+            "soundId": "kick",
+            "velocity": 0.7
+          },
+          {
+            "id": "L02-practice-e2",
+            "kind": "rest",
+            "onsetBeats": 1,
+            "durationBeats": 1
+          },
+          {
+            "id": "L02-practice-e3",
+            "kind": "drum",
+            "onsetBeats": 2,
+            "durationBeats": 1,
+            "soundId": "kick",
+            "velocity": 0.7
+          },
+          {
+            "id": "L02-practice-e4",
+            "kind": "rest",
+            "onsetBeats": 3,
+            "durationBeats": 1
+          }
+        ]
+      },
+      "independent": {
+        "id": "L02-independent",
+        "instrument": "drums",
+        "totalBeats": 4,
+        "timeSignature": [
+          4,
+          4
+        ],
+        "beatUnit": "crotchet",
+        "events": [
+          {
+            "id": "L02-independent-e1",
+            "kind": "drum",
+            "onsetBeats": 0,
+            "durationBeats": 1,
+            "soundId": "kick",
+            "velocity": 0.7
+          },
+          {
+            "id": "L02-independent-e2",
+            "kind": "rest",
+            "onsetBeats": 1,
+            "durationBeats": 1
+          },
+          {
+            "id": "L02-independent-e3",
+            "kind": "rest",
+            "onsetBeats": 2,
+            "durationBeats": 1
+          },
+          {
+            "id": "L02-independent-e4",
+            "kind": "drum",
+            "onsetBeats": 3,
+            "durationBeats": 1,
+            "soundId": "kick",
+            "velocity": 0.7
+          }
+        ]
+      },
+      "hints": [
+        {
+          "level": "question",
+          "text": "Which beat was meant to stay quiet?"
+        },
+        {
+          "level": "clue",
+          "text": "Keep counting through each rest."
+        },
+        {
+          "level": "answer",
+          "text": "Hear the sounds and spaces, then try again.",
+          "action": "play-demo"
+        }
+      ],
+      "strategyIds": [
+        "hear-example",
+        "isolate-rest",
+        "listen-and-retry"
+      ],
+      "creationPrompt": "Make a pattern with at least one quiet beat."
+    },
+    {
+      "version": "1.0.0-draft",
+      "suggestedAgeRange": [
+        7,
+        10
+      ],
+      "reviewStatus": "draft_pending_primary_music_educator",
+      "licence": "CC-BY-SA-4.0",
+      "curriculumMapping": {
+        "status": "orientation_only_not_formally_mapped",
+        "sourceId": "ACARA_ARTS",
+        "verifiedCodes": []
+      },
+      "contentNotes": "Original activity wording and symbolic patterns informed by the attributed open theory sources. Not a copied song or teacher-approved sequence.",
+      "id": "L03",
+      "title": "Two sounds in a beat",
+      "goal": "Rhythm",
+      "objective": "Compare one crotchet with two quavers in a crotchet-beat exercise.",
+      "prerequisites": [
+        "L02"
+      ],
+      "supportedInstruments": [
+        "drums"
+      ],
+      "sourceIds": [
+        "OMT_RHYTHM",
+        "OMT_METER"
+      ],
+      "instruction": "Fit two small sounds inside one beat.",
+      "explanation": "Here, a crotchet fills one beat. Two quavers share that space.",
+      "tempoBpm": 80,
+      "assessment": {
+        "mode": "timed-onsets",
+        "score": true,
+        "checkPitch": false,
+        "checkDuration": false,
+        "onTimeWindow": {
+          "beats": 0.2,
+          "maxMs": 150
+        }
+      },
+      "practice": {
+        "id": "L03-practice",
+        "instrument": "drums",
+        "totalBeats": 4,
+        "timeSignature": [
+          4,
+          4
+        ],
+        "beatUnit": "crotchet",
+        "events": [
+          {
+            "id": "L03-practice-e1",
+            "kind": "drum",
+            "onsetBeats": 0,
+            "durationBeats": 0.5,
+            "soundId": "snare",
+            "velocity": 0.7
+          },
+          {
+            "id": "L03-practice-e2",
+            "kind": "drum",
+            "onsetBeats": 0.5,
+            "durationBeats": 0.5,
+            "soundId": "snare",
+            "velocity": 0.7
+          },
+          {
+            "id": "L03-practice-e3",
+            "kind": "drum",
+            "onsetBeats": 1,
+            "durationBeats": 1,
+            "soundId": "kick",
+            "velocity": 0.7
+          },
+          {
+            "id": "L03-practice-e4",
+            "kind": "drum",
+            "onsetBeats": 2,
+            "durationBeats": 0.5,
+            "soundId": "snare",
+            "velocity": 0.7
+          },
+          {
+            "id": "L03-practice-e5",
+            "kind": "drum",
+            "onsetBeats": 2.5,
+            "durationBeats": 0.5,
+            "soundId": "snare",
+            "velocity": 0.7
+          },
+          {
+            "id": "L03-practice-e6",
+            "kind": "rest",
+            "onsetBeats": 3,
+            "durationBeats": 1
+          }
+        ]
+      },
+      "independent": {
+        "id": "L03-independent",
+        "instrument": "drums",
+        "totalBeats": 4,
+        "timeSignature": [
+          4,
+          4
+        ],
+        "beatUnit": "crotchet",
+        "events": [
+          {
+            "id": "L03-independent-e1",
+            "kind": "drum",
+            "onsetBeats": 0,
+            "durationBeats": 1,
+            "soundId": "kick",
+            "velocity": 0.7
+          },
+          {
+            "id": "L03-independent-e2",
+            "kind": "drum",
+            "onsetBeats": 1,
+            "durationBeats": 0.5,
+            "soundId": "snare",
+            "velocity": 0.7
+          },
+          {
+            "id": "L03-independent-e3",
+            "kind": "drum",
+            "onsetBeats": 1.5,
+            "durationBeats": 0.5,
+            "soundId": "snare",
+            "velocity": 0.7
+          },
+          {
+            "id": "L03-independent-e4",
+            "kind": "rest",
+            "onsetBeats": 2,
+            "durationBeats": 1
+          },
+          {
+            "id": "L03-independent-e5",
+            "kind": "drum",
+            "onsetBeats": 3,
+            "durationBeats": 0.5,
+            "soundId": "snare",
+            "velocity": 0.7
+          },
+          {
+            "id": "L03-independent-e6",
+            "kind": "drum",
+            "onsetBeats": 3.5,
+            "durationBeats": 0.5,
+            "soundId": "snare",
+            "velocity": 0.7
+          }
+        ]
+      },
+      "hints": [
+        {
+          "level": "question",
+          "text": "Which beat had two sounds?"
+        },
+        {
+          "level": "clue",
+          "text": "Keep the main beat steady while dividing it."
+        },
+        {
+          "level": "answer",
+          "text": "Listen to the paired sounds, then copy their spacing.",
+          "action": "play-demo"
+        }
+      ],
+      "strategyIds": [
+        "hear-example",
+        "slower-pulse",
+        "practise-two-beats"
+      ],
+      "creationPrompt": "Use one pair of quavers in a pattern of your own."
+    },
+    {
+      "version": "1.0.0-draft",
+      "suggestedAgeRange": [
+        7,
+        10
+      ],
+      "reviewStatus": "draft_pending_primary_music_educator",
+      "licence": "CC-BY-SA-4.0",
+      "curriculumMapping": {
+        "status": "orientation_only_not_formally_mapped",
+        "sourceId": "ACARA_ARTS",
+        "verifiedCodes": []
+      },
+      "contentNotes": "Original activity wording and symbolic patterns informed by the attributed open theory sources. Not a copied song or teacher-approved sequence.",
+      "id": "L04",
+      "title": "Higher and lower",
+      "goal": "Notes",
+      "objective": "Compare pitches and follow a short pitch contour.",
+      "prerequisites": [
+        "L00"
+      ],
+      "supportedInstruments": [
+        "keyboard"
+      ],
+      "sourceIds": [
+        "OMT_PITCH"
+      ],
+      "instruction": "Listen to the notes, then try their order.",
+      "explanation": "Pitch tells us how high or low a sound is. This is different from loudness.",
+      "tempoBpm": 80,
+      "assessment": {
+        "mode": "pitch-sequence",
+        "score": true,
+        "checkPitch": true,
+        "checkTiming": false,
+        "checkDuration": false
+      },
+      "practice": {
+        "id": "L04-practice",
+        "instrument": "keyboard",
+        "totalBeats": 4,
+        "timeSignature": [
+          4,
+          4
+        ],
+        "beatUnit": "crotchet",
+        "events": [
+          {
+            "id": "L04-practice-e1",
+            "kind": "note",
+            "onsetBeats": 0,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 60,
+              "name": "C4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L04-practice-e2",
+            "kind": "note",
+            "onsetBeats": 1,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 67,
+              "name": "G4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L04-practice-e3",
+            "kind": "note",
+            "onsetBeats": 2,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 64,
+              "name": "E4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L04-practice-e4",
+            "kind": "note",
+            "onsetBeats": 3,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 67,
+              "name": "G4"
+            },
+            "velocity": 0.7
+          }
+        ]
+      },
+      "independent": {
+        "id": "L04-independent",
+        "instrument": "keyboard",
+        "totalBeats": 4,
+        "timeSignature": [
+          4,
+          4
+        ],
+        "beatUnit": "crotchet",
+        "events": [
+          {
+            "id": "L04-independent-e1",
+            "kind": "note",
+            "onsetBeats": 0,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 67,
+              "name": "G4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L04-independent-e2",
+            "kind": "note",
+            "onsetBeats": 1,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 64,
+              "name": "E4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L04-independent-e3",
+            "kind": "note",
+            "onsetBeats": 2,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 60,
+              "name": "C4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L04-independent-e4",
+            "kind": "note",
+            "onsetBeats": 3,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 64,
+              "name": "E4"
+            },
+            "velocity": 0.7
+          }
+        ]
+      },
+      "hints": [
+        {
+          "level": "question",
+          "text": "Did the next note go higher or lower?"
+        },
+        {
+          "level": "clue",
+          "text": "Compare two notes at the same volume."
+        },
+        {
+          "level": "answer",
+          "text": "Hear the order again. Take your time playing it.",
+          "action": "play-demo"
+        }
+      ],
+      "strategyIds": [
+        "hear-two-notes",
+        "pitch-only",
+        "listen-and-retry"
+      ],
+      "creationPrompt": "Make a short pattern that rises, then falls."
+    },
+    {
+      "version": "1.0.0-draft",
+      "suggestedAgeRange": [
+        7,
+        10
+      ],
+      "reviewStatus": "draft_pending_primary_music_educator",
+      "licence": "CC-BY-SA-4.0",
+      "curriculumMapping": {
+        "status": "orientation_only_not_formally_mapped",
+        "sourceId": "ACARA_ARTS",
+        "verifiedCodes": []
+      },
+      "contentNotes": "Original activity wording and symbolic patterns informed by the attributed open theory sources. Not a copied song or teacher-approved sequence.",
+      "id": "L05",
+      "title": "Meet C, D and E",
+      "goal": "Notes",
+      "objective": "Connect three note names with their keyboard positions.",
+      "prerequisites": [
+        "L04"
+      ],
+      "supportedInstruments": [
+        "keyboard"
+      ],
+      "sourceIds": [
+        "OMT_PITCH"
+      ],
+      "instruction": "Find C, D and E. Try this note pattern.",
+      "explanation": "C is just before a group of two black keys. D and E are the next white keys to the right.",
+      "tempoBpm": 80,
+      "assessment": {
+        "mode": "pitch-sequence",
+        "score": true,
+        "checkPitch": true,
+        "checkTiming": false,
+        "checkDuration": false
+      },
+      "practice": {
+        "id": "L05-practice",
+        "instrument": "keyboard",
+        "totalBeats": 4,
+        "timeSignature": [
+          4,
+          4
+        ],
+        "beatUnit": "crotchet",
+        "events": [
+          {
+            "id": "L05-practice-e1",
+            "kind": "note",
+            "onsetBeats": 0,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 60,
+              "name": "C4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L05-practice-e2",
+            "kind": "note",
+            "onsetBeats": 1,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 62,
+              "name": "D4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L05-practice-e3",
+            "kind": "note",
+            "onsetBeats": 2,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 64,
+              "name": "E4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L05-practice-e4",
+            "kind": "note",
+            "onsetBeats": 3,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 60,
+              "name": "C4"
+            },
+            "velocity": 0.7
+          }
+        ]
+      },
+      "independent": {
+        "id": "L05-independent",
+        "instrument": "keyboard",
+        "totalBeats": 4,
+        "timeSignature": [
+          4,
+          4
+        ],
+        "beatUnit": "crotchet",
+        "events": [
+          {
+            "id": "L05-independent-e1",
+            "kind": "note",
+            "onsetBeats": 0,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 62,
+              "name": "D4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L05-independent-e2",
+            "kind": "note",
+            "onsetBeats": 1,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 64,
+              "name": "E4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L05-independent-e3",
+            "kind": "note",
+            "onsetBeats": 2,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 62,
+              "name": "D4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L05-independent-e4",
+            "kind": "note",
+            "onsetBeats": 3,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 60,
+              "name": "C4"
+            },
+            "velocity": 0.7
+          }
+        ]
+      },
+      "hints": [
+        {
+          "level": "question",
+          "text": "Which note name are you looking for?"
+        },
+        {
+          "level": "clue",
+          "text": "Find the group of two black keys, then C just before it."
+        },
+        {
+          "level": "answer",
+          "text": "Hear C, D and E. Try the target order slowly.",
+          "action": "play-demo"
+        }
+      ],
+      "strategyIds": [
+        "show-keyboard-group",
+        "pitch-only",
+        "hear-example"
+      ],
+      "creationPrompt": "Make a tune using only C, D and E."
+    },
+    {
+      "version": "1.0.0-draft",
+      "suggestedAgeRange": [
+        7,
+        10
+      ],
+      "reviewStatus": "draft_pending_primary_music_educator",
+      "licence": "CC-BY-SA-4.0",
+      "curriculumMapping": {
+        "status": "orientation_only_not_formally_mapped",
+        "sourceId": "ACARA_ARTS",
+        "verifiedCodes": []
+      },
+      "contentNotes": "Original activity wording and symbolic patterns informed by the attributed open theory sources. Not a copied song or teacher-approved sequence.",
+      "id": "L06",
+      "title": "Read a small melody",
+      "goal": "Reading music",
+      "objective": "Connect C4, D4 and E4 on a treble stave with played notes.",
+      "prerequisites": [
+        "L05"
+      ],
+      "supportedInstruments": [
+        "keyboard"
+      ],
+      "sourceIds": [
+        "OMT_NOTATION",
+        "OMT_PITCH"
+      ],
+      "instruction": "Look at each note on the stave. Play its sound.",
+      "explanation": "The treble clef tells us how to read the lines and spaces.",
+      "notation": {
+        "clef": "treble",
+        "pitchPlacementFixtures": {
+          "C4": "ledger line below stave",
+          "D4": "space below bottom line",
+          "E4": "bottom line"
+        }
+      },
+      "tempoBpm": 80,
+      "assessment": {
+        "mode": "pitch-sequence",
+        "score": true,
+        "checkPitch": true,
+        "checkTiming": false,
+        "checkDuration": false
+      },
+      "practice": {
+        "id": "L06-practice",
+        "instrument": "keyboard",
+        "totalBeats": 4,
+        "timeSignature": [
+          4,
+          4
+        ],
+        "beatUnit": "crotchet",
+        "events": [
+          {
+            "id": "L06-practice-e1",
+            "kind": "note",
+            "onsetBeats": 0,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 60,
+              "name": "C4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L06-practice-e2",
+            "kind": "note",
+            "onsetBeats": 1,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 64,
+              "name": "E4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L06-practice-e3",
+            "kind": "note",
+            "onsetBeats": 2,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 62,
+              "name": "D4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L06-practice-e4",
+            "kind": "note",
+            "onsetBeats": 3,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 60,
+              "name": "C4"
+            },
+            "velocity": 0.7
+          }
+        ]
+      },
+      "independent": {
+        "id": "L06-independent",
+        "instrument": "keyboard",
+        "totalBeats": 4,
+        "timeSignature": [
+          4,
+          4
+        ],
+        "beatUnit": "crotchet",
+        "events": [
+          {
+            "id": "L06-independent-e1",
+            "kind": "note",
+            "onsetBeats": 0,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 64,
+              "name": "E4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L06-independent-e2",
+            "kind": "note",
+            "onsetBeats": 1,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 62,
+              "name": "D4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L06-independent-e3",
+            "kind": "note",
+            "onsetBeats": 2,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 60,
+              "name": "C4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L06-independent-e4",
+            "kind": "note",
+            "onsetBeats": 3,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 62,
+              "name": "D4"
+            },
+            "velocity": 0.7
+          }
+        ]
+      },
+      "hints": [
+        {
+          "level": "question",
+          "text": "Is the note on a line or in a space?"
+        },
+        {
+          "level": "clue",
+          "text": "Find E on the bottom line, then compare C and D."
+        },
+        {
+          "level": "answer",
+          "text": "See and hear the note match, then try another order.",
+          "action": "play-demo"
+        }
+      ],
+      "strategyIds": [
+        "show-note-link",
+        "pitch-only",
+        "hear-example"
+      ],
+      "creationPrompt": "Play three notes, then look at their notation."
+    },
+    {
+      "version": "1.0.0-draft",
+      "suggestedAgeRange": [
+        7,
+        10
+      ],
+      "reviewStatus": "draft_pending_primary_music_educator",
+      "licence": "CC-BY-SA-4.0",
+      "curriculumMapping": {
+        "status": "orientation_only_not_formally_mapped",
+        "sourceId": "ACARA_ARTS",
+        "verifiedCodes": []
+      },
+      "contentNotes": "Original activity wording and symbolic patterns informed by the attributed open theory sources. Not a copied song or teacher-approved sequence.",
+      "id": "L07",
+      "title": "Hold a sound",
+      "goal": "Rhythm and notes",
+      "objective": "Distinguish two-beat and one-beat held notes in 4/4.",
+      "prerequisites": [
+        "L01",
+        "L05"
+      ],
+      "supportedInstruments": [
+        "keyboard"
+      ],
+      "sourceIds": [
+        "OMT_RHYTHM"
+      ],
+      "instruction": "Hold each note for its shown length.",
+      "explanation": "In this exercise, a minim lasts two beats and a crotchet lasts one.",
+      "tempoBpm": 80,
+      "requiredInputCapabilities": [
+        "note-on",
+        "note-off"
+      ],
+      "assessment": {
+        "mode": "timed-pitch-duration",
+        "score": true,
+        "checkPitch": true,
+        "checkTiming": true,
+        "checkDuration": true,
+        "onTimeWindow": {
+          "beats": 0.2,
+          "maxMs": 150
+        },
+        "durationTolerance": {
+          "beats": 0.25,
+          "maxMs": 200
+        }
+      },
+      "practice": {
+        "id": "L07-practice",
+        "instrument": "keyboard",
+        "totalBeats": 4,
+        "timeSignature": [
+          4,
+          4
+        ],
+        "beatUnit": "crotchet",
+        "events": [
+          {
+            "id": "L07-practice-e1",
+            "kind": "note",
+            "onsetBeats": 0,
+            "durationBeats": 2,
+            "pitch": {
+              "midi": 60,
+              "name": "C4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L07-practice-e2",
+            "kind": "note",
+            "onsetBeats": 2,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 62,
+              "name": "D4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L07-practice-e3",
+            "kind": "note",
+            "onsetBeats": 3,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 64,
+              "name": "E4"
+            },
+            "velocity": 0.7
+          }
+        ]
+      },
+      "independent": {
+        "id": "L07-independent",
+        "instrument": "keyboard",
+        "totalBeats": 4,
+        "timeSignature": [
+          4,
+          4
+        ],
+        "beatUnit": "crotchet",
+        "events": [
+          {
+            "id": "L07-independent-e1",
+            "kind": "note",
+            "onsetBeats": 0,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 64,
+              "name": "E4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L07-independent-e2",
+            "kind": "note",
+            "onsetBeats": 1,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 62,
+              "name": "D4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L07-independent-e3",
+            "kind": "note",
+            "onsetBeats": 2,
+            "durationBeats": 2,
+            "pitch": {
+              "midi": 60,
+              "name": "C4"
+            },
+            "velocity": 0.7
+          }
+        ]
+      },
+      "hints": [
+        {
+          "level": "question",
+          "text": "Which sound needs to last longer?"
+        },
+        {
+          "level": "clue",
+          "text": "Count two beats while keeping the long note held."
+        },
+        {
+          "level": "answer",
+          "text": "Listen to the long note and the shorter notes.",
+          "action": "play-demo"
+        }
+      ],
+      "strategyIds": [
+        "hear-example",
+        "duration-only",
+        "slower-pulse"
+      ],
+      "creationPrompt": "Use one long sound and two shorter sounds."
+    },
+    {
+      "version": "1.0.0-draft",
+      "suggestedAgeRange": [
+        7,
+        10
+      ],
+      "reviewStatus": "draft_pending_primary_music_educator",
+      "licence": "CC-BY-SA-4.0",
+      "curriculumMapping": {
+        "status": "orientation_only_not_formally_mapped",
+        "sourceId": "ACARA_ARTS",
+        "verifiedCodes": []
+      },
+      "contentNotes": "Original activity wording and symbolic patterns informed by the attributed open theory sources. Not a copied song or teacher-approved sequence.",
+      "id": "L08",
+      "title": "Read, play and rest",
+      "goal": "Reading music",
+      "objective": "Combine familiar pitches, durations and rests in two bars.",
+      "prerequisites": [
+        "L02",
+        "L06",
+        "L07"
+      ],
+      "supportedInstruments": [
+        "keyboard"
+      ],
+      "sourceIds": [
+        "OMT_NOTATION",
+        "OMT_RHYTHM",
+        "OMT_METER"
+      ],
+      "instruction": "Follow the notes and quiet spaces.",
+      "explanation": "Use the note position for pitch and the symbol for length.",
+      "tempoBpm": 80,
+      "requiredInputCapabilities": [
+        "note-on",
+        "note-off"
+      ],
+      "assessment": {
+        "mode": "timed-pitch-duration",
+        "score": true,
+        "checkPitch": true,
+        "checkTiming": true,
+        "checkDuration": true,
+        "checkRestViolations": true,
+        "onTimeWindow": {
+          "beats": 0.2,
+          "maxMs": 150
+        },
+        "durationTolerance": {
+          "beats": 0.25,
+          "maxMs": 200
+        }
+      },
+      "practice": {
+        "id": "L08-practice",
+        "instrument": "keyboard",
+        "totalBeats": 8,
+        "timeSignature": [
+          4,
+          4
+        ],
+        "beatUnit": "crotchet",
+        "events": [
+          {
+            "id": "L08-practice-e1",
+            "kind": "note",
+            "onsetBeats": 0,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 60,
+              "name": "C4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L08-practice-e2",
+            "kind": "note",
+            "onsetBeats": 1,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 62,
+              "name": "D4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L08-practice-e3",
+            "kind": "note",
+            "onsetBeats": 2,
+            "durationBeats": 2,
+            "pitch": {
+              "midi": 64,
+              "name": "E4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L08-practice-e4",
+            "kind": "rest",
+            "onsetBeats": 4,
+            "durationBeats": 1
+          },
+          {
+            "id": "L08-practice-e5",
+            "kind": "note",
+            "onsetBeats": 5,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 64,
+              "name": "E4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L08-practice-e6",
+            "kind": "note",
+            "onsetBeats": 6,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 62,
+              "name": "D4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L08-practice-e7",
+            "kind": "note",
+            "onsetBeats": 7,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 60,
+              "name": "C4"
+            },
+            "velocity": 0.7
+          }
+        ]
+      },
+      "independent": {
+        "id": "L08-independent",
+        "instrument": "keyboard",
+        "totalBeats": 8,
+        "timeSignature": [
+          4,
+          4
+        ],
+        "beatUnit": "crotchet",
+        "events": [
+          {
+            "id": "L08-independent-e1",
+            "kind": "note",
+            "onsetBeats": 0,
+            "durationBeats": 2,
+            "pitch": {
+              "midi": 64,
+              "name": "E4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L08-independent-e2",
+            "kind": "note",
+            "onsetBeats": 2,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 62,
+              "name": "D4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L08-independent-e3",
+            "kind": "rest",
+            "onsetBeats": 3,
+            "durationBeats": 1
+          },
+          {
+            "id": "L08-independent-e4",
+            "kind": "note",
+            "onsetBeats": 4,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 60,
+              "name": "C4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L08-independent-e5",
+            "kind": "note",
+            "onsetBeats": 5,
+            "durationBeats": 1,
+            "pitch": {
+              "midi": 62,
+              "name": "D4"
+            },
+            "velocity": 0.7
+          },
+          {
+            "id": "L08-independent-e6",
+            "kind": "note",
+            "onsetBeats": 6,
+            "durationBeats": 2,
+            "pitch": {
+              "midi": 64,
+              "name": "E4"
+            },
+            "velocity": 0.7
+          }
+        ]
+      },
+      "hints": [
+        {
+          "level": "question",
+          "text": "Which part would you like to hear again?"
+        },
+        {
+          "level": "clue",
+          "text": "Try one bar first, then join the two bars."
+        },
+        {
+          "level": "answer",
+          "text": "Hear the whole example, then choose your next try.",
+          "action": "play-demo"
+        }
+      ],
+      "strategyIds": [
+        "hear-example",
+        "practise-one-bar",
+        "slower-pulse"
+      ],
+      "creationPrompt": "Change the ending while keeping eight beats."
+    },
+    {
+      "version": "1.0.0-draft",
+      "suggestedAgeRange": [
+        7,
+        10
+      ],
+      "reviewStatus": "draft_pending_primary_music_educator",
+      "licence": "CC-BY-SA-4.0",
+      "curriculumMapping": {
+        "status": "orientation_only_not_formally_mapped",
+        "sourceId": "ACARA_ARTS",
+        "verifiedCodes": []
+      },
+      "contentNotes": "Original activity wording and symbolic patterns informed by the attributed open theory sources. Not a copied song or teacher-approved sequence.",
+      "id": "L09",
+      "title": "Make a musical answer",
+      "goal": "Create",
+      "objective": "Create, revise and save an original musical response.",
+      "prerequisites": [],
+      "recommendedPriorLessons": [
+        "L02",
+        "L06"
+      ],
+      "supportedInstruments": [
+        "keyboard",
+        "drums"
+      ],
+      "sourceIds": [
+        "ACARA_ARTS",
+        "OMT_NOTATION"
+      ],
+      "instruction": "Make a short answer in your own sounds.",
+      "explanation": "Your music can repeat an idea or change it. You choose.",
+      "assessment": {
+        "mode": "creative-completion",
+        "score": false,
+        "completionEvidence": [
+          "captured-performance",
+          "saved-composition"
+        ]
+      },
+      "practice": null,
+      "independent": null,
+      "exampleLessonIdsByInstrument": {
+        "keyboard": "L08",
+        "drums": "L03"
+      },
+      "hints": [
+        {
+          "level": "question",
+          "text": "What would you like your ending to do?"
+        },
+        {
+          "level": "clue",
+          "text": "Try repeating one part and changing another."
+        },
+        {
+          "level": "answer",
+          "text": "Hear an example if you want, then make your own answer.",
+          "action": "play-demo"
+        }
+      ],
+      "strategyIds": [
+        "explore-controls",
+        "hear-example",
+        "create-variation"
+      ],
+      "creationPrompt": "Record your answer. Listen, change it if you want, and save it."
+    }
+  ]
+}

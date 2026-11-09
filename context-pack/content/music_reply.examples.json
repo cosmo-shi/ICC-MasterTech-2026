@@ -1,0 +1,299 @@
+{
+  "schemaVersion": "2.0.0",
+  "fixtureOnly": true,
+  "executedModelOutputs": false,
+  "realStudentData": false,
+  "ticksPerQuarter": 480,
+  "totalTicks": 1920,
+  "sourceEvents": [
+    {
+      "id": "student-0",
+      "kind": "note",
+      "instrumentId": "keyboard",
+      "onsetTicks": 0,
+      "durationTicks": 480,
+      "pitch": 60,
+      "velocity": 70,
+      "author": "learner"
+    },
+    {
+      "id": "student-1",
+      "kind": "note",
+      "instrumentId": "keyboard",
+      "onsetTicks": 480,
+      "durationTicks": 480,
+      "pitch": 62,
+      "velocity": 70,
+      "author": "learner"
+    },
+    {
+      "id": "student-2",
+      "kind": "note",
+      "instrumentId": "keyboard",
+      "onsetTicks": 960,
+      "durationTicks": 480,
+      "pitch": 64,
+      "velocity": 70,
+      "author": "learner"
+    },
+    {
+      "id": "student-3",
+      "kind": "note",
+      "instrumentId": "keyboard",
+      "onsetTicks": 1440,
+      "durationTicks": 480,
+      "pitch": 67,
+      "velocity": 70,
+      "author": "learner"
+    }
+  ],
+  "cases": [
+    {
+      "id": "valid-transposition",
+      "operation": "transpose",
+      "goal": "pitch contrast with preserved rhythm",
+      "expectedAccept": true,
+      "permittedChangedFields": [
+        "pitch"
+      ],
+      "replyEvents": [
+        {
+          "id": "student-0",
+          "kind": "note",
+          "instrumentId": "keyboard",
+          "onsetTicks": 0,
+          "durationTicks": 480,
+          "pitch": 62,
+          "velocity": 70,
+          "author": "learner"
+        },
+        {
+          "id": "student-1",
+          "kind": "note",
+          "instrumentId": "keyboard",
+          "onsetTicks": 480,
+          "durationTicks": 480,
+          "pitch": 64,
+          "velocity": 70,
+          "author": "learner"
+        },
+        {
+          "id": "student-2",
+          "kind": "note",
+          "instrumentId": "keyboard",
+          "onsetTicks": 960,
+          "durationTicks": 480,
+          "pitch": 66,
+          "velocity": 70,
+          "author": "learner"
+        },
+        {
+          "id": "student-3",
+          "kind": "note",
+          "instrumentId": "keyboard",
+          "onsetTicks": 1440,
+          "durationTicks": 480,
+          "pitch": 69,
+          "velocity": 70,
+          "author": "learner"
+        }
+      ],
+      "explanation": "Symbolic pitch change only; not a claim of changed rhythm or observed learning.",
+      "playbackRole": "partner_demonstration",
+      "transformationProvenance": "illustrative_fixture",
+      "independentEvidence": false
+    },
+    {
+      "id": "invalid-timing-drift",
+      "operation": "transpose",
+      "goal": "pitch contrast with preserved rhythm",
+      "expectedAccept": false,
+      "permittedChangedFields": [
+        "pitch"
+      ],
+      "replyEvents": [
+        {
+          "id": "student-0",
+          "kind": "note",
+          "instrumentId": "keyboard",
+          "onsetTicks": 0,
+          "durationTicks": 480,
+          "pitch": 62,
+          "velocity": 70,
+          "author": "learner"
+        },
+        {
+          "id": "student-1",
+          "kind": "note",
+          "instrumentId": "keyboard",
+          "onsetTicks": 480,
+          "durationTicks": 480,
+          "pitch": 64,
+          "velocity": 70,
+          "author": "learner"
+        },
+        {
+          "id": "student-2",
+          "kind": "note",
+          "instrumentId": "keyboard",
+          "onsetTicks": 1080,
+          "durationTicks": 480,
+          "pitch": 66,
+          "velocity": 70,
+          "author": "learner"
+        },
+        {
+          "id": "student-3",
+          "kind": "note",
+          "instrumentId": "keyboard",
+          "onsetTicks": 1440,
+          "durationTicks": 480,
+          "pitch": 69,
+          "velocity": 70,
+          "author": "learner"
+        }
+      ],
+      "explanation": "One onset changed outside the permitted field.",
+      "playbackRole": "partner_demonstration",
+      "transformationProvenance": "illustrative_fixture",
+      "independentEvidence": false
+    },
+    {
+      "id": "valid-dynamic-contrast",
+      "operation": "dynamics",
+      "goal": "intentional softer version",
+      "expectedAccept": true,
+      "permittedChangedFields": [
+        "velocity"
+      ],
+      "replyEvents": [
+        {
+          "id": "student-0",
+          "kind": "note",
+          "instrumentId": "keyboard",
+          "onsetTicks": 0,
+          "durationTicks": 480,
+          "pitch": 60,
+          "velocity": 40,
+          "author": "learner"
+        },
+        {
+          "id": "student-1",
+          "kind": "note",
+          "instrumentId": "keyboard",
+          "onsetTicks": 480,
+          "durationTicks": 480,
+          "pitch": 62,
+          "velocity": 40,
+          "author": "learner"
+        },
+        {
+          "id": "student-2",
+          "kind": "note",
+          "instrumentId": "keyboard",
+          "onsetTicks": 960,
+          "durationTicks": 480,
+          "pitch": 64,
+          "velocity": 40,
+          "author": "learner"
+        },
+        {
+          "id": "student-3",
+          "kind": "note",
+          "instrumentId": "keyboard",
+          "onsetTicks": 1440,
+          "durationTicks": 480,
+          "pitch": 67,
+          "velocity": 40,
+          "author": "learner"
+        }
+      ],
+      "explanation": "Same symbolic notes/time/instrument; acoustic timbre may change with dynamics.",
+      "playbackRole": "partner_demonstration",
+      "transformationProvenance": "illustrative_fixture",
+      "independentEvidence": false
+    },
+    {
+      "id": "invalid-fake-contrast",
+      "operation": "dynamics",
+      "goal": "intentional softer version",
+      "expectedAccept": false,
+      "permittedChangedFields": [
+        "velocity"
+      ],
+      "replyEvents": [
+        {
+          "id": "student-0",
+          "kind": "note",
+          "instrumentId": "keyboard",
+          "onsetTicks": 0,
+          "durationTicks": 480,
+          "pitch": 60,
+          "velocity": 70,
+          "author": "learner"
+        },
+        {
+          "id": "student-1",
+          "kind": "note",
+          "instrumentId": "keyboard",
+          "onsetTicks": 480,
+          "durationTicks": 480,
+          "pitch": 62,
+          "velocity": 70,
+          "author": "learner"
+        },
+        {
+          "id": "student-2",
+          "kind": "note",
+          "instrumentId": "keyboard",
+          "onsetTicks": 960,
+          "durationTicks": 480,
+          "pitch": 64,
+          "velocity": 70,
+          "author": "learner"
+        },
+        {
+          "id": "student-3",
+          "kind": "note",
+          "instrumentId": "keyboard",
+          "onsetTicks": 1440,
+          "durationTicks": 480,
+          "pitch": 67,
+          "velocity": 70,
+          "author": "learner"
+        }
+      ],
+      "explanation": "No change occurred despite a contrast claim.",
+      "playbackRole": "partner_demonstration",
+      "transformationProvenance": "illustrative_fixture",
+      "independentEvidence": false
+    }
+  ],
+  "runtimeRejectionCases": [
+    "stale request or hash",
+    "model provenance without approved loaded model",
+    "fixture marked as real inference",
+    "unknown goal or evidence ID",
+    "new or missing events in a preserve-event task",
+    "out-of-range gain or event length",
+    "partner assistance in independent-check mode"
+  ],
+  "illustrativePlan": {
+    "schemaVersion": "2.0.0",
+    "requestId": "fixture-request-01",
+    "sourcePhraseHash": "6e015c572c636d230072f5979fa65bd3983591be634dc44bcaae029935caa838",
+    "goalId": "G_PITCH_CONTRAST",
+    "mode": "controlled_contrast",
+    "provenance": {
+      "kind": "illustrative_fixture",
+      "modelCardId": null
+    },
+    "operation": "transpose",
+    "parameters": {
+      "semitones": 2
+    },
+    "evidenceFactIds": [],
+    "feedbackTemplateId": "notice-one-change"
+  },
+  "illustrativePlanProductionStatus": "Must be rejected if presented as real model inference; schema-valid does not mean production-admissible."
+}

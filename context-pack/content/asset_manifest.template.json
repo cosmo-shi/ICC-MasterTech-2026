@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "1.0.0",
+  "templateOnly": true,
+  "approvedForShipping": false,
+  "policy": "Every actual shipped asset needs exact provenance, compatible licence and an actual hash. These nulls are deliberate, not approval.",
+  "entries": [
+    {
+      "id": "replace-with-real-asset-id",
+      "kind": "instrument-sample",
+      "sourceId": "VCSL",
+      "sourceUrl": "https://github.com/sgossner/VCSL",
+      "sourceRevision": null,
+      "originalFilePath": null,
+      "localFilePath": null,
+      "creator": null,
+      "licence": "CC0-1.0",
+      "licenceSnapshotPath": null,
+      "downloadedAt": null,
+      "sha256": null,
+      "bytes": null,
+      "rootMidiNote": null,
+      "modifications": [],
+      "status": "pending_file_selection_and_verification"
+    }
+  ]
+}

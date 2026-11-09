@@ -1,0 +1,826 @@
+PRIOR DESIGN RESEARCH — REFERENCE ONLY
+The current MASTER_CONTEXT.md resolves design alternatives. 'Open source' labels in an older register may only mean publicly accessible; they do not establish a reusable asset licence. Do not import third-party images or lesson content without item-level permission.
+
+<PARSED TEXT FOR PAGE: 1 / 19>
+ 01 / THE RECOMMENDATION
+
+
+
+ A place to make noise.
+ A playful, welcoming music app with a clear identity: a colourful sound
+ workshop built for curiosity, confidence and making things.
+
+ Use expressive, slightly irregular headings; readable everyday text; a warm canvas; a decisive cobalt
+ action colour; and a small family of shapes that visibly respond to sound.
+
+ The direction I would choose
+   Element                      Recommended starting point
+
+
+   Personality                  Childlike curiosity, generous space, confident colour and simple humour.
+
+   Typography                   Grandstander 650 for short display headings. Atkinson Hyperlegible Next 400/650 for
+                                reading and controls.
+
+   Palette                      Cream + dark plum ink + cobalt, with coral and yellow as expressive accents.
+
+   Signature                    A repeatable family of sound stamps: circles, arches, bars and loops.
+
+   Behaviour                    Make a sound quickly, explore freely, replay, undo and hear what changed.
+
+
+
+
+                   Try                                             Hear                                 Make
+ This is a design recommendation informed by evidence. Research constrains readability, access and attention; it does not
+ scientifically select these exact fonts, colours or shapes.
+ Sources: S009 · S030 · S053 · S067 · S073 · S074. IDs match the full evidence register.
+
+
+
+
+MUSIC LEARNING APP / DESIGN RESEARCH / 8 NOV 2026                                                                           1
+<PARSED TEXT FOR PAGE: 2 / 19>
+ 02 / DIAGNOSE THE PATTERN
+
+
+
+ What makes it feel generic?
+ The problem is usually the combination of defaults. A perfectly usable
+ font can feel anonymous when every other choice is equally
+ interchangeable.
+
+ I have not seen the Claude-generated screens, so this is a diagnosis of the pattern you described, not
+ a judgement of an unseen design.
+
+   Pattern to challenge                                 A more intentional decision
+
+
+   Same geometric sans everywhere                       One expressive display voice, with one restrained reading voice.
+
+   Every surface is a pale rounded card                 Give the instrument the main stage; use grouping and space before
+                                                        adding containers.
+
+   Gradient, glow and polish as the                     Choose recognisable shapes, a strong colour role and repeatable
+   identity                                             illustration rules.
+
+   A dashboard of progress before play                  Let the first screen offer a clear action that produces sound.
+
+   Random doodles and friendly faces                    Use a consistent drawing method and a reason for each character or
+                                                        mark.
+
+   Generic praise after every tap                       Give specific musical feedback: what changed, what was heard, what to
+                                                        try.
+
+
+ A useful test
+ Cover the name. Could the screen belong to a meal planner, a habit tracker or a finance app? If so, its
+ identity probably needs a stronger organising idea.
+
+ These are art-direction judgements. There is no reliable visual test that proves an interface was made by AI, and no font is
+ inherently an AI font.
+ Sources: S006 · S072 · S108 · S112. IDs match the full evidence register.
+
+
+
+
+MUSIC LEARNING APP / DESIGN RESEARCH / 8 NOV 2026                                                                               2
+<PARSED TEXT FOR PAGE: 3 / 19>
+ 03 / SCOPE AND EVIDENCE QUALITY
+
+
+
+ What was actually reviewed?
+ 120 annotated entries across 76 website hosts. 117 have substantive
+ content or reference value; three are explicitly access-only leads.
+
+   Source group                             Entri      What it can answer
+                                            es
+
+
+   Trends and brand evidence                12         What the industry is discussing; how recognition is built.
+
+   Reading and learning research            33         Reading, attention, interaction and learning constraints.
+
+   Design guidance                          29         Practical accessibility and child-centred design requirements.
+
+   Brand and product references             29         How a coherent identity is expressed in real work.
+
+   Typeface provenance                      10         Who made a font, what it supports and how it is licensed.
+
+   Dribbble visual references               7          Visual possibilities and familiar concept patterns.
+
+
+ How the source filter worked
+ Search results were screened for provenance. Preference went to original studies, standards bodies,
+ charities, official product pages, type designers and the studios responsible for the work. Generic
+ font-ranking sites, mirrored pages, affiliate roundups and untraceable trend lists were left out of the
+ final register.
+
+ Review depth is labelled per entry: public page extract, article/repository extract, indexed abstract,
+ creator description, official documentation or access-only lead. This is a structured research scan, not
+ a systematic review of 120 full-text studies.
+
+ D&AD is a gated landing page; Druin is a bibliographic lead; Tate Kids was too limited to assess. Their substantive findings
+ are not used. NN/G paid reports were not read. Apple guidance was read through its official documentation text. Related
+ Tubik shots were treated as one project.
+
+
+
+
+MUSIC LEARNING APP / DESIGN RESEARCH / 8 NOV 2026                                                                               3
+<PARSED TEXT FOR PAGE: 4 / 19>
+ 04 / INDUSTRY SIGNALS
+
+
+
+ 2026: what is moving, and why?
+ A broad reaction to visual sameness is visible in current design writing. The response is diverse:
+ louder expression, quieter restraint and handmade references all appear at once.
+
+   Signal                             Why it is appearing                           What to do here
+
+
+   Expressive lettering               Designers want character beyond               Use it in the name and short headlines;
+                                      interchangeable brand typography.             keep instructions stable.
+
+   Tactile and analogue               Texture and visible process offer a           Try crisp printed shapes and a little real
+   references                         counterpoint to cheap digital polish.         drawing; protect text clarity.
+
+   Surreal humour and                 Unexpected images can make a brand            Use a small, coherent cast or sound-shape
+   playful objects                    memorable and emotionally vivid.              family.
+
+   Calm and anti-cuteness             Some audiences want relief from               Provide breathing room and adjustable
+                                      overstimulation and relentless                effects; keep the playful identity.
+                                      friendliness.
+
+   Local and cultural                 Place and context can make work less          Commission and credit collaborators; work
+   specificity                        interchangeable.                              with cultural authority.
+
+   Sound and motion as                Digital systems can behave, not only          Make feedback follow the learner's action
+   identity                           display a logo.                               and offer sensory alternatives.
+
+
+ Canva identifies both scrapbook-like expression and an anti-cuteness direction. That contradiction is useful: a trend report
+ is a set of signals, not a rulebook for children.
+ Sources: S001 · S002 · S004 · S008 · S112. IDs match the full evidence register.
+
+
+
+
+MUSIC LEARNING APP / DESIGN RESEARCH / 8 NOV 2026                                                                                4
+<PARSED TEXT FOR PAGE: 5 / 19>
+ 05 / ART-DIRECTION DECISIONS
+
+
+
+ What to keep for the long term
+ Aim for a system that can absorb new content while remaining
+ recognisable. Longevity is a maintenance practice, not a prediction that
+ a style will never date.
+
+   Keep building                                    Use selectively                   Leave out of this direction
+
+
+   Legible text and clear hierarchy                 A rough edge on an illustration   Texture behind instructions.
+
+   A recognisable shape family                      Oversized or animated headline    Moving labels or decorative
+                                                    type                              distortion in controls.
+
+   A stable action colour                           Bright secondary colour           Every colour doing every job.
+                                                    combinations
+
+   Consistent input and feedback                    A character with a clear role     Unrelated mascot styles collected
+                                                                                      from asset packs.
+
+   Space for learner-made work                      Limited collage in campaigns      A scrapbook composition around
+                                                                                      the playing surface.
+
+   Repeatable rules for new screens                 Seasonal campaign experiments     Rebranding whenever a new trend
+                                                                                      list appears.
+
+
+ Why it can last
+ Simple shapes, a consistent drawing method and a recognisable voice are easy to extend. Girard's
+ long-lived figure family is a useful visual precedent. Yoto and Nickelodeon demonstrate how an
+ organising motif can connect many different touchpoints.
+
+ Avoid treating fake grain as proof of humanity. A clean digital design can have character; an artificial
+ paper texture can be just as formulaic as a gradient.
+ Sources: S053 · S065 · S108 · S110 · S112. IDs match the full evidence register.
+
+
+
+
+MUSIC LEARNING APP / DESIGN RESEARCH / 8 NOV 2026                                                                         5
+<PARSED TEXT FOR PAGE: 6 / 19>
+ 06 / EVIDENCE INTO DECISIONS
+
+
+
+ What research should change
+   Finding                                   Decision for the app                                      Limit
+
+
+   Size, spacing and letterforms             Start body text at 18 CSS px; allow                       18 px is our starting choice, not
+   affect reading tasks.                     enlargement and test the actual words.                    a scientifically optimal size.
+
+   There is individual variation in          Offer text size and comfortable spacing;                  Personal-best laboratory
+   useful text formats.                      consider a reading-font option.                           comparisons are not
+                                                                                                       guaranteed app gains.
+
+   Specialist dyslexia fonts do              Choose clear forms; measure reading and                   Do not market any font as a
+   not reliably outperform                   task completion.                                          treatment.
+   ordinary faces.
+
+   Irrelevant detail can compete             Keep the playing area clear; animate the                  Classroom findings do not map
+   for attention.                            thing being used.                                         directly to every screen.
+
+   Emotional design can help                 Test enjoyment and musical understanding                  Warm colours and rounded
+   motivation; learning results              separately.                                               shapes are not a universal
+   vary.                                                                                               learning recipe.
+
+   Children differ from adults in            Use generous targets and alternatives to                  Real devices and real learners
+   touchscreen behaviour.                    dragging.                                                 decide whether controls work.
+
+
+ The evidence supports purposeful delight. A pulsing pad can explain timing; confetti over the same pad can make it harder
+ to follow. The useful question is what the visual helps the learner notice.
+ Sources: S009 · S012 · S013 · S019 · S020 · S023 · S026 · S030 · S038. IDs match the full evidence register.
+
+
+
+
+MUSIC LEARNING APP / DESIGN RESEARCH / 8 NOV 2026                                                                                       6
+<PARSED TEXT FOR PAGE: 7 / 19>
+ 07 / REFERENCE PRINCIPLES
+
+
+
+ An identity, not a borrowed skin
+   Reference                          Borrow the principle                                  Keep your own expression
+
+
+   Duolingo / historical              Type, mascot, tone and graphic forms                  Create a different motif and voice; do
+   identity                           were developed together.                              not imitate its owl, green or button
+                                                                                            treatment.
+
+   Yoto / Pentagram                   Child control and cross-generation                    Use clarity and a sophisticated playful
+                                      appeal can coexist.                                   palette in your own interface.
+
+   Young V&A; / Pentagram             Expressive type can invite participation.             Keep irregularity in a few headings and
+                                                                                            images.
+
+   Toca Boca                          Creative agency can be the central                    Make experimentation, undo and return
+                                      promise.                                              paths feel safe.
+
+   Pok Pok                            A playroom can offer exploration without              Pair free play with clear, optional
+                                      constant scoring.                                     learning invitations.
+
+   Chrome Music Lab /                 Immediate interaction reduces the                     Design a first playable moment before a
+   Ableton                            distance between interest and making.                 progress dashboard.
+
+   Nordoff and Robbins                A meaningful motif can connect the                    Find your own sound-shape vocabulary.
+                                      whole identity.
+
+   Mailchimp / Dropbox                Playful expression can address adult                  Use restraint and coherent rules to
+                                      audiences.                                            avoid a nursery-only tone.
+
+ Sources: S053 · S054 · S057 · S061 · S064 · S066 · S067 · S068 · S072 · S101. IDs match the full evidence register.
+
+
+
+
+MUSIC LEARNING APP / DESIGN RESEARCH / 8 NOV 2026                                                                                     7
+<PARSED TEXT FOR PAGE: 8 / 19>
+ 08 / TYPOGRAPHY DIRECTION
+
+
+
+ Choose a voice for the words
+ Recommended: Grandstander for short, joyful display moments;
+ Atkinson Hyperlegible Next for everything people must read or operate.
+
+   Typeface                           Role and character                                           Caution
+
+
+   Grandstander                       Short headings, around 32-48 px; slightly                    Long passages can become tiring;
+                                      irregular book-like warmth.                                  keep the playful voice
+                                                                                                   concentrated.
+
+   Atkinson Hyperlegible              Body, buttons and labels at regular or                       Designed for legibility; not proven
+   Next                               semibold weights; visibly distinct characters.               best for every child.
+
+   Andika                             Alternative reading face for an early-literacy               Check the letterforms taught
+                                      version.                                                     locally and actual language
+                                                                                                   coverage.
+
+   Fredoka                            Softer, rounder display alternative for a                    Can feel more preschool when
+                                      younger direction.                                           combined with baby-like
+                                                                                                   characters.
+
+   Bricolage Grotesque                Display alternative for a broader teen/adult                 Use its character at larger sizes;
+                                      creative-studio feel.                                        avoid overloading the interface.
+
+   Nunito                             A restrained soft UI fallback if the team                    Needs a stronger surrounding
+                                      prefers it.                                                  identity to feel distinctive.
+
+
+ Grandstander                           Make a little noise.
+ Fredoka                                Make a little noise.
+ Bricolage Grotesque                    Make a little noise.
+ The six rendered families in the board pack were downloaded from the official Google Fonts repository and their Open Font
+ License files checked. Verify the versions and character coverage used in production. Fraunces, Lexend, Baloo and Readex
+ Pro are additional research references, not six more fonts to add to the interface.
+ Sources: S073 · S074 · S075 · S076 · S077 · S078 · S079 · S080 · S081 · S082. IDs match the full evidence register.
+
+
+
+
+MUSIC LEARNING APP / DESIGN RESEARCH / 8 NOV 2026                                                                                        8
+<PARSED TEXT FOR PAGE: 9 / 19>
+ 09 / STARTING SPECIFICATION
+
+
+
+ Make the type usable
+   Text role                        Starting choice                                  Rule
+
+
+   Main display                     Grandstander 650, 36/40 px                       One or two short lines. No essential words
+                                                                                     hidden in a decorative lock-up.
+
+   Section heading                  Atkinson Next 650, 24/30 px                      Sentence case and a stable hierarchy.
+
+   Instruction / body               Atkinson Next 400, 18/27 px                      Short sentences; left aligned. Test larger
+                                                                                     defaults for younger readers.
+
+   Button label                     Atkinson Next 650, 18/23 px                      Use an action: Play, Listen again, Save my
+                                                                                     sound.
+
+   Supporting label                 Atkinson Next 400, 16/22 px                      Do not put task-critical instructions in small
+                                                                                     supporting text.
+
+   Music labels                     Same reading family, clear symbols               Pair unfamiliar symbols with names or
+                                                                                     demonstrations.
+
+
+ Test actual words, not just an alphabet
+ Check "Play", "Listen", "Loop", "Record", "Stop" and "Save", plus I/l/1, O/0, rn/m and b/d/p/q. Compare
+ at the same visible size; nominal font size alone can be misleading.
+
+ Keep live text, preserve useful spacing when users enlarge it, and let labels wrap. Make room for
+ longer translated text. Typography for Arabic, Indic and other scripts needs a compatible family and
+ review by fluent readers.
+
+ Sizes above are web CSS starting points. Native iOS points and Android dp require platform-specific decisions. A preference
+ setting is useful only if the enlarged interface still works.
+ Sources: S012 · S013 · S073 · S077 · S093 · S117. IDs match the full evidence register.
+
+
+
+
+MUSIC LEARNING APP / DESIGN RESEARCH / 8 NOV 2026                                                                                     9
+<PARSED TEXT FOR PAGE: 10 / 19>
+ 10 / RECOMMENDED PALETTE
+
+
+
+ Colour with clear jobs
+ A warm canvas with dark plum ink feels open; cobalt makes the main action unmistakable. Coral and
+ yellow carry energy without becoming the text colour everywhere.
+
+   Token                              Hex                     Use
+
+
+   Paper                              #FFF8E8                 Main canvas; use plain areas behind text.
+
+   Ink                                #2B2341                 Main reading text, labels and strong outlines.
+
+   Action cobalt                      #3658D4                 Main action and key interactive emphasis.
+
+   Coral                              #FF7954                 Hero illustration, selected pads and warm accents; use dark ink
+                                                              labels.
+
+   Sunflower                          #FFD65C                 Highlights, rhythm objects and occasional emphasis.
+
+   Mint                               #A7DFC3                 Secondary sound objects and quiet illustration areas.
+
+   Lilac                              #C4B4E8                 Secondary family colour; pair with ink, not white.
+
+   Supporting ink                     #675D75                 Secondary reading text on the cream canvas.
+
+
+
+
+ Canvas              Ink                  Action              Coral            Yellow            Mint              Lilac
+
+
+ A practical allocation
+ Start with roughly 60-70% quiet canvas, 20-30% structured content and 10% strong accents on a
+ typical navigation screen. This is a compositional heuristic. A playing surface may use more colour
+ when it helps separate playable objects.
+
+ No research establishes that this palette makes children more creative. Choose it for identity and visual hierarchy, then test
+ comfort and recognition with the intended audience.
+ Sources: S031 · S032 · S035 · S095. IDs match the full evidence register.
+
+
+
+
+MUSIC LEARNING APP / DESIGN RESEARCH / 8 NOV 2026                                                                               10
+<PARSED TEXT FOR PAGE: 11 / 19>
+ 11 / MEASURED CHECKS
+
+
+
+ Which colour pairings work?
+ Contrast ratios were calculated from the exact hex values using the WCAG relative-luminance
+ method. These are pair checks, not a whole-app accessibility certification.
+
+   Foreground / background                                            Ratio     Decision
+
+
+   Ink on cream                                                       13.98:1   Strong default for reading.
+
+   White on cobalt                                                    5.99:1    Works for normal button-label text.
+
+   Ink on coral                                                       5.72:1    Works for normal text.
+
+   Ink on yellow                                                      10.59:1   Works for normal text.
+
+   Ink on mint                                                        9.85:1    Works for normal text.
+
+   Ink on lilac                                                       7.78:1    Works for normal text.
+
+   Supporting ink on cream                                            5.84:1    Works for normal supporting text.
+
+   White on coral                                                     2.59:1    Fails normal and large text thresholds;
+                                                                                use ink instead.
+
+
+ Apply colour accessibly
+ Normal text needs at least 4.5:1; large text has a 3:1 exception. Relevant controls and graphics also
+ need sufficient contrast. Never use colour alone for a musical category, a selection or a result: add a
+ label, symbol, position or outline.
+
+ Check focus, pressed, selected, disabled and error states separately. Test real screen brightness and
+ lighting. An attractive pastel surface does not automatically provide a visible boundary against cream.
+ Sources: S089 · S095 · S098. IDs match the full evidence register.
+
+
+
+
+MUSIC LEARNING APP / DESIGN RESEARCH / 8 NOV 2026                                                                         11
+<PARSED TEXT FOR PAGE: 12 / 19>
+ 12 / A CLEAR CHOICE
+
+
+
+ Three directions worth testing
+   Direction                        Visual ingredients                                   Best fit / risk
+
+
+   A. Sound Workshop                Grandstander + Atkinson Next. Cream,                 Strongest balance of youthful
+   Recommended                      plum, cobalt, coral, yellow. Crisp printed           expression and all-age credibility.
+                                    geometry and a little unevenness.                    Risk: too much faux craft or too
+                                                                                         many stamps.
+
+   B. Pocket Orchestra              Fredoka + Andika. Warm paper, forest,                Inviting for younger learners. Risk: a
+                                    mint, peach and a warm red accent. Soft              preschool reading if faces and
+                                    toy-like forms.                                      roundness dominate.
+
+   C. Festival of Sound             Bricolage Grotesque + Atkinson Next. Plum,           More energy for older children, teens
+                                    lilac, lime and coral. Bold poster-like              and adults. Risk: visual density and
+                                    compositions.                                        campaign style overtaking the
+                                                                                         instrument.
+
+
+ Make the comparison fair
+ The three boards use the same headline and comparable controls. Change visual direction while
+ holding task, words and interaction constant. Ask who each version seems to be for, then observe
+ whether people can actually use it.
+
+ Do not average all preferences into a fourth, anonymous design. Select the direction that best fits the
+ product promise, then resolve the concrete usability failures.
+
+ The alternatives are original art-direction interpretations. They are not designs tested in the cited studies. Exact contrast
+ checks in this report apply to Direction A; the other palettes require their own state-by-state checks.
+
+
+
+
+MUSIC LEARNING APP / DESIGN RESEARCH / 8 NOV 2026                                                                                12
+<PARSED TEXT FOR PAGE: 13 / 19>
+ 13 / SHAPE, ILLUSTRATION AND MOTION
+
+
+
+ Give the world a visual grammar
+ A small family of sound stamps
+ Build from circles, rounded rectangles, arches, bars and loops. Repeat one line weight, similar corner
+ behaviour and a limited palette. Slight irregularity can live in large artwork; playable hit areas remain
+ stable and generous.
+
+ Let the shapes behave: a touched pad compresses briefly, a held note has a steady visible state, and
+ a repeating phrase has a clear playhead. These are interface feedback ideas, not universal mappings
+ between shape, colour and musical meaning.
+
+   Layer                           Direction
+
+
+   Illustration                    Flat, confident colour; one coherent drawing method. Choose a few useful scenes rather
+                                   than unrelated decorative objects.
+
+   Characters                      Optional companions with specific roles. Expressions can be funny or curious; keep the
+                                   learner's work at the centre.
+
+   Material                        Crisp paper-like surfaces; texture only in nonessential art. Keep labels and controls
+                                   clean.
+
+   Motion                          Brief response to an action. Provide static equivalents, reduced motion and a way to turn
+                                   down effects.
+
+   Sound                           Separate instructional speech, instrument audio and decorative effects. Let users control
+                                   them.
+
+   Cultural instruments            Use accurate names, credited collaborators and context approved by the relevant
+                                   community.
+
+ Sources: S039 · S049 · S054 · S065 · S094 · S109 · S116. IDs match the full evidence register.
+
+
+
+
+MUSIC LEARNING APP / DESIGN RESEARCH / 8 NOV 2026                                                                           13
+<PARSED TEXT FOR PAGE: 14 / 19>
+ 14 / INTERACTION AND TONE
+
+
+
+ Make freedom something you can
+ do
+ The welcoming feeling should come from the experience: learners can
+ start, hear a result, change their mind and keep something they made.
+
+   Moment                       Recommended behaviour / wording
+
+
+   Start                        One obvious invitation: "Make a sound." Offer an optional guided start alongside free
+                                exploration.
+
+   Try                          Tap as a complete action. Give an alternative to every essential drag interaction.
+
+   Hear                         Make the relationship between the touched object and its sound clear, with a visible state
+                                too.
+
+   Learn                        Show a useful prompt: "Try leaving a space between these beats."
+
+   Recover                      Undo, clear and restart stay visible. Explain an error in plain language.
+
+   Keep                         "Save my sound" or "Listen again" gives ownership of the result.
+
+   Return                       "Ready to try another sound?" keeps the invitation open. Avoid guilt and lost-progress
+                                pressure.
+
+
+ Feedback should carry information
+ "You made the second note longer" tells a learner what happened. "You are a genius!" gives much
+ less guidance. Celebrate effort and exploration, while distinguishing free creation from an exercise
+ with a specific musical goal.
+
+ A decorative click should not mask timing or pitch. Offer visual timing cues and optional haptics
+ where supported, while being clear that some auditory learning objectives need adapted teaching or
+ alternatives.
+ Sources: S024 · S039 · S049 · S051 · S064 · S068 · S090 · S120. IDs match the full evidence register.
+
+
+
+
+MUSIC LEARNING APP / DESIGN RESEARCH / 8 NOV 2026                                                                        14
+<PARSED TEXT FOR PAGE: 15 / 19>
+ 15 / AGE AND ACCESS
+
+
+
+ One identity, adaptable
+ experiences
+ An identity can appeal across ages without assuming a six-year-old and an adult need the same
+ amount of text or the same instrument layout.
+
+   Learner or context                      Keep                                         Adapt
+
+
+   Beginning / pre-reading child           Recognisable controls, direct                Very short prompts, spoken
+                                           sound and the same visual family.            demonstrations, fewer visible choices and
+                                                                                        adult support as appropriate.
+
+   Primary school learner                  Playful type in headings, clear              Optional guided tasks, visible labels and
+                                           reading type and creative                    controllable complexity.
+                                           ownership.
+
+   Teen / adult beginner                   The same bold palette and                    More density when requested; restrained
+                                           sound-shape language.                        celebration and useful musical
+                                                                                        terminology.
+
+   Low vision / reading                    Distinct characters and strong               Enlarged text, adaptable spacing, zoom
+   differences                             contrast.                                    and layouts that still work.
+
+   Motor / input differences               Clear states and predictable                 Keyboard, switch-compatible controls, tap
+                                           focus.                                       alternatives and larger pads.
+
+   Sensory preferences /                   A visible relationship between               Separate effects, reduced motion,
+   hearing differences                     input and result.                            captions and adaptable musical tasks.
+
+   Low-cost or shared device               The core playing experience.                 Lightweight artwork, usable narrow
+                                                                                        screens and a path that tolerates limited
+                                                                                        connectivity.
+
+ These are test conditions, not rigid profiles of disability or age. Let people select useful options; do not infer all preferences
+ from an age label. Teachers and parents need clear setup and support information without taking over the learner's space.
+ Sources: S026 · S039 · S043 · S044 · S045 · S049 · S077 · S092 · S099. IDs match the full evidence register.
+
+
+
+
+MUSIC LEARNING APP / DESIGN RESEARCH / 8 NOV 2026                                                                                   15
+<PARSED TEXT FOR PAGE: 16 / 19>
+ 16 / CURATION RECIPE
+
+
+
+ Build a Miro board with a point
+ Use the supplied four wide PNG boards as large frames. Add linked source cards around them, with a
+ sentence explaining what each reference contributes.
+
+   Miro frame                        What goes in it
+
+
+   1. Product promise                "A place to try, hear, make and belong." Add 5 personality words and 5 design
+                                     behaviours.
+
+   2. Reference wall                 Yoto, Young V&A;, Toca Boca, Pok Pok, Music Lab, historical Duolingo and two
+                                     broader-age identities.
+
+   3. Type specimens                 Use the same headline, labels and character-confusion string in each candidate
+                                     pair.
+
+   4. Colour roles                   Label canvas, ink, main action, accents and status colours. Add the tested
+                                     text/background pairs.
+
+   5. Illustration and shape         Show the shape grammar and line rules; add one example that breaks the system.
+
+   6. Motion and sound               Storyboard an idle, touched, held and stopped state. Annotate reduced-motion
+                                     and silent alternatives.
+
+   7. The ordinary screen            Include the instrument, a prompt, settings, an error and a long translated label.
+
+   8. Comparisons and                Three Dribbble concepts with specific reasons to borrow or reject a feature.
+   exclusions
+
+   9. Decision wall                  Choose Direction A; list unanswered questions and test observations rather than
+                                     another round of inspiration.
+
+ Card template: SOURCE / WHAT I NOTICE / WHAT WE WILL TRY / WHAT WE WILL NOT INFER. The CSV pack includes
+ ready-to-import research and decision cards. Miro may map CSV columns differently by import method; the TSV is also easy
+ to copy and paste as text.
+
+
+
+
+MUSIC LEARNING APP / DESIGN RESEARCH / 8 NOV 2026                                                                        16
+<PARSED TEXT FOR PAGE: 17 / 19>
+ 17 / FORMATIVE EVALUATION
+
+
+
+ Test what the board cannot prove
+ Start with small observed sessions across younger children, older children and teen/adult beginners.
+ Include different access needs and actual low-cost devices. This is problem-finding research, not a
+ statistically powered age comparison.
+
+   Question                            Task or observation                                        Decision signal
+
+
+   Does it welcome without             Ask who the app seems made for, before                     Repeated "for toddlers" responses
+   feeling babyish?                    naming its audience.                                       among older learners trigger
+                                                                                                  changes in character and
+                                                                                                  celebration style.
+
+   Can people begin?                   "Show me how you would make your first                     Confusion about the first action
+                                       sound."                                                    requires a clearer control or
+                                                                                                  invitation.
+
+   Can they read and                   Read key labels and locate stop, replay and                Misread words or icon guessing
+   recognise controls?                 save.                                                      require a typography/label change.
+
+   Can they operate it?                Play, hold, stop, undo and repeat a short                  Missed targets or required help
+                                       pattern.                                                   expose layout and input failures.
+
+   Does the visual teach               Ask what changed in sound, then try a                      Enjoyment alone is insufficient; look
+   anything?                           similar task without the prompt.                           for explanation and transfer.
+
+   Can it adapt?                       Enlarge text, reduce motion, use a keyboard                Any blocked core task is a release
+                                       and disable decorative audio.                              blocker for the claimed mode.
+
+
+ Use appropriate child consent and assent, accessible participation and breaks. Ask adults about setup and trust separately.
+ Check licensing, local cultural permission and script coverage before using real cultural content.
+ Sources: S015 · S026 · S043 · S047 · S052 · S107 · S116. IDs match the full evidence register.
+
+
+
+
+MUSIC LEARNING APP / DESIGN RESEARCH / 8 NOV 2026                                                                                      17
+<PARSED TEXT FOR PAGE: 18 / 19>
+ 18 / IMPLEMENTATION DIRECTION
+
+
+
+ A brief you can hand to a designer
+ Design a music-learning app as a colourful sound workshop. The feeling is playful, welcoming, curious
+ and free to experiment. Use a consistent visual world that can welcome both children and older
+ beginners.
+
+ Use Grandstander 650 for short headings and Atkinson Hyperlegible Next 400/650 for reading and
+ controls. Begin with 18/27 px body text and visible 18 px action labels; support enlargement and
+ comfortable spacing.
+
+ Use cream #FFF8E8 as the main canvas; plum #2B2341 for text; cobalt #3658D4 for the main action
+ with white text. Use coral #FF7954, yellow #FFD65C, mint #A7DFC3 and lilac #C4B4E8 for sound
+ objects and illustration with plum labels.
+
+ Create a small family of printed geometric sound stamps: circles, arches, bars and loops. Keep
+ drawing, corners and line weights related. Let expressive art be a little uneven while controls stay
+ visually stable.
+
+ Prioritise a playable instrument and a clear first action. Provide generous targets: start at 48-56 CSS
+ px for web controls and larger playable pads where possible. Use labels plus icons and offer
+ keyboard and tap alternatives to essential dragging.
+
+ Make input produce purposeful sound and visible feedback. Offer reduced motion and separate
+ decorative audio. Let users explore, undo, replay and save their work. Use specific, encouraging
+ prompts.
+
+ Keep gradients, glossy 3D and decorative textures out of this starting direction. Keep reading
+ surfaces clear. Build the home, playing state, prompt, settings and error state in the same system
+ before adding a mascot or more artwork.
+
+ Validate with the intended learners, including disabled learners, rather than describing the result as accessible on
+ appearance alone. The exact fonts, ratios and target sizes above are implementation starting points to test.
+ Sources: S073 · S074 · S089 · S090 · S094 · S096 · S120. IDs match the full evidence register.
+
+
+
+
+MUSIC LEARNING APP / DESIGN RESEARCH / 8 NOV 2026                                                                       18
+<PARSED TEXT FOR PAGE: 19 / 19>
+ 19 / START HERE
+
+
+
+ The references that matter most
+ The separate evidence register contains all 120 entries, review depth, limitations and direct links.
+ These are the most useful first reads for making the design decisions.
+
+ S001 Innovation and authenticity - Adobe's 2026 Creative Trends forecast
+ 2026 forecast emphasises sensory expression, connection, playful surrealism and cultural specificity.
+ S002 'Imperfect by Design': The visual design trends set to define 2026
+ Handmade aesthetics coexist with calmer, less cute styles in the same 2026 forecast.
+ S009 Typography for children may be inappropriately designed
+ Child reading experiments indicate that type size and letter design can affect task performance.
+ S013 The Influence of Format Readability on Children's Reading Speed and Comprehension
+ A 51-child reading study found individual differences in useful font and spacing settings.
+ S019 Dyslexie font does not benefit reading in children with or without dyslexia
+ Controlled experiments found no reading advantage for Dyslexie over the comparison fonts.
+ S030 Multimedia Design for Learning: An Overview of Reviews With Meta-Meta-Analysis
+ A review of 29 reviews supports signaling, coherence and other purposeful multimedia principles.
+ S038 A systematic review of emotional design research in multimedia learning
+ A 51-article review reports more consistent motivation effects than learning-outcome effects.
+ S053 Yoto
+ Yoto combines a recognisable face, clear controls and a palette intended for children and parents.
+ S067 Young V&A
+ Young V&A combines a stable type system with lively handmade characters to invite participation.
+ S072 Identity & Bespoke Typeface for Duolingo - Beth Johnson
+ Duolingo's historical display type was derived from the mascot's shape language.
+ S073 Atkinson Hyperlegible Font - Braille Institute
+ Atkinson Hyperlegible Next is designed around distinct, recognisable characters and numbers.
+ S074 Grandstander - ETC
+ Grandstander has subtly uneven, children's-book-inspired display forms and an open licence.
+ S089 WCAG 2.2
+ WCAG gives measurable requirements for contrast, input, resizing and meaning beyond colour.
+ S090 Making Content Usable for People with Cognitive and Learning Disabilities
+ COGA adds patterns for clear purpose, consistent controls, reduced distraction and understandable content.
+ S108 Brands of Distinction - Ehrenberg-Bass Institute
+ Ehrenberg-Bass explains distinctiveness through the fame and uniqueness of recognisable assets.
+ S112 Elizabeth Goodspeed on imperfection as design strategy
+ Goodspeed challenges the assumption that digitally simulated roughness automatically signals human authorship.
+ S120 UNICEF RITEC Design Toolbox
+ The UNICEF toolbox translates well-being research into practical digital-play design prompts.
+ Reference images in the mood-board pack are credited excerpts for study and comparison. Their artwork and brand elements remain with
+ the original creators; the three proposed directions use new native shapes and verified font specimens.
+
+
+
+
+MUSIC LEARNING APP / DESIGN RESEARCH / 8 NOV 2026                                                                                       19

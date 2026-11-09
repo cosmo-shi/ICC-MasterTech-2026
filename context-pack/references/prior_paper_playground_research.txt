@@ -1,0 +1,951 @@
+PRIOR DESIGN RESEARCH — REFERENCE ONLY
+The current MASTER_CONTEXT.md resolves design alternatives. 'Open source' labels in an older register may only mean publicly accessible; they do not establish a reusable asset licence. Do not import third-party images or lesson content without item-level permission.
+
+<PARSED TEXT FOR PAGE: 1 / 17>
+    PAPER PLAYGROUND / DESIGN DIRECTION
+
+
+
+
+    A place to make a little noise
+    Design research and direction for a children's
+    music-learning app
+
+
+
+
+    8 November 2026 · Recommendation: Paper Playground
+
+    The app should feel like a creative place children are invited to use: bold, warm, curious, a little cheeky,
+    and generous about mistakes. Its personality should come from a recognisable visual language and
+    responsive musical play.
+
+    My recommendation is a paper-and-print-inspired world with sturdy expressive lettering, warm off-white
+    space, vivid flat colour, a small family of sound shapes, and simple controls. Think of a children's creative
+    museum or a hands-on print studio. The mood-board image is an original generated concept, not a
+    finished app, an exact font specimen, or evidence of usability.
+
+    The aim is childlike imagination with clear interaction. An all-ages brand can share a visual identity, but a
+    six-year-old, a teenager and a parent will still need different reading levels, content and support.
+
+    This review retained 115 source pages and relevant passages from 148 screened records. The remaining
+    33 were blocked, empty, limited or excluded. These are page-level sources, not 115 independent studies.
+    The companion register identifies every record and its status.
+
+
+
+
+8 NOV 2026 / Sources are linked by ID and listed in the companion register                                          1
+<PARSED TEXT FOR PAGE: 2 / 17>
+    PAPER PLAYGROUND / DESIGN DIRECTION
+
+
+
+
+    1. The design decision
+    Paper Playground is a direction name, not a proposed app name. It translates “playful, welcoming, free and
+    childish” into five practical rules:
+
+    1. Making is the main event. The first screen invites a sound or a small creative action. Children should hear
+    the result of an action before confronting a progress dashboard.
+
+    2. A bold silhouette does more than more decoration. Use a ring, a block, an arch and a wave as a small
+    starting vocabulary. They can become sound tiles, illustration parts and motion cues.
+
+    3. Personality has a home. Give headings, illustrations and transitions character. Keep directions, controls,
+    labels and the instrument surface stable and readable.
+
+    4. Mistakes are reversible. Replay, stop, undo and try-again controls should be obvious. In creative play, a
+    different sound is not automatically an incorrect answer.
+
+    5. The learner owns the sound. Saved creations and meaningful choices should be more prominent than
+    trophies, streaks or a mascot's approval.
+
+      Layer                                 Proposed treatment                        Purpose
+
+
+      Headings                              Gabarito, weight 800                      A sturdy, friendly voice without baby talk
+
+
+      Reading and controls                  Figtree, weights 400-600                  A quieter layer that supports the action
+
+
+      Ground                                Warm paper, #FFF8EC                       Breathing room between vivid elements
+
+
+      Colour                                Tomato, sunflower, pool blue, deep teal   A compact, recognisable set of roles
+                                            and midnight ink
+
+
+      Illustration                          Cut-paper geometry, occasional print      Material warmth with simple production rules
+                                            texture
+
+
+      Motion                                One responsive action at a time           Explain what the learner just did
+
+
+    The recommendation is a design judgement informed by the sources. No study establishes that this
+    particular aesthetic will improve music learning. It needs testing with the intended learners. [S016, S018,
+    S078, S092, S132]
+
+
+
+
+8 NOV 2026 / Sources are linked by ID and listed in the companion register                                                           2
+<PARSED TEXT FOR PAGE: 3 / 17>
+    PAPER PLAYGROUND / DESIGN DIRECTION
+
+
+
+
+    2. What the research can actually tell us
+    The research question was: Which design choices could create a distinctive, playful and welcoming
+    learning environment without sacrificing clarity, access or learner agency? No current app screens were
+    supplied, so this is a direction study rather than an audit of the existing implementation.
+
+      Evidence group                        Retained pages                   How it was used
+
+
+      Trends and marketing                  16                               Cultural signals and brand-recognition
+                                                                             principles
+
+
+      Brand and product                     38                               Working examples of coherent identity and
+      references                                                             creative interaction
+
+
+      Typeface sources                      15                               Specimens, design intent and licensing
+                                                                             context
+
+
+      Accessibility and                     23                               Constraints for readable, operable and
+      child-design guidance                                                  understandable interfaces
+
+
+      Research records                      14                               Abstracts, relevant passages and publisher
+                                                                             summaries about reading, learning and
+                                                                             usability
+
+
+      Portfolio showcases                   9                                Visual exploration and counterexamples; no
+                                                                             efficacy assumed
+
+
+    Searches covered 2026 forecasts, original studio case studies, official product pages, type foundries,
+    WCAG/WAI guidance, child-computer interaction and reading research, Dribbble and Behance.
+    Search-result leads were followed to their source pages where available. Specific passages were checked
+    for major recommendations. Six downloaded reference images were visually inspected: Toca Boca, Yoto,
+    Headspace, Young V&A and two Dribbble concepts.
+
+    Scraped “design token” sites, anonymous trend lists, duplicated mirrors and generic optimisation articles
+    were not used as decision anchors. Commercial reports were retained with lower weight and checked
+    against other kinds of evidence. A commercial report can be a useful signal without being neutral or
+    causal research.
+
+    Limits: this is a broad design review, not a systematic review or a market-prevalence survey. Some
+    research was available only as an abstract or institutional summary. Sources about the same study or
+    brand are not independent replications. The register counts documents, not independent findings. Several
+    relevant identities predate 2026; that is useful when considering longevity. Access date: 8 November
+    2026.
+
+
+
+
+8 NOV 2026 / Sources are linked by ID and listed in the companion register                                                3
+<PARSED TEXT FOR PAGE: 4 / 17>
+    PAPER PLAYGROUND / DESIGN DIRECTION
+
+
+
+
+    3. What is gaining attention in 2026, and why
+    The most useful pattern is a renewed appetite for visible personality and material expression. Canva's
+    2026 forecast draws on platform signals, an advisory board and a creator survey; Adobe highlights
+    sensory imagery, playful surrealism and connection. These describe creative-industry interests, not
+    children's learning outcomes. [S001, S002]
+
+      Signal in the reviewed                Why it is attracting attention               Application here
+      writing
+
+
+      Tactile, imperfect and analog         Creative directors describe fatigue with     Use a little print texture on illustration; keep
+      detail                                uniform polish and a desire for visible      text and controls clean
+                                            authorship
+
+
+      Expressive lettering                  Type can carry a specific voice when         Choose a headline family deliberately;
+                                            otherwise similar digital layouts converge   preserve ordinary word shapes in directions
+
+
+      Stronger colour and shape             They can make an experience                  Use vivid colour in bounded areas, with one
+                                            recognisable and establish hierarchy         clear main action
+
+
+      Collecting, collage and               Zine and trinket references make work        Let children arrange their own sound
+      personal composition                  feel assembled and particular                collection; avoid arbitrary collage on every
+                                                                                         screen
+
+
+      Character, humour and                 A recurring visual behaviour can build       Develop a few repeatable sound responses
+      motion systems                        recognition beyond a static logo             and expressions
+
+
+      Quiet and structured                  Canva's “Opt Out Era” sits alongside its     Make the activity surface calm even when
+      simplicity                            more expressive trends                       the brand is exuberant
+
+
+    The reviewed publications disagree in emphasis: maximalism and simplification both appear. This is a
+    reason to choose according to the task, not to combine all trends. Several “2026” reports were forecasts
+    published before or early in the year; they are not proof that a style dominates November 2026.
+    [S002-S009]
+
+    Google's Material 3 Expressive research is a useful counterweight to the idea that personality and usability
+    must conflict. Google reports 46 studies and more than 18,000 participants, with colour, shape, scale and
+    containment used to clarify action. That programme supports its own system; it does not validate this
+    children's app or the proposed palette. [S138]
+
+
+
+
+8 NOV 2026 / Sources are linked by ID and listed in the companion register                                                                  4
+<PARSED TEXT FOR PAGE: 5 / 17>
+    PAPER PLAYGROUND / DESIGN DIRECTION
+
+
+
+
+    4. What I would move away from in this app
+    These are suitability decisions, not claims that the whole industry has abandoned a style.
+
+      Move away from                        Reason in this product                      Replace it with
+
+
+      A neutral font carrying the           It leaves the app with little to remember   Expressive headings plus a consistent shape,
+      entire brand                          beyond a familiar UI template               colour and motion language
+
+
+      A large “learning dashboard”          Percentages, graphs and class statistics    A small number of meaningful musical
+      as the child's home                   can crowd out the invitation to play        actions
+
+
+      Frosted glass and soft                Transparency makes contrast depend on       Solid surfaces and clearly visible control
+      shadows defining controls             what is behind it; subtle edges can be      boundaries
+                                            difficult to locate
+
+
+      Purple gradients, sparkle             In your brief, this package communicates    A specific material and shape vocabulary tied
+      marks and generic assistant           a familiar AI-product aesthetic             to making sound
+      avatars used together
+
+
+      A new mascot, doodle or               Inconsistency weakens recognition and       A small reusable illustration grammar
+      illustration style on each            increases production burden
+      screen
+
+
+      Texture over every surface            Reading and precision controls must not     Texture on large artwork and occasional
+                                            compete with simulated paper grain          transitions
+
+
+      Rewards attached to every             They may redirect attention from making     Progress that reveals ability, saved work and
+      action                                and practising toward earning               optional creative challenges
+
+
+      Forced misspellings and               A childlike voice should not obscure        Short, warm, concrete language
+      baby talk                             meaning or patronise older learners
+
+
+    No font or colour is inherently “AI”. A serif is not automatically human and a sans serif is not automatically
+    generic. Even a cream-and-serif palette can become another template. What matters is a clear concept,
+    deliberate constraints and the quality of execution. Brand-sameness concerns also predate the current
+    generative-AI wave. [S010]
+
+    Marketing research and commentary point toward consistent recognisable cues rather than endless
+    novelty. Ipsos' brand-asset research is useful here: a designer's feeling that a colour is distinctive is not
+    the same as audiences recognising the brand from it. [S011-S014]
+
+
+
+
+8 NOV 2026 / Sources are linked by ID and listed in the companion register                                                              5
+<PARSED TEXT FOR PAGE: 6 / 17>
+    PAPER PLAYGROUND / DESIGN DIRECTION
+
+
+
+
+    5. Learn from Duolingo's coherence
+    Duolingo's own account explains a move toward simpler, readable vector shapes, a consistent illustration
+    vocabulary and a production approach its team could repeat. The relevant lesson is that the same logic
+    connects illustration, interface and brand. It is not a recipe of green, rounded buttons and a mascot.
+    [S016]
+
+      Reference                             What is worth studying                        What should remain its own
+
+
+      Toca Boca / Bold                      A flexible identity intended to grow with     Its mouth mark, character world, bounce and
+                                            children and tweens; the relationship         exact palette
+                                            between rules and expressive gestures
+
+
+      Young V&A / Pentagram                 Creative confidence, mixed lettering and      Its logo, altered V&A lettering and hand
+                                            cultural participation beyond preschool       imagery
+                                            aesthetics
+
+
+      Yoto / Pentagram                      A graphic system linked to a tangible         Its smile symbol, cards and custom lettering
+                                            product children can control
+
+
+      Headspace / ITAL/C                    Simple expressive illustration in a service   Its orange-circle equity and recognisable
+                                            also used by adults                           emotional characters
+
+
+      Nickelodeon / Roger                   An expressive world with a recurring          The splat, orange territory and specific
+                                            graphic thread                                motion language
+
+
+      Mailchimp / COLLINS                   Humour and eccentric imagery in useful        Its mascot, illustrations and exact
+                                            adult software                                typographic combination
+
+
+      Miffy / Dick Bruna                    Tight constraints, confident outlines and a   The bunny, brush contours and signature
+                                            limited colour vocabulary sustained over      primary-colour combinations
+                                            decades
+
+
+      Eric Carle / Carle Museum             Painted-paper collage as a material           The artist's specific imagery and
+                                            process                                       recognisable compositions
+
+
+    These are references for relationships and craft. They do not prove that copying a style causes
+    engagement or that one appearance works for everyone. [S018-S024, S124-S127]
+
+    For this app, recognition could grow from sound-responsive shapes, a distinctive small cast, a recurring
+    typographic rhythm and a consistent way creations are displayed. Keep the instrument itself recognisable
+    where recognising the real instrument is part of the learning goal. Abstract sound play and accurate
+    instrument teaching need different visual treatments.
+
+
+
+
+8 NOV 2026 / Sources are linked by ID and listed in the companion register                                                               6
+<PARSED TEXT FOR PAGE: 7 / 17>
+    PAPER PLAYGROUND / DESIGN DIRECTION
+
+
+
+
+    6. Typography: a shortlist with a purpose
+    Start with Gabarito 800 for headings and Figtree 400-600 for reading and controls. Gabarito's official
+    description places friendliness and educational use within its design story. Figtree supplies a calmer
+    supporting voice. This is a tone-and-function recommendation, not evidence that either family is the
+    most readable for children. [S117, S048]
+
+      Pairing                         Character                              Best use                           Main risk
+
+
+      Gabarito 800 + Figtree          Confident, open, friendly              Recommended broad-age              It still needs illustration and
+      500                                                                    creative-play route                behaviour to become
+                                                                                                                recognisable
+
+
+      Fredoka 600 + Figtree           Rounder, bouncier, more                A direction with a stronger        Using it everywhere can
+      500                             toy-like                               younger-child emphasis             push the app toward
+                                                                                                                preschool styling
+
+
+      Fraunces Soft 700 +             Story-led, warm and                    Listening stories, cultural        Dense serif headings or
+      Andika                          editorial                              context and creative collections   ornamental layouts can
+                                                                                                                slow scanning
+
+
+      Bricolage Grotesque +           Eccentric workshop energy              A more graphic, older-child        Without a specific concept
+      Figtree                                                                alternative                        it can become another
+                                                                                                                fashionable default
+
+
+    Use expressive type for short headings, chapter names and selected celebratory moments. Keep
+    instructional sentences, instrument labels, timings and error recovery in the reading family. Avoid forcing
+    every letter to wobble, rotating functional labels or using novelty lettering for a whole paragraph.
+
+    As prototype starting points, try approximately 20 CSS px for child-facing directions, 18-20 px for control
+    labels, and 32-44 px for short display headings, with generous spacing and room to resize. These are
+    design proposals, not WCAG-prescribed minimum font sizes. Test at the real device size and viewing
+    distance.
+
+    Andika is a useful beginning-reader alternative because its design deliberately differentiates potentially
+    confusing characters. Atkinson Hyperlegible Next is another option worth testing, especially for character
+    distinction. Neither removes the need for testing with different readers. [S049, S050]
+
+    Check: I l 1 | O 0 | rn m | a g | Béa | 1, 2, 3. Check supported scripts, accents, translations, numerals and
+    music symbols separately. A single Latin font does not establish international accessibility. Test long
+    labels at 200% text size. Single-storey a/g forms are a contextual choice, not a universal rule. [S068,
+    S085, S118, S120]
+
+
+
+
+8 NOV 2026 / Sources are linked by ID and listed in the companion register                                                                        7
+<PARSED TEXT FOR PAGE: 8 / 17>
+    PAPER PLAYGROUND / DESIGN DIRECTION
+
+
+
+
+    7. What font evidence supports
+    Size, spacing, character distinction and reader differences deserve more weight than “friendly font”
+    marketing. Hughes and Wilkins' child-reading study found the younger participants were affected by
+    decreasing text size. Wilkins and colleagues' later work also connects typographic format with
+    performance in particular child-reading tasks. These are not direct tests of a modern music app. [S083,
+    S084]
+
+    Studies of specialist dyslexia fonts do not justify promising that a particular branded font will solve
+    reading difficulty. Kuster and colleagues found no reading advantage for Dyslexie over the comparison
+    fonts in their experiments. Preference and performance are different measures. [S086]
+
+    Microsoft's Kermit project is interesting contemporary typography work, especially its approach to letter
+    differentiation and animation. Its own write-up says the proposed reading benefit of an animated feature
+    was still being tested. That is a good example of why a design rationale and a demonstrated outcome
+    should be kept separate. [S119]
+
+      Claim to avoid                                A more defensible statement
+
+
+      “Rounded fonts are accessible”                Some rounded families suit the desired voice; reading depends on the actual
+                                                    letterforms, size, spacing and reader
+
+
+      “Sans serif always reads better”              Compare appropriate families in the real task; serif status alone is insufficient
+
+
+      “A dyslexia font makes this inclusive”        Provide clear text, flexibility and testing; specialist-font claims need evidence
+
+
+      “Children like bright colours”                Age, task, culture, individual needs and context affect preference and use
+
+
+      “Neuro-friendly UI”                           State the tested needs and observed outcomes; a label or theory reference is
+                                                    insufficient
+
+
+    For typography testing, use the same instruction in two or three candidate families at comparable
+    apparent sizes. Look at what children misread, how much help they need and whether they can locate an
+    action. Ask which feels welcoming afterwards. Do not select a family from preference alone.
+
+
+
+
+8 NOV 2026 / Sources are linked by ID and listed in the companion register                                                              8
+<PARSED TEXT FOR PAGE: 9 / 17>
+    PAPER PLAYGROUND / DESIGN DIRECTION
+
+
+
+
+    8. Colour: the recommended working palette
+    The palette's character comes from a warm neutral, a dark anchor and a small group of vivid accents.
+    These colours are an authored proposal, not a scientific prescription for children's emotions.
+
+      Name                                  Hex                              Proposed role
+
+
+      Paper                                 #FFF8EC                          Main background and quiet space
+
+
+      Midnight ink                          #252545                          Text, essential outlines and high-contrast
+                                                                             controls
+
+
+      Tomato                                #F26A4F                          Hero artwork, selected sound tiles and
+                                                                             emphasis
+
+
+      Sunflower                             #FFD45C                          Creative prompts, highlight surfaces and
+                                                                             illustration
+
+
+      Pool blue                             #87CFE5                          Secondary sound surfaces and illustration
+
+
+      Deep teal                             #147D76                          Primary action and selected states
+
+
+      Quiet text                            #5C5C73                          Secondary text on paper
+
+
+    As an initial composition exercise, try roughly 60% paper, 25% vivid surfaces and 15% ink/deep anchors on
+    a landing or discovery screen. This is a sketching heuristic, not an optimal ratio. Instrument screens should
+    allocate space according to the task.
+
+    Think in roles as well as hues. Ink anchors reading. Deep teal identifies the main action. Tomato, sunflower
+    and pool blue create the world around that action. An exercise can use only two or three of these colours
+    rather than displaying the whole palette at once.
+
+    The same palette can be loud on a discovery illustration and quiet on a practice screen. That flexibility is
+    more useful for longevity than adding a new fashionable colour every season. If the palette changes later,
+    preserve meaningful action and state distinctions.
+
+
+
+
+8 NOV 2026 / Sources are linked by ID and listed in the companion register                                                9
+<PARSED TEXT FOR PAGE: 10 / 17>
+    PAPER PLAYGROUND / DESIGN DIRECTION
+
+
+
+
+    8b. Colour: exact foreground and background
+    pairs
+    Contrast belongs to a pair, at an actual size and state. It is not a property that a colour has by itself. The
+    following combinations use solid, opaque sRGB values; transparency, photographs and gradients need
+    their own checks.
+
+      Foreground / background               Contrast ratio                   Normal text at AA
+
+
+      Ink / paper                           13.92:1                          Pass
+
+
+      Ink / tomato                          4.86:1                           Pass
+
+
+      Ink / sunflower                       10.37:1                          Pass
+
+
+      Ink / pool blue                       8.46:1                           Pass
+
+
+      White / deep teal                     4.97:1                           Pass
+
+
+      Deep teal / paper                     4.71:1                           Pass
+
+
+      Quiet text / paper                    6.15:1                           Pass
+
+
+      White / tomato                        3.02:1                           Fail for normal text
+
+
+      Tomato / paper                        2.86:1                           Fail for normal text
+
+
+      Pool blue / paper                     1.65:1                           Fail for normal text
+
+
+    Ratios were calculated from the exact opaque sRGB values using the WCAG relative-luminance formula.
+    Normal text needs 4.5:1 at AA; large text uses 3:1. Essential control boundaries and graphical objects have
+    separate non-text requirements. A passing palette does not establish app conformance. [S062, S063]
+
+    Use ink text on tomato. Give pale sound pads a sufficiently contrasting boundary where their boundary is
+    needed to identify them. Check hover, pressed, selected, disabled and focus states against their actual
+    adjacent colours. Pitch, timing and correctness need cues in addition to colour. [S063, S064]
+
+
+
+
+8 NOV 2026 / Sources are linked by ID and listed in the companion register                                           10
+<PARSED TEXT FOR PAGE: 11 / 17>
+    PAPER PLAYGROUND / DESIGN DIRECTION
+
+
+
+
+    9. Illustration, motion and the play surface
+    Build a small grammar. Start with four silhouettes: a ring, a block, an arch and a wave. Decide how corners,
+    outlines, facial features and texture behave. A short set of rules helps different screens feel related and
+    makes the asset workload feasible. An abstract shape is not distinctive by itself; consistent use and
+    memorable combinations can make it associated with the app over time. [S011, S013, S016]
+
+    A percussion action might briefly compress its tile. A held note might extend a line. A musical phrase
+    might grow a short sequence of marks. These are proposed behaviours to prototype. Avoid assigning
+    supposedly universal colour-emotion meanings to timbres or teaching an inaccurate visual model of
+    sound.
+
+    Choose a small cast or even a single companion initially. The learner's instrument and creation should
+    receive the attention. A character can demonstrate, react or invite another attempt. It should not express
+    disappointment to pressure a return visit.
+
+      Screen                                Emphasise                                    Keep quieter
+
+
+      Discover                              A few clear invitations and intriguing       Analytics, rankings and long descriptive
+                                            sounds                                       cards
+
+
+      Play                                  The playable surface, response, stop and     Mascot movement and unrelated decoration
+                                            replay
+
+
+      Practise                              One instruction, relevant cue and specific   Multiple simultaneous goals and reward
+                                            feedback                                     counters
+
+
+      My sounds                             What the learner made and how to replay      Competitive comparisons
+                                            or change it
+
+
+    Motion should explain cause and effect. Nonessential animation needs a reduced-motion path;
+    concentration tasks should not be ringed by perpetual bouncing. In a music app, decoration should not
+    introduce extra sounds while a learner is trying to listen. Keep sound effects separately controllable from
+    instructional audio where practical. [S070-S072]
+
+    Offer tap/select alternatives to dragging, keyboard operation and meaningful accessible labels. Start
+    around 56 CSS px for major play targets where feasible, with generous separation; validate against motor
+    needs and screen constraints. WCAG's 24 CSS px AA target criterion includes exceptions, and its
+    enhanced 44 CSS px criterion is AAA. These are not claims that 24 px is an ideal child-sized control.
+    [S065, S066, S069]
+
+
+
+
+8 NOV 2026 / Sources are linked by ID and listed in the companion register                                                          11
+<PARSED TEXT FOR PAGE: 12 / 17>
+    PAPER PLAYGROUND / DESIGN DIRECTION
+
+
+
+
+    10. All-ages appeal and accessibility
+    A shared brand is realistic. One identical interface for all ages and abilities is a much weaker proposition.
+    Child and teen usability research supports paying attention to developmental differences and avoiding
+    adult stereotypes about what young users want. [S132, S133]
+
+      User or situation                     Keep in the common identity                    Adapt in the experience
+
+
+      Younger or beginning reader           Palette, silhouettes, core control positions   Less reading, optional narration, concrete
+                                                                                           actions and adult support
+
+
+      Older child or teenager               Creative tone and recognisable artwork         More agency, greater depth and less praise
+                                                                                           for trivial actions
+
+
+      Parent or teacher                     The same visual family                         Clear activity purpose, settings and useful
+                                                                                           progress information in the appropriate area
+
+
+      Low vision or reading                 Brand character and clear hierarchy            Text size, contrast, character distinction,
+      differences                                                                          screen-reader structure and user
+                                                                                           preferences
+
+
+      Motor differences                     Predictable controls                           Larger targets, alternative inputs and no
+                                                                                           drag-only route
+
+
+      Sensory needs                         Optional visual personality                    Reduced motion, sound-effect controls,
+                                                                                           pause and a calmer presentation
+
+
+      Hearing differences                   Access to making and exploring                 Visual timing, available haptics and suitable
+                                                                                           alternate goals; don't claim these reproduce
+                                                                                           every listening task
+
+
+    UNICEF's RITEC framework makes autonomy, identity, creativity, competence, safety and relationships
+    relevant design questions. Apply that through control, representation and opportunities to make
+    something personally meaningful, not through a “wellbeing” label on the interface. [S078, S079]
+
+    Where the app includes regional instruments or cultural learning, use accurate names and representations,
+    and give the relevant people authority over how material appears. Do not use generic “world music”
+    decoration as a shortcut to inclusion. In the prototype, a smaller set of well-represented instruments is
+    preferable to a large inconsistent catalogue.
+
+    Learning and visual attractiveness are different outcomes. Learning-science work highlights active,
+    engaged, meaningful and socially interactive experiences around a learning goal. Coherence research
+    gives a reason to question appealing but irrelevant extras. The reviewed gamification meta-analysis also
+    distinguishes motivation from competence-related outcomes. [S092, S095, S097]
+
+
+
+
+8 NOV 2026 / Sources are linked by ID and listed in the companion register                                                                 12
+<PARSED TEXT FOR PAGE: 13 / 17>
+    PAPER PLAYGROUND / DESIGN DIRECTION
+
+
+
+
+    11. A mood board you can rebuild in Miro
+    Use six frames arranged in two rows of three. Keep each frame to a few strong references and annotate
+    what you are borrowing. The included board PDF and PNG exports provide a starting set; all third-party
+    work is credited as reference material.
+
+      Frame                                 Contents                                    Decision it should help make
+
+
+      01 Feeling                            Original Paper Playground concept; five     Does this feel inviting without feeling
+                                            words: curious, welcoming, cheeky,          infantile?
+                                            expressive, generous
+
+
+      02 Identity                           Toca Boca, Young V&A, Yoto, Headspace       Which relationships between type, shape
+                                                                                        and behaviour are useful?
+
+
+      03 Type                               Three exact font-pair specimens with the    Which voice works with real directions and
+                                            same phrase                                 reading needs?
+
+
+      04 Colour                             Exact swatches, roles and contrast table    Which combinations will actually be used
+                                                                                        together?
+
+
+      05 Interaction                        Chrome Music Lab, Ableton Learning          What does a child do, and how does the app
+                                            Music, a calm play-surface study            respond?
+
+
+      06 Boundaries                         Two Dribbble examples, the avoid list and   What would make the app feel generic, busy
+                                            test questions                              or over-directed?
+
+
+    For each reference, write three short notes: Keep / Change / Test. For example: Yoto - keep the
+    connection between visual identity and child control; change the symbols, palette and exact interaction;
+    test whether a first-time learner understands the action.
+
+    Use source links rather than image-search descriptions as attribution. Source images are for this research
+    board, not a licensed asset library for the product. Keep the original generated concept separate from
+    third-party references and label it as a direction study. Its lettering and colour rendering are conceptual;
+    use the exact specimens and hex values for implementation.
+
+    The kit contains a reference-pin CSV, a copyable card-text file, palette tokens, a design brief and PNG
+    exports of all seven board pages. Pages 1-6 correspond to the six frames; page 7 is a linked reference map.
+    Upload the PNGs to Miro, add editable text/swatches alongside them, and use the pin links for any further
+    reference clippings. This does not assume a particular Miro CSV-import feature.
+
+
+
+
+8 NOV 2026 / Sources are linked by ID and listed in the companion register                                                           13
+<PARSED TEXT FOR PAGE: 14 / 17>
+    PAPER PLAYGROUND / DESIGN DIRECTION
+
+
+
+
+    12. Validate the direction before polishing it
+    Use a small formative round to find problems, then iterate. A practical first round might include four to six
+    participants in each priority age group, plus caregivers or educators and participants with relevant access
+    needs. That is a planning suggestion, not a sample size that can establish population-level learning
+    effects. Use appropriate consent and assent.
+
+    Compare Paper Playground with the quieter current direction using the same content and task. Keep task
+    difficulty comparable and vary order where practical. Do not show a beautiful polished concept against an
+    unfinished control and attribute the difference to the aesthetic alone.
+
+      Question                              Useful task or observation                   What would prompt a change?
+
+
+      Is the next action clear?             Ask the participant to make a first sound    Searching, mis-taps or adult prompting
+
+
+      Can they recover?                     Ask them to stop, replay or change           Missing controls, accidental loss or
+                                            something                                    uncertainty
+
+
+      Does type help?                       Use the same short direction in candidate    Misreading, effort or failure at larger text
+                                            families                                     settings
+
+
+      Does it feel age appropriate?         Ask what kind of person the app seems        Older learners consistently call it babyish
+                                            made for
+
+
+      Is it recognisable?                   After a gap, show an unbranded               Confusion with Duolingo or another
+                                            colour/shape fragment                        reference brand
+
+
+      Does play support the goal?           Try a small rhythm or listening task and a   A liked screen with poor task understanding
+                                            later retry
+
+
+      Do access options work?               Repeat the task with relevant input or       A decorative effect becomes essential to
+                                            sensory settings                             understanding
+
+
+    Record observed behaviour separately from comments about liking. Ask children to help select and
+    modify the direction rather than treating them only as final-stage testers. The Cooney Center's co-design
+    and playtesting resources offer practical starting points. [S080, S081]
+
+    Attractive interfaces can influence perceived ease of use, so “they liked it” is not enough. Brand
+    recognition, task completion, creative agency and learning should be assessed separately. [S134]
+
+
+
+
+8 NOV 2026 / Sources are linked by ID and listed in the companion register                                                              14
+<PARSED TEXT FOR PAGE: 15 / 17>
+    PAPER PLAYGROUND / DESIGN DIRECTION
+
+
+
+
+    13. Brief to give a designer or coding assistant
+    Design a children's music-learning app as a Paper Playground: a place to try, make and explore sound. The
+    voice is curious, welcoming, cheeky, expressive and generous about mistakes. It should also be
+    comfortable for older children and adults.
+
+    Use Gabarito 800 for short headings and Figtree 400-600 for reading and controls. Preserve normal
+    readable word shapes in directions. Consider Andika as a beginning-reader option and test character
+    distinction, text resizing and target-language support.
+
+    Use warm paper #FFF8EC, midnight ink #252545, tomato #F26A4F, sunflower #FFD45C, pool blue
+    #87CFE5 and deep teal #147D76. Use ink text on the pale and bright surfaces; white can be used on deep
+    teal. Check every state. Use colour with labels, shape or position, never as the only indicator.
+
+    Build illustrations from a consistent ring, block, arch and wave vocabulary. Use occasional painted-paper
+    or dry-print texture in artwork. Keep the playable surface and text clean. Develop a small original cast
+    rather than borrowing a mascot. Every movement should respond to an action or clarify a musical event.
+    Provide a calmer reduced-motion presentation.
+
+    Make first sound, stop, replay, undo and saving a creation obvious. Prefer large, well-separated controls
+    and a small number of meaningful choices. Add keyboard and non-drag alternatives. Keep progress
+    information useful and place it where the relevant learner or adult needs it.
+
+    Avoid generic assistant sparkles, frosted-glass controls, decorative gradients across all screens, excessive
+    shadow cards, music-note wallpaper, baby talk, a copied lesson path and rewards attached to every
+    action. A style is not prohibited in principle; each choice must serve this direction and the task.
+
+    Show a discovery screen, a play screen and a recovery/try-again state at real device size. Include
+    large-text and reduced-motion versions. Explain how the same rules connect the screens. Treat the mood
+    board as a starting hypothesis and test it with intended learners before declaring it accessible or
+    effective.
+
+
+
+
+8 NOV 2026 / Sources are linked by ID and listed in the companion register                                         15
+<PARSED TEXT FOR PAGE: 16 / 17>
+    PAPER PLAYGROUND / DESIGN DIRECTION
+
+
+
+
+    Selected sources and how to use the register
+    Source IDs in the text correspond to the searchable HTML register. Every entry includes its URL, category,
+    review status and a short decision note. A source's presence does not mean all of its claims were
+    accepted.
+
+    The most useful starting points are the official design cases and standards, followed by the research
+    passages on reading and learning. Use trend articles and portfolios to broaden visual possibilities; use
+    observed task performance to decide whether the proposed experience works.
+
+    The following pages list the core references. All 148 screened records, including the 33 limited or
+    excluded leads, remain in the companion register so that the review's scope is inspectable.
+
+    S001 Adobe 2026 Creative Trends Forecast
+    Trend & marketing · Open source
+
+    S002 ‘Imperfect by Design’: The visual design trends set to define 2026
+    Trend & marketing · Open source
+
+    S003 The graphic trends you’ll want to bookmark for 2026
+    Trend & marketing · Open source
+
+    S011 Recognisably You | Ipsos
+    Trend & marketing · Open source
+
+    S012 Be Distinctive. Everywhere. | Ipsos
+    Trend & marketing · Open source
+
+    S013 Brands of Distinction |
+    Trend & marketing · Open source
+
+    S016 Duolingo Blog
+    Brand & product · Open source
+
+    S018 Bold - Boundless Play
+    Brand & product · Open source
+
+    S019 Yoto
+    Brand & product · Open source
+
+    S020 Young V&A
+    Brand & product · Open source
+
+    S021 Headspace Rebrand | ITAL/C
+    Brand & product · Open source
+
+    S023 Roger | Nickelodeon Global Rebrand
+    Brand & product · Open source
+
+    S047 Bricolage Grotesque - Free & Open Source Variable Font
+    Typeface source · Open source
+
+    S048 Figtree - Erik D. Kennedy
+    Typeface source · Open source
+
+    S049 Design - Andika
+    Typeface source · Open source
+
+    S050 Atkinson Hyperlegible Font - Braille Institute
+    Typeface source · Open source
+
+
+
+
+8 NOV 2026 / Sources are linked by ID and listed in the companion register                                       16
+<PARSED TEXT FOR PAGE: 17 / 17>
+    PAPER PLAYGROUND / DESIGN DIRECTION
+
+
+
+
+    S062 Understanding Success Criterion 1.4.3: Contrast (Minimum) | WAI | W3C
+    Accessibility & child design · Open source
+
+    S063 Understanding Success Criterion 1.4.11: Non-text Contrast | WAI | W3C
+    Accessibility & child design · Open source
+
+    S064 Understanding Success Criterion 1.4.1: Use of Color | WAI | W3C
+    Accessibility & child design · Open source
+
+    S065 Understanding Success Criterion 2.5.8: Target Size (Minimum) | WAI | W3C
+    Accessibility & child design · Open source
+
+    S078 RITEC Design Toolbox | UNICEF Child Rights and Business
+    Accessibility & child design · Open source
+
+    S080 Co-Design with Kids Toolkit - Joan Ganz Cooney Center
+    Accessibility & child design · Open source
+
+    S084 Typography for children may be inappropriately designed - Research Repository
+    Research · Open source
+
+    S086 Dyslexie font does not benefit reading in children with or without dyslexia | Annals of Dyslexia | Springer Nature
+    Link
+    Research · Open source
+
+    S092 Putting Education in “Educational” Apps - Psychological Science in the Public Interest - APS
+    Research · Open source
+
+    S095 Seductive Details, Cognitive Load, and Learning Outcomes: A Multi-level Meta-analysis and MASEM | Educational
+    Psychology Review | Springer Nature Link
+    Research · Open source
+
+    S117 Gabarito: light-hearted geometric sans font | Naipe Foundry
+    Typeface source · Open source
+
+    S124 Miffy: his books, colour and simplicity
+    Brand & product · Open source
+
+    S132 Children’s UX: Usability Issues in Designing for Young People - NN/G
+    Research · Open source
+
+    S133 Teenager’s UX: Designing for Teens - NN/G
+    Research · Open source
+
+    S138 Expressive Design: Google's UX Research
+    Brand & product · Open source
+
+    S148 Kids Learning App UI Exploration by Paperpillar on Dribbble
+    Showcase · Open source
+
+
+
+
+8 NOV 2026 / Sources are linked by ID and listed in the companion register                                                    17

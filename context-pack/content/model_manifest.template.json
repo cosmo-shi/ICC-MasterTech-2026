@@ -1,0 +1,27 @@
+{
+  "templateOnly": true,
+  "approvedForShipping": false,
+  "role": "local musical response planning or symbolic note proposal",
+  "selectedModel": null,
+  "selectedRuntime": null,
+  "exactVersion": null,
+  "weightsHash": null,
+  "codeLicence": null,
+  "weightLicence": null,
+  "trainingDataRights": null,
+  "modelCardPath": null,
+  "trainingOrCheckpointProvenance": null,
+  "heldOutEvaluation": null,
+  "rulesBaselineComparison": null,
+  "actualDeviceMeasurements": null,
+  "networkAudit": null,
+  "childTrainingDataAllowed": false,
+  "preconditions": [
+    "Actual local inference",
+    "Documented rights for each component",
+    "Observed phrase-conditioned musical response",
+    "Runtime constraints and abstention",
+    "Representative device/offline checks"
+  ],
+  "note": "Do not replace unknowns with invented values or mark camera ML alone as the pedagogical AI path."
+}

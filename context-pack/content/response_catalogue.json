@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "2.0.0",
+  "humanEducatorApproved": false,
+  "status": "draft",
+  "operations": [
+    "transpose",
+    "dynamics",
+    "replace_with_rest",
+    "section_order",
+    "add_part",
+    "echo"
+  ],
+  "feedbackTemplates": [
+    {
+      "id": "notice-one-change",
+      "text": "Listen to both versions. What changed?",
+      "goalUse": "a verified contrast"
+    },
+    {
+      "id": "choose-next-step",
+      "text": "Would you like to listen again, try a change, or keep your version?",
+      "goalUse": "learner choice"
+    },
+    {
+      "id": "compare-new-idea",
+      "text": "Try a new idea using what you noticed.",
+      "goalUse": "independent application; do not expose an answer"
+    },
+    {
+      "id": "insufficient-evidence",
+      "text": "Let's listen once or try another way.",
+      "goalUse": "uncertainty without diagnosis"
+    }
+  ],
+  "partTemplates": [],
+  "note": "No AI music model, approved educational feedback or shipped partner track is supplied.",
+  "goals": [
+    {
+      "id": "G_DYNAMICS_CONTRAST",
+      "allowedOperations": [
+        "dynamics"
+      ]
+    },
+    {
+      "id": "G_REST",
+      "allowedOperations": [
+        "replace_with_rest"
+      ]
+    },
+    {
+      "id": "G_PITCH_CONTRAST",
+      "allowedOperations": [
+        "transpose"
+      ]
+    },
+    {
+      "id": "G_SECTION_ORDER",
+      "allowedOperations": [
+        "section_order"
+      ]
+    },
+    {
+      "id": "G_TEXTURE",
+      "allowedOperations": [
+        "add_part"
+      ]
+    }
+  ]
+}

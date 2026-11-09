@@ -1,0 +1,158 @@
+{
+  "version": "2.0",
+  "as_of": "2026-11-09",
+  "context_only": true,
+  "note": "Hashes verify archive contents, not source truth, app behaviour or educational effectiveness.",
+  "files": [
+    {
+      "path": "CHANGELOG.md",
+      "bytes": 1239,
+      "sha256": "6ae3b771ce66d1ccf6d25a113c29d4f5db09389b31961c955e14518ffafaeb90"
+    },
+    {
+      "path": "CLAUDE.md",
+      "bytes": 6709,
+      "sha256": "db16b87c965bd3010e24b8ab23b7906a76205864643babde8136c299e5b2dba9"
+    },
+    {
+      "path": "LICENSE_CONTENT.md",
+      "bytes": 2144,
+      "sha256": "6d3acd2f588ab86ef697781d70d0bc90d9c7404c1c79e1a059a1c1b291057e32"
+    },
+    {
+      "path": "MASTER_CONTEXT.md",
+      "bytes": 99296,
+      "sha256": "170230938755cef7af4688f63e7ee5ff8a9d0b2793bbddd4ad6a01f30f211184"
+    },
+    {
+      "path": "PACK_STATUS.json",
+      "bytes": 603,
+      "sha256": "ba72ddacb022e930230d8d5693126d54da3f1c5697e9de27226f6d979cf1534b"
+    },
+    {
+      "path": "README.md",
+      "bytes": 4876,
+      "sha256": "10bba606f8eb30ffcb11f5d1a5352d826a00b822651ddbed5db5eee4cc7e20b2"
+    },
+    {
+      "path": "content/asset_manifest.template.json",
+      "bytes": 785,
+      "sha256": "e4d913cc5aeb299894cc8ee72418ae476547bdec88f6bb3fd10491a7712b8518"
+    },
+    {
+      "path": "content/content_sources.json",
+      "bytes": 5531,
+      "sha256": "a5df776a0755c7958bc271952cf3c9bc72cf3530f3d27bc18c9deaa2dbf6774b"
+    },
+    {
+      "path": "content/lessons.seed.json",
+      "bytes": 41397,
+      "sha256": "0a039ce2a81f85116fe1d251f6f3bd0fcae153867afe6cca448399a5ae68b18d"
+    },
+    {
+      "path": "content/model_manifest.template.json",
+      "bytes": 882,
+      "sha256": "2c0bc3abea14b8e66fad78522c47ede7a3b9cc1eeb5041b9ff9260aaeb29467a"
+    },
+    {
+      "path": "content/music_reply.examples.json",
+      "bytes": 8020,
+      "sha256": "33e2c71efa93e46f765383ae170275d39e2d025b69ce9ad1fa29e229ae6e98ec"
+    },
+    {
+      "path": "content/music_reply.schema.json",
+      "bytes": 4335,
+      "sha256": "1041157fbc30dc0c9693991ce802ab62aa7cd6110b7d4ead48fa09c67896e8a8"
+    },
+    {
+      "path": "content/primary_suite.plan.json",
+      "bytes": 9668,
+      "sha256": "142d2795384549971c83f059c142e1dda4eeeb5fdfdcda0b7e3a0f4e192a71f0"
+    },
+    {
+      "path": "content/release_claims.json",
+      "bytes": 1424,
+      "sha256": "a55c4afb328075783e7e0db77c4aa32f31f88360c0a9dce63c0ea53199c7875e"
+    },
+    {
+      "path": "content/response_catalogue.json",
+      "bytes": 1517,
+      "sha256": "1bc82695b13c21ecf26ba6b339648f7b2814a625d64872028a763fa290e06293"
+    },
+    {
+      "path": "references/Carmen_Research_and_Product_Strategy.md",
+      "bytes": 72743,
+      "sha256": "b133b7911ad62bcc758dd897104a15b08f8b1387582590cf67dc54fada0812c4"
+    },
+    {
+      "path": "references/Carmen_Research_and_Product_Strategy.pdf",
+      "bytes": 175759,
+      "sha256": "73f422aadb4f811ddc093711681f0f526cc5e0db0dd11952b8c41cff30ffd211"
+    },
+    {
+      "path": "references/innovation_sources.csv",
+      "bytes": 10608,
+      "sha256": "22fef04baa582e449963048e49544a55c45b0255fa53c5f7345c52f85bd1b678"
+    },
+    {
+      "path": "references/prior_design_brief.md",
+      "bytes": 3515,
+      "sha256": "2a0a2eb2c9db216f4fd04e75c4887a2b7f7b0c555d5f5f44de54d41f5815aaba"
+    },
+    {
+      "path": "references/prior_paper_playground_research.txt",
+      "bytes": 47622,
+      "sha256": "793d313484fa061e1d5b3b2eb9b52922f83870c5cc4df9fb07305825c576148b"
+    },
+    {
+      "path": "references/prior_sound_workshop_research.txt",
+      "bytes": 44276,
+      "sha256": "f78c02c19dc1ffe0ac10ad66a2fe594a1e9505f8352f10a493b70d572c612d04"
+    },
+    {
+      "path": "references/sources.csv",
+      "bytes": 49840,
+      "sha256": "f3000af2260206b551c05715ce30da212218b502e3618974401af835cd528204"
+    },
+    {
+      "path": "references/user_research_bank.md",
+      "bytes": 16684,
+      "sha256": "0eca311d7c30ee906cf4e7e4214545e905f8e20aa689f25eea12ba863582d215"
+    },
+    {
+      "path": "research/INNOVATION_AUDIT.md",
+      "bytes": 9308,
+      "sha256": "fd34d5d390275b4f90c0a5a4d5aceef93d4d03afb3a30c7e31d3e29f8ae0efbf"
+    },
+    {
+      "path": "research/competitor_matrix.csv",
+      "bytes": 6165,
+      "sha256": "aad19c15a9d4e098fc11b323e7e7d8d58f54dca64aa39b18529bbc7519eda1c2"
+    },
+    {
+      "path": "research/search_log.csv",
+      "bytes": 5496,
+      "sha256": "417f44b6cb75708e1980223c998ec8ddd12836df0eda8d472a1671328e40acc4"
+    },
+    {
+      "path": "specs/AI_MUSIC_INTERACTION.md",
+      "bytes": 8917,
+      "sha256": "e92fd60fcb048a6ba8e2adf4fbb68e5e6ac52f27ea1b8bc999636c4fa4410539"
+    },
+    {
+      "path": "specs/FEASIBILITY_AND_SUSTAINABILITY.md",
+      "bytes": 7563,
+      "sha256": "ed9d90237552b285baba737f5d86f6b3c5ac8e49f6ac63bc4e87d5098e2f6036"
+    },
+    {
+      "path": "tools/validate_context.py",
+      "bytes": 5437,
+      "sha256": "f84ec38c49bec216e7f91df8f23d0e0fe487120e0a89a933fe48325561b6d55f"
+    },
+    {
+      "path": "tools/validate_update.py",
+      "bytes": 4279,
+      "sha256": "987577d5efe5d407f477450116b387638916593ce45355ba003b0f1bced4d446"
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "schemaVersion": "1.0.0",
+  "checkedAt": "2026-11-08",
+  "scope": "Source verification for lesson drafts, not educator approval",
+  "sources": [
+    {
+      "id": "OMT_HOME",
+      "title": "Open Music Theory — original edition",
+      "url": "https://openmusictheory.github.io/",
+      "kind": "OER",
+      "review": "Official full page",
+      "rights": "CC BY-SA 4.0; third-party exceptions",
+      "decision": "Contributor/editor attribution; college-level factual source, not a ready primary curriculum",
+      "checked": "2026-11-08",
+      "shipContentPermission": "CC-BY-SA-4.0 text adaptation, with attribution and change notice; exclude separate media"
+    },
+    {
+      "id": "OMT_RHYTHM",
+      "title": "Rhythmic values",
+      "url": "https://openmusictheory.github.io/rhythmicValues.html",
+      "kind": "OER",
+      "review": "Official full page",
+      "rights": "CC BY-SA 4.0",
+      "decision": "Note/rest duration concepts; original exercises and adapted child wording",
+      "checked": "2026-11-08",
+      "shipContentPermission": "CC-BY-SA-4.0 text adaptation, with attribution and change notice; exclude separate media"
+    },
+    {
+      "id": "OMT_PITCH",
+      "title": "Pitches and octave designations",
+      "url": "https://openmusictheory.github.io/pitches.html",
+      "kind": "OER",
+      "review": "Official full page",
+      "rights": "CC BY-SA 4.0",
+      "decision": "Keyboard/register reference; C4 convention",
+      "checked": "2026-11-08",
+      "shipContentPermission": "CC-BY-SA-4.0 text adaptation, with attribution and change notice; exclude separate media"
+    },
+    {
+      "id": "OMT_NOTATION",
+      "title": "Basic notation",
+      "url": "https://openmusictheory.github.io/basicNotation.html",
+      "kind": "OER",
+      "review": "Official full page",
+      "rights": "CC BY-SA 4.0",
+      "decision": "Stave, clef and ledger-line reference; do not copy separate images blindly",
+      "checked": "2026-11-08",
+      "shipContentPermission": "CC-BY-SA-4.0 text adaptation, with attribution and change notice; exclude separate media"
+    },
+    {
+      "id": "OMT_METER",
+      "title": "Meter and time signatures",
+      "url": "https://openmusictheory.github.io/meter.html",
+      "kind": "OER",
+      "review": "Official full page",
+      "rights": "CC BY-SA 4.0 for covered text; embeds excluded",
+      "decision": "Use simple-metre concepts; exclude Spotify/Vimeo/recordings/tracking",
+      "checked": "2026-11-08",
+      "shipContentPermission": "CC-BY-SA-4.0 text adaptation, with attribution and change notice; exclude separate media"
+    },
+    {
+      "id": "ACARA_ARTS",
+      "title": "Australian Curriculum V9 — The Arts",
+      "url": "https://www.australiancurriculum.edu.au/curriculum-information/understand-this-learning-area/the-arts",
+      "kind": "Curriculum",
+      "review": "Official page",
+      "rights": "Core material generally CC BY 4.0; exclusions apply",
+      "decision": "Orientation across listening, creating, responding and performing; no full alignment claim",
+      "checked": "2026-11-08",
+      "shipContentPermission": "Reference orientation only in this pack; any reproduced item must satisfy exact ACARA terms"
+    },
+    {
+      "id": "ACARA_TERMS",
+      "title": "ACARA copyright and terms of use",
+      "url": "https://www.australiancurriculum.edu.au/copyright-and-terms-of-use/",
+      "kind": "Rights",
+      "review": "Official full terms",
+      "rights": "Terms distinguish core CC BY from excluded materials",
+      "decision": "Photos/videos/support resources/trademarks/third-party and ICIP require specific handling",
+      "checked": "2026-11-08",
+      "shipContentPermission": "Reference orientation only in this pack; any reproduced item must satisfy exact ACARA terms"
+    },
+    {
+      "id": "AERO_EXPLICIT",
+      "title": "Explicit instruction practice guide",
+      "url": "https://www.edresearch.edu.au/guides-resources/practice-guides/explicit-instruction-practice-guide-full-publication",
+      "kind": "Pedagogy",
+      "review": "Official indexed/page extract",
+      "rights": "Reference; site says CC BY 4.0 unless noted",
+      "decision": "Small steps, demonstrations, response and purposeful practice; app sequence remains unvalidated",
+      "checked": "2026-11-08",
+      "shipContentPermission": "Reference for teaching design; verify item licence before copying"
+    },
+    {
+      "id": "AERO_SCAFFOLD",
+      "title": "Scaffold practice",
+      "url": "https://www.edresearch.edu.au/guides-resources/practice-guides/scaffold-practice",
+      "kind": "Pedagogy",
+      "review": "Official full page",
+      "rights": "CC BY 4.0 unless noted",
+      "decision": "Fade support toward independent application",
+      "checked": "2026-11-08",
+      "shipContentPermission": "Reference for teaching design; verify item licence before copying"
+    }
+  ],
+  "lessonPackLicence": "CC-BY-SA-4.0",
+  "attribution": "Adapted and newly authored primary-learning activities informed by Open Music Theory, built on resources by Kris Shaffer, Bryn Hughes, Brian Moseley and contributors; edited by Kris Shaffer and Robin Wharton; Hybrid Pedagogy Publishing. Original source pages linked per lesson. Covered source text is CC BY-SA 4.0. Changes: simplified and reordered concepts, new activity wording and symbolic patterns, local interactive practice and independent tasks. Third-party images, recordings, embeds and tracking are excluded.",
+  "reviewStatus": "draft_pending_primary_music_educator"
+}

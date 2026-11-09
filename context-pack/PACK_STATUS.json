@@ -1,0 +1,21 @@
+{
+  "version": "2.0",
+  "as_of": "2026-11-09",
+  "context_only": true,
+  "app_implemented": false,
+  "model_supplied": false,
+  "educator_approved": false,
+  "primary_bands": 4,
+  "new_mission_drafts": 5,
+  "comparator_entries": 29,
+  "search_queries": 31,
+  "source_records": 147,
+  "distinct_source_urls": 122,
+  "report_sections": 28,
+  "verification": {
+    "pack_consistency": "passed",
+    "response_schema_and_illustrative_plan": "passed_structural_validation",
+    "pdf_layout": "28_pages_rendered_and_visually_reviewed",
+    "app_model_device_learning_and_exclusivity": "not_established"
+  }
+}
