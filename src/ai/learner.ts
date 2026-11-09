@@ -66,7 +66,13 @@ export interface Observation {
 export const SKILLS = skillsData.skills.map((s) => s.id as SkillId);
 export const THRESHOLDS = skillsData.thresholds;
 export const WEIGHTS = skillsData.weights;
-const PARAMS: Record<string, BktParams> = Object.fromEntries(skillsData.skills.map((s) => [s.id, s.params]));
+export type ParamSet = Record<SkillId, BktParams>;
+/** The settings in use (fitted by `npm run fit:learner`, see skills.json "paramsSource"). */
+export const PARAMS = Object.fromEntries(skillsData.skills.map((s) => [s.id, s.params])) as ParamSet;
+/** The reviewed hand-picked starting values, kept for comparison. */
+export const STARTING_PARAMS = Object.fromEntries(
+  skillsData.skills.map((s) => [s.id, (s as { startingParams?: BktParams }).startingParams ?? s.params]),
+) as ParamSet;
 const LESSON_SKILLS = skillsData.lessons as Record<string, SkillId[]>;
 const RECENT = 5;
 const EVIDENCE_CAP = 8;
@@ -145,23 +151,23 @@ export function passProbability(p: number, params: BktParams): number {
   return p * (1 - params.pSlip) + (1 - p) * params.pGuess;
 }
 
-function emptySkill(skill: SkillId): SkillState {
-  return { p: PARAMS[skill].pInit, observations: 0, independent: 0, assisted: 0, independentPasses: 0, recent: [], evidenceAttemptIds: [], lastSeen: 0 };
+function emptySkill(skill: SkillId, params: ParamSet): SkillState {
+  return { p: params[skill].pInit, observations: 0, independent: 0, assisted: 0, independentPasses: 0, recent: [], evidenceAttemptIds: [], lastSeen: 0 };
 }
 
-export function emptyState(): LearnerState {
+export function emptyState(params: ParamSet = PARAMS): LearnerState {
   return {
     modelId: LEARNER_MODEL_ID,
     modelVersion: LEARNER_MODEL_VERSION,
-    skills: Object.fromEntries(SKILLS.map((k) => [k, emptySkill(k)])) as Record<SkillId, SkillState>,
+    skills: Object.fromEntries(SKILLS.map((k) => [k, emptySkill(k, params)])) as Record<SkillId, SkillState>,
     lessons: {},
     attemptsUsed: 0,
   };
 }
 
 /** Replay every attempt in time order. Pure: same attempts give the same state. */
-export function buildLearnerState(attempts: AttemptRecord[], lessons: LessonInfo[]): LearnerState {
-  const state = emptyState();
+export function buildLearnerState(attempts: AttemptRecord[], lessons: LessonInfo[], params: ParamSet = PARAMS): LearnerState {
+  const state = emptyState(params);
   const byId = new Map(lessons.map((l) => [l.id, l]));
   const sorted = [...attempts].sort((a, b) => a.createdAt - b.createdAt);
   for (const a of sorted) {
@@ -180,7 +186,7 @@ export function buildLearnerState(attempts: AttemptRecord[], lessons: LessonInfo
     if (obs.length) state.attemptsUsed += 1;
     for (const o of obs) {
       const sk = state.skills[o.skill];
-      sk.p = bktUpdate(sk.p, o.pass, PARAMS[o.skill], weight);
+      sk.p = bktUpdate(sk.p, o.pass, params[o.skill], weight);
       sk.observations += 1;
       if (a.kind === 'independent') {
         sk.independent += 1;

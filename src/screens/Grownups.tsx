@@ -519,7 +519,7 @@ function LearningPicture({ attempts }: { attempts: AttemptRecord[] }) {
         </p>
       )}
       <p className="note-text">
-        Checked on made-up learners only: it picked the weakest skill {Math.round(learnerMetrics.model.targetsWeakest * 1000) / 10}% of the time, against {Math.round(learnerMetrics.rulesBaseline.targetsWeakest * 1000) / 10}% for the fixed route. That
+        Its settings were fitted to made-up learners, not children. On a different made-up group it picked the weakest skill {Math.round(learnerMetrics.model.targetsWeakest * 1000) / 10}% of the time, against {Math.round(learnerMetrics.rulesBaseline.targetsWeakest * 1000) / 10}% for the fixed route. That
         shows the software works, not that children learn more. See <code>docs/LEARNER_MODEL_CARD.md</code>.
       </p>
       {confirm ? (

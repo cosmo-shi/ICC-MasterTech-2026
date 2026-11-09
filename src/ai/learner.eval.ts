@@ -3,36 +3,42 @@
 // summary is generated from those hidden levels, and we ask:
 //   1. does the next suggestion train the learner's truly weakest skill? (model vs the fixed route)
 //   2. how close is the model's predicted pass chance to the hidden level? (model vs prior only)
+//   3. how well does it predict each next pass/fail? (log-likelihood per observation)
+// The settings are compared two ways: the reviewed starting values and the values fitted by
+// `npm run fit:learner` on a DIFFERENT group of simulated learners (seed 1 vs the test seed).
 // This shows the software behaves as designed. It says nothing about real children's learning.
 
 import type { CheckSummary } from '../engine/checker.ts';
 import type { AttemptRecord } from '../store/db.ts';
-import { type LessonInfo, type SkillId, SKILLS, buildLearnerState, paramsFor, passProbability } from './learner.ts';
+import {
+  type LessonInfo,
+  type ParamSet,
+  PARAMS,
+  STARTING_PARAMS,
+  type SkillId,
+  SKILLS,
+  buildLearnerState,
+  passProbability,
+} from './learner.ts';
+import { logLikelihood, observationSequences } from './learner.fit.ts';
 import { mulberry32 } from './synth.ts';
 import { planNext, rulesPlan, type TailorContext } from './tailor.ts';
 
-export interface LearnerEvalMetrics {
-  seed: number;
-  learners: number;
-  attemptsPerLearner: number;
-  model: { targetsWeakest: number; calibrationMAE: number };
-  rulesBaseline: { targetsWeakest: number };
-  priorOnly: { calibrationMAE: number };
-  note: string;
+export const SIM_ROUTE = ['L01', 'L02', 'L03', 'L04', 'L05', 'L06', 'L07', 'L08'];
+export const TEST_SEED = 20261109;
+export const TRAIN_SEED = 1;
+
+export interface SimLearner {
+  attempts: AttemptRecord[];
+  /** Hidden skill levels at the end of practice (chance of passing that skill's check). */
+  hidden: Record<SkillId, number>;
 }
 
-const ROUTE = ['L01', 'L02', 'L03', 'L04', 'L05', 'L06', 'L07', 'L08'];
-
-export function runLearnerEval(infos: LessonInfo[], seed = 20261109, learners = 400, attemptsPerLearner = 16): LearnerEvalMetrics {
+/** Simulated learners: hidden skills, random lessons, checker-style summaries. */
+export function simulateLearners(infos: LessonInfo[], seed: number, learners: number, attemptsPerLearner: number): SimLearner[] {
   const rand = mulberry32(seed);
-  const scored = infos.filter((l) => ROUTE.includes(l.id));
-  let modelHits = 0;
-  let rulesHits = 0;
-  let cases = 0;
-  let modelErr = 0;
-  let priorErr = 0;
-  let calCount = 0;
-
+  const scored = infos.filter((l) => SIM_ROUTE.includes(l.id));
+  const out: SimLearner[] = [];
   for (let n = 0; n < learners; n++) {
     const hidden = Object.fromEntries(SKILLS.map((k) => [k, 0.2 + 0.75 * rand()])) as Record<SkillId, number>;
     const attempts: AttemptRecord[] = [];
@@ -59,7 +65,7 @@ export function runLearnerEval(infos: LessonInfo[], seed = 20261109, learners = 
       };
       const independent = rand() < 0.2;
       attempts.push({
-        id: `sim${n}-${t}`,
+        id: `sim${seed}-${n}-${t}`,
         createdAt: t + 1,
         activityId: lesson.id,
         activityVersion: 'sim',
@@ -74,33 +80,81 @@ export function runLearnerEval(infos: LessonInfo[], seed = 20261109, learners = 
       // Practice helps a little.
       for (const k of lesson.skills) hidden[k] = Math.min(0.98, hidden[k] + 0.02 * (1 - hidden[k]));
     }
+    out.push({ attempts, hidden });
+  }
+  return out;
+}
 
-    const state = buildLearnerState(attempts, infos);
+export interface ParamResult {
+  targetsWeakest: number;
+  calibrationMAE: number;
+  logLikelihoodPerObservation: number;
+}
+
+export interface LearnerEvalMetrics {
+  testSeed: number;
+  trainSeed: number;
+  learners: number;
+  attemptsPerLearner: number;
+  model: ParamResult; // settings in use (fitted)
+  startingSettings: ParamResult; // reviewed hand values, for comparison
+  rulesBaseline: { targetsWeakest: number };
+  priorOnly: { calibrationMAE: number };
+  note: string;
+}
+
+const r3 = (x: number) => Math.round(x * 1000) / 1000;
+
+function evaluate(sim: SimLearner[], infos: LessonInfo[], params: ParamSet) {
+  let hits = 0;
+  let rulesHits = 0;
+  let cases = 0;
+  let err = 0;
+  let priorErr = 0;
+  let cal = 0;
+  for (const { attempts, hidden } of sim) {
+    const state = buildLearnerState(attempts, infos, params);
     const observed = SKILLS.filter((k) => state.skills[k].observations >= 2);
     if (!observed.length) continue;
-
     for (const k of observed) {
-      modelErr += Math.abs(passProbability(state.skills[k].p, paramsFor(k)) - hidden[k]);
-      priorErr += Math.abs(passProbability(paramsFor(k).pInit, paramsFor(k)) - hidden[k]);
-      calCount += 1;
+      err += Math.abs(passProbability(state.skills[k].p, params[k]) - hidden[k]);
+      priorErr += Math.abs(passProbability(params[k].pInit, params[k]) - hidden[k]);
+      cal += 1;
     }
-
     const weakest = observed.reduce((a, b) => (hidden[a] <= hidden[b] ? a : b));
-    const ctx: TailorContext = { infos, route: ROUTE, aiEnabled: true, currentLessonId: attempts.at(-1)!.activityId };
-    const trains = (lessonId?: string) => !!lessonId && !!infos.find((l) => l.id === lessonId)?.skills.includes(weakest);
-    if (trains(planNext(state, ctx).next?.lessonId)) modelHits += 1;
+    const ctx: TailorContext = { infos, route: SIM_ROUTE, aiEnabled: true, currentLessonId: attempts.at(-1)!.activityId };
+    const trains = (id?: string) => !!id && !!infos.find((l) => l.id === id)?.skills.includes(weakest);
+    if (trains(planNext(state, ctx).next?.lessonId)) hits += 1;
     if (trains(rulesPlan(state, ctx).next?.lessonId)) rulesHits += 1;
     cases += 1;
   }
-
-  const r3 = (x: number) => Math.round(x * 1000) / 1000;
+  const seqs = observationSequences(sim.map((s) => s.attempts), infos);
+  let ll = 0;
+  let obs = 0;
+  for (const k of SKILLS) {
+    ll += logLikelihood(seqs[k], params[k]);
+    obs += seqs[k].reduce((a, seq) => a + seq.length, 0);
+  }
   return {
-    seed,
+    result: { targetsWeakest: r3(hits / cases), calibrationMAE: r3(err / cal), logLikelihoodPerObservation: r3(ll / obs) },
+    rulesTargets: r3(rulesHits / cases),
+    priorMAE: r3(priorErr / cal),
+  };
+}
+
+export function runLearnerEval(infos: LessonInfo[], learners = 400, attemptsPerLearner = 16): LearnerEvalMetrics {
+  const sim = simulateLearners(infos, TEST_SEED, learners, attemptsPerLearner);
+  const fitted = evaluate(sim, infos, PARAMS);
+  const starting = evaluate(sim, infos, STARTING_PARAMS);
+  return {
+    testSeed: TEST_SEED,
+    trainSeed: TRAIN_SEED,
     learners,
     attemptsPerLearner,
-    model: { targetsWeakest: r3(modelHits / cases), calibrationMAE: r3(modelErr / calCount) },
-    rulesBaseline: { targetsWeakest: r3(rulesHits / cases) },
-    priorOnly: { calibrationMAE: r3(priorErr / calCount) },
-    note: 'Simulated learners only. Shows the software works as designed; not evidence about children or learning.',
+    model: fitted.result,
+    startingSettings: starting.result,
+    rulesBaseline: { targetsWeakest: fitted.rulesTargets },
+    priorOnly: { calibrationMAE: starting.priorMAE },
+    note: 'Simulated learners only. Settings fitted to simulated learners (train seed), tested on a different group (test seed). Shows the software works as designed; not evidence about children or learning.',
   };
 }

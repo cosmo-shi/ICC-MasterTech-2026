@@ -1,10 +1,17 @@
 {
-  "seed": 20261109,
+  "testSeed": 20261109,
+  "trainSeed": 1,
   "learners": 400,
   "attemptsPerLearner": 16,
   "model": {
+    "targetsWeakest": 0.543,
+    "calibrationMAE": 0.144,
+    "logLikelihoodPerObservation": -0.374
+  },
+  "startingSettings": {
     "targetsWeakest": 0.575,
-    "calibrationMAE": 0.166
+    "calibrationMAE": 0.166,
+    "logLikelihoodPerObservation": -0.403
   },
   "rulesBaseline": {
     "targetsWeakest": 0.355
@@ -12,5 +19,5 @@
   "priorOnly": {
     "calibrationMAE": 0.334
   },
-  "note": "Simulated learners only. Shows the software works as designed; not evidence about children or learning."
+  "note": "Simulated learners only. Settings fitted to simulated learners (train seed), tested on a different group (test seed). Shows the software works as designed; not evidence about children or learning."
 }
