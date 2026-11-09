@@ -1,0 +1,149 @@
+/*
+  Keyboard styles. Every colour and size comes from src/styles/tokens.css.
+  White keys: surface. Black keys: ink. Pressed: accent, and the key also moves
+  down, so "pressed" is not shown by colour alone. High contrast follows the tokens.
+*/
+
+.kb {
+  --white-w: max(var(--target-min), calc(var(--control-base) * var(--control-scale)));
+  --black-w: calc(var(--white-w) * 0.62);
+  --key-h: clamp(160px, 36vh, 280px);
+  display: grid;
+  gap: var(--space-3);
+}
+
+.kb__nav {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.kb__nav[hidden] {
+  display: none;
+}
+
+.kb__shift {
+  min-height: var(--target-min);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+}
+
+.kb__shift:disabled {
+  opacity: 0.45;
+  cursor: default;
+  transform: none;
+  box-shadow: none;
+}
+
+.kb__arrow-left {
+  transform: scaleX(-1);
+}
+
+.kb__scroll {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line-strong) transparent;
+  padding-bottom: var(--space-2);
+}
+
+.kb__keys {
+  position: relative;
+  display: flex;
+  width: calc(var(--white-count) * var(--white-w));
+  height: var(--key-h);
+  margin-inline: auto;
+  touch-action: none; /* touches play notes, never scroll or zoom */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.kb__key {
+  appearance: none;
+  margin: 0;
+  padding: 0 0 var(--space-3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-1);
+  border: var(--border-width) solid var(--color-line-strong);
+  font: inherit;
+  font-weight: var(--weight-bold);
+  line-height: 1;
+  cursor: pointer;
+  touch-action: none;
+  transition: transform var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
+}
+
+.kb__key--white {
+  flex: 0 0 var(--white-w);
+  height: 100%;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  font-size: var(--text-lg);
+}
+
+/* Neighbouring white keys share one border line, without changing key width. */
+.kb__key--white {
+  border-left-width: 0;
+}
+
+.kb__key--white:first-child {
+  border-left-width: var(--border-width);
+}
+
+.kb__key--black {
+  position: absolute;
+  top: 0;
+  left: calc(var(--i) * var(--white-w) - var(--black-w) / 2);
+  z-index: 1;
+  width: var(--black-w);
+  height: 60%;
+  background: var(--color-ink);
+  color: var(--color-surface);
+  border-color: var(--color-ink);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  font-size: var(--text-sm);
+}
+
+html.high-contrast .kb__key--black {
+  border-color: var(--color-bg);
+}
+
+.kb__key.is-down {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-on-accent);
+  transform: translateY(2px);
+}
+
+.kb__key--black.is-down {
+  box-shadow: inset 0 -4px 0 var(--color-accent-press);
+}
+
+.kb__key:focus-visible {
+  z-index: 2;
+}
+
+/* Note names on or off (FR-PLY-11). The spoken name stays on for screen readers. */
+html.hide-note-names .kb__name {
+  visibility: hidden;
+}
+
+/* Laptop letter hints: only on devices with a mouse or trackpad. */
+.kb__hint {
+  display: none;
+  font-size: 0.8125rem;
+  font-weight: var(--weight-regular);
+  opacity: 0.75;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .kb__hint {
+    display: block;
+  }
+}
