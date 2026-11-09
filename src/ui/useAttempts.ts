@@ -1,23 +1,14 @@
-import { useEffect, useMemo, useState } from 'react';
-import { type AttemptEvidence, estimateSkills } from '../ai/learner.ts';
+import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
+import { learnerFrom, teacherOverrides, LESSON_INFOS } from '../ai/learner.ts';
+import type { TailorContext } from '../ai/tailor.ts';
+import { routeFrom } from '../data/curriculum.ts';
+import { usePrefs } from '../state/prefs.tsx';
 import { type AttemptRecord, type CompositionRecord, store } from '../store/db.ts';
 import { players, usePlayers } from '../store/profiles.ts';
 
-/** Only what the learner model needs; inputs and coach details stay out. */
-export function toEvidence(a: AttemptRecord): AttemptEvidence {
-  return {
-    activityId: a.activityId,
-    createdAt: a.createdAt,
-    kind: a.kind,
-    passed: a.passed,
-    hintLevel: a.support?.hintLevel ?? 0,
-    summary: a.summary,
-  };
-}
-
 export const isNote = (a: AttemptRecord) => !!a.note;
 
-/** All saved attempts and pieces on this device (every player). For Grown-ups. */
+/** All saved attempts and pieces on this device (every player). For the teacher space. */
 export function useAllRecords() {
   const [attempts, setAttempts] = useState<AttemptRecord[]>([]);
   const [pieces, setPieces] = useState<CompositionRecord[]>([]);
@@ -32,13 +23,20 @@ export function useAllRecords() {
   return { attempts, pieces };
 }
 
-/** Attempts by whoever is playing now (a guest sees this visit's unowned attempts). */
+export function useOverrides() {
+  return useSyncExternalStore(teacherOverrides.subscribe, teacherOverrides.snapshot, teacherOverrides.snapshot);
+}
+
+/** The learner model for whoever is playing now (a guest uses this visit's unowned attempts). */
 export function useMyLearning() {
+  const { prefs } = usePrefs();
   const { attempts } = useAllRecords();
   const who = usePlayers();
+  const all = useOverrides();
   const me = who.current && who.current !== 'guest' ? who.current : undefined;
   const mine = useMemo(() => attempts.filter((a) => !isNote(a) && (me ? a.profileId === me : !a.profileId)), [attempts, me]);
-  const evidence = useMemo(() => mine.map(toEvidence), [mine]);
-  const skills = useMemo(() => estimateSkills(evidence), [evidence]);
-  return { attempts: mine, evidence, ...skills, player: players.current() };
+  const ovr = useMemo(() => (me && all[me]) || { skills: {} }, [all, me]);
+  const model = useMemo(() => learnerFrom(mine, ovr), [mine, ovr]);
+  const context = (over: Partial<TailorContext> = {}): TailorContext => ({ infos: LESSON_INFOS, route: routeFrom(prefs.pathway), aiEnabled: prefs.aiEnabled, ...over });
+  return { attempts: mine, ...model, overrides: ovr, context, player: players.current(), loaded: true };
 }

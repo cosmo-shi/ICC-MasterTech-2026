@@ -1,86 +1,65 @@
-import { afterEach, describe, expect, it } from 'vitest';
-import { type AttemptEvidence, baselineLearner, estimateSkills, lessonStars, nextStep, registerLearnerModel, suggestGroups } from './learner.ts';
+import { describe, expect, it } from 'vitest';
+import type { AttemptRecord } from '../store/db.ts';
+import { LESSON_INFOS, estimatesFrom, learnerFrom, nextFor, supportFor, withOverrides } from './learner.ts';
+import { routeFrom } from '../data/curriculum.ts';
 
-const att = (activityId: string, onTime: number, kind: AttemptEvidence['kind'] = 'practice', t = 0, extra: Partial<AttemptEvidence> = {}): AttemptEvidence => ({
-  activityId,
-  createdAt: t,
-  kind,
-  passed: onTime >= 4,
-  hintLevel: 0,
-  summary: { expected: 4, correctSound: 4, restViolations: 0, onTime, durationOk: 0, durationIssues: 0 },
-  ...extra,
-});
+let t = 0;
+const att = (activityId: string, kind: 'practice' | 'independent', onTime: number, expected = 4, extra: Partial<AttemptRecord> = {}): AttemptRecord =>
+  ({
+    id: `a${t}`,
+    createdAt: ++t,
+    activityId,
+    activityVersion: '1',
+    kind,
+    instrument: 'drums',
+    tempoBpm: 80,
+    support: { hintLevel: 0, heardExample: false, largeControls: false, simplified: false, aiEnabled: true, slower: false },
+    inputs: [],
+    summary: { expected, correctSound: expected, wrong: 0, missed: 0, extra: 0, restViolations: 0, early: 0, onTime, late: expected - onTime, durationOk: 0, durationIssues: 0 },
+    passed: onTime === expected,
+    ...extra,
+  }) as AttemptRecord;
+const ctx = (over = {}) => ({ infos: LESSON_INFOS, route: routeFrom('1-2'), aiEnabled: true, ...over });
 
-const pulse = (atts: AttemptEvidence[]) => baselineLearner.estimate(atts).find((e) => e.skill === 'pulse')!;
-
-afterEach(() => registerLearnerModel(null));
-
-describe('learner model (baseline)', () => {
-  it('starts with no evidence', () => {
-    const e = pulse([]);
-    expect(e.status).toBe('not-yet');
-    expect(e.evidence).toBe(0);
+describe('learner decisions from the Bayesian model', () => {
+  it('says "not enough tries" instead of guessing with no evidence', () => {
+    const e = estimatesFrom(learnerFrom([]).state);
+    expect(e.every((x) => x.uncertain && x.band === 'new' && !x.needsPractice)).toBe(true);
   });
-
-  it('rises with good attempts and is only secure after an independent success', () => {
-    const practice = [1, 2, 3, 4, 5].map((t) => att('L01', 4, 'practice', t));
-    expect(pulse(practice).status).toBe('growing');
-    expect(pulse([...practice, att('L01', 4, 'independent', 9)]).status).toBe('secure');
+  it('sends a learner who keeps missing the beat back to a beat lesson, with the evidence', () => {
+    const tries = [att('L01', 'practice', 1), att('L01', 'practice', 2), att('L02', 'practice', 1)];
+    const { planning } = learnerFrom(tries);
+    const plan = nextFor(planning, { skills: {} }, ctx({ currentLessonId: 'L02' }));
+    expect(plan.provenance).toBe('learner-model');
+    expect(plan.next?.reasonId).toBe('practise-pulse');
+    expect(plan.next?.evidenceAttemptIds.length).toBeGreaterThan(0);
   });
-
-  it('counts hinted attempts for less', () => {
-    const plain = pulse([att('L01', 4, 'practice', 1)]).level;
-    const hinted = pulse([att('L01', 4, 'practice', 1, { hintLevel: 3 })]).level;
-    expect(hinted).toBeLessThan(plain);
+  it('offers more support (slower, a demonstration) when this lesson’s skill keeps failing', () => {
+    const tries = [att('L01', 'practice', 1), att('L01', 'practice', 1), att('L01', 'practice', 2)];
+    const s = supportFor(learnerFrom(tries).planning, 'L01', ctx());
+    expect(s.start).toContain('slower');
+    expect(s.demo).toBe(true);
+    expect(s.ready).toBe(false);
   });
-
-  it('suggests practising again when a started skill stays weak', () => {
-    const atts = [att('L01', 1, 'practice', 1), att('L01', 0, 'practice', 2)];
-    const step = nextStep(['L01', 'L02', 'L03'], baselineLearner.estimate(atts));
-    expect(step).toEqual({ activityId: 'L01', why: 'practise', skill: 'pulse' });
+  it('offers to go straight to "on your own" when the skill is already shown', () => {
+    const tries = [att('L01', 'independent', 4), att('L01', 'independent', 4), att('L01', 'independent', 4), att('L01', 'independent', 4)];
+    const s = supportFor(learnerFrom(tries).planning, 'L01', ctx());
+    expect(s.ready).toBe(true);
+    expect(s.demo).toBe(false);
   });
-
-  it('moves on once the route skill is secure', () => {
-    const atts = [att('L01', 4, 'independent', 1), att('L01', 4, 'independent', 2), att('L01', 4, 'independent', 3), att('L01', 4, 'independent', 4)];
-    expect(nextStep(['L01', 'L02'], baselineLearner.estimate(atts)).activityId).toBe('L02');
+  it('lets a teacher override: their choice wins and the model estimate is kept for review', () => {
+    const tries = [att('L01', 'practice', 1), att('L01', 'practice', 1)];
+    const m = learnerFrom(tries, { skills: { pulse: 'secure' } });
+    const pulse = m.estimates.find((e) => e.skill === 'pulse')!;
+    expect(pulse.override).toBe('secure');
+    expect(pulse.needsPractice).toBe(false);
+    expect(pulse.p).toBe(learnerFrom(tries).state.skills.pulse.p); // model value unchanged
+    expect(withOverrides(m.state, { skills: { pulse: 'secure' } }).skills.pulse.p).toBeGreaterThan(0.8);
+    const pinned = nextFor(m.planning, { skills: {}, next: 'D01' }, ctx());
+    expect(pinned).toMatchObject({ teacher: true, next: { lessonId: 'D01' } });
   });
-
-  it('never judges open tasks', () => {
-    const e = baselineLearner.estimate([{ activityId: 'L09', createdAt: 1, kind: 'practice', passed: false, hintLevel: 0 }]).find((x) => x.skill === 'create')!;
-    expect(e.status).toBe('secure');
-  });
-
-  it('scores lessons out of 3', () => {
-    expect(lessonStars([], 'L01')).toBe(0);
-    expect(lessonStars([att('L01', 1)], 'L01')).toBe(1);
-    expect(lessonStars([att('L01', 4)], 'L01')).toBe(2);
-    expect(lessonStars([att('L01', 4, 'independent')], 'L01')).toBe(3);
-  });
-
-  it('groups children working on the same skill', () => {
-    const weak = baselineLearner.estimate([att('L01', 2, 'practice', 1)]);
-    const strong = baselineLearner.estimate([4, 5, 6, 7].map((t) => att('L01', 4, 'independent', t)));
-    const g = suggestGroups([
-      { id: 'a', estimates: weak },
-      { id: 'b', estimates: weak },
-      { id: 'c', estimates: strong },
-    ]);
-    expect(g.find((x) => x.skill === 'pulse')?.children).toEqual(['a', 'b']);
-  });
-});
-
-describe('plug-in point', () => {
-  it('uses a registered model', () => {
-    registerLearnerModel({ id: 'live', version: '0.1', kind: 'live', estimate: (a) => baselineLearner.estimate(a).map((e) => ({ ...e, level: 0.5 })) });
-    const r = estimateSkills([]);
-    expect(r.model.id).toBe('live');
-    expect(r.fellBack).toBe(false);
-  });
-
-  it('falls back to the baseline when a plugged-in model fails', () => {
-    registerLearnerModel({ id: 'broken', version: '0', kind: 'live', estimate: () => { throw new Error('x'); } });
-    const r = estimateSkills([]);
-    expect(r.model.id).toBe('carmen-elo-baseline');
-    expect(r.fellBack).toBe(true);
+  it('falls back to the route when the AI is off', () => {
+    const plan = nextFor(learnerFrom([att('L01', 'practice', 1), att('L01', 'practice', 1)]).planning, { skills: {} }, ctx({ aiEnabled: false }));
+    expect(plan.provenance).toBe('rules');
   });
 });
