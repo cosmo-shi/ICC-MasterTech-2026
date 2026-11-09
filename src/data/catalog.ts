@@ -2,12 +2,13 @@
 // All content is draft, pending review by a qualified primary music educator.
 
 import seed from './lessons.seed.json';
+import extra from './lessons.extra.json';
 import plan from './pathways.plan.json';
 import { parseLessons, type Lesson } from '../music/lessons.ts';
 import type { PathwayId } from '../state/prefs.tsx';
 import type { Operation } from '../ai/reply.ts';
 
-export const LESSONS: Lesson[] = parseLessons(seed);
+export const LESSONS: Lesson[] = [...parseLessons(seed), ...parseLessons(extra)];
 export const lessonById = (id: string) => LESSONS.find((l) => l.id === id);
 
 export interface Pathway {

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { SKILLS } from '../ai/learner.ts';
+import { ACTIVITIES } from './curriculum.ts';
 import { THEORY, topicById } from './theory.ts';
 import { LESSONS } from './catalog.ts';
-import { UNITS } from './route.ts';
 
 describe('music words library', () => {
   it('every example fits its bars and uses whole ticks', () => {
@@ -20,8 +20,8 @@ describe('music words library', () => {
     }
     for (const s of SKILLS) expect(topicById(s.theory), s.id).toBeDefined();
   });
-  it('the route covers every lesson once', () => {
-    const ids = UNITS.flatMap((u) => u.stops.filter((s) => s.kind === 'lesson').map((s) => s.id));
+  it('the curriculum covers every lesson once', () => {
+    const ids = ACTIVITIES.filter((a) => a.kind === 'lesson').map((a) => a.id);
     expect(new Set(ids).size).toBe(ids.length);
     expect([...ids].sort()).toEqual(LESSONS.map((l) => l.id).sort());
   });
