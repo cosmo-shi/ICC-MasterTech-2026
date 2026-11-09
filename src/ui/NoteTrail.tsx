@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import type { DrumSound } from '../music/events.ts';
 import { midiToLetter } from '../music/theory.ts';
+import { DRUM_STAVE, diatonic, stavePosition } from '../music/notationKeys.ts';
 
 export interface TrailNote {
   midi?: number;
@@ -27,29 +28,9 @@ export class Trail {
 }
 
 const PX_PER_MS = 0.085; // the paper moves at a steady speed whatever the screen width
-const NATURAL_STEP: Record<number, number> = { 0: 0, 2: 1, 4: 2, 5: 3, 7: 4, 9: 5, 11: 6 };
-
-/** Diatonic step of a MIDI note (C4 = 28), and whether it is sharp. */
-function diatonic(midi: number): { step: number; sharp: boolean } {
-  const pc = ((midi % 12) + 12) % 12;
-  const oct = Math.floor(midi / 12) - 1;
-  const sharp = !(pc in NATURAL_STEP);
-  const base = NATURAL_STEP[sharp ? pc - 1 : pc];
-  return { step: oct * 7 + base, sharp };
-}
-const E4 = diatonic(64).step; // bottom line of the treble stave
-const G2 = diatonic(43).step; // bottom line of the bass stave
-
-// Drum kit on a five-line stave (positions in half-spaces from the bottom line).
-const DRUM_POS: Record<DrumSound, { pos: number; cross: boolean }> = {
-  kick: { pos: 1, cross: false },
-  tomLow: { pos: 3, cross: false },
-  snare: { pos: 5, cross: false },
-  tomHigh: { pos: 7, cross: false },
-  hihat: { pos: 9, cross: true },
-  crash: { pos: 10, cross: true },
-  clave: { pos: 8, cross: true },
-};
+// Stave positions come from the same module as the lesson score, so the two always agree.
+const BRAVURA = { treble: '\uE050', bass: '\uE062', drums: '\uE069' };
+let musicFont: 'loading' | 'ready' | null = null;
 
 /** "What you played", written as music: note heads on a stave, moving left as time passes.
  *  Treble clef for middle and high notes, bass clef for low notes, a drum stave for drums.
@@ -101,21 +82,14 @@ export function NoteTrail({ trail, recording, clef, letters }: { trail: Trail; r
         g.lineTo(w - 8, y);
         g.stroke();
       }
-      // Clef, drawn from the same shapes as the brand: a label in the reading face.
-      g.fillStyle = soft;
-      g.font = `700 ${Math.round(gap * 1.25)}px Figtree, system-ui, sans-serif`;
-      g.textBaseline = 'middle';
-      g.textAlign = 'left';
-      if (cl === 'drums') {
-        g.fillRect(14, yOf(2), 3, yOf(6) - yOf(2));
-        g.fillRect(20, yOf(2), 3, yOf(6) - yOf(2));
-      } else {
-        // Clefs began life as the letters G and F written on their line; Carmen keeps that idea.
-        g.font = `800 ${Math.round(gap * 2.6)}px Figtree, system-ui, sans-serif`;
-        g.fillText(cl === 'treble' ? 'G' : 'F', 12, yOf(cl === 'treble' ? 2 : 6));
-        g.beginPath();
-        g.arc(14 + gap * 2.2, yOf(cl === 'treble' ? 2 : 6), gap * 0.3, 0, Math.PI * 2);
-        g.fill();
+      // Clef: real clef signs from the Bravura music font (loaded with the score), so the
+      // trail reads like the score. Until the font is ready the stave shows no clef.
+      if (musicFont === 'ready') {
+        g.fillStyle = soft;
+        g.textBaseline = 'alphabetic';
+        g.textAlign = 'left';
+        g.font = `${Math.round(gap * 4)}px Bravura`;
+        g.fillText(BRAVURA[cl], 12, yOf(cl === 'treble' ? 2 : cl === 'bass' ? 6 : 4));
       }
       // Now line.
       g.strokeStyle = colour(rec.current ? '--record' : '--ink-faint');
@@ -134,11 +108,10 @@ export function NoteTrail({ trail, recording, clef, letters }: { trail: Trail; r
         let cross = false;
         let label = '';
         if (n.sound) {
-          ({ pos, cross } = DRUM_POS[n.sound]);
+          ({ pos, cross } = DRUM_STAVE[n.sound]);
         } else if (n.midi !== undefined) {
-          const d = diatonic(n.midi);
-          pos = d.step - (cl === 'bass' ? G2 : E4);
-          sharp = d.sharp;
+          pos = stavePosition(n.midi, cl === 'bass' ? 'bass' : 'treble');
+          sharp = diatonic(n.midi).sharp;
           label = midiToLetter(n.midi);
         } else continue;
         const x = head - (now - n.start) * pxPerMs;
@@ -228,6 +201,16 @@ export function NoteTrail({ trail, recording, clef, letters }: { trail: Trail; r
       st.raf = requestAnimationFrame(loop);
     });
     draw();
+    if (!musicFont) {
+      musicFont = 'loading';
+      import('vexflow/bravura')
+        .then(() => document.fonts?.load('20px Bravura'))
+        .then(() => {
+          musicFont = 'ready';
+          draw();
+        })
+        .catch(() => (musicFont = null));
+    } else if (musicFont === 'loading') document.fonts?.ready.then(() => draw());
     const ro = new ResizeObserver(() => draw());
     ro.observe(c);
     const mo = new MutationObserver(() => draw());
