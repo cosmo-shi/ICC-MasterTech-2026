@@ -2605,9 +2605,22 @@ details > summary {
   margin: 0 0 var(--s4);
   padding: 0;
   display: flex;
+  flex-wrap: wrap;
   gap: var(--s1);
-  overflow-x: auto;
-  scrollbar-width: none;
+}
+@media (max-width: 600px) {
+  .cycle-step:not(.is-now) .cycle-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .cycle-step:not(.is-now) {
+    flex: none;
+    padding-right: 6px;
+  }
 }
 .cycle::-webkit-scrollbar {
   display: none;
@@ -2853,4 +2866,304 @@ details > summary {
 .theory-related .chips {
   list-style: none;
   padding: 0;
+}
+
+/* ---------- Grown-ups: teacher dashboard ---------- */
+.dash-tabs {
+  display: flex;
+  gap: var(--s1);
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-bottom: 1px solid var(--hairline);
+  margin-bottom: var(--s5);
+}
+.dash-tabs::-webkit-scrollbar {
+  display: none;
+}
+.dash-tab {
+  flex: none;
+  min-height: var(--target);
+  padding: 0 var(--s4);
+  border: 0;
+  background: transparent;
+  color: var(--ink-soft);
+  font-weight: 700;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -1px;
+}
+.dash-tab.is-on {
+  color: var(--dusk);
+  border-bottom-color: var(--dusk);
+}
+.dash-stats {
+  list-style: none;
+  margin: 0 0 var(--s5);
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: var(--s3);
+}
+.dash-stats li {
+  padding: var(--s3) var(--s4);
+  border-radius: var(--r-md);
+  background: var(--paper-sunk);
+  color: var(--ink-soft);
+  font-weight: 700;
+  font-size: var(--t-support);
+}
+.stat-n {
+  display: block;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+.dash-block {
+  margin-bottom: var(--s6);
+}
+.dash-block > .h2,
+.dash-block > .h3 {
+  margin-bottom: var(--s3);
+}
+.hand-list,
+.group-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--s3);
+}
+@media (min-width: 900px) {
+  .hand-list,
+  .group-list {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.hand,
+.group {
+  padding: var(--s3) var(--s4);
+  border-radius: var(--r-md);
+  box-shadow: inset 0 0 0 1px var(--hairline);
+  background: var(--paper-raised);
+}
+.hand-who {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+  padding: 0;
+  min-height: var(--target);
+}
+.hand-name {
+  display: block;
+  font-weight: 800;
+}
+.hand-skill {
+  display: block;
+  font-size: var(--t-support);
+  color: var(--ink-soft);
+}
+.hand-move {
+  margin: var(--s2) 0 0;
+  font-size: var(--t-support);
+}
+.group-skill {
+  margin: 0 0 var(--s2);
+  font-weight: 800;
+}
+.group-kids {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s3);
+  margin: 0;
+}
+.group-kid {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+}
+.skill-grid {
+  border-collapse: collapse;
+  min-width: 720px;
+  width: 100%;
+}
+.skill-grid th,
+.skill-grid td {
+  text-align: left;
+  padding: var(--s2) var(--s3);
+  border-bottom: 1px solid var(--hairline);
+  font-size: var(--t-support);
+  white-space: nowrap;
+}
+.skill-grid thead th {
+  color: var(--ink-soft);
+  font-weight: 700;
+  white-space: normal;
+  vertical-align: bottom;
+}
+.grid-who {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  border: 0;
+  background: transparent;
+  color: var(--dusk);
+  font-weight: 800;
+  min-height: 40px;
+  padding: 0;
+}
+.st {
+  font-weight: 700;
+}
+.st-not-yet {
+  color: var(--ink-soft);
+}
+.st-starting {
+  color: var(--miss);
+}
+.st-growing {
+  color: var(--near);
+}
+.st-secure {
+  color: var(--good);
+}
+.provenance {
+  border-top: 1px solid var(--hairline);
+  padding-top: var(--s3);
+}
+.empty-state {
+  padding: var(--s5);
+  border-radius: var(--r-md);
+  background: var(--paper-sunk);
+}
+.child-pick {
+  margin-bottom: var(--s4);
+}
+.chip-who {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  padding-left: 6px;
+}
+.child-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+  margin-bottom: var(--s5);
+}
+.child-head .h2 {
+  margin: 0;
+}
+.child-head .note-text {
+  margin: 0;
+}
+.skill-bars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--s3);
+}
+.skill-bar {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px;
+  padding-bottom: var(--s3);
+  border-bottom: 1px solid var(--hairline);
+}
+@media (min-width: 900px) {
+  .skill-bar {
+    grid-template-columns: minmax(260px, 1.4fr) 1fr auto;
+    align-items: center;
+    column-gap: var(--s4);
+  }
+  .skill-move {
+    grid-column: 1 / -1;
+  }
+}
+.skill-name {
+  font-weight: 800;
+}
+.skill-name .muted {
+  font-weight: 500;
+}
+.bar {
+  height: 10px;
+  border-radius: 6px;
+  background: var(--paper-sunk);
+  overflow: hidden;
+}
+.bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: 6px;
+  background: var(--ink-faint);
+}
+.bar-fill.st-starting {
+  background: var(--miss);
+}
+.bar-fill.st-growing {
+  background: var(--sun-deep);
+}
+.bar-fill.st-secure {
+  background: var(--good);
+}
+.skill-st {
+  font-size: var(--t-support);
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.skill-move {
+  font-size: var(--t-support);
+  color: var(--ink-soft);
+}
+.piece-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--s2);
+}
+.piece-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s3);
+}
+.piece-title {
+  font-weight: 800;
+}
+.gate-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--s3);
+  margin: var(--s4) 0;
+}
+.gate-form .field {
+  max-width: 280px;
+}
+.st-dot {
+  vertical-align: -1px;
+}
+.grownups .lede {
+  margin-bottom: var(--s4);
+}
+.setting-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s2) var(--s3);
+  margin: var(--s2) 0;
+}
+.setting-label {
+  font-weight: 700;
+  flex: 1 1 140px;
+}
+.setting-value {
+  font-weight: 800;
+  min-width: 3ch;
 }

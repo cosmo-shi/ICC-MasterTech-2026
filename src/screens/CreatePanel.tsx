@@ -5,6 +5,7 @@ import { Recorder } from '../music/capture.ts';
 import { type InstrumentId, type Phrase, TPQ } from '../music/events.ts';
 import { type CompositionRecord, newId, stamp, store } from '../store/db.ts';
 import { Icon } from '../ui/icons.tsx';
+import { usePrefs } from '../state/prefs.tsx';
 import { usePlayer } from '../ui/usePlayer.ts';
 import { type LiveEvent, Workspace } from '../ui/Workspace.tsx';
 
@@ -22,8 +23,9 @@ interface Props {
 /** Record as note events (never microphone audio), replay, name and save locally. No score. */
 export function CreatePanel({ instrument, activityId, onSaved, idea, onBackToLesson }: Props) {
   const [state, setState] = useState<'idle' | 'countin' | 'recording' | 'recorded'>('idle');
-  const [click, setClick] = useState(false);
-  const [tempo, setTempo] = useState(idea ? idea.phrase.tempoBpm : 90);
+  const { prefs } = usePrefs();
+  const [click, setClick] = useState(prefs.metronomeOn);
+  const [tempo, setTempo] = useState(idea ? idea.phrase.tempoBpm : prefs.metronomeTempo);
   const [phrase, setPhrase] = useState<Phrase | null>(null);
   const [previous, setPrevious] = useState<{ phrase: Phrase; title: string } | null>(null);
   const [title, setTitle] = useState('');
@@ -60,7 +62,7 @@ export function CreatePanel({ instrument, activityId, onSaved, idea, onBackToLes
     if (click) {
       setState('countin');
       await clickPlayer.play([], tempo, {
-        countInBeats: 4,
+        countInBeats: prefs.countIn,
         click: true,
         totalTicks: Math.floor((MAX_SECONDS * tempo) / 60) * TPQ,
         onBeat0: (pb) => {
@@ -121,7 +123,7 @@ export function CreatePanel({ instrument, activityId, onSaved, idea, onBackToLes
         <span className="rec-dot" aria-hidden="true" />
         <span className="rec-text">
           <span className="rec-label">{recording ? (state === 'countin' ? 'Get ready' : 'Stop') : phrase ? 'Record again' : 'Record'}</span>
-          <span className="rec-sub">{state === 'countin' ? '4 beats, then play' : state === 'recording' ? 'Recording…' : click ? `Metronome ${tempo}` : 'Tap to start'}</span>
+          <span className="rec-sub">{state === 'countin' ? `${prefs.countIn} beats, then play` : state === 'recording' ? 'Recording…' : click ? `Metronome ${tempo}` : 'Tap to start'}</span>
         </span>
       </button>
       <button

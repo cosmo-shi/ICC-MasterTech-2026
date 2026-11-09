@@ -106,7 +106,7 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
     setKept(null);
     setRecState('countin');
     await player.play([], tempo, {
-      countInBeats: 4,
+      countInBeats: prefs.countIn,
       click: true,
       totalTicks: beats * TPQ,
       tailBeats: 0.5,
@@ -321,11 +321,11 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
                 ))}
               </div>
             )}
-            <BeatDots beats={recState === 'countin' ? 4 : beats} current={recState === 'countin' ? 4 + (player.beat ?? -4) : player.beat ?? -1} countIn={recState === 'countin'} />
+            <BeatDots beats={recState === 'countin' ? prefs.countIn : beats} current={recState === 'countin' ? prefs.countIn + (player.beat ?? -prefs.countIn) : player.beat ?? -1} countIn={recState === 'countin'} />
             <div className="row wrap">
               {recState !== 'countin' && recState !== 'recording' ? (
                 <button type="button" className="btn btn-coral btn-big" onClick={record}>
-                  <span aria-hidden="true">● </span>{phrase ? 'Record again' : 'Record (4 beats first)'}
+                  <span aria-hidden="true">● </span>{phrase ? 'Record again' : `Record (${prefs.countIn} beats first)`}
                 </button>
               ) : (
                 <p className="status-big" role="status">

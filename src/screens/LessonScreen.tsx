@@ -138,7 +138,7 @@ function AssessedLesson({ lessonId, go }: Props) {
     if (timed) {
       setPhase('countin');
       await player.play([], tempo, {
-        countInBeats: 4,
+        countInBeats: prefs.countIn,
         click: true,
         totalTicks: target.totalTicks,
         tailBeats: 0.75,
@@ -277,7 +277,7 @@ function AssessedLesson({ lessonId, go }: Props) {
             </button>
           </div>
 
-          {timed && <BeatDots beats={phase === 'countin' ? 4 : totalBeats} current={phase === 'countin' ? 4 + (beatNow ?? -4) : beatNow ?? -1} countIn={phase === 'countin'} />}
+          {timed && <BeatDots beats={phase === 'countin' ? prefs.countIn : totalBeats} current={phase === 'countin' ? prefs.countIn + (beatNow ?? -prefs.countIn) : beatNow ?? -1} countIn={phase === 'countin'} />}
 
           <div className="row wrap action-row">
             {phase !== 'countin' && phase !== 'playing' && (
@@ -290,7 +290,7 @@ function AssessedLesson({ lessonId, go }: Props) {
                 </button>
               </>
             )}
-            {phase === 'countin' && <p className="status-big" role="status">Get ready… 4 beats</p>}
+            {phase === 'countin' && <p className="status-big" role="status">Get ready… {prefs.countIn} beats</p>}
             {phase === 'playing' && (
               <>
                 <p className="status-big" role="status">

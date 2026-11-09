@@ -7,8 +7,8 @@ Last updated 9 November 2026. Plain facts only: what runs, how it was checked, a
 | Check | Command | Result |
 | --- | --- | --- |
 | Type check and production build | `npm run build` | Passes. The notation chunk (VexFlow with its music font) is about 720 KB and loads only when a score is shown. |
-| Lint | `npm run lint` | 0 errors, 8 warnings (fast-refresh hints about helper exports beside components; dev-only). |
-| Unit tests | `npm test` | 39 pass: checker, timing model, reply verification, notation layout, drum capture. |
+| Lint | `npm run lint` | 0 errors, 10 warnings (fast-refresh hints about helper exports beside components; dev-only). |
+| Unit tests | `npm test` | 52 pass: checker, timing model, reply verification, notation layout, drum capture, learner model (estimates, next step, groups, plug-in fallback), Music words examples and links, route coverage. |
 | Model training and held-out test | `npm run train` | Held-out synthetic set: model 95.3% vs fixed rules 89.9%, abstains on 1.2%. Written to `docs/model-metrics.json`. |
 | Model in a real browser | Grown-ups → "Run the check" (Chromium, headless) | Same 95% / 90% on 600 held-out synthetic attempts; under 0.01 ms per answer. |
 | Screens at 360 px and 1280 px | Playwright screenshots of Play, Learn, two lessons, a partner project, My music, Grown-ups | No console errors, no sideways scrolling after fixes. |
@@ -33,6 +33,23 @@ Not checked yet: a real screen reader (NVDA, VoiceOver), real tablets and Chrome
 - Offline after the first visit (built app only).
 - Design direction from `docs/carmen/UX_JOURNEY_AND_VISUAL_DIRECTION.md`: a sound check with tips when nothing is heard, "Sound paused" recovery, an original icon set for navigation and pathways, "Bring back my last take", "Carry on from last time", honest save-location wording, "More detail" notes (open by default for Years 5–6 and older), a quieter studio presentation for older learners, and a "Before a class" check with activity notes and preview links for teachers.
 - Identity "Songbook Horizon" (2026-11-09, replaces Colour Bars): sunset landscape whose hills are stave lines, note-head sun, paper sheet for the work, instrument in a dark case; colour by role (sun = now, red = record, dusk = selected); Bagel Fat One for brand and titles, Figtree for the rest; one icon/illustration family; "what you played" note trail above the instrument; sticker tap-timeline feedback in lessons; optional Night mode (Day / Night / Same as device). Learner wording shortened; curriculum and class-talk notes in Grown-ups; learners see "Carmen · listened to your timing" only when the on-device model ran, otherwise "Carmen · tip". Checked with Playwright at 360 px and 1280 px in Day and Night (Play, drums, Learn, a lesson including feedback, a partner project, My music, Settings, Grown-ups): no console errors, no sideways scroll. Colour contrast checked by calculation for every text/background pair, not by an automated audit. Not checked: real devices, screen readers, audio latency, real multitouch.
+
+
+## Added 9 November 2026 (connected app, tablet first)
+
+Checked with Playwright on phone (390 px), tablet (820 px) and desktop (1280 px) in Day and Night, and axe-core on Play, Learn, Music words, a lesson, a lesson summary, Make it yours, My music and Grown-ups: no violations and no console errors after fixes. A glide test drags across the keys (C, D, E, F, G sound in turn and only one note is held at a time), and the key map test drags the keyboard from C4 to C5. Not checked: real touch screens, real multitouch, audio latency, screen readers.
+
+- **Working: keyboard you can glide along.** The keyboard covers C2 to C7. A map above it shows where you are; drag or tap it to move smoothly, or use the octave buttons (kept). Sliding a finger across keys plays each one in turn. Computer-key letters start on the first C on screen.
+- **Working: real drum kit.** A kit laid out as seen from the stool (cymbal, hi-hat, toms, snare, bass drum), with a taller arrangement on phones. The pads are still one tap away (and in Settings).
+- **Working: Who's playing?** Local players (first name or nickname and a colour), no accounts or passwords. New work is tagged with the player; My music and "Last time" show only that player's work. "Just play" keeps nothing.
+- **Working: learner model** (`src/ai/learner.ts`): per-skill Elo-style estimates from attempts, with hinted tries counting for less; "secure" needs an independent success; open tasks are never judged. `registerLearnerModel()` is the plug-in point for the live local model, with automatic fallback to the baseline.
+- **Working: Learn as a pathway.** Five units with "you are here", note-head scores and "Up next" chosen by the learner model (practise again when a skill is stuck, otherwise the next skill not yet secure). "Start from" sets where you begin; every lesson stays open.
+- **Working: lesson cycle and summary.** Hear it, Learn, Try, Listen back (plays your own take), Make it yours (opens Play with the lesson idea and saves to My music), then a summary: 0–3 note heads (had a go, matched with practice, matched a new one on your own), best try per fact, what went well, one thing to practise, next step.
+- **Working: Music words.** 15 topics (beat, rhythm, tempo, metronome, note values, quavers, rests, bars, pitch, note names, stave, melody, dynamics, tone colour, form), each with notation and sound from the same event list. Draft wording.
+- **Working: Grown-ups dashboard.** Grown-up check (a multiplication; not security). Class tab: who might like a hand (skill still starting after two tries) with a teacher move, children who could practise together, a skills grid with shape + word (never colour alone). Each child: skills, their music with playback, recent tries with help used, notes, rename/remove. Lessons, How the AI works, Device and privacy tabs keep the earlier content.
+- **Working: Settings.** Who's playing, sound, metronome (on by default in Play, speed, 2 or 4 beats first), look, playing (incl. drum layout), saving.
+- **Draft:** teacher moves per skill, unit order and Music words wording. **Future:** encrypted class export file; Web MIDI keyboards; the live learner model.
+- **Known gaps:** on a portrait tablet the lesson task card pushes the instrument below the fold; the first key press before "Turn sound on" shifts the layout slightly.
 
 ## Draft
 

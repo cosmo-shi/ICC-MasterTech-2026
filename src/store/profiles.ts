@@ -100,3 +100,9 @@ export function grownupQuestion(seed: number): { text: string; answer: number } 
   const b = 7 + ((seed >> 3) % 3);
   return { text: `${a} × ${b}`, answer: a * b };
 }
+
+/** Is this saved record the current player's? A guest sees only records with no owner. */
+export function mine(r: { profileId?: string }): boolean {
+  const who = players.currentId();
+  return who ? r.profileId === who : !r.profileId;
+}

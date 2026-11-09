@@ -3,6 +3,7 @@ import { usePrefs } from '../state/prefs.tsx';
 import { type CompositionRecord, store } from '../store/db.ts';
 import { Icon } from '../ui/icons.tsx';
 import { usePlayer } from '../ui/usePlayer.ts';
+import { mine, players } from '../store/profiles.ts';
 import { CreatePanel } from './CreatePanel.tsx';
 import { lessonById } from '../data/catalog.ts';
 
@@ -12,11 +13,16 @@ function useLatestPiece(): CompositionRecord | null {
   useEffect(() => {
     const load = () =>
       store.all<CompositionRecord>('compositions').then(
-        (r) => setLatest(r.sort((a, b) => b.createdAt - a.createdAt)[0] ?? null),
+        (r) => setLatest(r.filter(mine).sort((a, b) => b.createdAt - a.createdAt)[0] ?? null),
         () => setLatest(null),
       );
     load();
-    return store.subscribe(load);
+    const off1 = store.subscribe(load);
+    const off2 = players.subscribe(load);
+    return () => {
+      off1();
+      off2();
+    };
   }, []);
   return latest;
 }

@@ -18,6 +18,11 @@ export interface Prefs {
   pathway: PathwayId | null;
   volume: number;
   drumView: 'pads' | 'kit';
+  /** Beats of metronome before recording or a timed task. */
+  countIn: 2 | 4;
+  /** Play starts with the metronome on, at this speed. */
+  metronomeOn: boolean;
+  metronomeTempo: number;
 }
 
 const DEFAULTS: Prefs = {
@@ -34,6 +39,9 @@ const DEFAULTS: Prefs = {
   pathway: null,
   volume: 0.7,
   drumView: 'kit',
+  countIn: 4,
+  metronomeOn: false,
+  metronomeTempo: 90,
 };
 
 const KEY = 'carmen-prefs-v1';

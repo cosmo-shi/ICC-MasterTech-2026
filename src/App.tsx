@@ -108,7 +108,7 @@ function Shell() {
         </a>
       </nav>
       {showEntry && <EntryScreen canClose={!!who.current} onDone={() => setSwitching(false)} />}
-      {settingsOpen && <ControlsSheet onClose={() => setSettingsOpen(false)} />}
+      {settingsOpen && <ControlsSheet onClose={() => setSettingsOpen(false)} onSwitchPlayer={() => { setSettingsOpen(false); setSwitching(true); }} />}
       <main id="main" ref={mainRef} tabIndex={-1} className={`sheet-main stage-${section || 'play'}`}>
         {saveError && (
           <p className="banner" role="alert">

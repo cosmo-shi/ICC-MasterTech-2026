@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { type CompositionRecord, store } from '../store/db.ts';
 import { Band, Icon } from '../ui/icons.tsx';
 import { usePlayer } from '../ui/usePlayer.ts';
+import { mine, players } from '../store/profiles.ts';
 
 export function MyMusic({ go }: { go: (r: string) => void }) {
   const [items, setItems] = useState<CompositionRecord[] | null>(null);
@@ -15,11 +16,16 @@ export function MyMusic({ go }: { go: (r: string) => void }) {
   useEffect(() => {
     const load = () =>
       store.all<CompositionRecord>('compositions').then(
-        (r) => setItems(r.sort((a, b) => b.createdAt - a.createdAt)),
+        (r) => setItems(r.filter(mine).sort((a, b) => b.createdAt - a.createdAt)),
         () => setError('Your saved music could not be opened in this browser.'),
       );
     load();
-    return store.subscribe(load);
+    const off1 = store.subscribe(load);
+    const off2 = players.subscribe(load);
+    return () => {
+      off1();
+      off2();
+    };
   }, []);
 
   const play = (c: CompositionRecord) => {
