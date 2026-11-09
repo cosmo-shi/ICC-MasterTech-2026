@@ -1,0 +1,215 @@
+/* Base styles: reset, text, links, buttons, focus. Colours and sizes come from tokens.css. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  color-scheme: light;
+}
+
+html.high-contrast {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: var(--color-selection);
+  color: var(--color-ink);
+}
+
+html.high-contrast ::selection {
+  color: var(--color-on-accent);
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  line-height: var(--leading-tight);
+  font-weight: var(--weight-bold);
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--text-2xl);
+  letter-spacing: var(--tracking-tight);
+}
+
+h2 {
+  font-size: var(--text-xl);
+}
+
+p {
+  margin: 0;
+  max-width: var(--measure);
+  text-wrap: pretty;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* ---------- Links ---------- */
+a {
+  color: var(--color-accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+}
+
+a:hover {
+  color: var(--color-accent-hover);
+}
+
+/* ---------- Focus: always visible for keyboard users ---------- */
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--focus-offset);
+  box-shadow: 0 0 0 var(--focus-offset) var(--color-focus-halo);
+  border-radius: var(--radius-sm);
+}
+
+/* Screen titles get focus on navigation (for screen readers); no ring needed. */
+h1[tabindex="-1"]:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* ---------- Buttons ---------- */
+button {
+  font: inherit;
+  color: inherit;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--target-comfort);
+  min-width: var(--target-min);
+  padding: var(--space-3) var(--space-5);
+  border: var(--border-width) solid transparent;
+  border-radius: var(--radius-md);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  text-decoration: none;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur) var(--ease-out);
+}
+
+.button svg {
+  width: 24px;
+  height: 24px;
+  flex: none;
+}
+
+.button:hover {
+  background: var(--color-accent-hover);
+  color: var(--color-on-accent);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-1);
+}
+
+.button:active {
+  background: var(--color-accent-press);
+  transform: translateY(1px) scale(0.99);
+  box-shadow: none;
+}
+
+.button--quiet {
+  background: var(--color-surface);
+  color: var(--color-ink);
+  border-color: var(--color-line-strong);
+}
+
+.button--quiet:hover {
+  background: var(--color-surface);
+  color: var(--color-ink);
+  border-color: var(--color-ink);
+}
+
+.button--quiet:active {
+  background: var(--color-surface-sunk);
+}
+
+/* Visible to screen readers only. */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Skip link: first thing Tab reaches. */
+.skip-link {
+  position: absolute;
+  left: var(--gutter);
+  top: var(--space-2);
+  z-index: 100;
+  padding: var(--space-3) var(--space-4);
+  min-height: var(--target-min);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  border-radius: var(--radius-sm);
+  font-weight: var(--weight-bold);
+  transform: translateY(-200%);
+}
+
+.skip-link:focus-visible {
+  transform: none;
+  color: var(--color-on-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .button:hover,
+  .button:active {
+    transform: none;
+  }
+}

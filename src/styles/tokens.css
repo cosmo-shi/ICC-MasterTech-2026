@@ -1,0 +1,141 @@
+/*
+  Design tokens: every colour and size in the app comes from here (SPEC hard rule 15).
+  Never write a colour anywhere else. If you need a new one, add a token here
+  AND its high-contrast value in the html.high-contrast block below.
+
+  Look: calm daylight classroom. Warm paper background, near-black ink,
+  one deep blue accent. Every text colour passes WCAG AA on its background.
+*/
+
+:root {
+  /* ---------- Colour ---------- */
+  --color-bg: #f7f4ee;            /* page background, warm paper */
+  --color-surface: #ffffff;       /* cards, panels */
+  --color-surface-sunk: #efeae1;  /* wells, inactive tracks */
+  --color-ink: #1a1d23;           /* main text, 15.4:1 on bg */
+  --color-ink-muted: #4b5260;     /* secondary text, 7.2:1 on bg */
+  --color-line: #ddd6ca;          /* dividers (decorative only) */
+  --color-line-strong: #6f695e;   /* borders of controls, 4.9:1 on bg */
+
+  --color-accent: #1f5c99;        /* buttons, links, selected state */
+  --color-accent-hover: #174a7d;
+  --color-accent-press: #113a63;
+  --color-on-accent: #ffffff;     /* text on accent, 6.9:1 */
+  --color-accent-soft: #e3ecf6;   /* tinted panels, e.g. the sound banner */
+  --color-on-accent-soft: #123d68;/* text on accent-soft, 9.3:1 */
+
+  --color-focus: #1f5c99;         /* focus ring */
+  --color-focus-halo: #ffffff;    /* thin gap between ring and control */
+  --color-selection: #cfe0f2;     /* highlighted text */
+
+  --color-demo-bg: #fff1c9;       /* "Demo data" badge */
+  --color-demo-ink: #5c4300;      /* 8.3:1 on demo-bg */
+  --color-demo-line: #c9a64a;     /* decorative edge; the words "Demo data" carry the meaning */
+
+  --shadow-color: 26 29 35;       /* rgb parts of ink, used in shadows */
+
+  /* ---------- Type ---------- */
+  /* System fonts only: works offline with no font download. */
+  --font-body: "Segoe UI", system-ui, -apple-system, "Roboto", "Helvetica Neue", Arial, sans-serif;
+
+  --text-sm: 1rem;          /* 16px: smallest text anywhere */
+  --text-base: 1.125rem;    /* 18px: body */
+  --text-lg: 1.375rem;      /* 22px: lead text, large buttons */
+  --text-xl: 1.75rem;       /* 28px: section headings */
+  --text-2xl: clamp(2rem, 1.6rem + 2vw, 2.75rem); /* screen titles */
+
+  --leading-body: 1.55;
+  --leading-tight: 1.15;
+  --tracking-tight: -0.02em;
+  --weight-regular: 400;
+  --weight-bold: 650;
+
+  --measure: 65ch;          /* max line length for reading */
+
+  /* ---------- Space (4px base) ---------- */
+  --space-1: 0.25rem;  /* 4  */
+  --space-2: 0.5rem;   /* 8  */
+  --space-3: 0.75rem;  /* 12 */
+  --space-4: 1rem;     /* 16 */
+  --space-5: 1.5rem;   /* 24 */
+  --space-6: 2rem;     /* 32 */
+  --space-7: 3rem;     /* 48 */
+  --space-8: 4rem;     /* 64 */
+
+  --gutter: var(--space-4);   /* side gutter at phone width */
+  --content-max: 40rem;       /* single calm column */
+
+  /* ---------- Shape ---------- */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-pill: 999px;
+  --border-width: 2px;
+
+  --shadow-1: 0 1px 2px rgb(var(--shadow-color) / 0.06),
+              0 4px 14px rgb(var(--shadow-color) / 0.06);
+  --shadow-2: 0 2px 4px rgb(var(--shadow-color) / 0.08),
+              0 10px 24px rgb(var(--shadow-color) / 0.08);
+
+  /* ---------- Touch targets (NFR-ACC-02) ---------- */
+  --target-min: 44px;         /* never smaller than this */
+  --target-comfort: 56px;     /* primary buttons */
+
+  /* Key, pad and string size (FR-ACC-01). Instruments size themselves with
+     calc(var(--control-base) * var(--control-scale)). Set by data-control-size. */
+  --control-base: 56px;
+  --control-scale: 1;
+
+  /* ---------- Focus ---------- */
+  --focus-width: 3px;
+  --focus-offset: 3px;
+
+  /* ---------- Motion ---------- */
+  --dur-fast: 120ms;
+  --dur: 200ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Control size presets (FR-ACC-01). Small never drops below 44px. */
+html[data-control-size="small"]  { --control-scale: 0.8; }
+html[data-control-size="medium"] { --control-scale: 1; }
+html[data-control-size="large"]  { --control-scale: 1.3; }
+
+/*
+  High-contrast mode (FR-ACC-04). Switched on by the "high-contrast" class
+  on <html>. Only colours change, so every screen follows automatically.
+*/
+html.high-contrast {
+  --color-bg: #000000;
+  --color-surface: #000000;
+  --color-surface-sunk: #000000;
+  --color-ink: #ffffff;
+  --color-ink-muted: #ffffff;
+  --color-line: #ffffff;
+  --color-line-strong: #ffffff;
+
+  --color-accent: #ffe500;
+  --color-accent-hover: #fff27a;
+  --color-accent-press: #ffffff;
+  --color-on-accent: #000000;
+  --color-accent-soft: #000000;
+  --color-on-accent-soft: #ffffff;
+
+  --color-focus: #ffe500;
+  --color-focus-halo: #000000;
+  --color-selection: #ffe500;
+
+  --color-demo-bg: #000000;
+  --color-demo-ink: #ffe500;
+  --color-demo-line: #ffe500;
+
+  --shadow-1: none;
+  --shadow-2: none;
+  --focus-width: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur: 0ms;
+  }
+}

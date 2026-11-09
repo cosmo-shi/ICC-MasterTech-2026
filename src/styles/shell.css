@@ -1,0 +1,381 @@
+/* App shell: header, sound banner, screen layout, placeholder, Demo data badge. */
+
+.app {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.wrap {
+  width: 100%;
+  max-width: calc(var(--content-max) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* ---------- Header ---------- */
+.app-header {
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.app-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: 64px;
+}
+
+.app-header__home {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
+  padding-inline: var(--space-1);
+  color: var(--color-ink);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tight);
+  text-decoration: none;
+}
+
+.app-header__home:hover {
+  color: var(--color-accent);
+}
+
+.app-header__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--target-min);
+  padding: var(--space-2) var(--space-4);
+  border: var(--border-width) solid var(--color-line-strong);
+  border-radius: var(--radius-pill);
+  color: var(--color-ink);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  text-decoration: none;
+  transition: border-color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
+}
+
+.app-header__link:hover {
+  color: var(--color-ink);
+  border-color: var(--color-ink);
+}
+
+.app-header__link[aria-current="page"] {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.app-header__link svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+
+/* ---------- Tap to start sound banner (FR-PLY-12) ---------- */
+.sound-banner[hidden] {
+  display: none;
+}
+
+.sound-banner {
+  background: var(--color-accent-soft);
+  color: var(--color-on-accent-soft);
+  border-bottom: var(--border-width) solid var(--color-accent);
+}
+
+.sound-banner__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-4);
+  padding-block: var(--space-4);
+}
+
+.sound-banner__text {
+  flex: 1 1 16rem;
+  font-size: var(--text-base);
+}
+
+.sound-banner .button {
+  flex: 1 1 14rem;
+}
+
+/* ---------- Screens ---------- */
+.app__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.screen {
+  flex: 1;
+  padding-block: var(--space-7) var(--space-8);
+}
+
+.screen__head {
+  display: grid;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.screen__lead {
+  color: var(--color-ink-muted);
+  font-size: var(--text-lg);
+}
+
+.screen__section {
+  margin-top: var(--space-7);
+}
+
+.screen__section h2 {
+  margin-bottom: var(--space-4);
+  font-size: var(--text-lg);
+}
+
+/* ---------- Placeholder details ---------- */
+.placeholder-facts {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+}
+
+.placeholder-facts div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-2);
+}
+
+.placeholder-facts dt {
+  color: var(--color-ink-muted);
+}
+
+.placeholder-facts dt::after {
+  content: ":";
+}
+
+.placeholder-facts dd {
+  margin: 0;
+  font-weight: var(--weight-bold);
+}
+
+/* ---------- Demo data badge ---------- */
+.demo-badge {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border: var(--border-width) solid var(--color-demo-line);
+  border-radius: var(--radius-pill);
+  background: var(--color-demo-bg);
+  color: var(--color-demo-ink);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+}
+
+.demo-badge svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+
+/* ---------- Jump-to-screen list (temporary, for the team) ---------- */
+.jump-list {
+  list-style: none;
+  display: grid;
+  border-top: 1px solid var(--color-line);
+}
+
+.jump-list li {
+  border-bottom: 1px solid var(--color-line);
+}
+
+.jump-list a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: var(--target-comfort);
+  padding-inline: var(--space-1);
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+.jump-list a:hover {
+  color: var(--color-accent);
+}
+
+.jump-list a:hover .jump-list__arrow {
+  transform: translateX(3px);
+}
+
+.jump-list a[aria-current="page"] {
+  font-weight: var(--weight-bold);
+}
+
+.jump-list__arrow {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+@media (min-width: 40rem) {
+  .jump-list {
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--space-6);
+  }
+}
+
+/* ---------- Settings test panel (FR-ACC-08) ---------- */
+.setting {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+}
+
+.setting + .setting {
+  margin-top: var(--space-4);
+}
+
+.setting__hint {
+  color: var(--color-ink-muted);
+  font-size: var(--text-sm);
+}
+
+/* Switch: a real checkbox with role="switch"; state is also written in words. */
+.switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: var(--target-comfort);
+  cursor: pointer;
+  font-weight: var(--weight-bold);
+}
+
+.switch input {
+  appearance: none;
+  flex: none;
+  position: relative;
+  width: 64px;
+  height: 36px;
+  margin: 0;
+  border: var(--border-width) solid var(--color-line-strong);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-sunk);
+  cursor: pointer;
+  transition: background-color var(--dur) var(--ease-out), border-color var(--dur) var(--ease-out);
+}
+
+.switch input::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--color-line-strong);
+  transition: transform var(--dur) var(--ease-out), background-color var(--dur) var(--ease-out);
+}
+
+.switch input:checked {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.switch input:checked::after {
+  transform: translateX(28px);
+  background: var(--color-on-accent);
+}
+
+.switch__state {
+  color: var(--color-ink-muted);
+  font-weight: var(--weight-regular);
+}
+
+/* Segmented choice: radio buttons that look like buttons. */
+.choice {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.choice legend {
+  padding: 0;
+  margin-bottom: var(--space-3);
+  font-weight: var(--weight-bold);
+}
+
+.choice__options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+}
+
+.choice__option {
+  position: relative;
+}
+
+.choice__option input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.choice__option span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--target-comfort);
+  padding: var(--space-2);
+  border: var(--border-width) solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  font-weight: var(--weight-bold);
+  text-align: center;
+  transition: background-color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+
+.choice__option input:hover + span {
+  border-color: var(--color-ink);
+}
+
+.choice__option input:checked + span {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+/* Tick shows the chosen option by shape, not only by colour. */
+.choice__option span svg {
+  display: none;
+  width: 18px;
+  height: 18px;
+}
+
+.choice__option input:checked + span svg {
+  display: block;
+}
+
+.choice__option input:focus-visible + span {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--focus-offset);
+}
