@@ -49,7 +49,7 @@ describe('curriculum', () => {
     expect(clefForPhrase(lessonById('P03')!.practice!)).toBe('bass');
   });
   it('says where each activity sits in its track', () => {
-    expect(positionInTrack('L05')).toMatchObject({ index: 2, track: { id: 'piano' } });
+    expect(positionInTrack('L05')).toMatchObject({ index: 3, track: { id: 'piano' } }); // N01, L04, then L05
   });
   it('maps every scored lesson to skills the learner model knows', () => {
     const known = skills.skills.map((s) => s.id);

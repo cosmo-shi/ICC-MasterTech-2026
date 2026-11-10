@@ -1,3 +1,4 @@
+import { GUIDED } from './guided.ts';
 import { describe, expect, it } from 'vitest';
 import { SKILLS } from '../ai/learner.ts';
 import { ACTIVITIES } from './curriculum.ts';
@@ -23,6 +24,7 @@ describe('music words library', () => {
   it('the curriculum covers every lesson once', () => {
     const ids = ACTIVITIES.filter((a) => a.kind === 'lesson').map((a) => a.id);
     expect(new Set(ids).size).toBe(ids.length);
-    expect([...ids].sort()).toEqual(LESSONS.map((l) => l.id).sort());
+    // Every lesson is either a scored lesson (lessons JSON) or a guided concept lesson (guided.ts).
+    expect([...ids].sort()).toEqual([...LESSONS.map((l) => l.id), ...GUIDED.map((g) => g.id)].sort());
   });
 });

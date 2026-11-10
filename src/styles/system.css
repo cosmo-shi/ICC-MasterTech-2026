@@ -1341,25 +1341,6 @@ h2[tabindex='-1']:focus {
    Pads were stretched into tall strips on desktop; they are now square tiles in one even grid. */
 .pads .pad { aspect-ratio: 1 / 1; min-height: 0; }
 @media (orientation: landscape) and (max-height: 500px) {
-  /* The stave column can never shrink to nothing (the drums tool row used to take all the width). */
-  .play .workspace.has-dock { grid-template-columns: minmax(160px, 1fr) auto; }
-  /* Drums: the stave and the kit on the left, Sound and the tools in a column on the right,
-     so the kit gets the height and the stave keeps its width. */
-  .play .workspace.has-dock:has(.pads-wrap) { grid-template-columns: minmax(0, 1fr) clamp(15rem, 40vw - 2rem, 20rem); grid-template-rows: auto minmax(0, 1fr); }
-  .play .workspace.has-dock:has(.pads-wrap) > .start-sound { grid-column: 2; grid-row: 1; align-self: start; padding: 0; background: none; }
-  .play .workspace.has-dock:has(.pads-wrap) > .start-sound > :not(button) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-  .play .workspace.has-dock:has(.pads-wrap) > .start-sound > button { width: 100%; }
-  .play .workspace.has-dock:has(.pads-wrap) > .trail { grid-column: 1; grid-row: 1; }
-  .play .workspace.has-dock:has(.pads-wrap) > .ws-bar {
-    grid-column: 2; grid-row: 2; align-self: start; margin: 0;
-    display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s1);
-  }
-  .play .workspace.has-dock:has(.pads-wrap) > .start-sound ~ .ws-bar { grid-row: 2; }
-  .play .workspace.has-dock:has(.pads-wrap) .dock { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s1); }
-  .play .workspace.has-dock:has(.pads-wrap) .dock > * { min-width: 0; justify-content: center; }
-  .play .workspace.has-dock:has(.pads-wrap) .drum-view { margin: 0; width: 100%; }
-  .play .workspace.has-dock:has(.pads-wrap) .drum-view .segment { flex: 1; min-height: var(--target, 48px); }
-  .play .workspace.has-dock:has(.pads-wrap) > .pads-wrap { grid-column: 1; grid-row: 2; }
   /* The kit keeps its 16:10 shape and fits the case both ways (container units: Safari 16+, Chrome 105+). */
   .pads-wrap:has(.kit) { container-type: size; min-height: 0; }
   .kit { width: min(100cqw, 160cqh); height: auto; max-height: none; aspect-ratio: 16 / 10; }
@@ -1374,13 +1355,6 @@ h2[tabindex='-1']:focus {
   .play .pads { height: 100%; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
   .play .pads .pad { aspect-ratio: auto; min-height: 0; gap: 2px; }
 }
-/* Narrow landscape phones (iPhone SE and similar): Record takes the full width of the tool column
-   and the three small tools share the row below it. */
-@media (orientation: landscape) and (max-height: 500px) and (max-width: 720px) {
-  .play .workspace.has-dock:has(.pads-wrap) .dock { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .play .workspace.has-dock:has(.pads-wrap) .dock > .rec { grid-column: 1 / -1; }
-}
-
 /* Teacher bar on 320 px phones: the logo mark stays, the word "carmen" gives way so Exit fits. */
 .teacher-title { min-width: 0; }
 @media (max-width: 360px) { .teacher-bar .wordmark-text { display: none; } }
@@ -1415,3 +1389,131 @@ h2[tabindex='-1']:focus {
     align-content: center;
   }
 }
+
+/* ---------- Play on a phone held sideways (brief 11 Nov, 9C) ----------
+   One composition for piano and drums: a large stave at the top left, the instrument under it,
+   and every control in one compact column on the right. The workspace and the create panel
+   become part of the Play grid (display: contents) so the stave, the tools and the instrument
+   can be placed side by side. Targets stay 44 px or more. */
+@media (orientation: landscape) and (max-height: 500px) {
+  .app.scene-play .sheet-main > .play {
+    --tools: clamp(13rem, 31vw, 17rem);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--tools);
+    grid-template-rows: auto auto auto minmax(0, 1fr);
+    column-gap: var(--s3);
+    row-gap: 6px;
+    height: 100%;
+    min-height: 0;
+  }
+  .play > .create,
+  .play .workspace.has-dock { display: contents; }
+  .play > .play-bar {
+    grid-column: 2; grid-row: 1;
+    display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; margin: 0;
+  }
+  .play > .play-bar .instrument-switch { width: 100%; }
+  .play > .play-bar .instrument-switch .segment { flex: 1; min-height: 44px; padding-inline: var(--s2); }
+  .play > .play-bar .input-chip { width: 100%; justify-content: center; min-height: 44px; }
+  .play > .play-bar .last-piece { display: none; }
+  .play .workspace.has-dock > * { grid-column: 1; }
+  .play .workspace.has-dock > .trail {
+    grid-column: 1; grid-row: 1 / 3;
+    height: clamp(88px, 34vh, 132px); align-self: start; margin: 0;
+  }
+  .play .workspace.has-dock > .start-sound { grid-column: 2; grid-row: 2; margin: 0; padding: 0; background: none; }
+  .play .workspace.has-dock > .start-sound > :not(button) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .play .workspace.has-dock > .start-sound > button { width: 100%; min-height: 44px; }
+  .play .workspace.has-dock > .ws-bar {
+    grid-column: 2; grid-row: 3 / 5; align-self: start; margin: 0;
+    display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px;
+  }
+  .play .workspace.has-dock > .kb-wrap,
+  .play .workspace.has-dock > .pads-wrap { grid-column: 1; grid-row: 3 / 5; min-height: 0; height: 100%; }
+  .play .workspace.has-dock > .input-status,
+  .play .workspace.has-dock > .rotate-tip { grid-column: 1 / -1; }
+  .play .dock { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; width: 100%; }
+  .play .dock > .rec { grid-column: 1 / -1; min-height: 44px; justify-content: center; }
+  .play .dock > .tool { min-width: 0; min-height: 44px; padding: 2px; gap: 0; justify-content: center; }
+  .play .dock > .tool span { font-size: 0.75rem; }
+  .play .dock .rec-dot { width: 26px; height: 26px; }
+  .play .drum-view { margin: 0; width: 100%; }
+  .play .drum-view .segment { flex: 1; min-height: 44px; }
+}
+
+/* Computer-key letters look like keycaps, so they are not read as note names (9D). */
+.kb-hint { display: inline-grid; place-items: center; min-width: 1.5em; padding: 0 3px; border: 1px solid currentColor; border-radius: 4px; line-height: 1.4; }
+.kb-legend { margin: 4px 0 0; font-size: 0.75rem; color: var(--on-case, rgb(255 255 255 / 0.75)); text-align: center; }
+@media (orientation: landscape) and (max-height: 500px) { .kb-legend { display: none; } }
+
+/* ---------- Brand: the approved logo beside "Carmen" (brief 11 Nov, section 10) ---------- */
+.logo-mark {
+  display: inline-block; flex: none; vertical-align: middle;
+  background-color: var(--brand-mark, currentColor);
+  -webkit-mask: url('/brand/carmen-mark.png') center / contain no-repeat;
+  mask: url('/brand/carmen-mark.png') center / contain no-repeat;
+}
+.logo-mark.is-tile { background-color: var(--sun-deep, var(--ink)); }
+.wordmark { display: inline-flex; align-items: center; gap: 0.3em; }
+/* Short landscape has no top bar: the lockup sits at the top of the side rail, small but readable. */
+.rail-brand { display: none; }
+@media (orientation: landscape) and (max-height: 500px) {
+  .app .tabs .rail-brand {
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    padding: 6px 0 8px; color: var(--ink); text-decoration: none; min-height: 48px;
+  }
+  .rail-brand .rail-brand-name { font-family: var(--font-wordmark); font-weight: 900; font-size: 0.8125rem; line-height: 1; }
+}
+
+/* ---------- Guided concept lessons (N01, B00, S01; brief 11 Nov, section 5) ---------- */
+.gl { display: grid; gap: var(--s3); min-width: 0; }
+.gl > .kicker { margin: 0; }
+.gl .lp-title { margin: 0; }
+.gl .lp-say { margin: 0; max-width: 60ch; }
+.gl-row { display: flex; flex-wrap: wrap; gap: var(--s2); align-items: center; }
+.gl-hear { justify-self: start; gap: var(--s2); }
+.gl-kb { background: var(--case); border-radius: var(--r-lg); padding: var(--s2); height: clamp(150px, 26vh, 220px); min-width: 0; }
+.gl-kb .kb { height: 100%; }
+.gl-choice { border: 0; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s2); min-width: 0; }
+.gl-choice legend { font-family: var(--font-display); font-weight: var(--w-head); font-size: 1.25rem; margin-bottom: var(--s2); padding: 0; }
+.gl-choice .btn { width: 100%; }
+.gl-choice .btn.is-picked { outline: 3px solid var(--ink); outline-offset: 2px; }
+.gl-msg { margin: 0; padding: var(--s3); border-radius: var(--r-md); display: flex; gap: var(--s2); align-items: flex-start; }
+.gl-msg svg { flex: none; margin-top: 2px; }
+.gl-msg.is-good { background: var(--good-bg); color: var(--ink); border-left: 4px solid var(--good); }
+.gl-msg.is-miss { background: var(--near-bg); color: var(--ink); border-left: 4px solid var(--near); }
+.gl-caption { margin: 0; color: var(--ink-soft); display: flex; flex-wrap: wrap; gap: var(--s2); }
+.gl-access { justify-self: start; }
+.gl-more { border-top: 1px solid var(--hairline); padding-top: var(--s2); }
+.gl-more summary { cursor: pointer; font-weight: var(--w-control); min-height: var(--target); display: flex; align-items: center; }
+.gl-more p { margin: var(--s2) 0 0; max-width: 60ch; }
+.gl-seq { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 999px; background: var(--paper-sunk); color: var(--ink); font-weight: var(--w-control); }
+.gl-seq.is-now { background: var(--sun-tint); outline: 2px solid var(--sun-deep); }
+.gl-seq.is-done { background: var(--good-bg); }
+.gl-checks { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s1); }
+.gl-checks li { display: flex; gap: var(--s2); align-items: center; color: var(--ink-soft); }
+.gl-checks li.is-done { color: var(--ink); font-weight: var(--w-control); }
+.gl-hold { display: grid; gap: var(--s2); }
+.gl-hold-bar { height: 14px; border-radius: 999px; background: var(--paper-sunk); overflow: hidden; }
+.gl-hold-bar span { display: block; height: 100%; background: var(--sun); border-radius: inherit; }
+.gl-speed { display: inline-flex; align-items: center; gap: var(--s2); font-weight: var(--w-control); }
+.gl-toggle { display: inline-flex; align-items: center; gap: var(--s2); min-height: var(--target); }
+.gl-toggle input { width: 22px; height: 22px; }
+.gl-pulse { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--s2); }
+.gl-pulse li { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--paper-sunk); color: var(--ink-soft); font-weight: var(--w-head); border: 2px solid transparent; }
+.gl-pulse li.is-past { border-color: var(--hairline); }
+.gl-pulse li.is-now { background: var(--sun); color: var(--on-sun); transform: scale(1.08); }
+.gl-tap { min-height: 112px; border: 0; border-radius: var(--r-lg); background: var(--pad); color: var(--ink); box-shadow: 0 6px 0 var(--pad-edge); font: var(--w-head) 1.5rem/1 var(--font-display); touch-action: manipulation; }
+.gl-tap:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--pad-edge); }
+.gl-beats { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s2); }
+.gl-beat-btn { width: 100%; min-height: 104px; display: grid; justify-items: center; align-content: center; gap: 6px; padding: var(--s2) 4px; border-radius: var(--r-md); background: var(--paper-raised); border: 2px solid var(--hairline); color: var(--ink); font: inherit; }
+button.gl-beat-btn { cursor: pointer; box-shadow: 0 3px 0 var(--hairline); }
+.gl-beats li.is-now .gl-beat-btn { border-color: var(--sun-deep); background: var(--sun-tint); }
+.gl-beat-n { font-size: 0.8125rem; color: var(--ink-soft); font-weight: var(--w-control); }
+.gl-beat-w { font-size: 0.8125rem; font-weight: var(--w-control); text-align: center; line-height: 1.2; }
+.gl-beat-shape { display: flex; gap: 6px; height: 26px; align-items: center; }
+.gl-beat-shape i { display: block; width: 22px; height: 22px; border-radius: 50%; background: var(--ink); }
+.gl-beat-shape.is-pair i { width: 14px; height: 14px; }
+.gl-beat-shape.is-rest i { background: none; border: 2px dashed var(--ink-soft); }
+.gl-foot { display: grid; gap: var(--s1); justify-items: center; width: 100%; }
+@media (min-width: 900px) { .gl { max-width: 760px; } .gl-kb { height: 220px; } }

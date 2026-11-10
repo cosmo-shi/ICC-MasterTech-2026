@@ -1,3 +1,4 @@
+import { guidedById } from '../data/guided.ts';
 import { lessonStars, nextFor, reasonText } from '../ai/learner.ts';
 import { useState } from 'react';
 import { blurb, lessonById, missionById } from '../data/catalog.ts';
@@ -35,7 +36,7 @@ export function LearnTabs({ at, go }: { at: 'path' | 'theory'; go: (r: string) =
 }
 
 export const TRACK_ICON: Record<TrackId, IconName> = { foundations: 'click', piano: 'piano', drums: 'drum', create: 'music' };
-export const titleOf = (id: string) => lessonById(id)?.title ?? missionById(id)?.title ?? id;
+export const titleOf = (id: string) => guidedById(id)?.title ?? lessonById(id)?.title ?? missionById(id)?.title ?? id;
 
 const READING: Record<Activity['reading'], string> = { none: 'Listen and copy', symbols: 'Rhythm symbols', stave: 'Notes on the stave' };
 const INPUT: Record<Activity['input'], string> = { tap: 'Tap in time', keys: 'Find the keys', hold: 'Hold keys down', make: 'Make your own' };

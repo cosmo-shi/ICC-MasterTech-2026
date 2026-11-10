@@ -6,7 +6,10 @@ import { usePrefs } from '../state/prefs.tsx';
 import { type AttemptRecord, type CompositionRecord, store } from '../store/db.ts';
 import { players, usePlayers } from '../store/profiles.ts';
 
-export const isNote = (a: AttemptRecord) => !!a.note;
+/** A teacher's observation saved from the teacher space (activityId 'note'). Learner records may carry a
+ *  `note` too (L00, L09, projects, concept mini-checks); treating every `note` as a teacher note hid
+ *  those finished activities from the learner's progress (found 11 Nov while adding concept lessons). */
+export const isNote = (a: AttemptRecord) => a.activityId === 'note' || !!a.note?.startsWith('Teacher observation:');
 
 /** All saved attempts and pieces on this device (every player). For the teacher space. */
 export function useAllRecords() {

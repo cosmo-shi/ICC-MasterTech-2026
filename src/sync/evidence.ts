@@ -28,10 +28,12 @@ const KIND: Record<AttemptRecord['kind'], EvidencePayload['kind']> = {
   check: 'check',
   mission: 'make',
   'mission-check': 'mission-check',
+  concept: 'check', // never sent: see isSyncable
 };
 
 /** Teacher notes kept on this device (PIN view) are not learning evidence. */
-export const isSyncable = (a: AttemptRecord): boolean => !a.note && !!a.activityId && a.activityId.length <= 40 && a.id.length >= 4 && a.id.length <= 64;
+// Concept mini-checks stay on the device until momo decides whether classes should see them.
+export const isSyncable = (a: AttemptRecord): boolean => a.kind !== 'concept' && !a.note && !!a.activityId && a.activityId.length <= 40 && a.id.length >= 4 && a.id.length <= 64;
 
 export function toEvidence(a: AttemptRecord, assignmentId?: string): EvidencePayload {
   const s = a.summary;

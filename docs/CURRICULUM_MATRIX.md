@@ -11,7 +11,7 @@ Generated from `src/data/curriculum.ts`, the lesson files and `src/data/pathways
   the wording, and their name and date are recorded in the lesson's `reviewStatus`.
 - **Validated**: reviewed, and used with learners in a pilot with results recorded (docs/PILOT.md).
 
-Today: **21 draft, 0 reviewed, 0 validated** of 21 activities.
+Today: **24 draft, 0 reviewed, 0 validated** of 24 activities.
 Nothing here is certified, endorsed or aligned by a curriculum authority. The curriculum codes are
 for orientation: they show which content descriptions an activity was written towards, not that it
 meets them. The pathway plan itself records `humanEducatorApproved: false`.
@@ -23,14 +23,17 @@ Level is musical demand (1 to 4), never an age. Reading and input demand are sep
 | Id | Activity | Track | Learners will | Level | Reading | Input | What Carmen checks | Evidence it produces | Suggested starting bands | Status |
 |---|---|---|---|---|---|---|---|---|---|---|
 | L00 | Sound and silence | Rhythm basics | Make a sound, stop it, then change it. | 1 | none | tap | Described, not marked | Exploration; nothing is marked | F | Draft |
+| B00 | Feeling the beat and making rhythm | Rhythm basics | Feel a steady beat, then make a rhythm with sounds and silences. | 1 | none | tap | n/a | One mini-check by listening; marks the concept as explored, not mastered | none | Draft |
 | L01 | Steady beat | Rhythm basics | Tap along with a steady beat. | 1 | symbols | tap | timing against the beat | Practice, then a different pattern on their own with hints hidden | F, 1–2 | Draft |
 | L02 | Crotchet rests | Rhythm basics | Leave one beat silent and keep counting. | 1 | symbols | tap | timing against the beat, silence in rests | Practice, then a different pattern on their own with hints hidden | 1–2 | Draft |
 | L03 | Crotchets and quavers | Rhythm basics | Play one crotchet or two quavers on each beat. | 2 | symbols | tap | timing against the beat | Practice, then a different pattern on their own with hints hidden | 1–2 | Draft |
 | F_SOUND_STORY | A sound story | Rhythm basics | Use loud and soft sounds to tell a story. | 1 | none | make | Completion and the learner’s own choices; not marked | A fresh intentional sound choice or accessible response; adult observation if not captured. | F | Draft |
+| N01 | What is a musical note? | Piano | Hear a note, tell which of two notes is higher, and meet C, D and E. | 1 | none | keys | n/a | One mini-check by listening; marks the concept as explored, not mastered | none | Draft |
 | L04 | High and low notes | Piano | Hear which note is higher, then play them in order. | 1 | none | keys | which sound or note | Practice, then a different pattern on their own with hints hidden | F, 3–4 | Draft |
 | L05 | Find C, D and E on the keyboard | Piano | Find the three keys and play them in order. | 1 | none | keys | which sound or note | Practice, then a different pattern on their own with hints hidden | 3–4 | Draft |
 | L06 | Read C, D and E on the stave | Piano | Read each note on the stave and play its key. | 2 | stave | keys | which sound or note | Practice, then a different pattern on their own with hints hidden | 3–4, 7+ | Draft |
 | P01 | Play C to G | Piano | Play the five notes from C to G, up and down. | 2 | stave | keys | which sound or note | Practice, then a different pattern on their own with hints hidden | none | Draft |
+| S01 | C and C♯: a closer step | Piano | Hear and play C and C♯, one semitone apart. | 2 | none | keys | n/a | One mini-check by listening; marks the concept as explored, not mastered | none | Draft |
 | L07 | Minims and crotchets | Piano | Hold notes for one beat or two beats. | 2 | stave | hold | which sound or note, timing against the beat, note length | Practice, then a different pattern on their own with hints hidden | 5–6 | Draft |
 | P34_MELODIC_REPLY | Melodic call and response | Piano | Play a short tune, then answer it higher or lower. | 2 | stave | make | Completion and the learner’s own choices; not marked | A new comparison or controlled musical response without teaching hints; representation/input support retained. | 3–4 | Draft |
 | L08 | Read a melody with rests | Piano | Read and play a two-bar melody with rests. | 3 | stave | hold | which sound or note, timing against the beat, note length, silence in rests | Practice, then a different pattern on their own with hints hidden | 5–6, 7+ | Draft |

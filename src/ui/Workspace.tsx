@@ -211,7 +211,10 @@ export function Workspace({ instrument, onEvent, highlightNotes, highlightPads, 
   // Computer-key letters: shown where there is a mouse or trackpad, hidden on touch screens
   // (phones in either direction). Settings can force them on for a connected keyboard.
   const finePointer = useMedia('(hover: hover) and (pointer: fine)');
-  const hints = !prefs.simplified && (prefs.keyHints === 'on' || (prefs.keyHints === 'auto' && finePointer));
+  // Computer-key letters only where there is a real keyboard and mouse: never on touch screens,
+  // where they look like note names (brief 11 Nov, 9D). Settings can still turn them on or off.
+  const anyTouch = useMedia('(any-pointer: coarse)');
+  const hints = !prefs.simplified && (prefs.keyHints === 'on' || (prefs.keyHints === 'auto' && finePointer && !anyTouch));
   const pads = useMemo(() => (prefs.simplified ? PADS.filter((p) => SIMPLE_PADS.includes(p.sound)) : PADS), [prefs.simplified]);
   const [trailStore] = useState(() => new Trail());
   const held = useRef(new Map<number, TrailNote>());
@@ -433,6 +436,7 @@ export function Workspace({ instrument, onEvent, highlightNotes, highlightPads, 
               label="Piano keys. Slide along the keys to glide. On a computer keyboard, A to K play the white keys from the first C on screen."
             />
           </div>
+          {hints && <p className="kb-legend">Letters in boxes are computer keys, not note names.</p>}
         </div>
       ) : (
         <div ref={ref} className="pads-wrap">
