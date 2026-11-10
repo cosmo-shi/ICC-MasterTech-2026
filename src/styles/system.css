@@ -52,6 +52,7 @@ body {
   white-space: normal;
   text-align: center;
   justify-content: center;
+  padding-block: 6px;
 }
 .row,
 .chips {
@@ -100,6 +101,9 @@ dialog.dlg::backdrop {
   overscroll-behavior: contain;
   padding: var(--pad-sheet) calc(var(--pad-sheet) + env(safe-area-inset-right)) var(--gap-related) calc(var(--pad-sheet) + env(safe-area-inset-left));
   display: grid;
+  /* Rows take their full height and the body scrolls; without this, rows shrink inside the
+     fixed-height dialog and wrapped labels spill out of their buttons at large text sizes. */
+  grid-auto-rows: max-content;
   gap: var(--gap-group);
   align-content: start;
 }
@@ -358,4 +362,25 @@ dialog.dlg::backdrop {
 }
 .trouble p {
   margin: 0;
+}
+
+/* Large text and WCAG text spacing: rows wrap instead of pushing controls off the screen. */
+.play-bar {
+  flex-wrap: wrap;
+  row-gap: var(--gap-related);
+}
+.segment {
+  justify-content: center;
+  text-align: center;
+}
+.player-name {
+  max-width: 14ch;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  overflow-wrap: anywhere;
+  line-height: 1.15;
+}
+.setting-row .setting-label {
+  flex: 1 1 12rem;
 }
