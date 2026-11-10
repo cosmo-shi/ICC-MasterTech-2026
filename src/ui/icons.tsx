@@ -339,9 +339,9 @@ export function WelcomeArt({ width = 260 }: { width?: number }) {
       </g>
       {[
         [44, 44, 'var(--sun)'],
-        [82, 33, 'var(--peri, var(--dusk))'],
-        [120, 33, 'var(--orchid, var(--dusk))'],
-        [158, 22, 'var(--sky-mid)'],
+        [82, 33, 'var(--sw-peri)'],
+        [120, 33, 'var(--sw-orchid)'],
+        [158, 22, 'var(--sw-sky)'],
         [204, 18, 'var(--sun)'],
       ].map(([x, y, c], i) => (
         <g key={i}>

@@ -89,6 +89,14 @@ momo asked for a real sign-up, a teacher area that a child can't get into, no di
 - **Checked:** `npm test` (153 pass), build, lint (0 errors). Playwright at 390 and 1280 px, light and dark: Learn, track switch, feedback with checks, listen check and result, read check, play check, Make with two versions, summary, Play, My music, teacher class and child.
 - **Not verified:** whether checks or supports help children; whether the model beats the rules for real learners (the seeded profile only illustrates states); check questions and supports are drafts pending a music educator; audio latency, real touch, screen readers.
 
+## Changed 10 November 2026, later (momo's review: coach, recording, layout)
+
+- **Coach in Use my instrument and lessons** (`src/ai/listenCoach.ts`, `src/ui/ListenCoachCard.tsx`): after a copied rhythm, free play or a recording, the on-device timing model reads the pattern and the coach gives one observation, one tip and a verified example to hear. "Carmen listened to your timing" only when the model ran; otherwise "A tip". Not shown during on-your-own checks. Free-play use is not separately evaluated (`docs/MODEL_CARD.md`).
+- **Recording gives feedback**: Carmen listens while recording and says what it heard when the recording stops, with the coach's read, before Save or Delete.
+- **Play a note keeps listening** until a clear note (up to 4 seconds after the first sound), with a Stop button, instead of ending on the first knock or breath.
+- **Layout**: an automated check of 22 screens at 8 sizes (360, 390, sideways phone, larger text, tablet both ways, 1280, 1536) for overlapping elements, clipped text, sideways scroll and uncentred buttons. Fixed: desktop sidebar buttons running under the page, header name crowding the wordmark on phones, the welcome screen gap and uncentred "Start learning", quiet buttons not centred everywhere, the hidden dot on Record, lesson and feedback sheet content sliding under their bottom buttons, sideways phones (feedback opens at the side; sign-up lists start at the top), a note in the welcome drawing that disappeared at night. Remaining flags are sheets that are meant to sit on top and the lesson tool row that scrolls sideways on phones (now fades at its edge).
+- Checks: 207 unit tests, build, lint (0 errors), `e2e-listen` 14/14 (adds coach and recording feedback), `e2e-touch` 11/11. Still not checked on real phones.
+
 ## Changed 10 November 2026 (Use my instrument, iPhone touch, teacher accounts, Just play)
 
 ### Checks run on 10 November

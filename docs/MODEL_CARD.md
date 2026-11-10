@@ -43,5 +43,7 @@ Full confusion matrices are in `docs/model-metrics.json`. A second check in `src
 ## Intended use
 Prototype coaching for Carmen's lessons: choosing between a small set of reviewed, verified musical replies after a short phrase. Teachers can see each decision, its evidence and whether the model or rules made it.
 
+Since 10 November it also reads the timing of takes in Use my instrument (copy a rhythm, free play, recordings) and in lesson practice (`src/ai/listenCoach.ts`). In free play there is no outside beat, so the beat is the one the learner set in their first three spaces; each sound is placed on that grid over at most 12 beats, which matches the shape of the training phrases. There, "early" and "late" have no meaning and are never shown; the rules answer instead. This use has **not** been evaluated separately: the held-out results above are for copied phrases only, and free-play timing from real microphones has not been measured. Learners see "Carmen listened to your timing" only when the model ran and was confident; otherwise "A tip".
+
 ## Out of scope
 Grading, ranking, placement, reports to parents or schools, any decision about a child outside the practice loop, and any use with real children before educator review and appropriate consent arrangements.

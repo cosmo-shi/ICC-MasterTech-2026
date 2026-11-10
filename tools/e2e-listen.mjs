@@ -56,10 +56,15 @@ await run(tapWav, async (page) => {
   await page.getByRole('button', { name: /finished/ }).click();
   const fb = await page.locator('.fb-what').textContent().catch(() => '');
   ok(/taps in \d+ seconds/.test(fb ?? '') && /even/.test(fb ?? ''), `free taps described: "${fb}"`);
+  const src = await page.locator('.lc-source').first().textContent().catch(() => '');
+  ok(/Carmen listened/.test(src ?? ''), `coach read the timing with the on-device model: "${src}"`);
   // Record is separate from listening, and saving is explicit.
   await page.getByRole('button', { name: /^Record$/ }).click();
   await page.waitForTimeout(1500);
+  await page.waitForTimeout(1500);
   await page.getByRole('button', { name: /Stop recording/ }).click();
+  const recFb = await page.locator('.record-bar .fb-what').textContent({ timeout: 3000 }).catch(() => '');
+  ok(/^Carmen heard/.test(recFb ?? ''), `recording gets feedback: "${recFb}"`);
   await page.getByRole('button', { name: /^Save$/ }).click({ timeout: 5000 });
   await page.getByText(/Saved in My music|until Carmen closes/).waitFor({ timeout: 5000 }).then(() => ok(true, 'recording saved on the device'), () => ok(false, 'recording saved on the device'));
   const n = await page.evaluate(() => new Promise((res) => { const r = indexedDB.open('carmen-local'); r.onerror = () => res(-1); r.onsuccess = () => { const db = r.result; if (!db.objectStoreNames.contains('recordings')) return res(`no store (v${db.version})`); const t = db.transaction('recordings').objectStore('recordings').count(); t.onsuccess = () => res(t.result); }; }));
