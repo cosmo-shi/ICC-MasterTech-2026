@@ -3,6 +3,7 @@
 // at technique, effort or feelings, and it never criticises a take Carmen couldn't hear clearly.
 
 import type { CheckResult } from '../engine/checker.ts';
+import { midiToLetter } from '../music/theory.ts';
 import type { HeardOnset } from './analyser.ts';
 
 export interface Feedback {
@@ -20,6 +21,47 @@ function list(nums: number[]): string {
   const s = nums.map(nth);
   if (s.length <= 1) return s.join('');
   return `${s.slice(0, -1).join(', ')} and ${s[s.length - 1]}`;
+}
+
+function soundWord(label?: string): string {
+  if (!label) return 'a different sound';
+  if (label.startsWith('midi:')) return midiToLetter(Number(label.slice(5)));
+  const s = label.slice(5);
+  return s === 'kick' ? 'the bass drum' : s === 'hihat' ? 'the hi-hat' : s === 'tomHigh' ? 'the high tom' : s === 'tomLow' ? 'the low tom' : `the ${s}`;
+}
+
+/**
+ * Feedback for any checked take in a lesson. Wrong sounds first (they change the music most), then
+ * missing ones, rests, then timing, then held notes. Taps and notes are named by number.
+ */
+export function takeFeedback(r: CheckResult, opts: { instrument: 'keyboard' | 'drums' }): Feedback {
+  const wrong = r.facts.filter((f) => f.status === 'wrong');
+  const noun = opts.instrument === 'drums' ? 'sound' : 'note';
+  if (wrong.length) {
+    const f = wrong[0];
+    const isNote = f.expectedLabel.startsWith('midi:');
+    return {
+      what: wrong.length === 1 ? `${noun === 'note' ? 'Note' : 'Sound'} ${f.index + 1} was ${soundWord(f.playedLabel)}; the music has ${soundWord(f.expectedLabel)}.` : `${wrong.length} ${noun}s were different from the music, starting with ${noun} ${f.index + 1}.`,
+      why: isNote ? 'Each note has its own place on the stave, and the tune changes if one moves.' : 'Each drum has its own sound, and the pattern is made of those sounds in order.',
+      next: isNote ? `Hear the music, then find ${soundWord(f.expectedLabel)}.` : `Hear the music, then find ${soundWord(f.expectedLabel)}.`,
+      compare: true,
+    };
+  }
+  if (!r.timed) {
+    const missed = r.facts.filter((f) => f.status === 'missed').map((f) => f.index + 1);
+    if (missed.length) return { what: `${missed.length === 1 ? `Note ${missed[0]} wasn’t` : `Notes ${list(missed)} weren’t`} played.`, why: 'The tune needs every note, in order.', next: 'Hear the music, then play it again.', compare: true };
+    return { what: `All ${r.facts.length} ${noun}s matched.`, why: 'The notes are the ones on the stave, in the same order.', next: 'Try it on your own.' };
+  }
+  const f = rhythmFeedback(r);
+  if (opts.instrument === 'keyboard') {
+    f.what = f.what.replace(/\btaps\b/g, 'notes').replace(/\btap\b/g, 'note').replace(/^Your notes/, 'Notes').replace(/^Tap /, 'Note ');
+    f.why = f.why.replace(/\btaps\b/g, 'notes').replace(/\btap\b/g, 'note');
+    f.next = f.next.replace(/\btaps\b/g, 'notes').replace(/\btap\b/g, 'play');
+  }
+  const held = r.facts.filter((x) => x.duration === 'short' || x.duration === 'long');
+  if (r.passed && held.length)
+    return { what: `Note ${held[0].index + 1} was ${held[0].duration === 'short' ? 'let go early' : 'held on too long'}.`, why: 'How long a note lasts is part of the rhythm too.', next: held[0].duration === 'short' ? 'Keep the key down until the next beat.' : 'Let go as the next note starts.', compare: true };
+  return f;
 }
 
 /** Feedback for a copied rhythm. */

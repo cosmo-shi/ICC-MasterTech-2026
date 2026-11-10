@@ -35,7 +35,7 @@ import { topicById } from "../data/theory.ts";
 import type { CapturedInput } from "../engine/checker.ts";
 import { listening } from "../input/session.ts";
 import { rhythmClarity } from "../listen/compare.ts";
-import { unclearFeedback, type Feedback } from "../listen/feedback.ts";
+import { takeFeedback, unclearFeedback, type Feedback } from "../listen/feedback.ts";
 
 type Phase = "ready" | "countin" | "playing" | "review";
 type Mode = "practice" | "independent";
@@ -444,6 +444,16 @@ function AssessedLesson({ lessonId, go }: Props) {
     });
   };
 
+  // Yours first, a short gap, then the music: the difference is easier to hear side by side.
+  const hearDifference = async () => {
+    listen.stop();
+    const take = inputsToPhrase(takeInputs, target, tempo);
+    const gap = target.totalTicks + 480;
+    const theirs = target.events.map((e) => ({ ...e, id: `m-${e.id}`, onset: e.onset + gap }));
+    await listen.play([{ events: [...take.events, ...theirs] }], tempo, { totalTicks: gap + target.totalTicks, countInBeats: 0 });
+  };
+  const fb = result ? takeFeedback(result, { instrument: target.instrument }) : null;
+
   const listenBack = async () => {
     listen.stop();
     const take = inputsToPhrase(takeInputs, target, tempo);
@@ -801,30 +811,56 @@ function AssessedLesson({ lessonId, go }: Props) {
                   : "Not yet"}
             </h2>
             <span className={`help-tag${helped ? " is-help" : ""}`}>
-              {mode === "independent" ? "On your own" : helped ? "With help" : "Practice"}
+              {mode === "independent" ? "On your own" : slower ? "Slower was on" : helped ? "With help" : "Practice"}
             </span>
           </div>
           {saveState === "failed" && (
             <p className="support warn">This try couldn’t be saved.</p>
           )}
-          <CoachCard decision={decision} onChoice={recordChoice} />
-          <FactList result={result} />
-          <LiveStatus
-            text={`${result.summary.correctSound} of ${result.summary.expected} sounds matched.`}
-          />
+          {fb && (
+            <div className="take-feedback">
+              <p className="fb-what">{fb.what}</p>
+              <p className="fb-why">{fb.why}</p>
+              <p className="fb-next">
+                <Icon name="forward" size={18} /> {fb.next}
+              </p>
+            </div>
+          )}
           <div className="compare" role="group" aria-label="Compare">
-            <button
-              type="button"
-              className="chip"
-              onClick={() => (listen.playing ? listen.stop() : void listenBack())}
-              disabled={!takeInputs.length}
-            >
-              <Icon name={listen.playing ? "stop" : "playback"} size={18} /> Hear yours
-            </button>
-            <button type="button" className="chip" onClick={() => void hearExample()}>
-              <Icon name="ear" size={18} /> Hear the music
-            </button>
+            {fb?.compare && takeInputs.length > 0 ? (
+              <button type="button" className="chip" onClick={() => (listen.playing ? listen.stop() : void hearDifference())}>
+                <Icon name={listen.playing ? "stop" : "ear"} size={18} /> {listen.playing ? "Stop" : "Hear the difference"}
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="chip"
+                onClick={() => (listen.playing ? listen.stop() : void listenBack())}
+                disabled={!takeInputs.length}
+              >
+                <Icon name={listen.playing ? "stop" : "playback"} size={18} /> Hear yours
+              </button>
+            )}
+            {!result.passed && mode === "practice" && timed && !slower && (
+              <button
+                type="button"
+                className="chip"
+                onClick={() => {
+                  recordChoice("slower");
+                  setSlower(() => true);
+                  setPhase("ready");
+                }}
+              >
+                Try slower
+              </button>
+            )}
           </div>
+          <CoachCard decision={decision} onChoice={recordChoice} hideObservation />
+          <details className="sound-by-sound">
+            <summary>Sound by sound</summary>
+            <FactList result={result} />
+          </details>
+          <LiveStatus text={fb ? `${fb.what} ${fb.next}` : `${result.summary.correctSound} of ${result.summary.expected} sounds matched.`} />
           {!result.passed && mode === "practice" && offer && !checkDeclined && (
             <div className="checkin" role="group" aria-labelledby="checkin-h">
               <p id="checkin-h" className="checkin-q">

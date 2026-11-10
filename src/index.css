@@ -5530,3 +5530,7 @@ details > summary {
 .music-item audio { width: 100%; max-width: 420px; }
 .play-on-chip { white-space: nowrap; }
 .lp-instrument .input-status { align-self: flex-start; }
+.take-feedback { display: grid; gap: var(--s1); margin: var(--s2) 0 var(--s3); }
+.take-feedback p { margin: 0; }
+.sound-by-sound { margin-top: var(--s3); }
+.sound-by-sound summary { min-height: 44px; display: flex; align-items: center; font-weight: 700; color: var(--dusk); cursor: pointer; }

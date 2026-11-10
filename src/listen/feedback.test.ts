@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { checkAttempt, type CapturedInput } from '../engine/checker.ts';
 import type { Assessment } from '../music/lessons.ts';
 import { type Phrase, TPQ } from '../music/events.ts';
-import { describeTaps, rhythmFeedback, unclearFeedback } from './feedback.ts';
+import { describeTaps, rhythmFeedback, takeFeedback, unclearFeedback } from './feedback.ts';
 
 const A: Assessment = { mode: 'timed-onsets', score: true, checkPitch: false, checkTiming: true, checkDuration: false, checkRestViolations: true, onTimeWindow: { beats: 0.2, maxMs: 150 }, durationTolerance: { beats: 0.5, maxMs: 400 } };
 const four: Phrase = { id: 'p', instrument: 'drums', meter: [4, 4], totalTicks: 4 * TPQ, tempoBpm: 60, events: [0, 1, 2, 3].map((b) => ({ id: `e${b}`, kind: 'drum' as const, onset: b * TPQ, duration: TPQ, sound: 'snare' as const, velocity: 0.7 })) };
@@ -40,5 +40,23 @@ describe('free tapping is described, not marked', () => {
     const d = describeTaps([0, 0.2, 1, 1.1, 2.4].map((time) => ({ time })));
     expect(d).toMatch(/changed, which can make a rhythm of its own/);
     expect(d).not.toMatch(/wrong|uneven/);
+  });
+});
+
+describe('lesson take feedback', () => {
+  const tune: Phrase = { id: 't', instrument: 'keyboard', meter: [4, 4], totalTicks: 4 * TPQ, tempoBpm: 60, events: [60, 62, 64].map((m, i) => ({ id: `n${i}`, kind: 'note' as const, onset: i * TPQ, duration: TPQ, midi: m, velocity: 0.7 })) };
+  const untimed: Assessment = { ...A, mode: 'pitch-sequence', checkPitch: true, checkTiming: false };
+  it('names a wrong note and the one asked for', () => {
+    const r = checkAttempt(tune, [60, 62, 65].map((m, i) => ({ id: `i${i}`, onsetMs: i * 1000, midi: m, source: 'pointer' as const })), untimed, 60);
+    const f = takeFeedback(r, { instrument: 'keyboard' });
+    expect(f.what).toBe('Note 3 was F; the music has E.');
+    expect(f.next).toBe('Hear the music, then find E.');
+  });
+  it('talks about notes, not taps, on the keyboard', () => {
+    const timedTune: Assessment = { ...A, checkPitch: true };
+    const r = checkAttempt(tune, [60, 62, 64].map((m, i) => ({ id: `i${i}`, onsetMs: [0, 700, 1700][i], midi: m, source: 'pointer' as const })), timedTune, 60);
+    const f = takeFeedback(r, { instrument: 'keyboard' });
+    expect(f.what).toBe('Notes 2 and 3 came before the beat.');
+    expect(f.next).toBe('Try counting out loud as you play.');
   });
 });
