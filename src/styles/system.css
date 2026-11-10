@@ -1024,3 +1024,32 @@ h2[tabindex='-1']:focus {
     min-height: 260px;
   }
 }
+@media (orientation: portrait) and (max-height: 760px) {
+  .l05 .kb-top {
+    display: none;
+  }
+  .l05 .lp-music .notation-svg svg {
+    max-height: 96px;
+  }
+  .lp-try.l05 .lp-instrument {
+    min-height: 150px;
+  }
+}
+@media (orientation: landscape) and (max-height: 360px) {
+  .play .workspace .kb-wrap,
+  .play .workspace .pads-wrap,
+  .play .workspace .kb {
+    min-height: 0;
+  }
+}
+@media (orientation: portrait) and (max-height: 640px) {
+  .l05 .lp-music .notation-svg svg {
+    max-height: 72px;
+  }
+  .l05 .lp-music .notation {
+    padding-block: 0;
+  }
+  .l05 .lp-actions .btn-quiet {
+    min-height: var(--target);
+  }
+}

@@ -208,12 +208,7 @@ export function NotesLesson({ go }: { go: (r: string) => void }) {
         <>
           <p className="kicker">{step.guided ? 'Find it' : 'Your turn'}</p>
           <h1 className="lp-title small" tabIndex={-1}>{step.title}</h1>
-          {step.guided && facts && (
-            <>
-              <p className="lp-say">{facts.keys}</p>
-              <p className="lp-say">{facts.stave}</p>
-            </>
-          )}
+          {step.guided && facts && <p className="lp-say">{facts.keys}</p>}
           {!step.guided && hint && facts && <p className="lp-say">{facts.keys}</p>}
           <div className="lp-actions">
             <button type="button" className="btn-quiet" onClick={() => playOne(step.target)}>
@@ -224,12 +219,12 @@ export function NotesLesson({ go }: { go: (r: string) => void }) {
                 <Icon name="hint" size={20} /> Show me
               </button>
             )}
-            {step.id === 'find-c' && (
-              <button type="button" className="btn-text" onClick={() => setSharpOpen(true)}>
-                What is the black key after C?
-              </button>
-            )}
           </div>
+          {step.id === 'find-c' && done && (
+            <button type="button" className="btn-text" onClick={() => setSharpOpen(true)}>
+              What is the black key after C?
+            </button>
+          )}
           {tap && (
             <div className={`lp-check ${tap.ok ? 'is-good' : 'is-miss'}`} role="status">
               <Icon name={tap.ok ? 'good' : 'near'} size={24} />
