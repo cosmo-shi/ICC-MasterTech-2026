@@ -44,13 +44,19 @@ export interface AnalyserOptions {
   maxHz?: number;
   /** Ignore onsets that start inside these windows (e.g. Carmen's own clicks), in stream seconds. */
   mute?: { from: number; to: number }[];
+  /** Pitch estimator for one frame (defaults to YIN in pitch.ts). */
+  detect?: (frame: Float32Array, sampleRate: number, minHz: number, maxHz: number) => { hz: number; clarity: number } | null;
+  /** Frames below this clarity are ignored. */
+  minClarity?: number;
+  /** Diagnostics only: called for every hop with the detector's view of it. */
+  onHop?: (h: { time: number; riseDiff: number; aboveDiff: number; riseRaw: number; aboveRaw: number; onset: boolean }) => void;
 }
 
 const HOP = 256;
 const WINDOW = 2048;
 const REFRACTORY = 0.07; // s: two onsets closer than this are one sound
-const RISE_DB = 8;
-const ABOVE_FLOOR_DB = 14;
+/** Onset thresholds, tuned on the listening benchmark (tools/bench-listen). Exported for that tuning only. */
+export const ONSET = { riseDb: 7, aboveDb: 10, lookback: 3 };
 const PITCH_LOOK = 0.16; // s after the onset used to settle the pitch
 
 const toDb = (x: number) => 20 * Math.log10(Math.max(1e-9, x));
@@ -58,6 +64,7 @@ const toDb = (x: number) => 20 * Math.log10(Math.max(1e-9, x));
 export class StreamAnalyser {
   readonly opts: AnalyserOptions;
   private ring: Float32Array;
+  private frame = new Float32Array(WINDOW);
   private ringPos = 0;
   private filled = 0;
   private hopBuf = new Float32Array(HOP);
@@ -124,8 +131,8 @@ export class StreamAnalyser {
     const rawDb = toDb(Math.sqrt(raw / HOP));
     // Two views of "something started": the attack (difference energy, good for taps and clicks)
     // and the plain level (good for notes when background noise is hissy). Each has its own floor.
-    const riseDiff = db - (this.recentDb.length ? Math.max(...this.recentDb.slice(-3)) : db);
-    const riseRaw = rawDb - (this.recentRaw.length ? Math.max(...this.recentRaw.slice(-3)) : rawDb);
+    const riseDiff = db - (this.recentDb.length ? Math.max(...this.recentDb.slice(-ONSET.lookback)) : db);
+    const riseRaw = rawDb - (this.recentRaw.length ? Math.max(...this.recentRaw.slice(-ONSET.lookback)) : rawDb);
     this.recentDb.push(db);
     this.recentRaw.push(rawDb);
     if (this.recentDb.length > 8) this.recentDb.shift();
@@ -143,10 +150,11 @@ export class StreamAnalyser {
     this.level = { db: rawDb, floorDb: this.floorRawDb, clipping: peak > 0.98 };
     const aboveDiff = db - this.floorDb;
     const aboveRaw = rawDb - this.floorRawDb;
-    const started = this.hops > 6 && ((riseDiff > RISE_DB && aboveDiff > ABOVE_FLOOR_DB) || (riseRaw > RISE_DB && aboveRaw > ABOVE_FLOOR_DB));
+    const started = this.hops > 6 && ((riseDiff > ONSET.riseDb && aboveDiff > ONSET.aboveDb) || (riseRaw > ONSET.riseDb && aboveRaw > ONSET.aboveDb));
 
     const time = firstSample / sr;
     const isOnset = started && time - this.lastOnset > REFRACTORY;
+    this.opts.onHop?.({ time, riseDiff, aboveDiff, riseRaw, aboveRaw, onset: isOnset });
     if (isOnset) {
       // Sample-accurate start: the first sample in this hop above a third of its peak.
       let k = 0;
@@ -160,18 +168,23 @@ export class StreamAnalyser {
         }
         const strength = Math.max(aboveDiff, aboveRaw);
         this.lastOnset = t;
-        this.out.push({ kind: 'onset', time: t, strength, confidence: Math.max(0, Math.min(1, (strength - ABOVE_FLOOR_DB) / 18 + 0.5)) });
+        this.out.push({ kind: 'onset', time: t, strength, confidence: Math.max(0, Math.min(1, (strength - ONSET.aboveDb) / 18 + 0.5)) });
         if (this.opts.pitch) this.pending = { time: t, strength, frames: [], until: t + PITCH_LOOK };
       }
     }
     // Pitch frames for a pending note.
+    // Every second hop (about 12 ms) is enough to settle a pitch and halves the work on phones.
     if (this.pending && this.filled === WINDOW && time > this.pending.time + 0.02) {
-      const frame = new Float32Array(WINDOW);
-      for (let i = 0; i < WINDOW; i++) frame[i] = this.ring[(this.ringPos + i) % WINDOW];
-      const p = detectPitch(frame, sr, { minHz: this.opts.minHz ?? 60, maxHz: this.opts.maxHz ?? 1400 });
-      if (p && p.clarity > 0.8) {
-        const nn = hzToNote(p.hz);
-        this.pending.frames.push({ ...nn, clarity: p.clarity });
+      if (this.hops % 2 === 0) {
+        const frame = this.frame;
+        for (let i = 0; i < WINDOW; i++) frame[i] = this.ring[(this.ringPos + i) % WINDOW];
+        const minHz = this.opts.minHz ?? 60;
+        const maxHz = this.opts.maxHz ?? 1400;
+        const p = this.opts.detect ? this.opts.detect(frame, sr, minHz, maxHz) : detectPitch(frame, sr, { minHz, maxHz });
+        if (p && p.hz >= minHz && p.hz <= maxHz && p.clarity > (this.opts.minClarity ?? 0.8)) {
+          const nn = hzToNote(p.hz);
+          this.pending.frames.push({ ...nn, clarity: p.clarity });
+        }
       }
       if (time >= this.pending.until) {
         const n = this.settle();
