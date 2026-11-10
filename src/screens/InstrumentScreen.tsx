@@ -77,7 +77,7 @@ export function InstrumentScreen({ go }: { go: (r: string) => void }) {
   };
 
   // If the microphone stopped (page hidden, unplugged), go back to the check so it can restart.
-  const lost = via === 'mic' && (step === 'do' || step === 'activity') && !l.listening;
+  const lost = (step === 'do' || step === 'activity') && (via === 'mic' ? !l.listening : via === 'midi' ? midiInput.state !== 'ready' : false);
 
   const title = {
     what: 'What will you play?',
@@ -188,12 +188,27 @@ export function InstrumentScreen({ go }: { go: (r: string) => void }) {
         </div>
       )}
 
-      {lost && (
+      {lost && via === 'mic' && (
         <div className="stack">
           <InputTrouble kind="mic" />
           <button type="button" className="btn" onClick={() => chooseVia('mic')}>
             <Icon name="mic" size={24} /> Listen again
           </button>
+        </div>
+      )}
+      {lost && via === 'midi' && (
+        <div className="stack">
+          <p className="trouble" role="alert">
+            <Icon name="alert" size={20} /> The MIDI {inst === 'drums' ? 'kit' : 'keyboard'} was disconnected. Plug it back in (or pair it again), then press Look again. Nothing you played has been lost.
+          </p>
+          <div className="row wrap">
+            <button type="button" className="btn" onClick={() => chooseVia('midi')}>
+              <Icon name="retry" size={24} /> Look again
+            </button>
+            <button type="button" className="btn-quiet" onClick={() => go('#/play')}>
+              Play on the screen instead
+            </button>
+          </div>
         </div>
       )}
 
@@ -213,6 +228,13 @@ export function InstrumentScreen({ go }: { go: (r: string) => void }) {
 function CheckStep({ inst, via, onNext }: { inst: Inst; via: Via; onNext: () => void }) {
   const l = useListening();
   const [last, setLast] = useState<string>('');
+  // No input detected: after a while, say what to check, without blaming anyone.
+  const [quiet, setQuiet] = useState(false);
+  useEffect(() => {
+    if (last) return;
+    const t = window.setTimeout(() => setQuiet(true), 8000);
+    return () => window.clearTimeout(t);
+  }, [last]);
   useEffect(() => {
     if (via === 'mic')
       return l.onHeard((h) => {
@@ -242,6 +264,23 @@ function CheckStep({ inst, via, onNext }: { inst: Inst; via: Via; onNext: () => 
         ) : (
           'Nothing heard yet.'
         )}
+      </p>
+      {!last && quiet && (
+        <div className="trouble" role="status">
+          <p>
+            <strong>Carmen hasn’t heard anything yet.</strong>
+          </p>
+          <p>
+            {via === 'mic'
+              ? 'Check the level bar moves when you play. Move the device closer, play a little louder, or check the browser is using the right microphone.'
+              : 'Check the keyboard is switched on and its cable or Bluetooth is connected. Some keyboards need their USB/MIDI setting turned on.'}
+          </p>
+        </div>
+      )}
+      <p className="note-text">
+        {inst === 'piano'
+          ? 'Carmen can hear which note you play and when each note starts. It can’t see your hands, so it doesn’t judge fingering, posture or how you play.'
+          : 'Carmen can hear when each tap starts. It can’t tell which drum you hit or how hard, and it can’t see how you hold the sticks.'}
       </p>
       {via === 'mic' && (
         <details className="more" open={inst === 'drums'}>
