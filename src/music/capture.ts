@@ -9,7 +9,8 @@ export interface RawEvent {
   midi?: number;
   sound?: CapturedInput['sound'];
   t: number;
-  source: 'pointer' | 'key';
+  source: 'pointer' | 'key' | 'midi' | 'mic';
+  soundUnknown?: boolean;
 }
 
 export class Recorder {
@@ -24,7 +25,7 @@ export class Recorder {
   handle(e: RawEvent): CapturedInput | null {
     const ms = e.t - this.beat0PerfMs;
     if (e.type === 'down') {
-      const inp: CapturedInput = { id: `in${this.n++}`, onsetMs: ms, midi: e.midi, sound: e.sound, source: e.source };
+      const inp: CapturedInput = { id: `in${this.n++}`, onsetMs: ms, midi: e.midi, sound: e.sound, source: e.source, ...(e.soundUnknown ? { soundUnknown: true } : {}) };
       this.inputs.push(inp);
       if (e.midi !== undefined) this.open.set(e.midi, inp);
       return inp;

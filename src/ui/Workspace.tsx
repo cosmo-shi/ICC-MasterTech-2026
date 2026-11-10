@@ -13,6 +13,7 @@ export interface LiveEvent {
   sound?: DrumSound;
   t: number; // performance.now() domain (event.timeStamp)
   source: InputSource;
+  soundUnknown?: boolean;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components

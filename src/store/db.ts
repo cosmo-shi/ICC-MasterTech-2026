@@ -5,7 +5,7 @@ import type { CapturedInput, CheckSummary } from '../engine/checker.ts';
 import type { InstrumentId, MusicEvent } from '../music/events.ts';
 import { players } from './profiles.ts';
 
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 const DB_NAME = 'carmen-local';
 const LIMIT_ATTEMPTS = 300;
 
@@ -72,12 +72,28 @@ export interface CompositionRecord {
   profileId?: string;
 }
 
-type StoreName = 'attempts' | 'compositions';
+/** Microphone audio, kept only when the learner pressed Record. Never sent anywhere, never used
+ *  for training. Stored as bytes (not a Blob) because some browsers cannot keep Blobs here. */
+export interface RecordingRecord {
+  id: string;
+  title: string;
+  createdAt: number;
+  mime: string;
+  bytes: ArrayBuffer;
+  size: number;
+  durationSec: number;
+  instrument: string;
+  activityId?: string;
+  profileId?: string;
+}
+
+type StoreName = 'attempts' | 'compositions' | 'recordings';
+const STORES: StoreName[] = ['attempts', 'compositions', 'recordings'];
 
 class LocalStore {
   private persistent = false;
   private db: IDBDatabase | null = null;
-  private mem: Record<StoreName, Map<string, unknown>> = { attempts: new Map(), compositions: new Map() };
+  private mem: Record<StoreName, Map<string, unknown>> = { attempts: new Map(), compositions: new Map(), recordings: new Map() };
   available = true;
   private listeners = new Set<() => void>();
 
@@ -103,6 +119,7 @@ class LocalStore {
         const db = req.result;
         if (!db.objectStoreNames.contains('attempts')) db.createObjectStore('attempts', { keyPath: 'id' });
         if (!db.objectStoreNames.contains('compositions')) db.createObjectStore('compositions', { keyPath: 'id' });
+        if (!db.objectStoreNames.contains('recordings')) db.createObjectStore('recordings', { keyPath: 'id' });
       };
       req.onsuccess = () => resolve(req.result);
       req.onerror = () => reject(req.error ?? new Error('Storage could not open.'));
@@ -116,7 +133,7 @@ class LocalStore {
       try {
         this.db = await this.open();
         this.persistent = true;
-        for (const store of ['attempts', 'compositions'] as StoreName[]) for (const v of this.mem[store].values()) await this.put(store, v);
+        for (const store of STORES) for (const v of this.mem[store].values()) await this.put(store, v);
         this.available = true;
       } catch {
         this.available = false;
@@ -125,7 +142,7 @@ class LocalStore {
       }
     } else {
       // Pull device records into memory for this session, then stop writing to the device.
-      if (this.db) for (const store of ['attempts', 'compositions'] as StoreName[]) for (const v of await this.all(store)) this.mem[store].set((v as { id: string }).id, v);
+      if (this.db) for (const store of STORES) for (const v of await this.all(store)) this.mem[store].set((v as { id: string }).id, v);
       this.persistent = false;
       this.db?.close();
       this.db = null;
@@ -182,11 +199,9 @@ class LocalStore {
 
   /** Delete all learning records and creations on this device. Downloaded app files are separate. */
   async clearAll(): Promise<void> {
-    this.mem.attempts.clear();
-    this.mem.compositions.clear();
+    for (const st of STORES) this.mem[st].clear();
     if (this.persistent) {
-      await this.tx('attempts', 'readwrite', (s) => s.clear());
-      await this.tx('compositions', 'readwrite', (s) => s.clear());
+      for (const st of STORES) await this.tx(st, 'readwrite', (s) => s.clear());
     } else if ('indexedDB' in globalThis) {
       await new Promise<void>((res) => {
         const r = indexedDB.deleteDatabase(DB_NAME);

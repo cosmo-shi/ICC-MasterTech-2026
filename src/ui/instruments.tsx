@@ -4,7 +4,7 @@ import { isBlackKey, midiToLetter, midiToName } from '../music/theory.ts';
 import { ContactTracker } from '../input/contacts.ts';
 import { inputDebug } from '../input/debug.ts';
 
-export type InputSource = 'pointer' | 'key';
+export type InputSource = 'pointer' | 'key' | 'midi' | 'mic';
 
 /* ---------------- Keyboard ---------------- */
 
