@@ -13,10 +13,9 @@ import {
 } from "../music/events.ts";
 import { usePrefs } from "../state/prefs.tsx";
 import { type AttemptRecord, newId, stamp, store } from "../store/db.ts";
-import { CoachCard } from "../ui/CoachCard.tsx";
-import { ListenCoachCard } from "../ui/ListenCoachCard.tsx";
-import { coachCopy, type ListenCoach } from "../ai/listenCoach.ts";
-import { BeatDots, FactList, LiveStatus, factMark } from "../ui/common.tsx";
+import { BeatDots, FactList, factMark } from "../ui/common.tsx";
+import { FeedbackSheet } from "../ui/FeedbackSheet.tsx";
+import { attemptFeedback, unclearAttempt } from "../teach/attempt.ts";
 import { MoreDetail } from "../ui/MoreDetail.tsx";
 import { Notation, describePhrase } from "../ui/Notation.tsx";
 import { usePlayer } from "../ui/usePlayer.ts";
@@ -37,7 +36,7 @@ import { topicById } from "../data/theory.ts";
 import type { CapturedInput } from "../engine/checker.ts";
 import { listening } from "../input/session.ts";
 import { rhythmClarity } from "../listen/compare.ts";
-import { takeFeedback, unclearFeedback, type Feedback } from "../listen/feedback.ts";
+
 
 type Phase = "ready" | "countin" | "playing" | "review";
 type Mode = "practice" | "independent";
@@ -98,7 +97,10 @@ function AssessedLesson({ lessonId, go }: Props) {
   const [heardExample, setHeardExample] = useState(false);
   const [result, setResult] = useState<CheckResult | null>(null);
   const [decision, setDecision] = useState<CoachDecision | null>(null);
-  const [coach, setCoach] = useState<ListenCoach | null>(null);
+  // The feedback sheet can be closed and opened again; the attempt stays until the next one starts.
+  const [sheetOpen, setSheetOpen] = useState(false);
+  // What a support choice just changed, said once on the try screen.
+  const [applied, setApplied] = useState<string | null>(null);
   const [saveState, setSaveState] = useState<
     "idle" | "saving" | "saved" | "failed"
   >("idle");
@@ -126,7 +128,7 @@ function AssessedLesson({ lessonId, go }: Props) {
   const beat0Ref = useRef(0);
   const clockFault = useRef(false);
   // A take Carmen couldn't judge fairly (microphone unclear, device clock wrong): said plainly, never graded.
-  const [unclear, setUnclear] = useState<Feedback | null>(null);
+  const [unclear, setUnclear] = useState<ReturnType<typeof unclearAttempt> | null>(null);
   // The microphone is for this lesson only.
   useEffect(() => () => listening.stopMic(), []);
   const attemptId = useRef<string>("");
@@ -221,7 +223,7 @@ function AssessedLesson({ lessonId, go }: Props) {
     recorder.current = null;
     rec.closeAll((totalBeats + 1) * (60000 / tempo));
     const micTake = listening.mode === "mic" && target.instrument === "drums" && timed;
-    let unclearWhy: Parameters<typeof unclearFeedback>[0] | null = clockFault.current ? "device" : null;
+    let unclearWhy: Parameters<typeof unclearAttempt>[0] | null = clockFault.current ? "device" : null;
     if (!unclearWhy && micTake) {
       const beatMs = 60000 / tempo;
       const heard = listening.heardSince(beat0Ref.current - beatMs / 2).filter((h) => h.kind === "onset" && h.tPerf <= beat0Ref.current + (totalBeats + 0.75) * beatMs);
@@ -245,8 +247,9 @@ function AssessedLesson({ lessonId, go }: Props) {
         passed: false,
         input: { mode: micTake ? "mic" : listening.mode, unclear: true, reason: unclearWhy },
       } satisfies AttemptRecord);
-      setUnclear(unclearFeedback(unclearWhy));
+      setUnclear(unclearAttempt(unclearWhy));
       setPhase("ready");
+      setSheetOpen(true);
       return;
     }
     const res = checkAttempt(target, rec.inputs, lesson.assessment, tempo);
@@ -272,9 +275,8 @@ function AssessedLesson({ lessonId, go }: Props) {
     });
     setResult(res);
     setDecision(d);
-    // The coach's read of the timing; never during an on-your-own check.
-    setCoach(mode === "practice" ? coachCopy(res, target, inputsToPhrase(rec.inputs, target, tempo), prefs.aiEnabled) : null);
     setPhase("review");
+    setSheetOpen(true);
     setTakeInputs(rec.inputs);
     setTries((t) => t + 1);
     const id = newId("att");
@@ -364,6 +366,8 @@ function AssessedLesson({ lessonId, go }: Props) {
     setLiveCount(0);
     setSaveState("idle");
     setUnclear(null);
+    setSheetOpen(false);
+    setApplied(null);
     clockFault.current = false;
     if (!audio.running) await audio.start();
     if (timed) {
@@ -457,15 +461,29 @@ function AssessedLesson({ lessonId, go }: Props) {
     const theirs = target.events.map((e) => ({ ...e, id: `m-${e.id}`, onset: e.onset + gap }));
     await listen.play([{ events: [...take.events, ...theirs] }], tempo, { totalTicks: gap + target.totalTicks, countInBeats: 0 });
   };
-  const fb = result ? takeFeedback(result, { instrument: target.instrument }) : null;
-
-  const listenBack = async () => {
-    listen.stop();
-    const take = inputsToPhrase(takeInputs, target, tempo);
-    await listen.play([{ events: take.events }], tempo, {
-      totalTicks: target.totalTicks,
-    });
+  const inputKind = listening.mode === "mic" ? "mic" : listening.mode === "midi" ? "midi" : "screen";
+  const fb = result && decision ? attemptFeedback({ target, result, decision, independent: mode === "independent", input: inputKind }) : null;
+  // One player for every example, so two never sound at once.
+  const playCompare = () => {
+    if (listen.playing) return listen.stop();
+    if (fb?.compare?.kind === "reply" && decision?.reply) {
+      const r = decision.reply;
+      recordChoice(`hear-reply:${r.plan.planId}`);
+      void listen.play(r.render.tracks, r.render.tempoBpm, { totalTicks: r.render.totalTicks, countInBeats: 0 });
+    } else {
+      recordChoice("hear-difference");
+      void hearDifference();
+    }
   };
+  // A support chosen from "More help" is applied, said on the try screen, and waits for Start.
+  const applySupport = (what: string, apply: () => void) => {
+    recordChoice(what);
+    listen.stop();
+    apply();
+    setSheetOpen(false);
+    setPhase("ready");
+  };
+
   const theoryId = skillsForActivity(lesson.id)[0]?.theory;
 
   const marks = result ? result.facts.map(factMark) : undefined;
@@ -487,13 +505,6 @@ function AssessedLesson({ lessonId, go }: Props) {
     stage === "hear" ? 1 : stage === "learn" ? 2 : mode === "practice" ? 3 : 4;
   const busy = phase === "countin" || phase === "playing";
   const topic = theoryId ? topicById(theoryId) : undefined;
-  const tone = result
-    ? result.passed
-      ? "good"
-      : result.summary.correctSound * 2 >= result.summary.expected
-        ? "near"
-        : "miss"
-    : "near";
   const toSummary = () => {
     recordChoice("finish");
     go(`#/lesson/${lesson.id}/summary`);
@@ -520,7 +531,7 @@ function AssessedLesson({ lessonId, go }: Props) {
           onClick={() => (listen.playing ? listen.stop() : void hearExample())}
           aria-label={listen.playing ? "Stop" : "Hear it"}
         >
-          <Icon name={listen.playing ? "stop" : "ear"} size={56} />
+          <Icon name={listen.playing ? "stop" : "ear"} size={48} />
         </button>
         <p className="lp-say">{lesson.instruction}</p>
         {act?.crossInstrument && (
@@ -581,7 +592,7 @@ function AssessedLesson({ lessonId, go }: Props) {
             className="btn-text"
             onClick={() => go(`#/theory/${topic.id}`)}
           >
-            <Icon name="notes" size={18} /> More about{" "}
+            <Icon name="notes" size={20} /> More about{" "}
             {topic.title.toLowerCase()}
           </button>
         )}
@@ -630,14 +641,10 @@ function AssessedLesson({ lessonId, go }: Props) {
               ))}
             </ol>
           )}
-          {unclear && phase === "ready" && (
-            <div className="listen-feedback" role="status">
-              <p className="fb-what">{unclear.what}</p>
-              <p className="fb-why">{unclear.why}</p>
-              <p className="fb-next">
-                <Icon name="forward" size={18} /> {unclear.next}
-              </p>
-            </div>
+          {applied && phase !== "countin" && phase !== "playing" && (
+            <p className="lp-status" role="status">
+              <Icon name="check" size={20} /> {applied}
+            </p>
           )}
           <div className="lp-music">
             {notation}
@@ -656,6 +663,11 @@ function AssessedLesson({ lessonId, go }: Props) {
               />
             )}
             <div className="chips lp-tools">
+              {(phase === "review" || unclear) && !sheetOpen && (
+                <button type="button" className="chip chip-feedback" onClick={() => setSheetOpen(true)}>
+                  <Icon name="ear" size={20} /> See feedback
+                </button>
+              )}
               <button
                 type="button"
                 className="chip"
@@ -664,7 +676,7 @@ function AssessedLesson({ lessonId, go }: Props) {
                 }
                 disabled={busy}
               >
-                <Icon name={listen.playing && !demoOn ? "stop" : "ear"} size={18} />{" "}
+                <Icon name={listen.playing && !demoOn ? "stop" : "ear"} size={20} />{" "}
                 {listen.playing && !demoOn ? "Stop" : "Hear it"}
               </button>
               {mode === "practice" && (
@@ -675,7 +687,7 @@ function AssessedLesson({ lessonId, go }: Props) {
                   onClick={() => (demoOn ? listen.stop() : void watchDemo())}
                   disabled={busy}
                 >
-                  <Icon name="playback" size={18} /> Watch it
+                  <Icon name="playback" size={20} /> Watch it
                 </button>
               )}
               {mode === "practice" && (
@@ -795,177 +807,114 @@ function AssessedLesson({ lessonId, go }: Props) {
   }
 
   const helped = mode === "practice" && (hintLevel > 0 || slower || demoWatched || counting || autoHear);
+  const retry = () => {
+    recordChoice("retry");
+    listen.stop();
+    setSheetOpen(false);
+    void start();
+  };
   const sheet =
-    stage === "try" && phase === "review" && result && decision ? (
-      <section
-        className={`check-sheet tone-${tone}`}
-        aria-labelledby="review-h"
-        role="dialog"
-        aria-modal="false"
-      >
-        <div className="check-inner">
-          <div className="check-head">
-            <ToneMark tone={tone} />
-            <h2 id="review-h" className="check-title">
-              {result.passed
-                ? mode === "independent"
-                  ? "You did it on your own!"
-                  : "That matched!"
-                : tone === "near"
-                  ? "Nearly!"
-                  : "Not yet"}
-            </h2>
-            <span className={`help-tag${helped ? " is-help" : ""}`}>
-              {mode === "independent" ? "On your own" : slower ? "Slower was on" : helped ? "With help" : "Practice"}
-            </span>
-          </div>
-          {saveState === "failed" && (
-            <p className="support warn">This try couldn’t be saved.</p>
-          )}
-          {fb && (
-            <div className="take-feedback">
-              <p className="fb-what">{fb.what}</p>
-              <p className="fb-why">{fb.why}</p>
-              <p className="fb-next">
-                <Icon name="forward" size={18} /> {fb.next}
-              </p>
-            </div>
-          )}
-          <div className="compare" role="group" aria-label="Compare">
-            {fb?.compare && takeInputs.length > 0 ? (
-              <button type="button" className="chip" onClick={() => (listen.playing ? listen.stop() : void hearDifference())}>
-                <Icon name={listen.playing ? "stop" : "ear"} size={18} /> {listen.playing ? "Stop" : "Hear the difference"}
-              </button>
-            ) : (
-              <button
-                type="button"
-                className="chip"
-                onClick={() => (listen.playing ? listen.stop() : void listenBack())}
-                disabled={!takeInputs.length}
-              >
-                <Icon name={listen.playing ? "stop" : "playback"} size={18} /> Hear yours
-              </button>
-            )}
-            {!result.passed && mode === "practice" && timed && !slower && (
-              <button
-                type="button"
-                className="chip"
-                onClick={() => {
-                  recordChoice("slower");
-                  setSlower(() => true);
-                  setPhase("ready");
-                }}
-              >
-                Try slower
-              </button>
-            )}
-          </div>
-          {coach ? (
-            <ListenCoachCard coach={coach} onHear={(id) => recordChoice(`hear-reply:${id}`)} />
-          ) : (
-            <CoachCard decision={decision} onChoice={recordChoice} hideObservation />
-          )}
-          <details className="sound-by-sound">
-            <summary>Sound by sound</summary>
-            <FactList result={result} />
-          </details>
-          <LiveStatus text={fb ? `${fb.what} ${fb.next}` : `${result.summary.correctSound} of ${result.summary.expected} sounds matched.`} />
-          {!result.passed && mode === "practice" && offer && !checkDeclined && (
-            <div className="checkin" role="group" aria-labelledby="checkin-h">
-              <p id="checkin-h" className="checkin-q">
-                {TRICKY[offer.skill]} has been tricky a few times. Want to find out what’s getting in the way?
-              </p>
-              <div className="checkin-cards">
-                {(["listen", "read", "play"] as const).map((k) => (
-                  <button key={k} type="button" className="checkin-card" onClick={() => openCheck(k)}>
-                    <Icon name={k === "listen" ? "ear" : k === "read" ? "notes" : inst === "drums" ? "drum" : "piano"} size={24} />
-                    <span className="checkin-title">{CHECK_CARDS[k].title}</span>
-                    <span className="checkin-about">{CHECK_CARDS[k].about}</span>
+    stage === "try" && unclear ? (
+      <FeedbackSheet
+        open={sheetOpen}
+        onClose={() => setSheetOpen(false)}
+        returnFocus={() => document.querySelector<HTMLElement>(".lp-foot .btn-big")}
+        tone="unclear"
+        title={unclear.title}
+        observed={unclear.observed}
+        why={`${unclear.why} ${unclear.advice}`}
+        primary={{ label: "Try again", onClick: retry }}
+        secondary={
+          listening.mode === "mic"
+            ? {
+                label: "Use the screen instead",
+                onClick: () => {
+                  listening.chooseScreen();
+                  setUnclear(null);
+                  setSheetOpen(false);
+                  setApplied("Using the screen now. Press Start when you’re ready.");
+                },
+              }
+            : undefined
+        }
+      />
+    ) : stage === "try" && phase === "review" && result && decision && fb ? (
+      <FeedbackSheet
+        open={sheetOpen}
+        onClose={() => {
+          listen.stop();
+          setSheetOpen(false);
+        }}
+        returnFocus={() => document.querySelector<HTMLElement>(".chip-feedback") ?? document.querySelector<HTMLElement>(".lp-foot .btn-big")}
+        tone={fb.tone}
+        title={fb.title}
+        observed={fb.observed}
+        why={fb.why}
+        tag={mode === "independent" ? "On your own" : slower ? "Slower was on" : helped ? "With help" : undefined}
+        warning={saveState === "failed" ? "This try couldn’t be saved on this device, so it won’t show in your progress." : undefined}
+        compare={fb.compare && takeInputs.length > 0 ? { label: fb.compare.label, playing: listen.playing, onToggle: playCompare } : undefined}
+        primary={
+          fb.next === "independent"
+            ? { label: fb.nextLabel, onClick: () => { setSheetOpen(false); goIndependent(); } }
+            : fb.next === "continue"
+              ? { label: fb.nextLabel, onClick: () => { recordChoice("make"); go(`#/lesson/${lesson.id}/make`); } }
+              : { label: fb.nextLabel, onClick: retry }
+        }
+        secondary={result.passed ? { label: "Again", onClick: retry } : { label: "Finish for now", onClick: toSummary }}
+        moreHelp={
+          <>
+            {!result.passed && mode === "practice" && (
+              <div className="help-options" role="group" aria-label="Ways to practise">
+                {timed && (
+                  <button type="button" className="help-option" aria-pressed={slower} onClick={() => applySupport("slower", () => { setSlower(() => !slower); setApplied(slower ? "Back to the usual speed. Press Start when you’re ready." : "Slower is on. Press Start when you’re ready."); })}>
+                    <Icon name="click" size={24} />
+                    <span>
+                      <span className="help-title">{slower ? "Back to the usual speed" : "Practise it slower"}</span>
+                      <span className="help-about">The same music at a slower beat.</span>
+                    </span>
                   </button>
-                ))}
-              </div>
-              <button type="button" className="btn-text" onClick={() => setCheckDeclined(true)}>
-                Not now
-              </button>
-            </div>
-          )}
-          {!result.passed && mode === "practice" && (
-            <div className="chips help-row" role="group" aria-label="Get help">
-              <button
-                type="button"
-                className={`chip${slower ? " is-on" : ""}`}
-                aria-pressed={slower}
-                onClick={() => setSlower((x) => !x)}
-              >
-                Slower
-              </button>
-              {hintLevel < 3 && (
-                <button
-                  type="button"
-                  className="chip"
-                  onClick={() => {
-                    recordChoice("hint");
-                    setHintLevel((h) => h + 1);
-                    setPhase("ready");
-                  }}
-                >
-                  <Icon name="hint" size={18} /> {hintLevel ? "Another hint" : "Hint"}
+                )}
+                <button type="button" className="help-option" onClick={() => applySupport("demo", () => { setApplied(null); void watchDemo(); })}>
+                  <Icon name="playback" size={24} />
+                  <span>
+                    <span className="help-title">Watch it</span>
+                    <span className="help-about">Carmen plays it and lights each {inst === "drums" ? "drum" : "key"}.</span>
+                  </span>
                 </button>
-              )}
-              <button
-                type="button"
-                className="chip"
-                onClick={() => {
-                  recordChoice("demo");
-                  setPhase("ready");
-                  void watchDemo();
-                }}
-              >
-                <Icon name="playback" size={18} /> Watch it
-              </button>
-            </div>
-          )}
-        </div>
-        <div className="check-foot">
-          {result.passed ? (
-            <>
-              <button
-                type="button"
-                className="btn-quiet"
-                onClick={() => {
-                  recordChoice("retry");
-                  void start();
-                }}
-              >
-                Again
-              </button>
-              <button
-                type="button"
-                className="btn btn-big"
-                onClick={mode === "practice" ? goIndependent : () => { recordChoice("make"); go(`#/lesson/${lesson.id}/make`); }}
-              >
-                {mode === "practice" ? "Now on your own" : "Continue"}
-              </button>
-            </>
-          ) : (
-            <>
-              <button type="button" className="btn-quiet" onClick={toSummary}>
-                Finish for now
-              </button>
-              <button
-                type="button"
-                className="btn btn-big"
-                onClick={() => {
-                  recordChoice("retry");
-                  void start();
-                }}
-              >
-                Try again
-              </button>
-            </>
-          )}
-        </div>
-      </section>
+                {hintLevel < 3 && (
+                  <button type="button" className="help-option" onClick={() => applySupport("hint", () => { setHintLevel((h) => h + 1); setApplied(null); })}>
+                    <Icon name="hint" size={24} />
+                    <span>
+                      <span className="help-title">{hintLevel ? "Another hint" : "A hint"}</span>
+                      <span className="help-about">A clue appears above the music.</span>
+                    </span>
+                  </button>
+                )}
+              </div>
+            )}
+            {!result.passed && mode === "practice" && offer && !checkDeclined && (
+              <div className="checkin" role="group" aria-labelledby="checkin-h">
+                <p id="checkin-h" className="checkin-q">
+                  {TRICKY[offer.skill]} has been tricky a few times. Find out what’s getting in the way:
+                </p>
+                <div className="help-options">
+                  {(["listen", "read", "play"] as const).map((k) => (
+                    <button key={k} type="button" className="help-option" onClick={() => { setSheetOpen(false); openCheck(k); }}>
+                      <Icon name={k === "listen" ? "ear" : k === "read" ? "notes" : inst === "drums" ? "drum" : "piano"} size={24} />
+                      <span>
+                        <span className="help-title">{CHECK_CARDS[k].title}</span>
+                        <span className="help-about">{CHECK_CARDS[k].about}</span>
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            <h3 className="help-h">Sound by sound</h3>
+            <FactList result={result} />
+          </>
+        }
+      />
     ) : null;
 
   const side =
@@ -991,23 +940,11 @@ function AssessedLesson({ lessonId, go }: Props) {
         go("#/learn");
       }}
       side={side}
-      foot={sheet ? null : foot}
+      foot={foot}
       sheet={sheet}
     >
       {body}
     </LessonShell>
-  );
-}
-
-/** A shape for each result, so it never relies on colour: tick, half circle, open circle. */
-function ToneMark({ tone }: { tone: "good" | "near" | "miss" }) {
-  return (
-    <svg className={`tone-mark tone-${tone}`} width="36" height="36" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <circle cx="12" cy="12" r="10" fill="currentColor" opacity={tone === "miss" ? 0 : 0.16} />
-      <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2" />
-      {tone === "good" && <path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />}
-      {tone === "near" && <path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor" />}
-    </svg>
   );
 }
 

@@ -70,7 +70,7 @@ export function PlayScreen({ go, makeFrom }: { go: (r: string) => void; makeFrom
               onClick={() => (player.playing ? player.stop() : void player.play([{ events: latest.events }], latest.tempoBpm, { totalTicks: latest.totalTicks }))}
             >
               <span className="last-icon">
-                <Icon name={player.playing ? 'stop' : 'playback'} size={14} />
+                <Icon name={player.playing ? 'stop' : 'playback'} size={16} />
               </span>
               <span className="last-text">
                 <span className="last-kicker">Last time</span>

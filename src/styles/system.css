@@ -1,0 +1,361 @@
+/* Carmen layout system (10 Nov 2026 brief). Loaded after index.css; it is the one source for
+   hierarchy, spacing and dialogs. Older rules in index.css that disagree are removed, not patched.
+
+   Hierarchy (one role per job, by size, weight and colour, never by boxes):
+     screen title      --t-title    900   ink
+     instruction       --t-do       800   ink        what to do now (lessons, activities)
+     explanation       --t-body     500   ink        why, how; comfortable line length
+     feedback title    --t-feedback 900   tone colour + shape
+     primary action    .btn-big     700   sun
+     secondary action  .btn-quiet   700   ink on paper
+     supporting info   --t-support  500   ink-soft   help, where things are kept
+     metadata          --t-meta     600   ink-soft   dates, counts, provenance (teacher)
+     teacher evidence  --t-body / tables, words before numbers
+
+   Space (validated at 360, 390, 844×390, 820, 1280 and 1536 wide, Day and Night):
+     --gutter       16–20 px page edge on phones, plus the safe area
+     --pad-sheet    20–24 px inside sheets and dialogs
+     --gap-related  8 px between a label and its explanation
+     --gap-group    20–24 px between separate groups
+*/
+
+:root {
+  --t-body: 1.0625rem; /* 17 px */
+  --t-support: 0.9375rem; /* 15 px */
+  --t-meta: 0.875rem; /* 14 px, metadata only */
+  --t-feedback: clamp(1.4rem, 4.6vw, 1.75rem);
+  --lh-body: 1.55;
+  --gutter: clamp(16px, 4.5vw, 20px);
+  --pad-sheet: clamp(20px, 5.5vw, 24px);
+  --gap-related: 8px;
+  --gap-group: clamp(20px, 5vw, 24px);
+  --measure: 62ch;
+}
+
+body {
+  line-height: var(--lh-body);
+}
+
+/* Text never collides with icons or actions: flex rows wrap, and labels can break. */
+.btn,
+.btn-quiet,
+.btn-big,
+.chip,
+.help-option,
+.pick {
+  overflow-wrap: anywhere;
+  min-height: var(--target);
+}
+.btn,
+.btn-quiet,
+.btn-big {
+  white-space: normal;
+  text-align: center;
+  justify-content: center;
+}
+.row,
+.chips {
+  flex-wrap: wrap;
+}
+.icon {
+  flex: none;
+}
+
+/* Supporting words are quieter than the task, but still readable body text. */
+.note-text,
+.support,
+.lede {
+  font-size: var(--t-support);
+  line-height: var(--lh-body);
+  max-width: var(--measure);
+}
+
+/* ---------- Dialogs: one component for every modal (feedback, settings) ---------- */
+dialog.dlg {
+  border: 0;
+  padding: 0;
+  color: var(--ink);
+  background: var(--paper);
+  /* Portrait phone: a bottom sheet. */
+  margin: auto 0 0;
+  width: 100%;
+  max-width: 100%;
+  max-height: min(90dvh, 100% - 16px);
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  box-shadow: var(--shadow-sheet);
+  overflow: hidden;
+}
+dialog.dlg[open] {
+  display: flex;
+  flex-direction: column;
+  animation: dlg-up 200ms ease-out;
+}
+dialog.dlg::backdrop {
+  background: rgb(23 26 48 / 0.5);
+}
+.dlg-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--pad-sheet) calc(var(--pad-sheet) + env(safe-area-inset-right)) var(--gap-related) calc(var(--pad-sheet) + env(safe-area-inset-left));
+  display: grid;
+  gap: var(--gap-group);
+  align-content: start;
+}
+.dlg-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--s3);
+}
+.dlg-close {
+  align-self: start;
+  margin: -8px -8px 0 0;
+}
+.dlg-foot {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap-reverse;
+  gap: var(--s3);
+  align-items: center;
+  justify-content: flex-end;
+  padding: var(--s3) calc(var(--pad-sheet) + env(safe-area-inset-right)) max(var(--s4), env(safe-area-inset-bottom)) calc(var(--pad-sheet) + env(safe-area-inset-left));
+  border-top: 1px solid var(--hairline);
+  background: var(--paper);
+}
+.dlg-foot .btn-big {
+  flex: 1 1 220px;
+}
+.dlg-foot .btn-quiet {
+  flex: 1 1 140px;
+}
+@keyframes dlg-up {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  dialog.dlg[open] {
+    animation: none;
+  }
+}
+/* Tablets and desktops: a centred dialog at a comfortable reading width (never a side panel). */
+@media (min-width: 600px) and (min-height: 520px) {
+  dialog.dlg {
+    margin: auto;
+    width: min(600px, 100% - 48px);
+    max-height: min(760px, 100dvh - 64px);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-pop);
+  }
+  .dlg-foot .btn-big {
+    flex: 0 1 auto;
+    min-width: 200px;
+  }
+  .dlg-foot .btn-quiet {
+    flex: 0 1 auto;
+  }
+}
+/* Short landscape phones: a focused full-screen review, words in a readable column. */
+@media (max-height: 519px) and (orientation: landscape) {
+  dialog.dlg {
+    margin: 0;
+    width: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    border-radius: 0;
+  }
+  .dlg-body {
+    padding-top: var(--s3);
+    gap: var(--s4);
+  }
+  .dlg-body > *,
+  .dlg-foot {
+    width: min(100%, 680px);
+    margin-inline: auto;
+  }
+  .dlg-foot {
+    border-top: 0;
+    padding-top: var(--s2);
+  }
+}
+
+/* ---------- Feedback ---------- */
+.fb-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--near-bg);
+  color: var(--near);
+}
+.tone-good .fb-mark {
+  background: var(--good-bg);
+  color: var(--good);
+}
+.tone-miss .fb-mark {
+  background: var(--miss-bg);
+  color: var(--miss);
+}
+.tone-unclear .fb-mark,
+.tone-free .fb-mark {
+  background: var(--dusk-soft);
+  color: var(--dusk);
+}
+.fb-title {
+  margin: 0;
+  font-weight: var(--w-display);
+  font-size: var(--t-feedback);
+  line-height: 1.15;
+  letter-spacing: -0.005em;
+  color: var(--ink);
+  outline-offset: 4px;
+}
+[data-presentation='studio'] .fb-title {
+  font-weight: 800;
+}
+.fb-tag {
+  margin: calc(var(--gap-group) * -1 + var(--gap-related)) 0 0;
+  font-size: var(--t-meta);
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+.fb-warning {
+  margin: 0;
+  display: flex;
+  gap: var(--s2);
+  align-items: flex-start;
+  color: var(--miss);
+  font-weight: 700;
+}
+.fb-words {
+  display: grid;
+  gap: var(--gap-related);
+  max-width: var(--measure);
+}
+.fb-observed {
+  margin: 0;
+  font-size: var(--t-do);
+  font-weight: 700;
+  line-height: 1.4;
+}
+.fb-why {
+  margin: 0;
+  font-size: var(--t-body);
+  line-height: var(--lh-body);
+  color: var(--ink);
+}
+.fb-compare {
+  justify-self: start;
+  width: auto;
+  max-width: 100%;
+  text-align: left;
+  justify-content: flex-start;
+}
+/* The heading takes focus when the dialog opens so it is read first; it is not a control. */
+.fb-title:focus,
+.dlg h2[tabindex='-1']:focus {
+  outline: none;
+  box-shadow: none;
+}
+.more-help {
+  border-top: 1px solid var(--hairline);
+  padding-top: var(--s3);
+}
+.more-help > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  min-height: var(--target);
+  font-weight: var(--w-control);
+  color: var(--dusk);
+  cursor: pointer;
+  list-style: none;
+}
+.more-help > summary::-webkit-details-marker {
+  display: none;
+}
+.more-help-body {
+  display: grid;
+  gap: var(--gap-group);
+  padding-top: var(--s3);
+}
+.help-options {
+  display: grid;
+  gap: var(--s2);
+}
+.help-option {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--s3);
+  align-items: center;
+  text-align: left;
+  padding: var(--s3) var(--s4);
+  border: 0;
+  border-radius: var(--r-md);
+  background: var(--paper-sunk);
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+.help-option[aria-pressed='true'] {
+  background: var(--dusk-soft);
+  box-shadow: inset 0 0 0 2px var(--dusk);
+}
+.help-option > span {
+  display: grid;
+  gap: 2px;
+}
+.help-title {
+  font-weight: 800;
+}
+.help-about {
+  font-size: var(--t-support);
+  color: var(--ink-soft);
+}
+.help-h {
+  margin: 0 0 calc(var(--gap-related) - var(--gap-group));
+  font-size: var(--t-support);
+  font-weight: 800;
+  color: var(--ink-soft);
+}
+.checkin-q {
+  margin: 0 0 var(--gap-related);
+  font-weight: 700;
+}
+.intent {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--gap-related);
+}
+.intent legend {
+  padding: 0;
+  margin-bottom: var(--gap-related);
+  font-weight: 800;
+  font-size: var(--t-do);
+}
+.free-done {
+  display: grid;
+  gap: var(--gap-related);
+}
+.lp-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+}
+.facts .fact-icon {
+  display: inline-grid;
+  place-items: center;
+}
+.trouble {
+  display: grid;
+  gap: var(--gap-related);
+}
+.trouble p {
+  margin: 0;
+}

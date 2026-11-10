@@ -125,9 +125,27 @@ class Mic {
     });
   }
 
+  /**
+   * A recording that was interrupted (the page went into the background, the microphone was
+   * unplugged or its permission was taken away). It stays in memory only, so the learner can
+   * listen, save or delete it; it is never saved by itself. Cleared when the screen is left.
+   */
+  interrupted: { blob: Blob; durationSec: number } | null = null;
+
   private release() {
     try {
-      if (this.recorder?.state === 'recording') this.recorder.stop();
+      const r = this.recorder;
+      if (r?.state === 'recording') {
+        const chunks = this.chunks;
+        const started = this.recStarted;
+        r.ondataavailable = (e) => e.data.size && chunks.push(e.data);
+        r.onstop = () => {
+          const blob = new Blob(chunks, { type: r.mimeType || 'audio/webm' });
+          this.interrupted = blob.size ? { blob, durationSec: (performance.now() - started) / 1000 } : null;
+          this.subs.forEach((f) => f());
+        };
+        r.stop();
+      }
     } catch {
       /* already stopped */
     }

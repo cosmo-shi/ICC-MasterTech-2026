@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import type { CheckResult, EventFact } from '../engine/checker.ts';
 import { midiToLetter } from '../music/theory.ts';
-import { Logo } from './icons.tsx';
+import { Logo } from './brand.tsx';
+import { Icon, type IconName } from './icons.tsx';
 
 export function Pill({ tone = 'paper', children }: { tone?: 'paper' | 'mint' | 'lilac' | 'sunflower' | 'coral' | 'cobalt'; children: React.ReactNode }) {
   return <span className={`pill pill-${tone}`}>{children}</span>;
@@ -27,14 +28,14 @@ function soundName(label?: string): string {
   return s === 'kick' ? 'bass drum' : s === 'hihat' ? 'hi-hat' : s === 'tomHigh' ? 'high tom' : s === 'tomLow' ? 'low tom' : s;
 }
 
-function factText(f: EventFact): { icon: string; text: string; tone: string } {
-  if (f.status === 'missed') return { icon: '○', text: 'not played', tone: 'missed' };
-  if (f.status === 'wrong') return { icon: '✕', text: `played ${soundName(f.playedLabel)}`, tone: 'wrong' };
-  if (f.timing === 'early') return { icon: '◀', text: 'a bit early', tone: 'timing' };
-  if (f.timing === 'late') return { icon: '▶', text: 'a bit late', tone: 'timing' };
-  if (f.duration === 'short') return { icon: '—', text: 'let go early', tone: 'timing' };
-  if (f.duration === 'long') return { icon: '—', text: 'held too long', tone: 'timing' };
-  return { icon: '✓', text: f.timing ? 'on the beat' : 'matched', tone: 'ok' };
+function factText(f: EventFact): { icon: IconName; text: string; tone: string } {
+  if (f.status === 'missed') return { icon: 'missed', text: 'not played', tone: 'missed' };
+  if (f.status === 'wrong') return { icon: 'miss', text: `played ${soundName(f.playedLabel)}`, tone: 'wrong' };
+  if (f.timing === 'early') return { icon: 'prev', text: 'a bit early', tone: 'timing' };
+  if (f.timing === 'late') return { icon: 'next', text: 'a bit late', tone: 'timing' };
+  if (f.duration === 'short') return { icon: 'minus', text: 'let go early', tone: 'timing' };
+  if (f.duration === 'long') return { icon: 'minus', text: 'held too long', tone: 'timing' };
+  return { icon: 'good', text: f.timing ? 'on the beat' : 'matched', tone: 'ok' };
 }
 
 export function factMark(f: EventFact): string {
@@ -52,8 +53,8 @@ export function FactList({ result }: { result: CheckResult }) {
           return (
             <li key={f.factId} className={`fact fact-${t.tone}`}>
               <span className="fact-n">{f.index + 1}</span>
-              <span className="fact-icon" aria-hidden="true">
-                {t.icon}
+              <span className="fact-icon">
+                <Icon name={t.icon} size={16} />
               </span>
               <span className="fact-sound">{soundName(f.expectedLabel)}</span>
               <span className="fact-text">{t.text}</span>

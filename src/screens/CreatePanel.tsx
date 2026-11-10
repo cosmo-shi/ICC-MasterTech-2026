@@ -138,15 +138,15 @@ export function CreatePanel({ instrument, activityId, onSaved, idea, onBackToLes
         disabled={!hasTake || recording}
         onClick={() => (player.playing ? player.stop() : phrase && void player.play([phrase], phrase.tempoBpm, { totalTicks: phrase.totalTicks }))}
       >
-        <Icon name={player.playing ? 'stop' : 'playback'} size={22} />
+        <Icon name={player.playing ? 'stop' : 'playback'} size={24} />
         <span>{player.playing ? 'Stop' : 'Play'}</span>
       </button>
       <button type="button" className="tool" disabled={!previous || recording} onClick={bringBack} aria-label="Undo: bring back my last take">
-        <Icon name="undo" size={22} />
+        <Icon name="undo" size={24} />
         <span>Undo</span>
       </button>
       <button type="button" className="tool tool-toggle" aria-pressed={click} disabled={recording} onClick={() => setClick((c) => !c)} aria-label="Metronome while recording">
-        <Icon name="click" size={22} />
+        <Icon name="click" size={24} />
         <span>Metronome</span>
       </button>
       {click && !recording && (
@@ -178,7 +178,7 @@ export function CreatePanel({ instrument, activityId, onSaved, idea, onBackToLes
               disabled={recording}
               onClick={() => (ideaPlayer.playing ? ideaPlayer.stop() : void ideaPlayer.play([idea.phrase], idea.phrase.tempoBpm, { totalTicks: idea.phrase.totalTicks }))}
             >
-              <Icon name={ideaPlayer.playing ? 'stop' : 'playback'} size={18} /> {ideaPlayer.playing ? 'Stop' : 'Hear the idea'}
+              <Icon name={ideaPlayer.playing ? 'stop' : 'playback'} size={20} /> {ideaPlayer.playing ? 'Stop' : 'Hear the idea'}
             </button>
             {onBackToLesson && (
               <button type="button" className="btn-quiet" onClick={onBackToLesson}>

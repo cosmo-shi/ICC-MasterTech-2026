@@ -35,7 +35,7 @@ export function TheoryScreen({ topicId, go }: { topicId?: string; go: (r: string
       <div className="screen theory">
         <nav className="crumbs" aria-label="Breadcrumb">
           <button type="button" className="link" onClick={() => go('#/theory')}>
-            <Icon name="back" size={18} /> Music words
+            <Icon name="back" size={20} /> Music words
           </button>
         </nav>
         <p className="kicker">{topic.group}</p>

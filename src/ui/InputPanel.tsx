@@ -10,6 +10,7 @@ import type { HeardOnset } from '../listen/analyser.ts';
 import type { InstrumentId } from '../music/events.ts';
 import { TPQ } from '../music/events.ts';
 import { Icon } from './icons.tsx';
+import { Dialog } from './Dialog.tsx';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function useListening() {
@@ -132,7 +133,7 @@ export function TimingCheck({ onDone }: { onDone?: (ok: boolean) => void }) {
   return (
     <div className="timing-check">
       <button type="button" className={stage === 'ok' ? 'btn-quiet' : 'btn'} onClick={run} disabled={stage === 'running' || !l.listening}>
-        <Icon name="click" size={22} /> {stage === 'running' ? 'Listening to four clicks…' : stage === 'ok' ? 'Check timing again' : 'Check timing'}
+        <Icon name="click" size={24} /> {stage === 'running' ? 'Listening to four clicks…' : stage === 'ok' ? 'Check timing again' : 'Check timing'}
       </button>
       <p className="note-text" role="status">
         {stage === 'idle' && (l.latency === null ? 'Carmen plays four clicks. If you wear headphones, tap along with them.' : `Timing was checked on this device (${Math.round(l.latency * 1000)} ms).`)}
@@ -167,7 +168,7 @@ export function InputStatus({ instrument }: { instrument: InstrumentId }) {
         </span>
         <LevelMeter />
         <button type="button" className="btn-quiet small" onClick={() => l.stopMic()}>
-          <Icon name="stop" size={18} /> Stop listening
+          <Icon name="stop" size={20} /> Stop listening
         </button>
       </div>
     );
@@ -186,28 +187,21 @@ export function InputStatus({ instrument }: { instrument: InstrumentId }) {
  */
 export function PlayOnSheet({ instrument, onClose }: { instrument: InstrumentId; onClose: () => void }) {
   const l = useListening();
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    ref.current?.querySelector<HTMLElement>('h2')?.focus();
-    const esc = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
-    window.addEventListener('keydown', esc);
-    return () => window.removeEventListener('keydown', esc);
-  }, [onClose]);
   const [asked, setAsked] = useState<'mic' | 'midi' | null>(null);
   return (
-    <div className="sheet" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div ref={ref} className="sheet-inner" role="dialog" aria-modal="true" aria-labelledby="playon-h">
+    <Dialog open onClose={onClose} labelledBy="playon-h" className="settings-dlg">
+      <div className="dlg-body">
         <div className="sheet-head">
           <h2 id="playon-h" className="title" tabIndex={-1}>
             Play on
           </h2>
           <button type="button" className="icon-btn" onClick={onClose} aria-label="Close">
-            <Icon name="close" size={22} />
+            <Icon name="close" size={24} />
           </button>
         </div>
         <div className="pick-list" role="radiogroup" aria-labelledby="playon-h">
           <button type="button" role="radio" aria-checked={l.mode === 'screen'} className="pick" onClick={() => { l.chooseScreen(); onClose(); }}>
-            <Icon name={instrument === 'drums' ? 'drum' : 'piano'} size={28} />
+            <Icon name={instrument === 'drums' ? 'drum' : 'piano'} size={32} />
             <span>
               <span className="pick-title">This screen</span>
               <span className="pick-sub">Tap the {instrument === 'drums' ? 'drums' : 'keys'} here.</span>
@@ -223,7 +217,7 @@ export function PlayOnSheet({ instrument, onClose }: { instrument: InstrumentId;
               if (await l.connectMidi()) onClose();
             }}
           >
-            <Icon name="midi" size={28} />
+            <Icon name="midi" size={32} />
             <span>
               <span className="pick-title">{instrument === 'drums' ? 'Electronic drum kit (MIDI)' : 'MIDI keyboard'}</span>
               <span className="pick-sub">By cable or Bluetooth. Every key and its timing.</span>
@@ -240,7 +234,7 @@ export function PlayOnSheet({ instrument, onClose }: { instrument: InstrumentId;
                 await l.startMic({ pitch: false });
               }}
             >
-              <Icon name="mic" size={28} />
+              <Icon name="mic" size={32} />
               <span>
                 <span className="pick-title">Taps into the microphone</span>
                 <span className="pick-sub">A drum, a table or clapping. Carmen hears when each tap starts, not which drum or how hard. Nothing is sent or kept.</span>
@@ -258,6 +252,6 @@ export function PlayOnSheet({ instrument, onClose }: { instrument: InstrumentId;
         )}
         {instrument === 'keyboard' && <p className="note-text">To play a piano note into the microphone, use “Use my instrument” on Play.</p>}
       </div>
-    </div>
+    </Dialog>
   );
 }

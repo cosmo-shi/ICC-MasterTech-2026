@@ -4,7 +4,8 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { AuthBlocked, looksLikeEmail, looksPersonal, teacherAuth, type TeachingSpace } from '../auth/teacherAuth.ts';
 import { teacher } from '../store/profiles.ts';
-import { Icon, Wordmark } from '../ui/icons.tsx';
+import { Icon } from '../ui/icons.tsx';
+import { Wordmark } from '../ui/brand.tsx';
 import { TeacherDoor } from './EntryScreen.tsx';
 
 type Step = 'home' | 'email' | 'code' | 'setup' | 'space' | 'pin' | 'pin-reset';
@@ -126,7 +127,7 @@ export function TeacherWelcome({ go }: { go: (r: string) => void }) {
                   </div>
                 )}
                 <button type="button" className="btn-text" onClick={() => setStep('pin')}>
-                  <Icon name="lock" size={18} /> Use a PIN on this device only
+                  <Icon name="lock" size={20} /> Use a PIN on this device only
                 </button>
               </div>
             )}
@@ -272,7 +273,7 @@ export function TeacherWelcome({ go }: { go: (r: string) => void }) {
         {step === 'pin' && (
           <div className="stack">
             <p className="tw-device-note">
-              <Icon name="lock" size={18} /> Device only. Not a school account.
+              <Icon name="lock" size={20} /> Device only. Not a school account.
             </p>
             <TeacherDoor onOpen={() => { try { sessionStorage.removeItem(SPACE_KEY); } catch { /* fine */ } }} heading={heading} />
             {teacher.hasPin() && (

@@ -10,7 +10,8 @@ import type { Lesson } from '../music/lessons.ts';
 import { teacher } from '../store/profiles.ts';
 import { teacherAuth } from '../auth/teacherAuth.ts';
 import { currentSpace } from './TeacherWelcome.tsx';
-import { Icon, Wordmark } from '../ui/icons.tsx';
+import { Icon } from '../ui/icons.tsx';
+import { Wordmark } from '../ui/brand.tsx';
 import { ChildView, ClassView } from './TeacherDashboard.tsx';
 import learnerMetrics from '../../docs/learner-model-metrics.json';
 
@@ -58,7 +59,7 @@ export function Grownups({ go }: { go: (h: string) => void }) {
         <Wordmark size={24} />
         <h1 className="teacher-title">Teacher</h1>
         <button type="button" className="btn-quiet" onClick={() => { teacher.close(); go('#/play'); }}>
-          <Icon name="lock" size={18} /> Exit
+          <Icon name="lock" size={20} /> Exit
         </button>
       </header>
       <AccountLine go={go} />
@@ -270,6 +271,9 @@ export function Grownups({ go }: { go: (h: string) => void }) {
             <li>Lesson content adapts Open Music Theory (Shaffer, Hughes, Moseley and contributors; ed. Shaffer and Wharton), CC BY-SA 4.0. Changes: new child-facing wording, sequence and exercises.</li>
             <li>Piano and percussion sounds: Versilian Community Sample Library (VCSL), CC0.</li>
             <li>Font: Nunito, SIL Open Font License 1.1.</li>
+            <li>
+              Interface icons: Lucide (Lucide Contributors; some icons from Feather), ISC and MIT. <a href="/licences/lucide.txt">Licence text</a>
+            </li>
             <li>Music notation: VexFlow (MIT) with the Bravura music font (SIL OFL).</li>
             <li>Background on the need: ABC Classic (2023), ACMF (2024), ABC Education (2023), ASME submission (2022), Limelight (2020), Music Australia (2026), ABC News (2026).</li>
           </ul>

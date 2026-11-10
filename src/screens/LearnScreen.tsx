@@ -1,20 +1,20 @@
 import { lessonStars, nextFor, reasonText } from '../ai/learner.ts';
-import { useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { useState } from 'react';
 import { blurb, lessonById, missionById } from '../data/catalog.ts';
 import { type Activity, type TrackId, activityById, positionInTrack, trackActivities, trackById } from '../data/curriculum.ts';
-import { Icon, type IconName } from '../ui/icons.tsx';
+import { Icon, type IconName, type IconSize } from '../ui/icons.tsx';
+import { Dialog } from '../ui/Dialog.tsx';
 import { useMyLearning } from '../ui/useAttempts.ts';
 import { usePrefs } from '../state/prefs.tsx';
 import type { InstrumentId } from '../music/events.ts';
-/** Three note heads: had a go, matched with practice, matched on your own. */
-export function Stars({ n, size = 18 }: { n: number; size?: number }) {
+/** Three marks: had a go, matched with practice, matched on your own. A shape for each, never colour alone. */
+export function Stars({ n, size = 16 }: { n: number; size?: IconSize }) {
   return (
-    <span className="stars" role="img" aria-label={`${n} of 3 stars`}>
+    <span className="stars" role="img" aria-label={`${n} of 3`}>
       {[0, 1, 2].map((i) => (
-        <svg key={i} width={size} height={size} viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-          <ellipse cx="10" cy="10" rx="7.5" ry="5.6" transform="rotate(-22 10 10)" className={i < n ? 'star-on' : 'star-off'} />
-        </svg>
+        <span key={i} className={i < n ? 'star-on' : 'star-off'}>
+          <Icon name={i < n ? "good" : "missed"} size={size} />
+        </span>
       ))}
     </span>
   );
@@ -44,14 +44,14 @@ export function InstrumentLine({ a }: { a: Activity }) {
   if (a.instrument === 'either')
     return (
       <span className="inst-line">
-        <Icon name="drum" size={18} />
-        <Icon name="piano" size={18} />
+        <Icon name="drum" size={20} />
+        <Icon name="piano" size={20} />
         Drums or piano
       </span>
     );
   return (
     <span className="inst-line">
-      <Icon name={a.instrument === 'drums' ? 'drum' : 'piano'} size={18} />
+      <Icon name={a.instrument === 'drums' ? 'drum' : 'piano'} size={20} />
       {a.instrument === 'drums' ? 'Drums' : 'Piano'}
     </span>
   );
@@ -159,7 +159,7 @@ export function LearnScreen({ go }: { go: (r: string) => void }) {
         </div>
         {why && (
           <p className="resume-why">
-            <Icon name="ear" size={18} /> {why}
+            <Icon name="ear" size={20} /> {why}
           </p>
         )}
         <button type="button" className="btn btn-big" onClick={() => go(nextAct.kind === 'lesson' ? `#/lesson/${nextId}` : `#/mission/${nextId}`)}>
@@ -229,10 +229,10 @@ export function LearnScreen({ go }: { go: (r: string) => void }) {
                       aria-haspopup="dialog"
                       onClick={() => setOpen(a.id)}
                     >
-                      <Icon name={state === 'done' ? 'check' : project ? 'music' : inst === 'drums' ? 'drum' : 'piano'} size={34} />
+                      <Icon name={state === 'done' ? 'check' : project ? 'music' : inst === 'drums' ? 'drum' : 'piano'} size={32} />
                     </button>
                     <span className="node-label">{titleOf(a.id)}</span>
-                    {!project && <Stars n={stars} size={14} />}
+                    {!project && <Stars n={stars} size={16} />}
                   </li>
                 );
               })}
@@ -259,30 +259,22 @@ function StopSheet({ id, stars, started, onClose, go }: { id: string; stars: num
   const m = missionById(id);
   const after = trackActivities(a.track)[pos.index];
   const first = a.prerequisites.filter((p) => !started(p)).map(titleOf);
-  const btn = useRef<HTMLButtonElement>(null);
-  useEffect(() => {
-    btn.current?.focus();
-    const k = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
-    window.addEventListener('keydown', k);
-    return () => window.removeEventListener('keydown', k);
-  }, [onClose]);
   const controls = Object.entries(a.controls)
     .map(([inst, c]) => (a.instrument === 'either' ? `${inst === 'drums' ? 'Drums' : 'Piano'}: ${c}` : c))
     .join(' · ');
-  // Portal: the page sheet is its own stacking layer, so this would sit under the tab bar.
-  return createPortal(
-    <div className="stop-sheet-wrap" onClick={onClose}>
-      <div className={`stop-sheet tr-${a.track}`} role="dialog" aria-modal="true" aria-labelledby="stop-h" onClick={(e) => e.stopPropagation()}>
+  return (
+    <Dialog open onClose={onClose} labelledBy="stop-h" className={`stop-dlg tr-${a.track}`}>
+      <div className="dlg-body stop-sheet">
         <div className="resume-top">
           <TrackTag id={a.track} />
           {a.kind === 'project' && <span className="kicker">Project</span>}
         </div>
-        <h2 id="stop-h" className="stop-sheet-title">
+        <h2 id="stop-h" className="stop-sheet-title" tabIndex={-1}>
           {titleOf(id)}
         </h2>
         <p className="stop-sheet-sub">{blurb(id, (l ?? m)?.objective ?? a.learn)}</p>
         <TrackProgress id={id} at={pos.index} done={(x) => started(x)} />
-        {a.kind === 'lesson' && <Stars n={stars} size={28} />}
+        {a.kind === 'lesson' && <Stars n={stars} size={32} />}
         <dl className="stop-facts">
           <div>
             <dt>You’ll learn</dt>
@@ -303,7 +295,7 @@ function StopSheet({ id, stars, started, onClose, go }: { id: string; stars: num
           </div>
         </dl>
         {first.length > 0 && <p className="stop-sheet-note">Helps to try first: {first.join(', ')}</p>}
-                <button ref={btn} type="button" className="btn btn-big btn-block" onClick={() => go(a.kind === 'lesson' ? `#/lesson/${id}` : `#/mission/${id}`)}>
+                <button type="button" className="btn btn-big btn-block" data-autofocus onClick={() => go(a.kind === 'lesson' ? `#/lesson/${id}` : `#/mission/${id}`)}>
           {stars === 3 ? 'Play again' : stars ? 'Keep going' : 'Start'}
         </button>
         {after && <p className="stop-sheet-after">After this: {titleOf(after.id)}</p>}
@@ -311,7 +303,6 @@ function StopSheet({ id, stars, started, onClose, go }: { id: string; stars: num
           Not now
         </button>
       </div>
-    </div>,
-    document.body,
+    </Dialog>
   );
 }

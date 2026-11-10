@@ -35,8 +35,12 @@ await run(pianoWav, async (page) => {
   await page.getByRole('button', { name: /Carry on/ }).click();
   await page.getByRole('button', { name: /Play a note/ }).click();
   await page.getByRole('button', { name: /Play it/ }).click();
-  const fb = await page.locator('.fb-what').textContent({ timeout: 10000 }).catch(() => '');
-  ok(/That was C/.test(fb ?? ''), `note feedback: "${fb}"`);
+  const fb = await page.locator('dialog.dlg[open] .fb-title').textContent({ timeout: 10000 }).catch(() => '');
+  ok(/That was C/.test(fb ?? ''), `note feedback opens as a dialog: "${fb}"`);
+  const focus = await page.evaluate(() => document.activeElement?.className);
+  ok(/fb-title/.test(focus ?? ''), `focus starts on the feedback heading (${focus})`);
+  await page.keyboard.press('Escape');
+  ok(await page.locator('.chip-feedback').isVisible(), 'Escape closes it and "See feedback" reopens it');
   if (process.env.SHOT_DIR) await page.screenshot({ path: `${process.env.SHOT_DIR}/listen-note.png` });
   // Leaving stops the microphone.
   await page.goto(`${BASE}#/learn`);
@@ -54,17 +58,23 @@ await run(tapWav, async (page) => {
   await page.getByRole('button', { name: /^Start$/ }).click();
   await page.waitForTimeout(4000);
   await page.getByRole('button', { name: /finished/ }).click();
-  const fb = await page.locator('.fb-what').textContent().catch(() => '');
-  ok(/taps in \d+ seconds/.test(fb ?? '') && /even/.test(fb ?? ''), `free taps described: "${fb}"`);
-  const src = await page.locator('.lc-source').first().textContent().catch(() => '');
-  ok(/Carmen listened/.test(src ?? ''), `coach read the timing with the on-device model: "${src}"`);
+  const fb = await page.locator('.free-done .fb-observed').textContent().catch(() => '');
+  ok(/^Carmen heard \d+ sounds/.test(fb ?? ''), `free taps described, not marked: "${fb}"`);
+  ok((await page.locator('dialog.dlg[open]').count()) === 0, 'free-play reflection is optional (not opened by itself)');
+  await page.getByRole('button', { name: /What Carmen noticed/ }).first().click();
+  const noticed = await page.locator('dialog.dlg[open] .fb-observed').textContent({ timeout: 3000 }).catch(() => '');
+  ok(/beat/.test(noticed ?? '') && !/Carmen listened/.test(await page.locator('dialog.dlg[open]').textContent()), `reflection describes the beat, no model label: "${noticed}"`);
+  await page.keyboard.press('Escape');
   // Record is separate from listening, and saving is explicit.
   await page.getByRole('button', { name: /^Record$/ }).click();
   await page.waitForTimeout(1500);
   await page.waitForTimeout(1500);
   await page.getByRole('button', { name: /Stop recording/ }).click();
-  const recFb = await page.locator('.record-bar .fb-what').textContent({ timeout: 3000 }).catch(() => '');
-  ok(/^Carmen heard/.test(recFb ?? ''), `recording gets feedback: "${recFb}"`);
+  ok(await page.locator('.record-bar audio').waitFor({ timeout: 3000 }).then(() => true, () => false), 'recording can be listened back');
+  await page.locator('.record-bar').getByRole('button', { name: /What Carmen noticed/ }).click();
+  const recFb = await page.locator('dialog.dlg[open] .fb-observed').textContent({ timeout: 3000 }).catch(() => '');
+  ok(/Carmen|beat|sounds/.test(recFb ?? ''), `recording gets a reflection: "${recFb}"`);
+  await page.locator('dialog.dlg[open]').getByRole('button', { name: /^Done$/ }).click();
   await page.getByRole('button', { name: /^Save$/ }).click({ timeout: 5000 });
   await page.getByText(/Saved in My music|until Carmen closes/).waitFor({ timeout: 5000 }).then(() => ok(true, 'recording saved on the device'), () => ok(false, 'recording saved on the device'));
   const n = await page.evaluate(() => new Promise((res) => { const r = indexedDB.open('carmen-local'); r.onerror = () => res(-1); r.onsuccess = () => { const db = r.result; if (!db.objectStoreNames.contains('recordings')) return res(`no store (v${db.version})`); const t = db.transaction('recordings').objectStore('recordings').count(); t.onsuccess = () => res(t.result); }; }));

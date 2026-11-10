@@ -1,60 +1,23 @@
-// Coach for takes played on a real instrument (Use my instrument and recordings).
-// The on-device timing model reads the pattern in the taps (steady, early, late, speeding up,
-// slowing down, uneven); the coach turns it into one observation, one tip and, when it passes the
-// music check, a short verified example to hear. It never marks free play, never judges technique,
-// and says "Carmen listened" only when the model actually ran (source 'local-model').
+// Timing reads for takes played on a real instrument or in free play, where there may be no outside
+// beat. The on-device timing model (or the rules baseline) reads the pattern in the onsets; the
+// teaching words live in src/teach/free.ts. In free play the beat is only a guess from the first
+// few sounds, so "early" and "late" are never used there, and nothing is marked.
 
 import coachText from '../data/coach.json';
-import type { CheckResult } from '../engine/checker.ts';
 import { type MusicEvent, type Phrase, TPQ } from '../music/events.ts';
-import { timingEvidence } from './coach.ts';
 import type { Pattern, TimingEvidence } from './features.ts';
 import { type ModelResult, runModel } from './model.ts';
-import { type ReplyPlan, type ReplyRender, type Verification, compileReply, verifyReply } from './reply.ts';
+import { type ReplyRender, type Verification, compileReply, verifyReply } from './reply.ts';
 import { rulesPattern } from './rules.ts';
 
-export interface ListenCoach {
+export interface PatternRead {
   /** 'local-model' only when the on-device model ran and was confident. */
   source: 'local-model' | 'rules';
   pattern: Pattern;
-  observation: string;
-  tip: string;
   model?: ModelResult;
-  reply?: { planId: string; replyText: string; render: ReplyRender; verification: Verification };
 }
 
-const OBS = coachText.observations as Record<string, string>;
-
-/** One next step for each timing pattern. In a copy task the beat is the music's; in free play it is the learner's own. */
-const TIPS: Record<'copy' | 'free', Record<Pattern, string>> = {
-  copy: {
-    steady: 'Keep that steady beat, and try a new rhythm.',
-    early: 'Wait for each click, then tap with it.',
-    late: 'Get ready during the count-in, and tap as the click lands.',
-    speedingUp: 'Count 1, 2, 3, 4 out loud to hold the speed.',
-    slowingDown: 'Keep counting to the end, so the last taps stay with the beat.',
-    uneven: 'Try it slower, and make every space the same.',
-  },
-  free: {
-    steady: 'Try keeping that beat while you play some notes longer and some shorter.',
-    early: 'Try keeping that beat while you play some notes longer and some shorter.',
-    late: 'Try keeping that beat while you play some notes longer and some shorter.',
-    speedingUp: 'To keep one speed, count 1, 2, 3, 4 in your head as you play.',
-    slowingDown: 'To keep one speed, count all the way to the end as you play.',
-    uneven: 'If you wanted a steady beat, try counting as you play. If you wanted it to change, that worked.',
-  },
-};
-
-const FREE_OBS: Record<Pattern, string> = {
-  steady: 'Your beat stayed steady the whole way through.',
-  early: 'Your beat stayed steady the whole way through.',
-  late: 'Your beat stayed steady the whole way through.',
-  speedingUp: 'Your beat got faster as you went.',
-  slowingDown: 'Your beat got slower as you went.',
-  uneven: 'The spaces between your sounds changed a lot.',
-};
-
-function read(ev: TimingEvidence, aiEnabled: boolean, free: boolean): { pattern: Pattern; source: ListenCoach['source']; model?: ModelResult } | null {
+export function readPattern(ev: TimingEvidence, aiEnabled: boolean, free: boolean): PatternRead | null {
   let model: ModelResult | undefined;
   if (aiEnabled) {
     model = runModel(ev);
@@ -64,30 +27,6 @@ function read(ev: TimingEvidence, aiEnabled: boolean, free: boolean): { pattern:
   const p = rulesPattern(ev);
   if (p === 'insufficient') return null;
   return { pattern: p, source: 'rules', model };
-}
-
-function withReply(c: ListenCoach, plan: ReplyPlan, source: Phrase): ListenCoach {
-  const render = compileReply(plan, source);
-  const verification = verifyReply(plan, source, render);
-  if (verification.ok) c.reply = { planId: plan.planId, replyText: coachText.replies[plan.templateId as keyof typeof coachText.replies], render, verification };
-  return c;
-}
-
-/** Coach for a copied rhythm, from the checker's result. Null when too few taps matched. */
-export function coachCopy(result: CheckResult, target: Phrase, learner: Phrase, aiEnabled: boolean): ListenCoach | null {
-  if (!result.timed) return null;
-  const ev = timingEvidence(result, target);
-  const r = read(ev, aiEnabled, false);
-  if (!r) return null;
-  const c: ListenCoach = { ...r, observation: OBS[r.pattern], tip: TIPS.copy[r.pattern] };
-  const prov = r.source === 'local-model' ? 'local-model' : 'rules';
-  if (r.pattern === 'early' || r.pattern === 'late')
-    return withReply(c, { planId: 'pulse-with-mine', params: { op: 'add_part', part: 'pulse', tempoScale: 1 }, source: 'learner', provenance: prov, evidenceFactIds: [], templateId: 'pulse-with-mine' }, learner);
-  if (r.pattern === 'speedingUp' || r.pattern === 'slowingDown')
-    return withReply(c, { planId: 'pulse-slower', params: { op: 'add_part', part: 'pulse', tempoScale: 0.85 }, source: 'learner', provenance: prov, evidenceFactIds: [], templateId: 'pulse-slower' }, learner);
-  if (r.pattern === 'uneven')
-    return withReply(c, { planId: 'target-slower', params: { op: 'echo', tempoScale: 0.8 }, source: 'target', provenance: prov, evidenceFactIds: [], templateId: 'target-slower' }, target);
-  return c;
 }
 
 /**
@@ -123,15 +62,15 @@ export function freeEvidence(timesSec: number[]): { ev: TimingEvidence; bpm: num
   return { ev: { residuals, positions, expectedCount: t.length }, bpm: Math.round(60 / period) };
 }
 
-/** Coach for free play or a recording: describes the learner's own beat, never marks it. */
-export function coachFree(timesSec: number[], aiEnabled: boolean, instrument: 'keyboard' | 'drums', notes?: number[]): ListenCoach | null {
-  const fe = freeEvidence(timesSec);
-  if (!fe) return null;
-  const r = read(fe.ev, aiEnabled, true);
-  if (!r) return null;
-  const c: ListenCoach = { ...r, observation: FREE_OBS[r.pattern], tip: TIPS.free[r.pattern] };
-  if (r.pattern === 'uneven') return c;
-  // A verified example: what you played, on the steady beat Carmen heard, with the metronome under it.
+export interface FreeReply {
+  planId: string;
+  replyText: string;
+  render: ReplyRender;
+  verification: Verification;
+}
+
+/** A verified example: what you played, placed on the steady beat Carmen guessed, with the metronome under it. */
+export function freeReply(fe: { ev: TimingEvidence; bpm: number }, read: PatternRead, instrument: 'keyboard' | 'drums', notes?: number[]): FreeReply | undefined {
   const bpm = Math.min(150, Math.max(45, fe.bpm));
   const events: MusicEvent[] = fe.ev.positions.map((p, i) => {
     const onset = Math.round(p * TPQ);
@@ -143,6 +82,8 @@ export function coachFree(timesSec: number[], aiEnabled: boolean, instrument: 'k
   const last = fe.ev.positions[fe.ev.positions.length - 1];
   const totalTicks = Math.ceil((last + 1) / 4) * 4 * TPQ;
   const learner: Phrase = { id: 'free-take', instrument, meter: [4, 4], totalTicks, tempoBpm: bpm, events };
-  const prov = r.source === 'local-model' ? 'local-model' : 'rules';
-  return withReply(c, { planId: 'pulse-with-mine', params: { op: 'add_part', part: 'pulse', tempoScale: 1 }, source: 'learner', provenance: prov, evidenceFactIds: [], templateId: 'free-steady' }, learner);
+  const plan = { planId: 'pulse-with-mine', params: { op: 'add_part' as const, part: 'pulse' as const, tempoScale: 1 }, source: 'learner' as const, provenance: read.source, evidenceFactIds: [], templateId: 'free-steady' };
+  const render = compileReply(plan, learner);
+  const verification = verifyReply(plan, learner, render);
+  return verification.ok ? { planId: plan.planId, replyText: coachText.replies['free-steady'], render, verification } : undefined;
 }

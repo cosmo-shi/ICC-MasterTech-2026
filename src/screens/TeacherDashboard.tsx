@@ -65,21 +65,10 @@ export function useClassLearning(): { children: ChildLearning[]; unowned: number
   }, [attempts, pieces, list, all, prefs.aiEnabled]);
 }
 
-/** Dash, empty, half, three-quarter or full circle, so the band never relies on colour alone. */
+/** Dash, open, half or full circle, so the band never relies on colour alone. */
+const BAND_ICON = { new: 'minus', growing: 'ring', nearly: 'half', secure: 'good' } as const;
 function BandDot({ b }: { b: Band }) {
-  return (
-    <svg className="st-dot" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" focusable="false">
-      {b === 'new' ? (
-        <path d="M3 6h6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      ) : (
-        <>
-          <circle cx="6" cy="6" r="4.5" fill="none" stroke="currentColor" strokeWidth="1.6" />
-          {b === 'nearly' && <path d="M6 1.5a4.5 4.5 0 0 1 0 9z" fill="currentColor" />}
-          {b === 'secure' && <circle cx="6" cy="6" r="4.5" fill="currentColor" />}
-        </>
-      )}
-    </svg>
-  );
+  return <Icon name={BAND_ICON[b]} size={16} className="st-dot" />;
 }
 
 function BandCell({ e }: { e?: SkillEstimate }) {
@@ -357,8 +346,8 @@ export function ChildView({ childId, setChild }: { childId: string | null; setCh
                   <ul className="skill-tries">
                     {tries.map((a) => (
                       <li key={a.id}>
-                        <span className={a.passed ? 'mark-good' : 'mark-miss'} aria-hidden="true">
-                          {a.passed ? '✓' : '○'}
+                        <span className={a.passed ? 'mark-good' : 'mark-miss'}>
+                          <Icon name={a.passed ? 'good' : 'missed'} size={16} />
                         </span>{' '}
                         {titleOf(a.activityId)} · {supportText(a)} · {a.passed ? 'matched' : 'not yet'} <span className="muted">{new Date(a.createdAt).toLocaleDateString()}</span>
                       </li>
@@ -404,7 +393,7 @@ export function ChildView({ childId, setChild }: { childId: string | null; setCh
             {c.pieces.slice(0, 8).map((p) => (
               <li key={p.id} className="piece-row">
                 <button type="button" className="btn-quiet small" onClick={() => void player.play([{ events: p.events }], p.tempoBpm, { totalTicks: p.totalTicks })}>
-                  <Icon name="playback" size={14} /> Play
+                  <Icon name="playback" size={16} /> Play
                 </button>
                 <span className="piece-title">{p.title}</span>
                 <span className="muted">
@@ -441,11 +430,11 @@ export function ChildView({ childId, setChild }: { childId: string | null; setCh
                     <th scope="row">{titleOf(a.activityId)}</th>
                     <td>{supportText(a)}</td>
                     <td>
-                      {a.summary ? `${a.summary.correctSound}/${a.summary.expected} sounds, ${a.summary.onTime} on time${a.summary.restViolations ? `, ${a.summary.restViolations} in rests` : ''}` : a.passed ? 'completed' : '—'}
-                      {prefs.badges && a.passed && (a.kind === 'independent' || a.kind === 'mission-check') ? ' ★' : ''}
+                      {a.summary ? `${a.summary.correctSound}/${a.summary.expected} sounds, ${a.summary.onTime} on time${a.summary.restViolations ? `, ${a.summary.restViolations} in rests` : ''}` : a.passed ? 'completed' : 'none'}
+                      {prefs.badges && a.passed && (a.kind === 'independent' || a.kind === 'mission-check') ? ', on their own' : ''}
                     </td>
                     <td>
-                      {a.coach ? `${a.coach.label}${a.coach.pattern ? `: ${a.coach.pattern}` : ''}` : '—'}
+                      {a.coach ? `${a.coach.label}${a.coach.pattern ? `: ${a.coach.pattern}` : ''}` : 'none'}
                       {a.coach?.tailor?.startTipUsed ? ` · started with “${a.coach.tailor.startTipUsed}”` : ''}
                     </td>
                   </tr>
@@ -547,7 +536,7 @@ function ModelTrace({ c }: { c: ChildLearning }) {
                 <th scope="col">Try</th>
                 <th scope="col">Counts as</th>
                 <th scope="col">Evidence</th>
-                <th scope="col">Estimate (before → after)</th>
+                <th scope="col">Estimate before and after</th>
                 <th scope="col">Model chose</th>
                 <th scope="col">Rules alone</th>
               </tr>
@@ -560,12 +549,12 @@ function ModelTrace({ c }: { c: ChildLearning }) {
                     <span className="muted"> {new Date(st.attempt.createdAt).toLocaleDateString()}</span>
                   </th>
                   <td>{st.why}</td>
-                  <td>{st.changes.length ? st.changes.map((x) => `${skillById(x.skill).name}: ${x.pass ? 'pass' : 'miss'}`).join('; ') : '—'}</td>
+                  <td>{st.changes.length ? st.changes.map((x) => `${skillById(x.skill).name}: ${x.pass ? 'pass' : 'miss'}`).join('; ') : 'none'}</td>
                   <td>
                     {st.changes.length
                       ? st.changes.map((x) => (
                           <span key={x.skill} className="trace-est">
-                            {skillById(x.skill).name}: {BAND_WORDS[x.bandBefore].toLowerCase()} → {BAND_WORDS[x.bandAfter].toLowerCase()}
+                            {skillById(x.skill).name}: {BAND_WORDS[x.bandBefore].toLowerCase()}, then {BAND_WORDS[x.bandAfter].toLowerCase()}
                             {x.uncertain ? ' (too few tries)' : ''}
                           </span>
                         ))
@@ -574,10 +563,10 @@ function ModelTrace({ c }: { c: ChildLearning }) {
                   <td>
                     {st.model.checkIn ? 'Offer checks. ' : ''}
                     {st.model.start.length ? `Start ${st.model.start.join(' and ')}. ` : ''}
-                    Next: {st.model.next ? titleOf(st.model.next) : '—'}
+                    Next: {st.model.next ? titleOf(st.model.next) : 'none'}
                   </td>
                   <td>
-                    {st.rules.checkIn ? 'Offer checks. ' : ''}Next: {st.rules.next ? titleOf(st.rules.next) : '—'}
+                    {st.rules.checkIn ? 'Offer checks. ' : ''}Next: {st.rules.next ? titleOf(st.rules.next) : 'none'}
                   </td>
                 </tr>
               ))}

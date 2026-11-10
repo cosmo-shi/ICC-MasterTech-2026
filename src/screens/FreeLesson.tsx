@@ -48,7 +48,7 @@ export function FreeLesson({ lesson, go }: { lesson: Lesson; go: (r: string) => 
     <div className="seg-row" role="group" aria-label="Instrument">
       {(['keyboard', 'drums'] as const).map((i) => (
         <button key={i} type="button" className={`seg${instrument === i ? ' is-on' : ''}`} aria-pressed={instrument === i} onClick={() => { setInstrument(i); set('instrument', i); }}>
-          <Icon name={i === 'keyboard' ? 'piano' : 'drum'} size={18} /> {i === 'keyboard' ? 'Keyboard' : 'Drums'}
+          <Icon name={i === 'keyboard' ? 'piano' : 'drum'} size={20} /> {i === 'keyboard' ? 'Keyboard' : 'Drums'}
         </button>
       ))}
     </div>

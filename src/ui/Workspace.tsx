@@ -52,7 +52,7 @@ function RotateTip() {
   if (prefs.rotateTipDismissed || !phoneUpright) return null;
   return (
     <div className="rotate-tip" role="note">
-      <Icon name="rotate" size={28} />
+      <Icon name="rotate" size={32} />
       <p>
         <strong>More room to play.</strong>
         Turn your phone sideways to make the keys wider and easier to reach. You can keep playing upright.
@@ -383,7 +383,7 @@ export function Workspace({ instrument, onEvent, highlightNotes, highlightPads, 
   const playOnChip =
     playOn && l.mode === 'screen' ? (
       <button type="button" className="chip play-on-chip" onClick={() => setPlayOnOpen(true)} aria-haspopup="dialog">
-        <Icon name="listen" size={18} /> Play on my instrument
+        <Icon name="listen" size={20} /> Play on my instrument
       </button>
     ) : null;
   const centre = WHITES[Math.min(RANGE_WHITES - 1, shown + Math.floor(whiteCount / 2))];
