@@ -6,6 +6,7 @@ import { Icon } from '../ui/icons.tsx';
 import { players, usePlayers } from '../store/profiles.ts';
 import { Avatar } from './EntryScreen.tsx';
 import { Dialog } from '../ui/Dialog.tsx';
+import { MyClassSection } from './MyClass.tsx';
 
 export function ControlsSheet({ onClose, onSwitchPlayer }: { onClose: () => void; onSwitchPlayer: () => void }) {
   const { prefs, set } = usePrefs();
@@ -94,6 +95,7 @@ export function ControlsSheet({ onClose, onSwitchPlayer }: { onClose: () => void
             </p>
           )}
         </section>
+        <MyClassSection />
         <section className="sheet-group" aria-labelledby="sound-h">
           <h3 id="sound-h" className="group-h">
             Sound

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 import metrics from '../../docs/model-metrics.json';
 import { LESSONS, MISSIONS, PATHWAYS } from '../data/catalog.ts';
 import { loadModel } from '../ai/model.ts';
@@ -13,11 +13,12 @@ import { currentSpace } from './TeacherWelcome.tsx';
 import { Icon } from '../ui/icons.tsx';
 import { Wordmark } from '../ui/brand.tsx';
 import { ChildView, ClassView } from './TeacherDashboard.tsx';
+import { TeacherClasses } from './TeacherClasses.tsx';
 import learnerMetrics from '../../docs/learner-model-metrics.json';
 
 /** Who is signed in, which space, and Sign out; or plainly "device only" for the PIN view. */
 function AccountLine({ go }: { go: (h: string) => void }) {
-  const session = teacherAuth.current();
+  const session = useSyncExternalStore(teacherAuth.subscribe, teacherAuth.current, teacherAuth.current);
   const space = currentSpace();
   if (!session || !space)
     return (
@@ -51,7 +52,7 @@ export function Grownups({ go }: { go: (h: string) => void }) {
   const [confirmClear, setConfirmClear] = useState(false);
   const [cleared, setCleared] = useState(false);
   const model = loadModel();
-  const [tab, setTab] = useState<Tab>('class');
+  const [tab, setTab] = useState<Tab>(() => (teacherAuth.current() && currentSpace() ? 'classes' : 'class'));
   const [childId, setChildId] = useState<string | null>(null);
   return (
     <div className="screen grownups">
@@ -74,6 +75,7 @@ export function Grownups({ go }: { go: (h: string) => void }) {
         {tab === 'class' && (
           <ClassView openChild={(id) => { setChildId(id); setTab('child'); }} />
         )}
+        {tab === 'classes' && <TeacherClasses space={currentSpace()} onSignedOut={() => { teacher.close(); go('#/teacher'); }} />}
         {tab === 'child' && <ChildView childId={childId} setChild={setChildId} />}
         {tab === 'lessons' && (
           <>
@@ -287,7 +289,8 @@ export function Grownups({ go }: { go: (h: string) => void }) {
 }
 
 const TABS = [
-  ['class', 'Class'],
+  ['classes', 'Classes'],
+  ['class', 'This device'],
   ['child', 'Students'],
   ['lessons', 'Lessons'],
   ['ai', 'AI'],

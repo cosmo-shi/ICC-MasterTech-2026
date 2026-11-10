@@ -66,13 +66,19 @@ export function looksPersonal(email: string): boolean {
   return ['gmail.com', 'outlook.com', 'hotmail.com', 'yahoo.com', 'icloud.com', 'live.com', 'bigpond.com', 'proton.me'].includes(d);
 }
 
+/** The service address must be https; plain http is allowed only for a service on this computer
+ *  (local verification, tools/verify-db), never for a school deployment. */
+export function isServiceUrl(url: string): boolean {
+  return /^https:\/\//.test(url) || /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/|$)/.test(url);
+}
+
 export function createTeacherAuth(deps: Deps = {}) {
   const url = (deps.url ?? '').replace(/\/+$/, '');
   const anonKey = deps.anonKey ?? '';
   const f = deps.fetch ?? ((...a: Parameters<typeof fetch>) => fetch(...a));
   const storage = deps.storage;
   const now = deps.now ?? (() => Date.now());
-  const configured = !!url && !!anonKey && /^https:\/\//.test(url);
+  const configured = !!url && !!anonKey && isServiceUrl(url);
   const listeners = new Set<() => void>();
   const emit = () => listeners.forEach((l) => l());
 
@@ -124,6 +130,9 @@ export function createTeacherAuth(deps: Deps = {}) {
 
   function friendly(msg: string, status: number): string {
     const m = msg.toLowerCase();
+    if (/row-level security|permission denied|not your learner|owners only|not a member of this space/.test(m))
+      return 'You don’t have access to that. Ask the class’s teacher, or the owner of your school’s teaching space.';
+    if (m.includes('make another owner first')) return 'You’re the only owner. Make someone else an owner before you leave.';
     if (m.includes('expired') || m.includes('invalid') || m.includes('otp')) return 'That code didn’t work. It may have expired. Ask for a new one.';
     if (m.includes('signups not allowed') || m.includes('not allowed')) return 'This email can’t make an account here. Use your school email, or ask your school.';
     if (m.includes('rate') || status === 429) return 'Too many tries. Wait a minute, then try again.';
@@ -136,10 +145,18 @@ export function createTeacherAuth(deps: Deps = {}) {
   }
 
   /** A valid session, refreshed if it is about to expire; null if signed out or the refresh failed. */
+  let refreshing: Promise<TeacherSession | null> | null = null;
   async function session(): Promise<TeacherSession | null> {
     const s = readSession();
     if (!s) return null;
     if (s.expiresAt - now() > 60_000) return s;
+    // One refresh at a time: a refresh token works once, so two calls racing would sign the teacher out.
+    refreshing ??= renew(s).finally(() => {
+      refreshing = null;
+    });
+    return refreshing;
+  }
+  async function renew(s: TeacherSession): Promise<TeacherSession | null> {
     try {
       const d = await call<Parameters<typeof fromTokenResponse>[0]>('/auth/v1/token?grant_type=refresh_token', { body: { refresh_token: s.refreshToken } });
       const fresh = fromTokenResponse(d);
@@ -147,6 +164,10 @@ export function createTeacherAuth(deps: Deps = {}) {
       return fresh;
     } catch (e) {
       if (e instanceof AuthError && e.status >= 400 && e.status < 500) {
+        // Another tab may have renewed it a moment ago: use that session rather than signing out.
+        lastRaw = undefined;
+        const other = readSession();
+        if (other && other.refreshToken !== s.refreshToken && other.expiresAt - now() > 60_000) return other;
         writeSession(null);
         return null;
       }
@@ -203,6 +224,10 @@ export function createTeacherAuth(deps: Deps = {}) {
       const s = await session();
       if (!s) throw new AuthError('Please log in again.', 401);
       await authed('/rest/v1/teachers', { body: { id: s.user.id, display_name: displayName.trim().slice(0, 60), school: school.trim().slice(0, 100) || null }, headers: { Prefer: 'resolution=merge-duplicates' } });
+    },
+    /** Call a database function as the signed-in teacher (row-level security applies). */
+    rpc<T>(name: string, args: Record<string, unknown> = {}): Promise<T> {
+      return authed<T>(`/rest/v1/rpc/${name}`, { body: args });
     },
     async spaces(): Promise<TeachingSpace[]> {
       return authed<TeachingSpace[]>('/rest/v1/rpc/my_spaces', { body: {} });

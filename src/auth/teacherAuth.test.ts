@@ -57,6 +57,22 @@ describe('teacher accounts', () => {
     expect(calls.some((c) => c.url.endsWith('/auth/v1/logout'))).toBe(true);
   });
 
+  it('renews once when several calls need a fresh session at the same moment', async () => {
+    let t = 1_000_000;
+    const { f, calls } = fakeFetch({ '/auth/v1/verify': { body: token(120) }, 'grant_type=refresh_token': { body: { ...token(3600), access_token: 'AT2', refresh_token: 'RT2' } }, '/rpc/my_classes': { body: [] } });
+    const a = createTeacherAuth({ url: 'https://x.supabase.co', anonKey: 'k', fetch: f, storage: memStorage(), now: () => t });
+    await a.verifyCode('ms.lee@school.edu.au', '123456');
+    t += 100_000;
+    await Promise.all([a.rpc('my_classes'), a.rpc('my_classes'), a.rpc('my_classes')]);
+    expect(calls.filter((c) => c.url.includes('grant_type=refresh_token')).length).toBe(1);
+    expect(calls.filter((c) => c.url.includes('/rpc/my_classes')).every((c) => (c.init.headers as Record<string, string>).Authorization === 'Bearer AT2')).toBe(true);
+  });
+
+  it('allows plain http only for a service on this computer', () => {
+    expect(createTeacherAuth({ url: 'http://localhost:54321', anonKey: 'k' }).configured).toBe(true);
+    expect(createTeacherAuth({ url: 'http://localhost.evil.test', anonKey: 'k' }).configured).toBe(false);
+  });
+
   it('drops a session the server no longer accepts', async () => {
     let t = 0;
     const { f } = fakeFetch({ '/auth/v1/verify': { body: token(10) }, 'grant_type=refresh_token': { status: 400, body: { error_description: 'Invalid Refresh Token' } } });

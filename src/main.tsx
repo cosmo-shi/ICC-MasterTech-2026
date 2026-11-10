@@ -3,12 +3,16 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import './styles/system.css'
 import App from './App.tsx'
+import { startClassSync } from './sync/index.ts'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />
   </StrictMode>,
 )
+
+// Class link: does nothing until this device joins a class.
+startClassSync()
 
 // Offline cache (built app only). Failure just means no offline copy; the app still works.
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {

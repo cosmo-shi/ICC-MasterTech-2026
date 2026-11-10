@@ -23,7 +23,8 @@ import { type LiveEvent, Workspace } from "../ui/Workspace.tsx";
 import { FreeLesson } from "./FreeLesson.tsx";
 import { inputsToPhrase } from "../ai/coach.ts";
 import { coachFocus, LESSON_INFOS, skillsForActivity, supportFor } from "../ai/learner.ts";
-import { CHECK_CARDS, TRICKY, type CheckKind, type SupportId, checkInOffer, rulesCheckInOffer } from "../ai/checkin.ts";
+import { CHECK_CARDS, SUPPORTS, TRICKY, type CheckKind, type SupportId, checkInOffer, rulesCheckInOffer } from "../ai/checkin.ts";
+import { classSupports, useMyClass } from "../sync/index.ts";
 import { CheckPanel, CheckResult as CheckResultCard } from "../ui/CheckPanel.tsx";
 import { freshRelated, restSpans } from "../music/versions.ts";
 import { activityById, instrumentFor, lessonFor } from "../data/curriculum.ts";
@@ -84,12 +85,16 @@ function AssessedLesson({ lessonId, go }: Props) {
   const support = supportFor(planning, lessonId, tctx);
   const focusHint = coachFocus(planning, lessonId, tctx);
   const pathway = pathwayById(prefs.pathway);
+  // Supports the learner's teacher switched on (class link). They start on; the learner can still change them.
+  const { link: myClass } = useMyClass();
+  const fromTeacher = classSupports(myClass, lessonId);
+  const teacherOn = (Object.keys(fromTeacher) as SupportId[]).filter((k) => fromTeacher[k] && k in SUPPORTS);
   const [mode, setMode] = useState<Mode>("practice");
   const [stage, setStage] = useState<"hear" | "learn" | "try">("hear");
   const [phase, setPhase] = useState<Phase>("ready");
   const [slowerChoice, setSlowerChoice] = useState<boolean | null>(null);
   // Starts slower when the model suggests it; the learner can always switch it off.
-  const slower = mode === "practice" && (slowerChoice ?? support.start.includes("slower"));
+  const slower = mode === "practice" && (slowerChoice ?? (support.start.includes("slower") || !!fromTeacher.slower));
   const setSlower = (f: (s: boolean) => boolean) => setSlowerChoice(f(slower));
   const [demoOn, setDemoOn] = useState(false);
   const [demoWatched, setDemoWatched] = useState(false);
@@ -117,8 +122,8 @@ function AssessedLesson({ lessonId, go }: Props) {
   const [checksDone, setChecksDone] = useState<CheckKind[]>([]);
   const [checkDeclined, setCheckDeclined] = useState(false);
   const [playCheck, setPlayCheck] = useState(false);
-  const [autoHear, setAutoHear] = useState(false);
-  const [counting, setCounting] = useState(false);
+  const [autoHear, setAutoHear] = useState(() => !!fromTeacher["hear-first"]);
+  const [counting, setCounting] = useState(() => !!fromTeacher["count-aloud"]);
   const [fresh, setFresh] = useState<Phrase | null>(null);
   const [lastTake, setLastTake] = useState<Phrase | null>(null);
   const checkId = useRef("");
@@ -544,6 +549,23 @@ function AssessedLesson({ lessonId, go }: Props) {
           </div>
         )}
         <div className="lp-music">{notation}</div>
+        {teacherOn.length > 0 && mode === "practice" && (
+          <div className="suggest from-teacher" role="note">
+            <p className="suggest-why">Your teacher set up some help for this one. You can change it on the next screen.</p>
+            <ul className="suggest-list">
+              {teacherOn.map((k) => (
+                <li key={k}>
+                  <Icon name="check" size={16} /> {SUPPORTS[k].label}
+                  {k === "bigger-controls" && !prefs.large && (
+                    <button type="button" className="btn-text" onClick={() => setPref("large", true)}>
+                      Turn on
+                    </button>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
         {(support.start.length > 0 || support.demo) && (
           <div className="suggest" role="note">
             <p className="suggest-why">{support.reason ?? "Some help to start with."}</p>

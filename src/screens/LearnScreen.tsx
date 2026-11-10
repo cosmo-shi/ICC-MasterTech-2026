@@ -1,3 +1,4 @@
+import { FromTeacher } from './MyClass.tsx';
 import { lessonStars, nextFor, reasonText } from '../ai/learner.ts';
 import { useState } from 'react';
 import { blurb, lessonById, missionById } from '../data/catalog.ts';
@@ -143,6 +144,8 @@ export function LearnScreen({ go }: { go: (r: string) => void }) {
         <h1 className="h1">Learn</h1>
         <LearnTabs at="path" go={go} />
       </div>
+
+      <FromTeacher go={go} />
 
       <section className={`resume tr-${nextAct.track}`} aria-labelledby="resume-h">
         <div className="resume-top">
