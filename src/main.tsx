@@ -2,11 +2,15 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import './styles/system.css'
+import './styles/look.css'
+import { applyLook } from './state/look.ts'
 import App from './App.tsx'
 import { startClassSync } from './sync/index.ts'
 import { TEST_DATA } from './fixtures/testMode.ts'
 import { fixtureAttempts } from './fixtures/teacherFixtures.ts'
 import { store } from './store/db.ts'
+
+applyLook()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

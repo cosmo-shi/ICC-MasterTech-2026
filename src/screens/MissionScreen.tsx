@@ -6,6 +6,7 @@ import { rulesPattern } from '../ai/rules.ts';
 import type { Pattern } from '../ai/features.ts';
 import coachText from '../data/coach.json';
 import { blurb, missionById, PATHWAYS } from '../data/catalog.ts';
+import { LOOK } from '../state/look.ts';
 import { Icon } from '../ui/icons.tsx';
 import { Recorder, clipAt, gridEvidence, quantise } from '../music/capture.ts';
 import { freshTask, type IndependentTask } from '../music/fresh.ts';
@@ -291,11 +292,16 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
           <Icon name="back" size={20} /> Learn
         </button>
       </nav>
-      <header className="lesson-head">
+      <header className={LOOK ? 'lesson-head lx-create-head tr-create' : 'lesson-head'}>
         <div>
-          <p className="eyebrow">Partner project</p>
-          <h1 className="h1">{mission.title}</h1>
-          <p className="lede">{fewWords ? mission.steps[0] : blurb(mission.id, mission.objective)}</p>
+          <p className="eyebrow">{LOOK ? 'Compose and create · partner project' : 'Partner project'}</p>
+          <h1 className={LOOK ? 'lx-display lx-create-title' : 'h1'}>{mission.title}</h1>
+          {(() => {
+            const lede = fewWords ? mission.steps[0] : blurb(mission.id, mission.objective);
+            // Review fix: the lede repeated the title word for word on some projects.
+            return LOOK && lede.trim() === mission.title.trim() ? null : <p className="lede">{lede}</p>;
+          })()}
+          {LOOK && <p className="lede">Nothing here is marked. Make an idea, change it, listen back and keep the version you like.</p>}
           {mission.band === 'F' && <p className="note-text">A grown-up can help with the buttons. The music choices are yours.</p>}
         </div>
       </header>

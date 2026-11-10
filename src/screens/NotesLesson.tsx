@@ -17,7 +17,11 @@ import { Notation } from '../ui/Notation.tsx';
 import { MiniKeys, NotePair, WrongPairs, playOne } from '../ui/NotePair.tsx';
 import { usePlayer } from '../ui/usePlayer.ts';
 import { type LiveEvent, Workspace } from '../ui/Workspace.tsx';
-import { LessonShell } from './LessonShell.tsx';
+import { LOOK } from '../state/look.ts';
+import { LessonShell, type Stage } from './LessonShell.tsx';
+
+/** Explain → Demonstrate → Explore → Practise → Feedback → Continue, for each L05 step. */
+const L05_STAGE: Record<string, Stage> = { intro: 'Explain', 'find-c': 'Demonstrate', 'find-d': 'Demonstrate', 'find-e': 'Demonstrate', up: 'Explore', down: 'Explore', link: 'Explore', guided: 'Practise', own: 'Practise', create: 'Continue', reflect: 'Continue' };
 
 const TEMPO = 80;
 
@@ -184,7 +188,9 @@ export function NotesLesson({ go }: { go: (r: string) => void }) {
 
   let task: React.ReactNode;
   let foot: React.ReactNode;
-  const continueBtn = (label = 'Continue', enabled = true) => (
+  // Design review (?look): say where the button goes, and which teaching stage this is.
+  const onward = LOOK ? `Next: ${L05_STEPS[index + 1]?.title ?? 'Finish the lesson'}` : 'Continue';
+  const continueBtn = (label = onward, enabled = true) => (
     <button type="button" className="btn btn-big btn-block" onClick={next} disabled={!enabled}>
       {label}
     </button>
@@ -237,7 +243,7 @@ export function NotesLesson({ go }: { go: (r: string) => void }) {
           {tap && !tap.ok && lastWrong !== null && <NotePair expected={step.target} played={lastWrong} />}
         </>
       );
-      foot = continueBtn(done ? 'Continue' : `Press ${midiToLetter(step.target)} on the keys`, done);
+      foot = continueBtn(done ? onward : `Press ${midiToLetter(step.target)} on the keys`, done);
       break;
     case 'copy':
       task = (
@@ -278,7 +284,7 @@ export function NotesLesson({ go }: { go: (r: string) => void }) {
           )}
         </>
       );
-      foot = continueBtn(links >= 3 ? 'Continue' : `Try ${3 - links} more`, links >= 3);
+      foot = continueBtn(links >= 3 ? onward : `Try ${3 - links} more`, links >= 3);
       break;
     case 'independent':
       task = (
@@ -332,7 +338,7 @@ export function NotesLesson({ go }: { go: (r: string) => void }) {
 
   const showKeys = step.kind !== 'reflect';
   return (
-    <LessonShell step={index + 1} steps={L05_STEPS.length} onClose={() => go('#/learn')} stepKey={step.id} foot={foot} sheet={
+    <LessonShell stage={sheetOpen ? 'Feedback' : L05_STAGE[step.id]} step={index + 1} steps={L05_STEPS.length} onClose={() => go('#/learn')} stepKey={step.id} foot={foot} sheet={
       <>
         {step.kind === 'independent' && seq && (
           <FeedbackSheet
@@ -344,7 +350,7 @@ export function NotesLesson({ go }: { go: (r: string) => void }) {
             why={seq.ok ? 'Reading the stave and finding the keys without letter names is what this lesson is for.' : 'Each line and space on the stave is one key. Find the landmark, then count.'}
             tag="On your own"
             warning={saveFailed ? 'This try couldn’t be saved on this device, so it won’t show in your progress.' : undefined}
-            primary={seq.ok ? { label: 'Continue', onClick: next } : { label: seq.wrong.length === 1 ? 'Try that note' : 'Try again', onClick: tryAgain }}
+            primary={seq.ok ? { label: onward, onClick: next } : { label: seq.wrong.length === 1 ? 'Try that note' : 'Try again', onClick: tryAgain }}
             secondary={seq.ok ? undefined : { label: 'Show me how', onClick: () => { setSheetOpen(false); hear(original); } }}
           >
             <WrongPairs wrong={seq.wrong} />

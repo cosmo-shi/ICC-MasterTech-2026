@@ -1,0 +1,296 @@
+/* Design review (sc-visual-review). Fonts load only when a type system is chosen with ?type or ?look.
+   All self-hosted under public/fonts, SIL OFL 1.1 (see ASSETS.md). */
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  src: url('/fonts/BricolageGrotesque-wght.woff2') format('woff2');
+  font-weight: 200 800;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Atkinson Hyperlegible Next';
+  src: url('/fonts/AtkinsonHyperlegibleNext-wght.woff2') format('woff2');
+  font-weight: 200 800;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Cabin';
+  src: url('/fonts/Cabin-wght.woff2') format('woff2');
+  font-weight: 400 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Fraunces';
+  src: url('/fonts/Fraunces-wght.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: swap;
+}
+/* ♯ ♭ ♮ only: none of the text fonts has them, so they come from Noto Music in every type system. */
+@font-face {
+  font-family: 'Carmen Music';
+  src: url('/fonts/NotoMusic-symbols.woff2') format('woff2');
+  unicode-range: U+266D-266F;
+  font-display: swap;
+}
+
+/* Type systems: a display face for titles, Atkinson Hyperlegible Next for reading and controls. */
+:root[data-type] {
+  --font-body: 'Carmen Music', 'Atkinson Hyperlegible Next', system-ui, sans-serif;
+  --font-ui: var(--font-body);
+  --w-body: 400;
+  --w-control: 650;
+  --w-head: 700;
+  --w-display: 800;
+}
+:root[data-type='1'] {
+  --font-display: 'Carmen Music', 'Bricolage Grotesque', system-ui, sans-serif;
+  --display-tracking: -0.02em;
+}
+:root[data-type='2'] {
+  --font-display: 'Carmen Music', 'Cabin', system-ui, sans-serif;
+  --w-display: 700;
+  --display-tracking: -0.01em;
+}
+:root[data-type='3'] {
+  --font-display: 'Carmen Music', 'Fraunces', Georgia, serif;
+  --w-display: 700;
+  --display-tracking: -0.01em;
+}
+:root[data-type] body {
+  font-family: var(--font-body);
+  font-weight: var(--w-body);
+}
+:root[data-type] :is(h1, h2, h3, .h1, .h2, .lp-title, .resume-title, .fb-title, .teacher-title, .lx-display) {
+  font-family: var(--font-display);
+  letter-spacing: var(--display-tracking, 0);
+}
+:root[data-type] :is(button, .btn, .btn-quiet, .segment, .chip, .tab-link, select, input) {
+  font-family: var(--font-ui);
+}
+
+/* ===================== Learn compositions (?look=a|b|c) =====================
+   Shared parts first, then one block per direction. Colours are Carmen's tokens only. */
+.lx { gap: var(--s6); }
+.lx-display { font-family: var(--font-display, var(--font-ui)); font-weight: var(--w-display, 900); line-height: 1.05; margin: 0; overflow-wrap: anywhere; }
+.lx-kicker { margin: 0; font-weight: var(--w-control, 700); font-size: 0.875rem; letter-spacing: 0.04em; text-transform: uppercase; }
+.lx-about, .lx-desc { margin: 0; color: var(--ink-soft); }
+.lx-desc { font-size: 0.9375rem; }
+.lx-why { margin: 0; font-size: 0.9375rem; }
+.lx-item-title { margin: 0; font-size: 1.125rem; font-weight: var(--w-head, 800); line-height: 1.25; overflow-wrap: anywhere; }
+.lx-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s3); }
+.lx-btn {
+  min-height: var(--target, 48px); padding: 0 var(--s5); border: 0; border-radius: var(--r-md);
+  background: var(--sun); color: var(--on-sun); font: inherit; font-family: var(--font-ui); font-weight: var(--w-control, 700); font-size: 1rem;
+  cursor: pointer;
+}
+.lx-btn:hover { background: var(--sun-deep); color: var(--paper); }
+.lx-btn-quiet { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 2px currentColor; }
+.lx-btn-quiet:hover { background: var(--paper-sunk); color: var(--ink); }
+.lx-link {
+  min-height: var(--target, 48px); padding: 0 var(--s2); border: 0; background: none; color: inherit;
+  font: inherit; font-family: var(--font-ui); font-weight: var(--w-control, 700); text-decoration: underline; text-underline-offset: 0.2em; cursor: pointer;
+}
+.lx-status { display: inline-flex; align-items: center; gap: var(--s1); font-size: 0.875rem; font-weight: var(--w-control, 700); color: var(--ink-soft); }
+.lx-status.st-done { color: var(--good); }
+.lx-status.st-started { color: var(--dusk); }
+.lx-preview { background: var(--paper); border-radius: var(--r-md); padding: var(--s2) var(--s3); color: var(--ink); min-width: 0; }
+.lx-preview svg { max-width: 100%; height: auto; }
+.lx-chosen { display: inline-flex; align-items: center; gap: var(--s1); font-size: 0.875rem; font-weight: var(--w-control, 700); }
+.lx-inst { display: grid; gap: var(--s3); grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.lx-inst-opt {
+  display: grid; gap: var(--s2); align-content: start; text-align: left; min-height: var(--target, 48px);
+  border: 0; border-radius: var(--r-lg); padding: var(--s4); font: inherit; color: var(--ink); cursor: pointer;
+}
+.lx-inst-name { display: inline-flex; align-items: center; gap: var(--s2); font-family: var(--font-display, var(--font-ui)); font-weight: var(--w-head, 800); font-size: 1.25rem; }
+.lx-inst-about { font-size: 0.9375rem; }
+.lx-inst-opt[aria-checked='true'] { box-shadow: inset 0 0 0 3px var(--ink); }
+
+/* ---------- A: Expressive editorial — big type, numbered chapters, rules not boxes ---------- */
+.lxa-head { display: grid; gap: var(--s4); }
+.lxa-title { font-size: clamp(3.25rem, 14vw, 7.5rem); letter-spacing: -0.03em; line-height: 0.9; }
+.lx-inst-words { display: flex; flex-wrap: wrap; gap: var(--s5); }
+.lx-inst-words .lx-inst-opt { padding: 0 0 var(--s1); background: none; border-radius: 0; box-shadow: none; display: flex; align-items: center; gap: var(--s3); }
+.lx-inst-words .lx-inst-name { font-size: clamp(1.5rem, 5vw, 2.25rem); color: var(--ink-soft); }
+.lx-inst-words .lx-inst-opt[aria-checked='true'] { box-shadow: inset 0 -5px 0 var(--sun); }
+.lx-inst-words .lx-inst-opt[aria-checked='true'] .lx-inst-name { color: var(--ink); }
+.lxa-feature {
+  display: grid; gap: var(--s5); padding: var(--s6) var(--s5); border-radius: var(--r-lg) var(--r-lg) var(--r-lg) var(--r-sm);
+  background: var(--tr); color: var(--on-sun);
+}
+.lxa-feature .lx-btn { background: var(--on-sun); color: var(--tr); }
+.lxa-feature .lx-btn:hover { background: var(--ink); color: var(--paper); }
+.lxa-feature .lx-kicker, .lxa-feature .lx-why { color: var(--on-sun); }
+.lxa-feature-text { display: grid; gap: var(--s3); align-content: start; }
+.lxa-feature-title { font-size: clamp(2rem, 7vw, 3.5rem); letter-spacing: -0.02em; }
+.lxa-feature-desc { margin: 0; font-size: 1.125rem; max-width: 34ch; }
+.lxa-feature-score .lx-preview { padding: var(--s4); border-radius: var(--r-md); }
+.lxa-unit { display: grid; gap: var(--s4); }
+.lxa-unit-head { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--s4); align-items: end; padding-bottom: var(--s3); border-bottom: 3px solid var(--tr); }
+.lxa-num { font-family: var(--font-display, var(--font-ui)); font-weight: var(--w-display, 900); font-size: clamp(3rem, 12vw, 5rem); line-height: 0.85; color: var(--tr-ink); }
+.lxa-unit-title { font-size: clamp(1.5rem, 5vw, 2.25rem); }
+.lxa-list { list-style: none; margin: 0; padding: 0; display: grid; }
+.lxa-item { display: grid; gap: var(--s3); padding: var(--s4) 0; border-bottom: 1px solid var(--hairline); }
+.lxa-item-text { display: grid; gap: var(--s1); }
+.lxa-item.is-next .lx-item-title { font-size: 1.375rem; }
+.lxa-item-act { display: flex; flex-wrap: wrap; gap: var(--s2); align-items: center; }
+.lxa-create { display: grid; gap: var(--s5); padding: var(--s6) var(--s5); border-radius: var(--r-lg); background: var(--tr-create-tint); }
+.lxa-create-title { font-size: clamp(2.25rem, 9vw, 4.5rem); color: var(--tr-create-ink); letter-spacing: -0.02em; }
+.lxa-create-lede { margin: 0; max-width: 46ch; font-size: 1.0625rem; }
+.lxa-create-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s5); }
+.lxa-create-list li { display: grid; gap: var(--s2); padding-top: var(--s3); border-top: 3px solid var(--tr-create); }
+@media (min-width: 900px) {
+  .lxa-head { grid-template-columns: minmax(0, 1fr) auto; align-items: end; }
+  .lxa-head .lx-inst { grid-column: 1 / -1; }
+  .lxa-feature { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); padding: var(--s7); align-items: center; }
+  .lxa-unit { grid-template-columns: 16rem minmax(0, 1fr); align-items: start; }
+  .lxa-unit-head { grid-template-columns: 1fr; border-bottom: 0; position: sticky; top: var(--s4); }
+  .lxa-item { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+  .lxa-create-list { grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
+}
+
+/* ---------- B: Contemporary music studio — dark case surfaces, instruments up front ---------- */
+.lx-b { --st-bg: var(--case); --st-raised: color-mix(in srgb, var(--case) 86%, #ffffff); --st-text: #f5eff1; --st-soft: #c9c8e0; }
+.lxb-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s3); }
+.lxb-head h1 { font-size: clamp(2rem, 7vw, 3rem); }
+.lx-inst-studio .lx-inst-opt { background: var(--st-bg); color: var(--st-text); padding: var(--s4); }
+.lx-inst-studio .lx-inst-about { color: var(--st-soft); }
+.lx-inst-studio .lx-inst-opt[aria-checked='true'] { box-shadow: inset 0 0 0 3px var(--sun); }
+.lx-inst-studio .lx-chosen { color: var(--sun); }
+.lx-keys { display: flex; height: 44px; gap: 2px; }
+.lx-keys i { position: relative; flex: 1; background: var(--key-white); border-radius: 0 0 4px 4px; }
+.lx-keys i.has-black::after { content: ''; position: absolute; right: -30%; top: 0; width: 60%; height: 58%; background: var(--key-black); border-radius: 0 0 3px 3px; z-index: 1; }
+.lx-pads { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s2); }
+.lx-pads i { font-style: normal; font-size: 0.75rem; font-weight: var(--w-control, 700); text-align: center; padding: var(--s3) var(--s1); border-radius: var(--r-sm); background: var(--st-raised); color: var(--st-text); }
+.lxb-feature { display: grid; gap: var(--s4); padding: var(--s5); border-radius: var(--r-lg); background: var(--st-bg); color: var(--st-text); }
+.lxb-feature .lx-kicker { color: var(--sun); }
+.lxb-feature-title { font-size: clamp(1.75rem, 6vw, 2.75rem); }
+.lxb-feature-desc, .lxb-feature .lx-why { margin: 0; color: var(--st-soft); }
+.lxb-feature .lx-link { color: var(--st-text); }
+.lxb-score .lx-preview { padding: var(--s4); }
+.lxb-unit { display: grid; border-radius: var(--r-lg); overflow: hidden; background: var(--paper); box-shadow: inset 0 0 0 1px var(--hairline); }
+.lxb-unit-side { display: grid; gap: var(--s2); align-content: start; padding: var(--s4) var(--s5); background: var(--tr); color: var(--on-sun); }
+.lxb-unit-side .lx-about { color: var(--on-sun); }
+.lxb-unit-title { font-size: 1.5rem; }
+.lxb-count { margin: 0; font-weight: var(--w-control, 700); font-size: 0.875rem; }
+.lxb-list { list-style: none; margin: 0; padding: 0 var(--s5); display: grid; }
+.lxb-item { display: grid; gap: var(--s3); padding: var(--s4) 0; border-top: 1px solid var(--hairline); }
+.lxb-item:first-child { border-top: 0; }
+.lxb-item .lx-preview { background: var(--paper-sunk); max-width: 22rem; }
+.lxb-item:not(.is-next) .lx-preview { display: none; }
+.lxb-item-text { display: grid; gap: var(--s1); }
+.lxb-item-act { display: flex; flex-wrap: wrap; gap: var(--s2); align-items: center; }
+.lxb-studio { display: grid; gap: var(--s4); padding: var(--s5); border-radius: var(--r-lg); background: color-mix(in srgb, var(--case) 78%, var(--sw-orchid)); color: var(--st-text); }
+.lxb-studio-title { font-size: clamp(1.75rem, 6vw, 2.5rem); color: var(--st-text); }
+.lxb-studio-lede { margin: 0; color: var(--st-soft); }
+.lxb-studio-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s3); }
+.lxb-studio-list li { display: grid; gap: var(--s2); padding: var(--s4); border-radius: var(--r-md); background: rgb(255 255 255 / 0.08); }
+.lxb-studio .lx-desc { color: var(--st-text); }
+.lxb-studio .lx-btn { background: var(--sw-orchid); color: var(--on-sun); }
+.lxb-studio .lx-link { color: var(--st-text); }
+@media (min-width: 900px) {
+  .lxb-feature { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); align-items: center; padding: var(--s6); }
+  .lxb-feature-act { grid-column: 1 / -1; }
+  .lxb-unit { grid-template-columns: 17rem minmax(0, 1fr); }
+  .lxb-unit-side { padding: var(--s5); }
+  .lxb-item { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+  .lxb-item .lx-preview { grid-column: 1 / -1; grid-row: 2; }
+  .lxb-studio-list { grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); }
+}
+
+/* ---------- C: Playful modular — bento tiles of different sizes, round shapes ---------- */
+.lxc-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s3); }
+.lxc-head h1 { font-size: clamp(2.25rem, 8vw, 3.25rem); }
+.lxc-top { display: grid; gap: var(--s3); }
+.lxc-feature { display: grid; gap: var(--s3); padding: var(--s5); border-radius: var(--r-lg); background: var(--tr-tint); }
+.lxc-feature .lx-kicker { color: var(--tr-ink); }
+.lxc-feature-title { font-size: clamp(1.75rem, 6vw, 2.5rem); }
+.lxc-feature-desc { margin: 0; }
+.lx-inst-tiles .lx-inst-opt { border-radius: var(--r-lg); padding: var(--s5) var(--s4); min-height: 8rem; color: var(--on-sun); }
+.lx-inst-tiles .inst-keyboard { background: var(--tr-piano); }
+.lx-inst-tiles .inst-drums { background: var(--tr-drums); border-radius: var(--r-lg) var(--r-lg) var(--r-lg) 64px; }
+.lx-inst-tiles .lx-inst-opt[aria-checked='false'] { opacity: 1; background: var(--paper-sunk); color: var(--ink); }
+.lxc-modules { display: grid; gap: var(--s3); }
+.lxc-unit { display: grid; gap: var(--s3); align-content: start; padding: var(--s5); border-radius: var(--r-lg); background: var(--tr-tint); }
+.lxc-unit-title { font-size: 1.5rem; color: var(--tr-ink); }
+.lxc-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s2); }
+.lxc-item { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--s3); padding: var(--s3); border-radius: var(--r-md); background: var(--paper); }
+.lxc-badge { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--tr); color: var(--on-sun); }
+.lxc-item.is-done .lxc-badge { background: var(--good-bg); color: var(--good); }
+.lxc-item-text { display: grid; gap: var(--s1); }
+.lxc-item-act { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: var(--s2); align-items: center; }
+.lxc-create { display: grid; gap: var(--s3); }
+.lxc-create-title { font-size: clamp(1.75rem, 6vw, 2.5rem); color: var(--tr-create-ink); }
+.lxc-create-lede { margin: 0; }
+.lxc-create-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s3); }
+.lxc-proj { display: grid; gap: var(--s2); align-content: end; padding: var(--s5); background: var(--tr-create); color: var(--on-sun); border-radius: var(--r-lg); min-height: 10rem; }
+.lxc-proj .lx-desc { color: var(--on-sun); }
+.lxc-proj .lx-btn { background: var(--on-sun); color: var(--tr-create); }
+.lxc-proj.shape-1 { background: var(--sw-peach); border-radius: 64px var(--r-lg) var(--r-lg) var(--r-lg); }
+.lxc-proj.shape-2 { background: var(--tr-create-tint); color: var(--ink); }
+.lxc-proj.shape-2 .lx-desc { color: var(--ink-soft); }
+.lxc-proj.shape-2 .lx-btn { background: var(--tr-create); color: var(--on-sun); }
+@media (min-width: 700px) {
+  .lxc-top { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+  .lx-inst-tiles { grid-template-columns: 1fr; }
+  .lxc-modules { grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); }
+  .lxc-create-list { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .lxc-proj { grid-column: span 2; }
+  .lxc-proj.shape-0 { grid-column: span 4; }
+}
+:root[data-theme='dark'] .lx-b { --st-bg: color-mix(in srgb, var(--case) 70%, var(--paper)); }
+.lx-preview-icon { display: grid; place-items: center; min-height: 8rem; background: rgb(255 255 255 / 0.35); color: inherit; }
+.lxb-feature .lx-preview-icon { background: rgb(255 255 255 / 0.08); color: var(--sun); }
+
+/* ---------- Music theory (review): categories by hue, place and words; every card has notation + sound ---------- */
+.lxt-head { display: grid; gap: var(--s3); }
+.lxt-title { font-size: clamp(2.5rem, 10vw, 5rem); letter-spacing: -0.02em; }
+.lxt-lede { margin: 0; font-size: 1.125rem; max-width: 40ch; }
+.lxt-jump { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.lxt-jump-link { display: inline-flex; align-items: center; min-height: var(--target, 48px); padding: 0 var(--s4); border-radius: 999px; background: var(--tr-tint); color: var(--tr-ink); font-weight: var(--w-control, 700); text-decoration: none; }
+.lxt-group { display: grid; gap: var(--s4); scroll-margin-top: var(--s4); }
+.lxt-group-head { display: grid; gap: var(--s1); padding: var(--s4) var(--s5); border-radius: var(--r-lg); background: var(--tr); color: var(--on-sun); }
+.lxt-group-head .lx-about { color: var(--on-sun); }
+.lxt-group-title { font-size: clamp(1.5rem, 6vw, 2.25rem); }
+.lxt-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s4); }
+.lxt-card { display: grid; gap: var(--s2); align-content: start; padding: var(--s4) 0; border-top: 3px solid var(--tr); }
+.lxt-card .lx-preview { background: var(--tr-tint); }
+.lxt-topic > .kicker { color: var(--tr-ink); }
+.lxt-topic-title { font-size: clamp(2.25rem, 9vw, 4rem); letter-spacing: -0.02em; }
+.lxt-topic .theory-example { background: var(--tr-tint); border-radius: var(--r-md); }
+@media (min-width: 700px) { .lxt-grid { grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); column-gap: var(--s5); } }
+@media (min-width: 900px) { .lxt-head { grid-template-columns: minmax(0, 1fr) auto; align-items: end; } .lxt-lede { grid-column: 1 / -1; } }
+
+/* ---------- Lesson (review): the six teaching stages, current one named in words and shape ---------- */
+.lx-stages { list-style: none; margin: 0; padding: 0 var(--s4) var(--s2); display: flex; gap: var(--s1); }
+.lx-stages li { flex: 1; display: grid; gap: 2px; justify-items: center; padding: var(--s1) 0; border-top: 4px solid var(--hairline); color: var(--ink-soft); font-size: 0.8125rem; font-weight: var(--w-control, 700); }
+.lx-stages li.is-past { border-top-color: var(--dusk); }
+.lx-stages li.is-now { border-top-color: var(--sun); color: var(--ink); }
+.lx-stage-n { display: none; }
+@media (max-width: 599px) {
+  .lx-stages li:not(.is-now) .lx-stage-w { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .lx-stages li:not(.is-now) { flex: 0 0 var(--s5); }
+  .lx-stages li.is-now { justify-items: start; }
+}
+:root[data-look] .lp-title { font-family: var(--font-display); font-weight: var(--w-display); letter-spacing: var(--display-tracking, 0); }
+:root[data-look] .lp-title.small { font-size: clamp(1.5rem, 6vw, 2.125rem); line-height: 1.1; }
+.lxt-card .lx-preview { background: none; padding: 0; }
+
+/* ---------- Teacher (review): same faces and hues, calmer and denser: numbers on hairlines, not tiles ---------- */
+:root[data-look] .teacher-mode .teacher-title { font-family: var(--font-display); font-weight: var(--w-display); letter-spacing: var(--display-tracking, 0); }
+:root[data-look] .teacher-mode .dash-stats { gap: 0; border-block: 1px solid var(--hairline); }
+:root[data-look] .teacher-mode .dash-stats > li { background: none; border-radius: 0; padding: var(--s3) var(--s4); border-left: 1px solid var(--hairline); }
+:root[data-look] .teacher-mode .dash-stats > li:first-child { border-left: 0; padding-left: 0; }
+:root[data-look] .teacher-mode .stat-n { font-family: var(--font-display); font-weight: var(--w-display); font-size: 2.25rem; color: var(--dusk); }
+:root[data-look] .teacher-mode :is(td, th) { padding-block: var(--s2); }
+/* Segmented switches (Lessons / Music theory, School / On this device) were 40 px tall; Carmen's rule is 48 px. */
+:root[data-look] .segmented .segment { min-height: var(--target, 48px); }
+@media (max-width: 599px) { .lxa-feature .lx-preview-icon { display: none; } }
+@media (max-height: 500px) {
+  :root[data-look] .lp-title.small { font-size: 1.25rem; }
+  .lx-stages { padding-bottom: 0; }
+  .lx-stages li { padding: 0; font-size: 0.75rem; }
+}
+
+/* ---------- Creative project entry (review): the orchid Compose identity, not marked ---------- */
+.lx-create-head { padding: var(--s5); border-radius: var(--r-lg) var(--r-lg) var(--r-lg) var(--r-sm); background: var(--tr-tint); }
+.lx-create-head .eyebrow { color: var(--tr-ink); }
+.lx-create-title { font-size: clamp(2rem, 8vw, 3.25rem); letter-spacing: -0.02em; color: var(--ink); }

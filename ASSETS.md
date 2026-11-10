@@ -47,6 +47,24 @@ Every third-party file shipped with Carmen. Checked 9 November 2026.
 |---|---|
 | `public/fonts/Nunito-wght.woff2` | `ba344451eab25b217a165363b1982048a5e5830a0daf36577973955a04cac793` |
 
+### Design review fonts (branch `sc-visual-review`, loaded only with `?look` or `?type`)
+
+All SIL OFL 1.1, from Fontsource 5.3.0 (`@fontsource-variable/*`, latin `wght` subset unless noted), used unmodified except the Noto Music subset. Each is downloaded by the browser only when a review type system uses it.
+
+- Bricolage Grotesque, Copyright 2022 The Bricolage Grotesque Project Authors. Notice: `public/fonts/OFL-BricolageGrotesque.txt`.
+- Atkinson Hyperlegible Next, Copyright 2020-2024 The Atkinson Hyperlegible Next Project Authors. Notice: `public/fonts/OFL-AtkinsonHyperlegibleNext.txt`.
+- Cabin (weights 400–700), Copyright 2018 The Cabin Project Authors. Notice: `public/fonts/OFL-Cabin.txt`.
+- Fraunces, Copyright 2020 The Fraunces Project Authors. Notice: `public/fonts/OFL-Fraunces.txt`.
+- Noto Music, Copyright 2022 The Noto Project Authors. Source `@fontsource/noto-music` 5.3.0, subset to U+266D–266F (♭ ♮ ♯) because no text face here, Nunito included, has those signs. Notice: `public/fonts/OFL-NotoMusic.txt`.
+
+| File | Size | SHA-256 |
+|---|---|---|
+| `public/fonts/BricolageGrotesque-wght.woff2` | 41 KB | `a97804dc9fbe5fc972a08018c5eda4dab7ef2346f64c57e61419d05e6de4ea1c` |
+| `public/fonts/AtkinsonHyperlegibleNext-wght.woff2` | 34 KB | `18b2a1a39a2fa298b0ba5390aca68462669826c90925656f1c1f6796e0e1bbaf` |
+| `public/fonts/Cabin-wght.woff2` | 28 KB | `f51448b0b7f024d139fb7598d21b4e06e8174268ac93fc26cc2d4196144cb672` |
+| `public/fonts/Fraunces-wght.woff2` | 37 KB | `7f9d191d999336d3b9790afa72e1358e50a13b06d4f289341e92a311967a80f9` |
+| `public/fonts/NotoMusic-symbols.woff2` | 3 KB | `e6f45d50beb5e6a7d7764d17017ce4007a34e66d5ba5513c412341d23f3e5841` |
+
 ## Interface icons — Lucide (ISC)
 
 - Chosen 10 Nov 2026 to replace Carmen's hand-drawn interface icons (momo's brief: one established family, the real assets, no redrawing).

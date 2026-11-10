@@ -3,6 +3,10 @@
 Last updated 10 November 2026. Plain facts only: what runs, how it was checked, and what is still missing.
 
 
+## Visual direction review (branch `sc-visual-review`, local, 10 Nov)
+
+- Draft: three Learn compositions and three type systems behind `?look=a|b|c` and `?type=1|2|3`; Theory, L05, creative entry and teacher proof in direction A. Not rolled out; waiting on momo's choice. See `docs/DESIGN_DIRECTION.md`.
+
 ## 10 Nov, video QA (sc 3b753e4 and later)
 
 - **Working:** stave redraws on resize/rotation and stays on screen with the keys at all 10 checked sizes (emulated, `node tools/e2e-video-qa.mjs`); wrong-note feedback with Hear E / Hear G, both keys and the stave; L05 as a full 11-step teaching sequence with the C♯ explainer; L01 beat foundations before the checked copy (starts slower); count-in shown 1 2 3 4; lesson titles from the brief; teacher wording from the brief's table.

@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { blurb, lessonById, missionById } from '../data/catalog.ts';
 import { type Activity, type TrackId, activityById, lessonFor, positionInTrack, trackActivities, trackById } from '../data/curriculum.ts';
 import { Notation } from '../ui/Notation.tsx';
+import { LOOK } from '../state/look.ts';
+import { LearnLook, type LibItem, type Library } from './learn/LearnLooks.tsx';
 import { Icon, type IconName, type IconSize } from '../ui/icons.tsx';
 import { Dialog } from '../ui/Dialog.tsx';
 import { useMyLearning } from '../ui/useAttempts.ts';
@@ -103,12 +105,12 @@ const UNITS: Record<InstrumentId, { track: TrackId; title: string; about: string
   keyboard: [
     { track: 'foundations', title: 'Beat and rhythm', about: 'Steady beat, rests and quavers, played on the piano.' },
     { track: 'piano', title: 'Notes and reading', about: 'Find the notes, read the stave, hold and rest.' },
-    { track: 'create', title: 'Make your own', about: 'Answer, build and add parts to your own music.' },
+    { track: 'create', title: 'Compose and create', about: 'Answer, build and add parts to your own music.' },
   ],
   drums: [
     { track: 'foundations', title: 'Beat and rhythm', about: 'Steady beat, rests and quavers, played on the drums.' },
     { track: 'drums', title: 'Grooves on the kit', about: 'Rock beat, hi-hat time and fills.' },
-    { track: 'create', title: 'Make your own', about: 'Answer, build and swap rhythms.' },
+    { track: 'create', title: 'Compose and create', about: 'Answer, build and swap rhythms.' },
   ],
 };
 const onInstrument = (a: Activity, inst: InstrumentId) => a.instrument === 'either' || a.instrument === inst;
@@ -137,6 +139,38 @@ export function LearnScreen({ go }: { go: (r: string) => void }) {
     if (a.instrument === 'either') set('instrument', inst);
     go(a.kind === 'lesson' ? `#/lesson/${id}` : `#/mission/${id}`);
   };
+
+  // Design review: ?look=a|b|c shows one of three compositions of this same screen, same data.
+  if (LOOK) {
+    const item = (a: Activity): LibItem => {
+      const stars = starsFor(a);
+      const project = a.kind === 'project';
+      const state = project ? (stars ? 'started' : 'new') : stars === 3 ? 'done' : stars > 0 ? 'started' : 'new';
+      const base = lessonById(a.id);
+      return { a, title: titleOf(a.id), stars, state, here: a.id === nextId, preview: base ? (lessonFor(base, inst).practice ?? null) : null, open: () => openLesson(a.id), info: () => setOpen(a.id) };
+    };
+    const lib: Library = {
+      inst,
+      setInst: (i) => {
+        setInst(i);
+        set('instrument', i);
+      },
+      next: { ...item(nextAct), why },
+      units: UNITS[inst]
+        .filter((u) => u.track !== 'create')
+        .map((u) => ({ ...u, items: trackActivities(u.track).filter((a) => onInstrument(a, inst) && a.kind === 'lesson').map(item) }))
+        .filter((u) => u.items.length),
+      // Composing gets its own section: the create-unit lessons and every creative project.
+      projects: UNITS[inst].flatMap((u) => trackActivities(u.track)).filter((a) => onInstrument(a, inst) && (a.kind === 'project' || a.track === 'create')).map(item),
+      go,
+    };
+    return (
+      <>
+        <LearnLook look={LOOK} lib={lib} />
+        {open && <StopSheet id={open} stars={starsFor(activityById(open)!)} started={started} onClose={() => setOpen(null)} go={(r) => (r.startsWith('#/lesson/') || r.startsWith('#/mission/') ? openLesson(open) : go(r))} />}
+      </>
+    );
+  }
 
   return (
     <div className="screen learn">
