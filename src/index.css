@@ -5551,3 +5551,14 @@ details > summary {
 .tw-device-note { display: inline-flex; gap: var(--s2); align-items: center; font-weight: 700; color: var(--near); margin: 0; }
 .account-line { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s2); margin: 0 0 var(--s3); font-size: var(--t-support); color: var(--ink-soft); }
 .account-line code { font-weight: 800; letter-spacing: 0.08em; color: var(--ink); }
+
+/* Welcome on a phone held sideways: picture and words on the left, the three choices on the right, nothing hidden. */
+@media (orientation: landscape) and (max-height: 500px) {
+  .entry.entry-welcome { display: grid; grid-template-columns: 1fr minmax(260px, 340px); grid-template-rows: 1fr; overflow-y: auto; }
+  .entry-welcome .entry-scene { inset: 0 auto 0 0; width: 60%; height: 100%; min-height: 0; }
+  .entry-welcome .entry-body { grid-column: 1; grid-row: 1; justify-content: center; padding: var(--s3); width: 100%; }
+  .entry-welcome .entry-hero { height: auto; min-height: 0; }
+  .entry-welcome .entry-hero svg:not(:first-child) { display: none; }
+  .entry-welcome .entry-title { margin: var(--s5) 0 0; font-size: 1.4rem; color: var(--on-sky); position: relative; }
+  .entry-welcome .entry-foot { grid-column: 2; grid-row: 1; align-content: center; padding: var(--s4) calc(var(--s4) + env(safe-area-inset-right)) var(--s4) var(--s4); width: 100%; }
+}

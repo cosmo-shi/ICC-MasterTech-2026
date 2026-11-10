@@ -77,6 +77,14 @@ export function rhythmFeedback(r: CheckResult): Feedback {
     return { what: `Carmen heard ${heard} ${heard === 1 ? 'tap' : 'taps'}; the rhythm has ${expected}.`, why: 'Each note in the rhythm needs its own tap.', next: 'Hear it again, then copy it.', compare: true };
   if (inRest.length)
     return { what: `There was a tap in the rest${inRest.length > 1 ? 's' : ''}.`, why: 'A rest is a silent beat. It still counts, but you don’t play.', next: 'Try saying “rest” in your head on that beat.', compare: true };
+  if (r.extras.length && missed.length)
+    return {
+      what: `${r.extras.length === 1 ? 'One tap' : `${r.extras.length} taps`} landed between the beats, so note ${list(missed)} ${missed.length === 1 ? 'was' : 'were'} missed.`,
+      why: 'Each tap needs to land with its own note for the rhythm to match.',
+      next: 'Try it slower, one tap for each note.',
+      slower: true,
+      compare: true,
+    };
   if (r.extras.length)
     return { what: `Carmen heard ${heard} taps; the rhythm has ${expected}.`, why: 'Each note gets one tap, so the extra ones change the rhythm.', next: 'Try it slower, one tap for each note.', slower: true, compare: true };
   if (missed.length)

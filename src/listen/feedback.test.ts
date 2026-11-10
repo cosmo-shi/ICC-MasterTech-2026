@@ -19,6 +19,10 @@ describe('rhythm feedback: what happened, why it matters, one next step', () => 
   it('says when every tap was with the beat', () => {
     expect(rhythmFeedback(checkAttempt(four, taps([0, 1000, 2000, 3000]), A, 60)).what).toBe('Every tap landed with the beat.');
   });
+  it('explains a tap between the beats without contradicting itself', () => {
+    const f = rhythmFeedback(checkAttempt(four, taps([0, 1000, 2500, 3000]), A, 60));
+    expect(f.what).not.toMatch(/heard 4 taps; the rhythm has 4/);
+  });
   it('counts what was heard against the rhythm when taps are missing', () => {
     expect(rhythmFeedback(checkAttempt(four, taps([0]), A, 60)).what).toBe('Carmen heard 1 tap; the rhythm has 4.');
   });

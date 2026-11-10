@@ -23,6 +23,21 @@ The AI loop: the learner plays a phrase; deterministic code measures it; a small
 | Pitch wording | "Built for Australian primary students without instruments or teachers". Do not say "first" or "only". |
 | Branch | Work and commit on `sc` only. Never push to `main`. |
 
+### Decisions (momo, 10 Nov 2026) — these win over the 9 Nov table where they differ
+
+| Topic | Decision |
+|---|---|
+| Microphone | **Optional input** ("Use my instrument"): single notes on piano or keyboard, and tapped rhythms. Asked for only after the learner presses "Microphone", with the reason shown first. A visible Listening state with Stop; stops on leaving the screen, hiding the page or a phone call. Processed on the device; no cloud fallback; audio kept only when Record is pressed, saved only on the device, deletable, never used for training. Denied permission leaves the on-screen instrument and MIDI working. |
+| Camera | Still never requested. |
+| MIDI | Optional input for keyboards and electronic kits (Web MIDI, no system-exclusive access). Not available in Safari; the app says so. |
+| Uncertain listening | Detection, comparison and teaching are separate. A take Carmen couldn't hear clearly, or one where the device clock was wrong, is said plainly and never counts as evidence (weight 0). Volume is not striking strength; which drum was hit is not judged; no chord or technique claims; guitar hidden until checked on real guitars. |
+| Feedback | Three parts: what happened (observed), why it matters musically, one next step. "Hear the difference" and "Try slower" where they apply. Per-sound marks behind "Sound by sound". Provenance and uncertainty live in the Teacher area. |
+| First screen | "Just play" first. No name, colour or level needed to make music. A name is optional when saving, with what is stored and where. |
+| Learn | Instrument (Piano/Drums) → concept units → steps. "Carry on" (global) is kept apart from "Next on <instrument>". |
+| Teacher accounts | "I'm a teacher" opens a welcome with Log in and Create account: school email, a one-time code, session refresh, sign-out, first-use name, create or join a teaching space. Server-enforced permissions (Supabase Auth + row-level security, `supabase/`). Only the public anon key is in the app. Verification is not authorisation: access needs space membership. If not configured, the app says it is blocked and offers only the device PIN, labelled device-only, with a reset. Learner play stays registration-free. No learner data or audio is uploaded. |
+| Landscape | Supported, never forced. A dismissible portrait suggestion with the exact words "More room to play. Turn your phone sideways to make the keys wider and easier to reach. You can keep playing upright." |
+| Illustrations | No people or Band characters. A restrained musical composition and one icon set; decorative icons aria-hidden; no emoji as assets. |
+
 ## 3. Contradictions resolved on this branch
 
 | Topic | `main` SPEC (Miro) | Pack v2 | Used on `sc` | Why |
@@ -35,12 +50,14 @@ The AI loop: the learner plays a phrase; deterministic code measures it; a small
 | Targets | 44 px | 48 px (64 px large) | 48 px default, 64 px large | Stricter wins. |
 | Sound | Tone.js or licensed samples | Authentic sampled | VCSL CC0 samples through Web Audio | Real instruments, no extra library. |
 | Gesture | Not built | Optional experiment | Not built | momo: no camera. |
+| Microphone | Not in the Miro SPEC | Optional | Optional input from 10 Nov (above) | momo's 10 Nov brief; camera rule unchanged. |
+| Accounts | Not in the Miro SPEC | No accounts | Teacher accounts only, server-enforced; learners never sign up | momo's 10 Nov brief: a device PIN is not school authentication. |
 
 ## 4. Hard rules
 
-1. No account or sign-up. A sound within 3 taps of opening.
-2. Nothing the child does leaves the device. No analytics, no cloud AI, no external fonts/CDNs at runtime.
-3. No microphone or camera requests.
+1. No learner account or sign-up. A sound within 3 taps of opening ("Just play"). Teacher accounts are the only accounts.
+2. Nothing the child does leaves the device. No analytics, no cloud AI, no external fonts/CDNs at runtime. The only network calls are a teacher's own sign-in and space calls, when configured.
+3. No camera, ever. The microphone only on the learner's press, with a visible state and Stop; no recording without Record.
 4. No streaks, timers, rankings, purchases, ads or generic praise. Badges are off by default.
 5. AI output is a plan of approved IDs, never text from a model, never HTML, never a grade.
 6. Every reply is verified before playback. Invalid replies fall back to reviewed rules, labelled as such.
@@ -68,7 +85,8 @@ The AI loop: the learner plays a phrase; deterministic code measures it; a small
 - FR35 M Teacher Mode: goal, attempts, AI contribution, support, independent evidence; local only.
 - FR37 M Four primary pathways + Older extension, each meaningfully different.
 - FR36 M Truthful recovery: audio blocked, storage unavailable, model failed.
-- F Guitar, wind, community, mentors, class sync, camera, cloud model.
+- FR40 M Use my instrument: microphone (single notes, taps) and MIDI, in Play and lessons; timing check; separate Record; recordings listed with size and delete. FR41 M Unclear or device-fault takes never graded. FR42 M Teacher accounts with server permissions, or a plain blocked state.
+- F Guitar (until checked on real guitars), wind, community, mentors, class sync of learner data, camera, cloud model, polyphonic transcription (Basic Pitch) for after-phrase review.
 
 ## 6. Data files
 

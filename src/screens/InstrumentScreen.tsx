@@ -102,7 +102,7 @@ export function InstrumentScreen({ go }: { go: (r: string) => void }) {
       <h1 ref={heading} tabIndex={-1} className="title flow-title">
         {title}
       </h1>
-      <StartSound compact />
+      {step === 'do' && <StartSound compact />}
 
       {step === 'what' && (
         <>

@@ -1,10 +1,15 @@
 {
   "name": "Carmen",
   "short_name": "Carmen",
-  "description": "Make music and learn the basics on piano and drums. Everything stays on this device.",
+  "description": "Make music and learn the basics on piano and drums.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#5b2e8c",
-  "theme_color": "#5b2e8c",
-  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+  "background_color": "#fffaf6",
+  "theme_color": "#9fb3e6",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
 }
