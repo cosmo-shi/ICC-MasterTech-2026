@@ -16,7 +16,8 @@ export function Logo({ size = 32, tile = false }: { size?: number; tile?: boolea
 export function Wordmark({ size = 30 }: { size?: number }) {
   return (
     <span className="wordmark" style={{ fontSize: size }}>
-      <Logo size={Math.round(size * 0.95)} />
+      {/* Sized in em so the whole lockup can shrink on a narrow screen without the mark and word drifting apart. */}
+      <span className="logo-mark" style={{ height: '0.95em', width: `${(0.95 * LOGO_ASPECT).toFixed(3)}em` }} aria-hidden="true" />
       <span className="wordmark-text">Carmen</span>
     </span>
   );

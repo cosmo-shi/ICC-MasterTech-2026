@@ -1435,7 +1435,9 @@ h2[tabindex='-1']:focus {
   .play .dock { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; width: 100%; }
   .play .dock > .rec { grid-column: 1 / -1; min-height: 44px; justify-content: center; }
   .play .dock > .tool { min-width: 0; min-height: 44px; padding: 2px; gap: 0; justify-content: center; }
-  .play .dock > .tool span { font-size: 0.75rem; }
+  .play .dock > .tool { flex-direction: column; }
+  .play .dock > .tool span { font-size: 0.75rem; line-height: 1.1; white-space: nowrap; }
+  .play .dock > .speed { grid-column: 1 / -1; }
   .play .dock .rec-dot { width: 26px; height: 26px; }
   .play .drum-view { margin: 0; width: 100%; }
   .play .drum-view .segment { flex: 1; min-height: 44px; }
@@ -1547,3 +1549,19 @@ button.gl-beat-btn { cursor: pointer; box-shadow: 0 3px 0 var(--hairline); }
 .lxt-search input:focus-visible { border-color: var(--ink); }
 .lxt-none { margin: 0; font-weight: var(--w-control); }
 .theory-before, .theory-next, .theory-lesson-note { margin: var(--s2) 0 0; color: var(--ink-soft); }
+
+/* Learn units in a narrow column (iPad landscape beside the rail): actions go under the words,
+   never squeeze the title one letter wide. */
+.lxa-list { container-type: inline-size; }
+.lxa-upnext { white-space: nowrap; }
+@container (max-width: 34rem) {
+  .lxa-item { grid-template-columns: minmax(0, 1fr); align-items: start; }
+}
+@media (min-width: 900px) and (max-width: 1199px) {
+  .lxa-unit { grid-template-columns: minmax(0, 1fr); }
+  .lxa-unit-head { position: static; grid-template-columns: auto minmax(0, 1fr); }
+}
+
+/* The welcome lockup never runs off a small phone (320 px): it scales with the screen width. */
+.entry-hero .wordmark { font-size: min(56px, 10.5vw) !important; max-width: 100%; }
+.entry-hero.small .wordmark { font-size: min(40px, 9vw) !important; }
