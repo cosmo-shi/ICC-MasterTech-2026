@@ -1,6 +1,7 @@
 -- Carmen teacher accounts: teachers, teaching spaces and memberships.
 -- Run in a Supabase project (SQL editor or `supabase db push`). See docs/SERVICES.md.
--- No child data is stored here: learner work stays on the learner's device.
+-- No child data is stored by this file. Class rosters and learning summaries (never audio) are
+-- added by 20261110120000_classes_and_evidence.sql, with the rules written there.
 --
 -- Rules enforced by the server, not the app:
 --   * A teacher can read and write only their own profile.
