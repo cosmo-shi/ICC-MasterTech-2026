@@ -32,15 +32,9 @@ export function MyClassSection() {
   const [error, setError] = useState('');
   const [leaving, setLeaving] = useState(false);
 
-  if (!classLink.configured)
-    return (
-      <section className="sheet-group" aria-labelledby="class-h">
-        <h3 id="class-h" className="group-h">
-          My class
-        </h3>
-        <p className="note-text">Joining a class isn’t set up for this copy of Carmen yet. Your work stays on this device.</p>
-      </section>
-    );
+  // No class service on this copy of Carmen: learners aren't shown a feature they can't use.
+  // (The Teacher area says plainly that school accounts and classes aren't set up.)
+  if (!classLink.configured) return null;
 
   return (
     <section className="sheet-group my-class" aria-labelledby="class-h">

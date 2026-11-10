@@ -38,6 +38,18 @@ The AI loop: the learner plays a phrase; deterministic code measures it; a small
 | Landscape | Supported, never forced. A dismissible portrait suggestion with the exact words "More room to play. Turn your phone sideways to make the keys wider and easier to reach. You can keep playing upright." |
 | Illustrations | No people or Band characters. A restrained musical composition and one icon set; decorative icons aria-hidden; no emoji as assets. |
 
+### Decisions from the improvement brief (momo, 10 Nov 2026, 08:14) — these win where they differ
+
+| Topic | Decision |
+|---|---|
+| Icons | One licensed family (Lucide, ISC) through one `Icon` component with fixed sizes. This replaces the hand-drawn "one geometry" icon set. Brand art, notation and instruments are separate. |
+| Feedback | One modal after each try: one observation, why it matters, one next step, one comparison, More help. Bottom sheet on phones, full screen in short landscape, centred dialog on desktop. This replaces the three-part card plus coach card, and the side panel. No "Carmen listened" or model badges for learners. |
+| Advice | Built from the expected events. "Keep the spaces the same" only for evenly spaced phrases. In free play Carmen asks about intention. |
+| Classes | A teacher's class can span devices: nickname roster, single-use learner codes, assignments, evidence summaries, a status board and a per-learner plan. Permissions are enforced in the database. **Pending momo:** whether learner evidence should sync at all (decision card, recommended yes with summaries only). Off wherever the service is not configured. |
+| What leaves a device | Nothing, unless the learner joins a class with a code: then attempt summaries only (docs/CLASSROOM.md). Audio never. |
+| Layout | `src/styles/system.css` owns hierarchy, spacing and dialogs; checked at 200% text and WCAG text spacing. |
+| Release | docs/RELEASE_CHECKLIST.md, docs/UAT_RECORD_TEMPLATE.md, docs/OPERATIONS.md (owners unassigned), docs/PILOT.md, docs/CURRICULUM_MATRIX.md (generated). |
+
 ## 3. Contradictions resolved on this branch
 
 | Topic | `main` SPEC (Miro) | Pack v2 | Used on `sc` | Why |

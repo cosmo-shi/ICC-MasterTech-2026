@@ -89,3 +89,23 @@ Audit of the `sc` build at `69ce33f` (same app source as `main` at `338508b`), r
 Journeys 1 to 6 are built as targeted above, with the changes noted (8-second Undo; microphone in
 lessons is taps only). Screens for each journey at phone, tablet, desktop, short landscape and larger
 text, in Day and Night, are in the delivery flow map. Phone checks still to run are in `docs/UAT.md`.
+
+## 8. A class across devices (10 Nov brief)
+
+Needs the school service (docs/SERVICES.md); otherwise each side says plainly that it isn't set up.
+
+| Step | Teacher's device | Learner's device |
+|---|---|---|
+| 1 | Teacher → Classes → New class → add learners by nickname | |
+| 2 | Get a code for each learner (6 characters, works once) | |
+| 3 | | Settings → My class → Join my class → type the code → "3B Music, as Ari · Up to date with your teacher" |
+| 4 | Assign an activity (preview, who, help that starts on, a line for learners) | Learn → From your teacher → the activity |
+| 5 | Board: Not started, then Practising | Plays it; one feedback dialog; the try waits on the device if offline |
+| 6 | Press the learner's name → what Carmen saw → change next activity, help, a skill judgement; add a private note → Save | |
+| 7 | | Next time online: Learn says "Your teacher picked this for you"; the lesson says "Your teacher set up some help", and it starts on |
+| 8 | If another teacher saved first: "Another teacher changed this plan"; their version is shown; save again | |
+
+Recovery: wrong or used code ("That code didn't work… each code works once"); offline ("Your work is
+safe here and will go to your teacher later"); teacher made a new code ("This device isn't linked
+any more" → Enter a new code); teacher's login ended ("Log in again", classes are safe); class
+removed or teacher left ("This class isn't available to you any more").

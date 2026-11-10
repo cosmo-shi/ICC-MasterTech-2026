@@ -1,13 +1,14 @@
 # Carmen services
 
-Carmen runs entirely in the browser. The only outside service is **teacher sign-in**, and it is
-optional. Learners never sign in, and no learner data or audio leaves the device.
+Carmen runs entirely in the browser unless a school switches on **teacher accounts and classes**.
+Learners never sign in. Audio never leaves the device. If a learner joins a teacher's class with a
+code, a short summary of each try is sent to that class (docs/CLASSROOM.md says exactly what).
 
 ## Status
 
 | Service | Needed for | Status |
 |---|---|---|
-| Supabase (Auth + Postgres with row-level security) | Teacher accounts and teaching spaces | **Blocked: not configured.** Code, SQL and tests are done; it needs a project and two env vars |
+| Supabase (Auth + Postgres with row-level security) | Teacher accounts, teaching spaces, classes and evidence sync | **Blocked: not configured.** Code, SQL and tests are done; database rules verified on a local Postgres. It needs a hosted project and two env vars |
 | Vercel | Hosting the preview and the live app | Working (team master-tech-2026) |
 | Anything else (analytics, fonts, CDNs, cloud audio) | Nothing | Not used, on purpose |
 
@@ -17,10 +18,13 @@ the device PIN, labelled "Device only. Not a school account." It never pretends 
 ## Setting up teacher accounts
 
 1. **Create a Supabase project** (Sydney region, `ap-southeast-2`, keeps data in Australia).
-2. **Run the SQL.** In the SQL editor, run `supabase/migrations/20261110000000_teacher_spaces.sql`
-   (or `supabase db push` with the CLI). It creates `teachers`, `teaching_spaces`, `space_members`
-   and `allowed_email_domains`, turns on row-level security, and adds the functions `my_spaces`,
-   `create_space` and `join_space`.
+2. **Run the SQL, in order.** In the SQL editor (or `supabase db push`):
+   `supabase/migrations/20261110000000_teacher_spaces.sql` (teachers, spaces, members, allowed
+   domains), then `supabase/migrations/20261110120000_classes_and_evidence.sql` (classes, roster,
+   seats, assignments, evidence, support plans, notes, retention). Both turn on row-level security.
+   Check first with `node tools/verify-db/run.mjs`.
+2a. **Schedule retention.** Database → Cron: daily `select public.purge_old_evidence();` (deletes
+   evidence older than 400 days). Nothing is purged until this is scheduled.
 3. **Allow school email domains.** Only listed domains can create an account. The match is exact,
    so list each domain the school uses:
    ```sql
@@ -51,14 +55,28 @@ design; what it can do is limited by the row-level security in the SQL.
 - Only the owner sees the join code.
 - Signing up from a domain not in `allowed_email_domains` is refused by a database trigger.
 
+- Classes, learners, evidence, plans and notes are visible only to teachers of that class and the
+  space owner. Learner devices reach only their own seat, through three functions. Full table in
+  docs/CLASSROOM.md.
+
 Verifying an email proves the person controls that address. It does not prove they teach a class;
 that is what the join code is for.
 
 ## How it was checked
 
-- Unit tests: `src/auth/teacherAuth.test.ts` (blocked when unconfigured, code request, verify,
-  refresh, refresh failure, sign-out, friendly errors).
-- `node tools/e2e-teacher.mjs` runs the whole page against a stand-in service on `localhost`.
-- **Not checked:** a real Supabase project, real emails, and the row-level security policies on a
-  live database. Do this before any school uses it: make two teacher accounts and confirm neither
-  can see the other's space without the code.
+| Check | Command | What it proves | What it does not |
+|---|---|---|---|
+| Unit tests | `npm test` (`src/auth`, `src/sync`) | Blocked when unconfigured, code request, verify, single renewal, sign-out, plain errors, outbox and statuses | Any server |
+| Sign-in page flow | `node tools/e2e-teacher.mjs` | The app's requests and steps, against intercepted calls | Any server |
+| Database rules | `node tools/verify-db/run.mjs` | Both migrations on real Postgres 16, run as PostgREST runs requests (role and JWT claims per transaction): 74 rules across signed-out, same-space, other-school, owner and learner-device callers | Supabase's own Auth, gateway, email, rate limits |
+| Two devices | `node tools/verify-db/server.mjs` + `node tools/e2e-classes.mjs` | The whole class workflow through the real app on two browser profiles, on real Postgres | A hosted project; real phones; real email |
+
+`tools/verify-db/server.mjs` is a **stand-in** for Supabase's sign-in and REST services in front of a
+real local Postgres. It prints sign-in codes instead of emailing them. It is for verification on
+one computer and must never be deployed.
+
+**Still to do on a hosted project before any school uses it:** apply both migrations; add the
+school's domains; switch on email codes; schedule the purge; set the two env vars; then run
+`BASE=<preview url> SVC=<project url> node tools/e2e-classes.mjs` adapted to real inboxes, and the
+two-device rows in `docs/UAT_RECORD_TEMPLATE.md` on real devices. Record the results in
+`docs/uat/`. Until then classes are unproven in production.

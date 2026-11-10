@@ -2,6 +2,63 @@
 
 Last updated 10 November 2026. Plain facts only: what runs, how it was checked, and what is still missing.
 
+## Added 10 November 2026 (improvement brief): where things stand
+
+Full audit with before and after: `docs/AUDIT-2026-11-10.md`. This section is the current truth;
+older sections below describe earlier work and some of their wording is superseded (icons are now
+Lucide; feedback is one dialog; "Grown-ups" is "Teacher").
+
+Checks run on `sc` today: `npm test` 225 pass; `npm run build` passes; `npm run lint` 0 errors
+(14 fast-refresh warnings); `node tools/e2e-touch.mjs` 11 of 11; `node tools/e2e-listen.mjs` all
+pass; `node tools/verify-db/run.mjs` 74 of 74; `node tools/e2e-classes.mjs` 15 of 15. Layout audit
+at 360, 390, 844×390, 820, 1180 and 1280 to 1536 wide, Day and Night, 150% and 200% text and WCAG
+text spacing: no clipped text, no controls off the edge, no sideways scroll after fixes. Auth and
+class-code fields stay visible when the visible area shrinks as an on-screen keyboard would
+(simulated by resizing; not a real keyboard).
+
+**Working**
+- One icon family (Lucide 1.62.0, ISC) through `src/ui/icons.tsx`; labels kept; record in ASSETS.md.
+- Layout system in `src/styles/system.css`: type roles, spacing tokens, one dialog component.
+- One feedback dialog after each try, the same in lessons and Use my instrument: one observation,
+  why it matters, one next step, one audible comparison, More help. Reopenable. Retry goes straight
+  back to playing. Free-play reflection is optional and asks about intention.
+- Feedback words built from the expected rhythm (`src/teach`), with tests for rests, unequal
+  rhythms, tempo drift, missing and extra sounds, unclear input.
+- Listening and recording states: denied, no input, quiet or unclear, MIDI unsupported, MIDI
+  unplugged, interrupted recording, storage failure, success.
+- Classes across devices (when the service is configured): teacher classes, roster with single-use
+  codes, assign with preview, status board, learner review (next activity, supports, skill
+  correction with version check, private notes); learner Join my class, offline outbox, From your
+  teacher, teacher's supports start on. Details: docs/CLASSROOM.md.
+
+**Draft**
+- All 21 activities and every feedback sentence: not reviewed by a primary music educator
+  (docs/CURRICULUM_MATRIX.md lists what needs review).
+- Board status thresholds ("may need support" after three clear misses, and so on).
+- Release checklist, UAT record template, operations owners (all unassigned), pilot measures.
+
+**Blocked (needs something outside the code)**
+- **Hosted Supabase project.** Accounts and classes are verified on a local Postgres with a stand-in
+  for sign-in and REST. Nothing has run on a hosted project, with real email, or with the purge
+  scheduled. The live preview has no service configured, so it shows accounts and classes as "not
+  set up" and offers the device-only PIN.
+- **Educator review** of content and wording.
+- **Owners** for operations, privacy, education and release (docs/OPERATIONS.md).
+- **Sponsor decisions** (docs/PILOT.md, 14 questions), including whether learner evidence should
+  sync to teachers at all for a first pilot.
+
+**Not checked (needs people or hardware)**
+- Any real phone, tablet or Chromebook since these changes; real microphones and rooms; USB MIDI;
+  audio latency; real multitouch. Desktop emulation is not proof.
+- A screen reader (VoiceOver, TalkBack, NVDA). Focus order and names were checked by script only.
+- A real on-screen keyboard over the sign-in and class-code fields.
+- Any session with learners or teachers.
+
+**Future (not built)**
+- School-admin console across several spaces, bulk roster import, audit log, making a second owner
+  from the app. Live push to the board (it polls every 20 s). Parent access.
+- Folding the remaining duplicated rules in `src/index.css` into the layout system.
+
 ## How it was checked
 
 | Check | Command | Result |

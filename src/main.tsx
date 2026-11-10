@@ -11,6 +11,15 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>,
 )
 
+// On-screen keyboards shrink the visible area without telling the page layout. When that happens
+// while a field has focus, bring the field (and the button under it) back into view.
+if (typeof window !== 'undefined' && window.visualViewport) {
+  window.visualViewport.addEventListener('resize', () => {
+    const el = document.activeElement
+    if (el instanceof HTMLElement && el.matches('input, textarea, select')) el.scrollIntoView({ block: 'center', behavior: 'auto' })
+  })
+}
+
 // Class link: does nothing until this device joins a class.
 startClassSync()
 

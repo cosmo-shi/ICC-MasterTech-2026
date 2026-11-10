@@ -641,3 +641,17 @@ dialog.dlg::backdrop {
 .student-review > .dash-block {
   margin-top: var(--gap-group);
 }
+.ft-list,
+.class-list,
+.roster,
+.evidence-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+/* Headings take focus when a step changes so they are read first; they are not controls. */
+h1[tabindex='-1']:focus,
+h2[tabindex='-1']:focus {
+  outline: none;
+  box-shadow: none;
+}

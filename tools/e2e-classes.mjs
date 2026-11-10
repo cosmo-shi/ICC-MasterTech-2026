@@ -210,6 +210,7 @@ await step('two teachers editing at once: the later save is stopped and shown th
   await t2.getByRole('button', { name: 'Save for Ari' }).click();
   await t2.getByText('Another teacher changed this plan').waitFor();
   if ((await t2.getByRole('combobox', { name: 'Next activity' }).inputValue()) !== 'L03') throw new Error('newer plan not shown');
+  await t2.getByText('Another teacher changed this plan').scrollIntoViewIfNeeded();
   await shot(t2, 'c9-teacher-conflict');
   await t2.close();
 });

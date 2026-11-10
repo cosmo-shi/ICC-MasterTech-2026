@@ -21,14 +21,15 @@ Pure logic (music, checker, ai, verifier) lives in plain TS under `src/music`, `
 - Keyboard (sampled piano) and drums (sampled percussion) only. No guitar/wind tiles. Guitar listening stays hidden until checked with real guitars.
 - No camera, ever. Microphone only as optional input ("Use my instrument", momo 10 Nov): asked for after the learner presses it, visible Listening state with Stop, stops on leave/hide, on-device only, no cloud fallback, audio kept only on Record and only on the device, never used for training. See `docs/LISTENING.md`.
 - No learner accounts. Teacher accounts only (Supabase Auth + RLS in `supabase/`, env `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`; see `docs/SERVICES.md`); if unconfigured, show it as blocked, never simulate. The PIN is device-only and must be labelled so. No service keys or secrets in the frontend.
-- No analytics, no learner data or audio uploaded, no external fonts or CDNs at runtime.
+- No analytics, no audio uploaded ever, no external fonts or CDNs at runtime. Learner data stays on the device unless the learner joins a teacher's class with a code (10 Nov brief; momo's go-ahead on the sync decision still pending): then only attempt summaries from `src/sync/evidence.ts` are sent, to that class. Never audio, raw inputs, pieces, reflections or the local player name. See `docs/CLASSROOM.md`; any change to what is sent needs momo.
+- Classes: permissions live in the database (`supabase/migrations`), never only in the app. Run `node tools/verify-db/run.mjs` after any SQL change. `tools/verify-db/server.mjs` is a local stand-in, never a deployment.
 - No streaks, timers, rankings, ads, purchases, generic praise. Badges off by default.
 - Teacher Mode is real and local. No mock or "demo data" screens.
 
 ## AI honesty
 - The on-device model is a small MLP trained on seeded synthetic attempts. It describes timing patterns; it does not diagnose, read emotion or judge creativity.
 - The model picks from approved plan IDs only. The verifier checks every reply before it plays.
-- Learners see "Carmen listened" (or "heard your timing") only when the model actually ran; otherwise "A tip". No AI badges. Grown-ups shows the full provenance ("AI coach" vs "Coach tips").
+- Learners see no AI, model or "Carmen listened" labels (removed 10 Nov). Microphone input is worded as an estimate ("It sounded like", "Carmen heard"). The Teacher area shows the full provenance ("AI coach" vs "Coach tips").
 - Never claim educational effectiveness, curriculum certification, educator approval or "first/only".
 - Report metrics from `docs/MODEL_CARD.md`; regenerate them with `npm run train`, never hand-edit numbers.
 
@@ -49,7 +50,11 @@ Pure logic (music, checker, ai, verifier) lives in plain TS under `src/music`, `
 - Colour has roles (tokens in `src/styles/tokens.css`): sky/hills = environment only; paper/ink = reading and playing; sun (coral) = "now" (main action, pressed key, current beat); record = recording only; dusk (periwinkle) = where you are; good/near/miss = feedback, always with words and a shape; track hues: Rhythm basics coral, Piano periwinkle, Drums sky, Create orchid.
 - Type: Nunito only (self-hosted, OFL). Roles by weight: 900 wordmark/titles/big feedback, 800 headings, 700 controls, 500 body.
 - Shape/space/elevation: 4-pt spacing (`--s1`…`--s7`), radii 10/16/28. Only playable things (keys, pads, Record) have a physical edge. Group by space and hairlines, not boxes, outlines or heavy shadows. The instrument sits in a dark case, centred, and is the biggest thing on Play.
-- Brand mark: note-head sun over two curved stave lines (`Logo`, `Wordmark`, `public/favicon.svg`, PNG icons from `tools/make-icons.mjs`). No people or Band characters (removed 10 Nov). Icons, the mark, the `Horizon` scene and `WelcomeArt` share one geometry: 24 grid, 2-unit round strokes, the tilted note head as the one filled motif. Keep familiar action icons (play, undo, stop, gear).
+- Brand mark: note-head sun over two curved stave lines (`Logo`, `Wordmark`, `public/favicon.svg`, PNG icons from `tools/make-icons.mjs`). No people or Band characters (removed 10 Nov). Brand art (`src/ui/brand.tsx`) is separate from interface icons.
+- Interface icons: Lucide only (pinned, ISC, recorded in ASSETS.md), always through `Icon` in `src/ui/icons.tsx` with sizes 16/20/24/32/48 and `currentColor`. No hand-drawn icons, emoji or text symbols as icons. Every icon that carries meaning has words beside it. Notation, instruments and brand art are not icons.
+- Layout system: `src/styles/system.css` owns type roles, spacing tokens (`--gutter`, `--pad-sheet`, `--gap-related`, `--gap-group`) and dialogs. Fix layout there, not with one-off patches in `index.css`.
+- Feedback after a try is one modal (`FeedbackSheet` on `Dialog`): one observation, why, one next step, one comparison, More help. Bottom sheet on phones, full screen in short landscape, centred dialog on desktop, never a side panel. No "Carmen listened" or model-versus-rules badges for learners.
+- Feedback words come from `src/teach` and are grounded in the expected events. Never advise "make every space the same" unless the phrase is evenly spaced with no rests. In free play the beat is a guess: ask about intention.
 - Phone: bottom tabs Play / Learn / My music, settings (incl. Day/Night/Same as device) behind the gear; short landscape uses a side rail. Landscape is suggested, never forced (exact text in SPEC.md). Desktop ≥900 px: sidebar on the landscape, Teacher after a divider.
 - First screen: "Just play", "Start learning", "I'm a teacher". No name needed to play; a name is optional at save.
 - Learn: instrument → concept units → steps; "Carry on" apart from "Next on <instrument>".
@@ -65,5 +70,5 @@ Pure logic (music, checker, ai, verifier) lives in plain TS under `src/music`, `
 ## Checking work
 - Run `npm test`, `npm run build`, `npm run lint` before calling a milestone done.
 - Use Playwright to screenshot 360 px and 1280 px and check the console. Playwright cannot judge audio latency, real microphones or real multitouch; say so.
-- `node tools/e2e-touch.mjs` (touch), `node tools/e2e-listen.mjs <piano.wav> <taps.wav>` (fake microphone), `node tools/e2e-teacher.mjs` (stand-in sign-in service), `node tools/bench-listen/run.mjs` (listening benchmark). iPhone/Android checks are in `docs/UAT.md`.
+- `node tools/e2e-touch.mjs` (touch), `node tools/e2e-listen.mjs <piano.wav> <taps.wav>` (fake microphone), `node tools/e2e-teacher.mjs` (stand-in sign-in service), `node tools/verify-db/run.mjs` (database rules on real Postgres), `node tools/e2e-classes.mjs` (two-device class scenario; see its header), `node tools/bench-listen/run.mjs` (listening benchmark). Before a release: `docs/RELEASE_CHECKLIST.md`. iPhone/Android checks are in `docs/UAT.md`.
 - Update `docs/STATUS.md` honestly: working / draft / blocked / future.
