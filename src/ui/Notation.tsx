@@ -181,7 +181,7 @@ export function Notation({ phrase, activeIndex, marks, onNoteTap }: Props) {
       {phrase.instrument === 'drums' && (
         <p className="drum-key">
           {drumSoundsIn(phrase)
-            .map((d) => `${PADS.find((p) => p.sound === d)?.name ?? d}: ${DRUM_STAVE[d].where}`)
+            .map((d) => `${PADS.find((p) => p.sound === d)?.name ?? (d === 'clave' ? 'Click' : d)}: ${DRUM_STAVE[d].where}`)
             .join(' · ')}
         </p>
       )}

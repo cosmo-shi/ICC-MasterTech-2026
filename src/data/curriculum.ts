@@ -76,7 +76,7 @@ export const ACTIVITIES: Activity[] = [
   A({ id: 'D03', kind: 'lesson', track: 'drums', learn: 'Play a short tom pattern that ends on the crash cymbal.', instrument: 'drums', controls: { drums: 'Toms, snare, cymbal' }, level: 4, reading: 'symbols', input: 'tap', prerequisites: ['D02'] }),
 
   // Create.
-  A({ id: 'L09', kind: 'lesson', track: 'create', learn: 'Hear a short idea, then make up your own answer.', instrument: 'either', controls: { drums: 'Drums and Record', keyboard: 'Keys and Record' }, level: 2, reading: 'none', input: 'make', crossInstrument: true, prerequisites: [] }),
+  A({ id: 'L09', kind: 'lesson', track: 'create', learn: 'Listen to a short phrase. Create an answer using notes of your own.', instrument: 'either', controls: { drums: 'Drums and Record', keyboard: 'Keys and Record' }, level: 2, reading: 'none', input: 'make', crossInstrument: true, prerequisites: [] }),
   A({ id: 'P56_FORM_AND_TEXTURE', kind: 'project', track: 'create', learn: 'Make two different sections and put them in order.', instrument: 'either', controls: { drums: 'Drums and Record', keyboard: 'Keys and Record' }, level: 3, reading: 'symbols', input: 'make', crossInstrument: true, prerequisites: ['L03'] }),
   A({ id: 'OLDER_EXTENSION', kind: 'project', track: 'create', learn: 'Add another part and hear how it changes your piece.', instrument: 'either', controls: { drums: 'Drums and Record', keyboard: 'Keys and Record' }, level: 4, reading: 'stave', input: 'make', crossInstrument: true, prerequisites: ['L08'] }),
 ];
