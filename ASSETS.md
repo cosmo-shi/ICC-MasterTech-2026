@@ -83,17 +83,23 @@ All SIL OFL 1.1, from Fontsource 5.3.0 (`@fontsource-variable/*`, latin `wght` s
 
 - `src/ai/model.weights.json`: trained by this project from seeded synthetic data (`npm run train`). See `docs/MODEL_CARD.md`.
 
-## App icons (this project's own work, 10 Nov 2026)
+## Brand and app icons (approved logo supplied by momo, 11 Nov 2026)
 
-The mark (a note-head sun over two curved stave lines) on the Soft Light sky. Drawn for Carmen; no third-party artwork. PNGs are rendered from the same SVG by `node tools/make-icons.mjs`.
+The Carmen music logo ("2026 ICC MasterTech - Carmen Music Logo (3).png") was supplied by the product owner (momo) for this project. It is the team's own artwork; it is not openly licensed. The original is kept unchanged. The app copy is cropped to the artwork (transparent padding only removed) and scaled down; it is not redrawn or traced. In the app it is used as a CSS mask so it takes the theme's ink colour. App icons put the unchanged white mark on a deep-ink tile, rendered by `node tools/make-icons.mjs`.
 
-| File | SHA-256 |
-|---|---|
-| `public/favicon.svg` | `8c05164fdee1cf2db44bef1a22a3f7b776781323cc8dcd064a4bf10288f5b8c7` |
-| `public/icons/apple-touch-icon.png` | `25f6f3cfa486cc7352fd73fd03e657ecb5d44ae97ecfba5308157891db60e13e` |
-| `public/icons/icon-192.png` | `27d6e518709db190b94d88c6702cce1e5087e88b6757b621e131fabe4954f0ea` |
-| `public/icons/icon-512.png` | `f9d527097f8dcfc8840a11ac896f246bf517f5649e02f954d3da5d4b6966e2a5` |
-| `public/icons/icon-maskable-512.png` | `9132bfdb7cec541d89679e4626d5612245f1d0175797f87b5bc123d00c6b60d4` |
+| File | Made from | SHA-256 |
+|---|---|---|
+| `docs/brand/carmen-music-logo-original.png` | the supplied file, unchanged (2000 × 2000, transparent) | `29b78f37344124ce7d0df27eaeacb9205fbe429582b2b7d3166a4f41758627d1` |
+| `docs/brand/carmen-mark-cropped-full.png` | crop to x 186–1868, y 658–1466 (16 px margin), lossless | `8b2cca1454bf7b508ba056bb242fff6478785791d3bc1a8e0456c091f440efa9` |
+| `public/brand/carmen-mark.png` | the crop scaled to 480 × 231 (Lanczos) | `fcace986e53343b1d3aa7f4054b9cd87301d7dc776c53bc0dd2b8a6b5e039d84` |
+| `public/favicon.svg` | ink tile + embedded copy of the mark | `21558b4c10b2634a1aca04a3e7815f5e81efd08f8833976e773943f38caedd34` |
+| `public/icons/favicon-32.png` | ink tile + mark | `80c67d5a37c0fb01faea68279ec4d3cc1705059a8654227d5beb2271c33f2560` |
+| `public/icons/apple-touch-icon.png` | ink tile + mark | `7613505759992437cbd9761dce2f23aff80f51073ada2032fd06bbf320354942` |
+| `public/icons/icon-192.png` | ink tile + mark | `ed807c19709b59833c331dbd9aaf73a6f34ec7a4e031ebebbe7bf418c748bd32` |
+| `public/icons/icon-512.png` | ink tile + mark | `4fef95dec5800cbec57751ef947cf0137d58c03054f4ee9862c9c48ef84aaa4c` |
+| `public/icons/icon-maskable-512.png` | ink tile + mark, inside the maskable safe zone | `f7c1d1ba40cb7ebd874905224907ba749240eb0a875a6c2844d394ce6dd5aba5` |
+
+The earlier drawn mark (a note-head sun over two stave lines, 10 Nov) is retired; these files replace it.
 
 ## Listening (no third-party code or data in the app)
 

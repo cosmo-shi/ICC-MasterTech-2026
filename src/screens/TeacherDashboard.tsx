@@ -310,7 +310,7 @@ export function ChildView({ childId, setChild }: { childId: string | null; setCh
   const [confirmRemove, setConfirmRemove] = useState(false);
   const player = usePlayer();
   const setOverride = (o: TeacherOverrides) => c && teacherOverrides.set(c.player.id, o);
-  if (!c) return <p className="note-text">No players on this device yet.</p>;
+  if (!c) return <p className="note-text">No learners on this device yet.</p>;
 
   const addNote = async () => {
     if (!note.trim()) return;
@@ -341,7 +341,7 @@ export function ChildView({ childId, setChild }: { childId: string | null; setCh
 
   return (
     <div className="dash child">
-      <div className="chips child-pick" role="radiogroup" aria-label="Choose a player">
+      <div className="chips child-pick" role="radiogroup" aria-label="Choose a learner">
         {children.map((x) => (
           <button key={x.player.id} type="button" role="radio" aria-checked={x.player.id === c.player.id} className="chip chip-who" onClick={() => setChild(x.player.id)}>
             <Avatar player={x.player} size={28} /> {x.player.name}
@@ -543,7 +543,7 @@ export function ChildView({ childId, setChild }: { childId: string | null; setCh
 
       <section className="dash-block" aria-labelledby="cm-h">
         <h3 id="cm-h" className="h3">
-          Manage player
+          Manage learner
         </h3>
         <div className="row wrap">
           {rename === null ? (
@@ -575,7 +575,7 @@ export function ChildView({ childId, setChild }: { childId: string | null; setCh
             </>
           ) : (
             <button type="button" className="btn-quiet" onClick={() => setConfirmRemove(true)}>
-              Remove player
+              Remove learner
             </button>
           )}
         </div>

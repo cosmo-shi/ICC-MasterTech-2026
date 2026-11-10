@@ -55,8 +55,8 @@ describe('feedback for one attempt: one observation, why, one next step', () => 
     const tune = phrase([60, 62, 64].map((m, i) => ({ id: `n${i}`, kind: 'note' as const, onset: i * TPQ, duration: TPQ, midi: m, velocity: 0.7 })), 'keyboard');
     const untimed: Assessment = { ...timed, mode: 'pitch-sequence', checkPitch: true, checkTiming: false };
     const f = feedback(tune, [60, 62, 65].map((m, i) => ({ id: `i${i}`, onsetMs: i * 1000, midi: m, source: 'pointer' as const })), untimed);
-    expect(f.title).toBe('The note was E');
-    expect(f.observed).toBe('Note 3 was E. You played F.');
+    expect(f.title).toBe('Note 3 is E');
+    expect(f.observed).toBe('You played F for note 3, but this phrase uses E.');
     expect(f.why).toMatch(/E is the next note lower than F/);
     // Paired comparison: the two notes can be heard and seen side by side.
     expect(f.pairs).toEqual([{ index: 2, expected: 64, played: 65 }]);
@@ -113,7 +113,7 @@ describe('several wrong notes in one attempt', () => {
     const untimed: Assessment = { ...timed, mode: 'pitch-sequence', checkPitch: true, checkTiming: false };
     const f = feedback(tune, [60, 65, 67, 60].map((m, i) => ({ id: `i${i}`, onsetMs: i * 1000, midi: m, source: 'pointer' as const })), untimed);
     expect(f.title).toBe('Notes 2 and 3 were wrong');
-    expect(f.observed).toBe('Note 2 was D. You played F. Note 3 was E. You played G.');
+    expect(f.observed).toBe('You played F for note 2, but this phrase uses D. You played G for note 3, but this phrase uses E.');
     expect(f.pairs?.map((p) => p.index)).toEqual([1, 2]);
     expect(f.nextLabel).toBe('Start from note 2');
   });
