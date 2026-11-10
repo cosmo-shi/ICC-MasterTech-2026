@@ -29,12 +29,12 @@ export interface SkillInfo {
 }
 
 export const SKILLS: SkillInfo[] = [
-  { id: 'pulse', name: 'Keeping the beat', teacher: 'Sounds land within the on-time window of the beat', theory: 'pulse' },
+  { id: 'pulse', name: 'Pulse', teacher: 'Sounds land within the on-time window of the beat', theory: 'pulse' },
   { id: 'rests', name: 'Rests', teacher: 'No sound during written rests', theory: 'rests' },
-  { id: 'subdivision', name: 'Two sounds in a beat', teacher: 'Quaver pairs land on time against the beat', theory: 'quavers' },
-  { id: 'pitch', name: 'The right notes', teacher: 'Every expected key was played (untimed tasks have no timing penalty)', theory: 'note-names' },
-  { id: 'reading', name: 'Reading notes', teacher: 'Right keys when the task is read from the stave', theory: 'stave' },
-  { id: 'duration', name: 'Holding notes', teacher: 'Notes held for their written length', theory: 'note-values' },
+  { id: 'subdivision', name: 'Subdivision', teacher: 'Quaver pairs land on time against the beat', theory: 'quavers' },
+  { id: 'pitch', name: 'Pitch accuracy', teacher: 'Every expected key was played (untimed tasks have no timing penalty)', theory: 'note-names' },
+  { id: 'reading', name: 'Notation reading', teacher: 'Right keys when the task is read from the stave', theory: 'stave' },
+  { id: 'duration', name: 'Note duration', teacher: 'Notes held for their written length', theory: 'note-values' },
 ];
 export const skillById = (id: SkillId) => SKILLS.find((s) => s.id === id)!;
 
@@ -197,8 +197,8 @@ export function suggestGroups(byChild: { id: string; estimates: SkillEstimate[] 
 
 /** Teacher words for a band. Never a percentage or a diagnosis. */
 export const BAND_WORDS: Record<Band, string> = {
-  new: 'Not enough tries yet',
+  new: 'Limited evidence',
   growing: 'Still learning',
-  nearly: 'Nearly there',
+  nearly: 'Almost secure',
   secure: 'Secure on their own',
 };

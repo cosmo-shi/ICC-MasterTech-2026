@@ -15,10 +15,17 @@ Status: **Fixed** (changed and re-checked), **Already fixed** (in the video, not
 | CNT-01 (new) | 0:29–0:30 | Count-in | Count-in shown as 4 3 2 1 | Any timed lesson | `BeatDots` counted down during count-in | Counts 1 2 3 4, as musicians count in | — | — | — |
 | UX-01 | 0:01–0:02 | First run | Asks for a name and a starting level before any sound | — | Older onboarding | **Already fixed**: first screen is Just play / Start learning / I'm a teacher; no name needed to play | — | — | — |
 | UX-02 | 0:04, 0:28 | Play, lesson | Small labels and targets; drum kit tiny in a lesson | 320×568 Play; L01 try in portrait | Fixed chrome heights pushed the keys under the tab bar; help chips squeezed the kit | Small phones: shorter stave, one-row sound button, compact Record; lesson kit keeps 260 px | e2e-video-qa (keys above the tab bar at 320×568) | `docs/video-qa/` | Text-size pass not done for every screen |
-| UX-03 | 0:38–0:44 | Teacher | Narrow, dense columns; "players", "tries", "Who might like a hand"; "Still learning" from 3 tries | Teacher area | Older wording and layout | Proposal on the review branch only (see `docs/REDESIGN_REVIEW.md`) | — | — | Not merged until momo approves |
+| UX-03 | 0:38–0:44 | Teacher | Narrow, dense columns; "players", "tries", "Who might like a hand"; "Still learning" from 3 tries | Teacher area | Older wording and layout | Wording from the brief's language table applied (Practice attempts, Review recommended, Pulse, Pitch accuracy, Limited evidence, "No practice recorded yet.") | `npm test` | — | Layout rebuild (tabs, sticky column, phone list) waits for momo |
 | AUD-01 | — | Keys and pads | Sample mapping and multitouch | — | — | Not changed. Chromium touch check passes (`tools/e2e-touch.mjs`, 11/11) | e2e-touch | — | **Unconfirmed** on a real iPhone or Android |
 | DATA-01 | 0:25–0:27 | Feedback during rotation | Rotate, back or retry must not save twice or mislabel help | Rotation in Chromium does not remount the lesson | — | L05 saves at most one record per try (guard on the try id); "With help" is set from hints, slower and the example | — | — | **Unconfirmed** on a real device |
 | NEW-01 | — | Entry, landscape | Bird drawings overlap the tagline at 844×390 | Entry screen landscape | Brand art position | Open | — | — | Cosmetic |
+
+## Lesson copy (brief's table)
+
+All 21 titles and descriptions now match the brief; IDs are unchanged; "Music words" is now "Music theory". Two activities do not match their new description:
+
+- **D01** "bass drum on 1 and 3, snare on 2 and 4": the on-your-own pattern adds extra bass drum quavers (beats 3½ and 7½).
+- **D02** "steady quavers on the hi-hat": the hi-hat stops where the snare plays, and the on-your-own pattern swaps hi-hats for bass drum. A real rock hi-hat keeps going under the snare.
 
 ## Not from the video, found while checking
 

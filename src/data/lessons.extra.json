@@ -10,7 +10,7 @@
    ],
    "contentNotes": "Original Carmen draft activity.",
    "id": "D01",
-   "title": "Bass drum and snare",
+   "title": "Rock beat: bass drum and snare",
    "goal": "Drum kit",
    "objective": "Play a basic rock beat: bass drum on beats 1 and 3, snare on beats 2 and 4.",
    "prerequisites": [
@@ -230,7 +230,7 @@
    ],
    "contentNotes": "Original Carmen draft activity.",
    "id": "D02",
-   "title": "Keep time on the hi-hat",
+   "title": "Quaver hi-hat patterns",
    "goal": "Drum kit",
    "objective": "Play steady quavers on the hi-hat with the snare on beats 2 and 4.",
    "prerequisites": [
@@ -435,7 +435,7 @@
    ],
    "contentNotes": "Original Carmen draft activity.",
    "id": "D03",
-   "title": "Play a drum fill",
+   "title": "Introduction to drum fills",
    "goal": "Drum kit",
    "objective": "Play a one-bar fill moving from high tom to low tom, ending on the cymbal.",
    "prerequisites": [
@@ -623,7 +623,7 @@
    ],
    "contentNotes": "Original Carmen draft activity.",
    "id": "P01",
-   "title": "Five notes, C to G",
+   "title": "Piano patterns: C to G",
    "goal": "Keyboard",
    "objective": "Play the five notes C D E F G up and back down, one finger on each key.",
    "prerequisites": [
@@ -905,7 +905,7 @@
    ],
    "contentNotes": "Original Carmen draft activity.",
    "id": "P02",
-   "title": "Steps and skips",
+   "title": "Melodic steps and skips",
    "goal": "Keyboard",
    "objective": "Tell steps (next key) from skips (missing one key) and play C E G.",
    "prerequisites": [
@@ -1144,7 +1144,7 @@
    ],
    "contentNotes": "Original Carmen draft activity.",
    "id": "P03",
-   "title": "Low notes, bass clef",
+   "title": "Reading the bass clef",
    "goal": "Keyboard",
    "objective": "Read and play a short low melody on the bass clef stave (C3 to G3).",
    "prerequisites": [

@@ -101,7 +101,7 @@ export function LessonSummary({ lessonId, go }: { lessonId: string; go: (r: stri
               </button>
               {theory && (
                 <button type="button" className="chip" onClick={() => go(`#/theory/${theory}`)}>
-                  <Icon name="notes" size={16} /> Music words
+                  <Icon name="notes" size={16} /> Music theory
                 </button>
               )}
             </div>

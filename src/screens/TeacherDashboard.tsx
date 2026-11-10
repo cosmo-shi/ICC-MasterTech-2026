@@ -113,25 +113,25 @@ export function ClassView({ openChild }: { openChild: (id: string) => void }) {
     <div className="dash">
       <ul className="dash-stats" aria-label="This device">
         <li>
-          <span className="stat-n">{children.length}</span> players
+          <span className="stat-n">{children.length}</span> learners
         </li>
         <li>
-          <span className="stat-n">{active}</span> played this week
+          <span className="stat-n">{active}</span> active learners this week
         </li>
         <li>
-          <span className="stat-n">{children.reduce((n, c) => n + c.attempts.length, 0)}</span> tries
+          <span className="stat-n">{children.reduce((n, c) => n + c.attempts.length, 0)}</span> practice attempts
         </li>
         <li>
-          <span className="stat-n">{children.reduce((n, c) => n + c.pieces.length, 0)}</span> pieces made
+          <span className="stat-n">{children.reduce((n, c) => n + c.pieces.length, 0)}</span> compositions
         </li>
       </ul>
 
       <section className="dash-block" aria-labelledby="hand-h">
         <h2 id="hand-h" className="h2">
-          Who might like a hand
+          Review recommended
         </h2>
         {stuck.length === 0 ? (
-          <p className="note-text">No one looks stuck right now. A child appears here when the model has two or more tries showing a skill still needs practice.</p>
+          <p className="note-text">No review needed right now. A learner appears here when two or more practice attempts show a skill still needs practice.</p>
         ) : (
           <ul className="hand-list">
             {stuck.map(({ c, n }) => (
@@ -156,7 +156,7 @@ export function ClassView({ openChild }: { openChild: (id: string) => void }) {
 
       <section className="dash-block" aria-labelledby="groups-h">
         <h2 id="groups-h" className="h2">
-          Could practise together
+          Suggested practice groups
         </h2>
         {groups.length === 0 ? (
           <p className="note-text">Groups appear when two or more children are working on the same skill.</p>
@@ -181,7 +181,7 @@ export function ClassView({ openChild }: { openChild: (id: string) => void }) {
 
       <section className="dash-block" aria-labelledby="grid-h">
         <h2 id="grid-h" className="h2">
-          Skills across the class
+          Skill progress
         </h2>
         <p className="note-text">
           <BandDot b="new" /> not enough tries yet · <BandDot b="growing" /> still learning · <BandDot b="nearly" /> nearly there · <BandDot b="secure" /> secure on their own. Bands come from the evidence, not a score. Select a name to see the tries behind them and to change them.
@@ -322,7 +322,11 @@ export function ChildView({ childId, setChild }: { childId: string | null; setCh
         <h3 id="cs-h" className="h3">
           Skills: evidence and your review
         </h3>
-        <p className="note-text">Known facts are the tries listed. The band is the model’s estimate from them; you can override it, and your choice changes what {c.player.name} is offered.</p>
+        <p className="note-text">Progress is estimated from recorded practice. Review a student’s work before changing their learning plan.</p>
+        <details className="how-estimated">
+          <summary>How progress is estimated</summary>
+          <p className="note-text">Each practice attempt records what was played against the written music. A small statistical model on this device turns those attempts into a band for each skill. Attempts with help, slower or with unclear input count for less, or not at all. You can override any band, and your choice changes what {c.player.name} is offered next.</p>
+        </details>
         <ul className="skill-rows">
           {SKILLS.map((s) => {
             const e = c.estimates.find((x) => x.skill === s.id)!;
@@ -410,7 +414,7 @@ export function ChildView({ childId, setChild }: { childId: string | null; setCh
           Recent tries
         </h3>
         {c.attempts.length === 0 ? (
-          <p className="note-text">No tries yet.</p>
+          <p className="note-text">No practice recorded yet.</p>
         ) : (
           <div className="table-wrap" tabIndex={0} role="region" aria-label="Recent tries">
             <table className="evidence">
@@ -527,7 +531,7 @@ function ModelTrace({ c }: { c: ChildLearning }) {
         How the model used {c.player.name}’s tries
       </h3>
       {recent.length === 0 ? (
-        <p className="note-text">No tries yet.</p>
+        <p className="note-text">No practice recorded yet.</p>
       ) : (
         <div className="table-wrap" tabIndex={0} role="region" aria-label="Model trace (scrolls sideways)">
           <table className="evidence trace">

@@ -28,7 +28,7 @@ export function LearnTabs({ at, go }: { at: 'path' | 'theory'; go: (r: string) =
         <Icon name="learn" size={20} /> Pathway
       </button>
       <button type="button" role="tab" aria-selected={at === 'theory'} className="segment" onClick={() => go('#/theory')}>
-        <Icon name="notes" size={20} /> Music words
+        <Icon name="notes" size={20} /> Music theory
       </button>
     </div>
   );

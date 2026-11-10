@@ -92,7 +92,7 @@ const ICONS = {
   saved: Save,
   empty: ListMusic,
   grownups: GraduationCap, // Teacher
-  notes: Library, // Music words (the theory library)
+  notes: Library, // Music theory (the theory library)
   // Actions
   gear: Settings,
   stop: Square,

@@ -25,7 +25,7 @@ function Example({ ex }: { ex: TheoryExample }) {
   );
 }
 
-/** Music words: every topic has words, notation and sound from the same event list. */
+/** Music theory: every topic has words, notation and sound from the same event list. */
 export function TheoryScreen({ topicId, go }: { topicId?: string; go: (r: string) => void }) {
   const topic = topicId ? topicById(topicId) : undefined;
 
@@ -35,7 +35,7 @@ export function TheoryScreen({ topicId, go }: { topicId?: string; go: (r: string
       <div className="screen theory">
         <nav className="crumbs" aria-label="Breadcrumb">
           <button type="button" className="link" onClick={() => go('#/theory')}>
-            <Icon name="back" size={20} /> Music words
+            <Icon name="back" size={20} /> Music theory
           </button>
         </nav>
         <p className="kicker">{topic.group}</p>

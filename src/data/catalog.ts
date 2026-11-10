@@ -41,11 +41,11 @@ export interface Mission {
 }
 
 const MISSION_TITLES: Record<string, string> = {
-  F_SOUND_STORY: 'Loud and soft sound story',
-  P12_RHYTHMIC_CONVERSATION: 'Rhythm conversation',
-  P34_MELODIC_REPLY: 'Melody reply',
-  P56_FORM_AND_TEXTURE: 'Build a piece: A and B',
-  OLDER_EXTENSION: 'Arrange with a partner part',
+  F_SOUND_STORY: 'Dynamics: a sound story',
+  P12_RHYTHMIC_CONVERSATION: 'Rhythm call and response',
+  P34_MELODIC_REPLY: 'Melodic call and response',
+  P56_FORM_AND_TEXTURE: 'Musical form: A and B',
+  OLDER_EXTENSION: 'Arranging a second part',
 };
 
 export const MISSIONS: Mission[] = plan.missions.map((m) => ({
@@ -137,20 +137,20 @@ export const pathwayById = (id: PathwayId | null) => PATHWAYS.find((p) => p.id =
 
 /** One short, learner-facing line per activity. The formal objective stays in Grown-ups. */
 const BLURBS: Record<string, string> = {
-  L00: 'Make a sound, change it, stop it.',
-  L01: 'Tap a steady beat.',
-  L02: 'Play, then leave a quiet gap.',
-  L03: 'One sound or two in each beat.',
-  L04: 'Is the next note higher or lower?',
-  L05: 'Find C, D and E on the keys.',
-  L06: 'Read three notes and play them.',
-  L07: 'Hold a note for longer.',
-  L08: 'Read two bars with a rest.',
-  L09: 'Make up an answer to a tune.',
-  F_SOUND_STORY: 'Tell a story with loud and soft.',
-  P12_RHYTHMIC_CONVERSATION: 'Swap rhythms with a partner.',
-  P34_MELODIC_REPLY: 'Play a tune. Carmen answers higher or lower.',
-  P56_FORM_AND_TEXTURE: 'Make part A and part B, then pick the order.',
-  OLDER_EXTENSION: 'Add a partner part and decide what works.',
+  L00: 'Sound and silence',
+  L01: 'Steady beat',
+  L02: 'Crotchet rests',
+  L03: 'Crotchets and quavers',
+  L04: 'Pitch: high and low',
+  L05: 'Keyboard notes: C, D and E',
+  L06: 'Treble clef: C, D and E',
+  L07: 'Minims and crotchets',
+  L08: 'Reading notes and rests',
+  L09: 'Compose a musical response',
+  F_SOUND_STORY: 'Dynamics: a sound story',
+  P12_RHYTHMIC_CONVERSATION: 'Rhythm call and response',
+  P34_MELODIC_REPLY: 'Melodic call and response',
+  P56_FORM_AND_TEXTURE: 'Musical form: A and B',
+  OLDER_EXTENSION: 'Arranging a second part',
 };
 export const blurb = (id: string, fallback: string) => BLURBS[id] ?? fallback;
