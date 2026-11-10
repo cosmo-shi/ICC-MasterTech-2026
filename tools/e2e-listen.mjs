@@ -37,7 +37,7 @@ await run(pianoWav, async (page) => {
   await page.getByRole('button', { name: /Play it/ }).click();
   const fb = await page.locator('.fb-what').textContent({ timeout: 10000 }).catch(() => '');
   ok(/That was C/.test(fb ?? ''), `note feedback: "${fb}"`);
-  await page.screenshot({ path: process.env.SHOT_DIR ? `${process.env.SHOT_DIR}/listen-note.png` : '/dev/null' });
+  if (process.env.SHOT_DIR) await page.screenshot({ path: `${process.env.SHOT_DIR}/listen-note.png` });
   // Leaving stops the microphone.
   await page.goto(`${BASE}#/learn`);
   await page.waitForTimeout(500);
@@ -64,7 +64,7 @@ await run(tapWav, async (page) => {
   await page.getByText(/Saved in My music|until Carmen closes/).waitFor({ timeout: 5000 }).then(() => ok(true, 'recording saved on the device'), () => ok(false, 'recording saved on the device'));
   const n = await page.evaluate(() => new Promise((res) => { const r = indexedDB.open('carmen-local'); r.onerror = () => res(-1); r.onsuccess = () => { const db = r.result; if (!db.objectStoreNames.contains('recordings')) return res(`no store (v${db.version})`); const t = db.transaction('recordings').objectStore('recordings').count(); t.onsuccess = () => res(t.result); }; }));
   ok(n === 1, `one recording in IndexedDB (${n})`);
-  await page.screenshot({ path: process.env.SHOT_DIR ? `${process.env.SHOT_DIR}/listen-taps.png` : '/dev/null' });
+  if (process.env.SHOT_DIR) await page.screenshot({ path: `${process.env.SHOT_DIR}/listen-taps.png` });
 });
 
 console.log(fails ? `${fails} FAILED` : 'ALL PASS');

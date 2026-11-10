@@ -5543,3 +5543,11 @@ details > summary {
 .unit { margin-top: var(--s5); }
 .unit .track-banner { margin-bottom: var(--s2); }
 .listen-pick { margin-top: var(--s6); }
+.teacher-welcome { max-width: 520px; margin: 0 auto; padding: var(--s4); display: grid; gap: var(--s5); }
+.tw-bar { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); }
+.tw-body { display: grid; gap: var(--s4); }
+.tw-body .title { margin: 0; }
+.tw-card { padding: var(--s4); border-radius: var(--r-md); background: var(--paper-raised); border: 1px solid var(--hairline); }
+.tw-device-note { display: inline-flex; gap: var(--s2); align-items: center; font-weight: 700; color: var(--near); margin: 0; }
+.account-line { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s2); margin: 0 0 var(--s3); font-size: var(--t-support); color: var(--ink-soft); }
+.account-line code { font-weight: 800; letter-spacing: 0.08em; color: var(--ink); }

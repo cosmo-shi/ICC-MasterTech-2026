@@ -213,7 +213,7 @@ export function EntryScreen({ onDone, go, canClose, initial }: { onDone: () => v
             <button type="button" className="btn-quiet btn-block" onClick={() => { setLearning(true); setStep('start'); }}>
               <Icon name="learn" size={22} /> Start learning
             </button>
-            <button type="button" className="btn-text" onClick={() => setStep('teacher')}>
+            <button type="button" className="btn-text" onClick={() => { onDone(); go('#/teacher'); }}>
               I’m a teacher
             </button>
           </>
@@ -228,7 +228,7 @@ export function EntryScreen({ onDone, go, canClose, initial }: { onDone: () => v
                 Back
               </button>
             )}
-            <button type="button" className="btn-text" onClick={() => setStep('teacher')}>
+            <button type="button" className="btn-text" onClick={() => { onDone(); go('#/teacher'); }}>
               <Icon name="grownups" size={18} /> Teacher
             </button>
           </>

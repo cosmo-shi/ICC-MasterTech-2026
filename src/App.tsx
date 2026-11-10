@@ -11,6 +11,7 @@ import { Avatar, EntryScreen } from './screens/EntryScreen.tsx';
 import { players, teacher, usePlayers } from './store/profiles.ts';
 import { InputLog } from './ui/InputLog.tsx';
 import { InstrumentScreen } from './screens/InstrumentScreen.tsx';
+import { TeacherWelcome } from './screens/TeacherWelcome.tsx';
 import { listening } from './input/session.ts';
 
 const MissionScreen = lazy(() => import('./screens/MissionScreen.tsx').then((m) => ({ default: m.MissionScreen })));
@@ -71,7 +72,7 @@ function Shell() {
   else if (section === 'lesson' && arg) screen = <LessonScreen key={hash} lessonId={arg} view={sub} go={go} />;
   else if (section === 'mission' && arg) screen = <MissionScreen key={arg} missionId={arg} go={go} />;
   else if (section === 'music') screen = <MyMusic go={go} />;
-  else if (section === 'teacher' || section === 'grownups') screen = teacherOpen ? <Grownups go={go} /> : <EntryScreen initial="teacher" canClose onDone={() => undefined} go={go} />;
+  else if (section === 'teacher' || section === 'grownups') screen = teacherOpen ? <Grownups go={go} /> : <TeacherWelcome go={go} />;
   else if (section === 'play' && arg === 'instrument') screen = <InstrumentScreen go={go} />;
   else screen = <PlayScreen key={hash} go={go} makeFrom={arg === 'make' ? sub : undefined} />;
 
