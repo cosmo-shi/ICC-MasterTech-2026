@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 import metrics from '../../docs/model-metrics.json';
 import { LESSONS, MISSIONS, PATHWAYS } from '../data/catalog.ts';
 import { loadModel } from '../ai/model.ts';
@@ -10,13 +10,15 @@ import type { Lesson } from '../music/lessons.ts';
 import { teacher } from '../store/profiles.ts';
 import { teacherAuth } from '../auth/teacherAuth.ts';
 import { currentSpace } from './TeacherWelcome.tsx';
-import { Icon, Wordmark } from '../ui/icons.tsx';
+import { Icon } from '../ui/icons.tsx';
+import { Wordmark } from '../ui/brand.tsx';
 import { ChildView, ClassView } from './TeacherDashboard.tsx';
+import { TeacherClasses } from './TeacherClasses.tsx';
 import learnerMetrics from '../../docs/learner-model-metrics.json';
 
 /** Who is signed in, which space, and Sign out; or plainly "device only" for the PIN view. */
 function AccountLine({ go }: { go: (h: string) => void }) {
-  const session = teacherAuth.current();
+  const session = useSyncExternalStore(teacherAuth.subscribe, teacherAuth.current, teacherAuth.current);
   const space = currentSpace();
   if (!session || !space)
     return (
@@ -50,7 +52,7 @@ export function Grownups({ go }: { go: (h: string) => void }) {
   const [confirmClear, setConfirmClear] = useState(false);
   const [cleared, setCleared] = useState(false);
   const model = loadModel();
-  const [tab, setTab] = useState<Tab>('class');
+  const [tab, setTab] = useState<Tab>(() => (teacherAuth.current() && currentSpace() ? 'classes' : 'class'));
   const [childId, setChildId] = useState<string | null>(null);
   return (
     <div className="screen grownups">
@@ -58,7 +60,7 @@ export function Grownups({ go }: { go: (h: string) => void }) {
         <Wordmark size={24} />
         <h1 className="teacher-title">Teacher</h1>
         <button type="button" className="btn-quiet" onClick={() => { teacher.close(); go('#/play'); }}>
-          <Icon name="lock" size={18} /> Exit
+          <Icon name="lock" size={20} /> Exit
         </button>
       </header>
       <AccountLine go={go} />
@@ -73,6 +75,7 @@ export function Grownups({ go }: { go: (h: string) => void }) {
         {tab === 'class' && (
           <ClassView openChild={(id) => { setChildId(id); setTab('child'); }} />
         )}
+        {tab === 'classes' && <TeacherClasses space={currentSpace()} onSignedOut={() => { teacher.close(); go('#/teacher'); }} />}
         {tab === 'child' && <ChildView childId={childId} setChild={setChildId} />}
         {tab === 'lessons' && (
           <>
@@ -270,6 +273,9 @@ export function Grownups({ go }: { go: (h: string) => void }) {
             <li>Lesson content adapts Open Music Theory (Shaffer, Hughes, Moseley and contributors; ed. Shaffer and Wharton), CC BY-SA 4.0. Changes: new child-facing wording, sequence and exercises.</li>
             <li>Piano and percussion sounds: Versilian Community Sample Library (VCSL), CC0.</li>
             <li>Font: Nunito, SIL Open Font License 1.1.</li>
+            <li>
+              Interface icons: Lucide (Lucide Contributors; some icons from Feather), ISC and MIT. <a href="/licences/lucide.txt">Licence text</a>
+            </li>
             <li>Music notation: VexFlow (MIT) with the Bravura music font (SIL OFL).</li>
             <li>Background on the need: ABC Classic (2023), ACMF (2024), ABC Education (2023), ASME submission (2022), Limelight (2020), Music Australia (2026), ABC News (2026).</li>
           </ul>
@@ -283,7 +289,8 @@ export function Grownups({ go }: { go: (h: string) => void }) {
 }
 
 const TABS = [
-  ['class', 'Class'],
+  ['classes', 'Classes'],
+  ['class', 'This device'],
   ['child', 'Students'],
   ['lessons', 'Lessons'],
   ['ai', 'AI'],

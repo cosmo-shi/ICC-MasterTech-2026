@@ -70,7 +70,7 @@ export function CheckPanel({
           {listen.options.map((o, i) => (
             <div key={o.id} className={`ab-opt${answered !== null && o.id === 'right' ? ' is-answer' : ''}`}>
               <button type="button" className="ab-play" onClick={() => hear(o.id, o.phrase)} aria-label={`${playing === o.id ? 'Stop' : 'Play'} version ${i ? 'B' : 'A'}`}>
-                <Icon name={playing === o.id ? 'stop' : 'playback'} size={28} />
+                <Icon name={playing === o.id ? 'stop' : 'playback'} size={32} />
               </button>
               <span className="ab-name">Version {i ? 'B' : 'A'}</span>
               {answered === null ? (

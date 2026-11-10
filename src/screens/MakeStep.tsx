@@ -134,10 +134,10 @@ export function MakeStep({ lessonId, go }: { lessonId: string; go: (r: string) =
 
         <div className="compare" role="group" aria-label="Listen">
           <button type="button" className="chip" onClick={() => play('now', cells)}>
-            <Icon name={playing === 'now' ? 'stop' : 'playback'} size={18} /> Play mine
+            <Icon name={playing === 'now' ? 'stop' : 'playback'} size={20} /> Play mine
           </button>
           <button type="button" className="chip" onClick={() => play('lesson', lessonCells)}>
-            <Icon name={playing === 'lesson' ? 'stop' : 'ear'} size={18} /> Play the lesson’s
+            <Icon name={playing === 'lesson' ? 'stop' : 'ear'} size={20} /> Play the lesson’s
           </button>
         </div>
         {changed.length > 0 && (

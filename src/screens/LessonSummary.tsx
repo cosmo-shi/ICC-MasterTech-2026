@@ -66,7 +66,7 @@ export function LessonSummary({ lessonId, go }: { lessonId: string; go: (r: stri
       }
     >
       <div className="lp-center summary">
-        <Stars n={stars} size={56} />
+        <Stars n={stars} size={48} />
         <h1 className="lp-title" tabIndex={-1}>
           {stars === 3 ? 'Lesson complete!' : stars === 2 ? 'Matched it!' : lesson.title}
         </h1>

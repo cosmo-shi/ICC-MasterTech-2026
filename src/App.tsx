@@ -1,7 +1,8 @@
 import { lazy, Suspense, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { audio } from './audio/engine.ts';
 import { PrefsProvider, usePrefs } from './state/prefs.tsx';
-import { Horizon, Icon, Wordmark } from './ui/icons.tsx';
+import { Icon } from './ui/icons.tsx';
+import { Horizon, Wordmark } from './ui/brand.tsx';
 import { PlayScreen } from './screens/PlayScreen.tsx';
 import { LearnScreen } from './screens/LearnScreen.tsx';
 import { LessonScreen } from './screens/LessonScreen.tsx';
@@ -121,7 +122,7 @@ function Shell() {
             <Icon name="stop" size={20} />
           </button>
           <button type="button" className="icon-btn" aria-expanded={settingsOpen} aria-controls="controls-sheet" aria-label="Settings" onClick={() => setSettingsOpen(!settingsOpen)}>
-            <Icon name="gear" size={22} />
+            <Icon name="gear" size={24} />
           </button>
         </div>
       </header>

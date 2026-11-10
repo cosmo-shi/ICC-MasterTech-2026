@@ -47,6 +47,20 @@ Every third-party file shipped with Carmen. Checked 9 November 2026.
 |---|---|
 | `public/fonts/Nunito-wght.woff2` | `ba344451eab25b217a165363b1982048a5e5830a0daf36577973955a04cac793` |
 
+## Interface icons — Lucide (ISC)
+
+- Chosen 10 Nov 2026 to replace Carmen's hand-drawn interface icons (momo's brief: one established family, the real assets, no redrawing).
+- Why Lucide: one coherent family of about 1,600 icons on a 24 grid with round 2-unit strokes, which matches Carmen's round, soft shapes. It has everything Carmen needs, including piano, drum, metronome, ear, microphone and cable. The licence is permissive with no attribution fee, and the package is bundled into the app, so nothing loads from a CDN at runtime. A Flaticon pack was not used: its free licence needs visible attribution on every screen that uses an icon, and its premium licence needs a paid account, which this project doesn't have.
+- Source: npm package `lucide-react` 1.62.0 (https://lucide.dev, https://github.com/lucide-icons/lucide), pinned exactly in `package.json`.
+- Authors: Lucide Contributors. A few icons are derived from Feather (Cole Bemis), MIT.
+- Licence: ISC (Lucide) and MIT (Feather-derived icons). The full text is shipped at `public/licences/lucide.txt` (SHA-256 `b495047bd93a9b06913511076f504daba17d5bbeb3e0650f3bb53a4220329c57`). The Teacher area's credits link to it.
+- Used through one component, `src/ui/icons.tsx`, which maps Carmen's names to Lucide icons. Sizes are 16, 20, 24, 32 and 48. The stroke is adjusted per size and the colour is always `currentColor`.
+- Two glyphs, check and chevron-right, are used as CSS masks for states that have no element of their own (a pressed chip, an open disclosure). Their path data is copied unchanged from `lucide-static` 1.71.0 into `src/styles/tokens.css`.
+- Not interface icons, so not from Lucide (documented exceptions):
+  - Musical notation is drawn by VexFlow (`vexflow`, MIT) from real music data: clefs, notes, rests and accidentals.
+  - The on-screen instruments (keys, pads, drum kit, pad shape marks in `src/ui/instruments.tsx`) are functional drawings whose geometry is the instrument.
+  - The brand mark, wordmark, header scene and welcome picture (`src/ui/brand.tsx`, `public/favicon.svg`, app icons) are Carmen's own identity art. They are listed under "App icons" below.
+
 ## Lesson content
 
 - `src/data/lessons.seed.json` and `src/data/pathways.plan.json`: from the Carmen context pack v2.0, CC BY-SA 4.0, adapting Open Music Theory (Shaffer, Hughes, Moseley et al.). See `context-pack/LICENSE_CONTENT.md`. Drafts pending primary music-educator review.

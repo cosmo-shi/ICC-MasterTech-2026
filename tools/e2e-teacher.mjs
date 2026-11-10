@@ -26,6 +26,7 @@ await page.route('https://fake-carmen.supabase.co/**', async (route) => {
   if (url.includes('/rest/v1/teachers') && r.method() === 'GET') return json(200, profile ? [profile] : []);
   if (url.includes('/rest/v1/teachers')) { profile = { id: 'u1', ...body }; return json(201, {}); }
   if (url.includes('/rpc/my_spaces')) return json(200, spaces);
+  if (url.includes('/rpc/my_classes')) return json(200, []);
   if (url.includes('/rpc/create_space')) { const s = { id: 's1', name: body.space_name, join_code: 'K7MQ2PXA', role: 'owner' }; spaces.push(s); return json(200, [s]); }
   if (url.includes('/auth/v1/logout')) return json(204, {});
   return json(404, {});

@@ -1,0 +1,657 @@
+/* Carmen layout system (10 Nov 2026 brief). Loaded after index.css; it is the one source for
+   hierarchy, spacing and dialogs. Older rules in index.css that disagree are removed, not patched.
+
+   Hierarchy (one role per job, by size, weight and colour, never by boxes):
+     screen title      --t-title    900   ink
+     instruction       --t-do       800   ink        what to do now (lessons, activities)
+     explanation       --t-body     500   ink        why, how; comfortable line length
+     feedback title    --t-feedback 900   tone colour + shape
+     primary action    .btn-big     700   sun
+     secondary action  .btn-quiet   700   ink on paper
+     supporting info   --t-support  500   ink-soft   help, where things are kept
+     metadata          --t-meta     600   ink-soft   dates, counts, provenance (teacher)
+     teacher evidence  --t-body / tables, words before numbers
+
+   Space (validated at 360, 390, 844×390, 820, 1280 and 1536 wide, Day and Night):
+     --gutter       16–20 px page edge on phones, plus the safe area
+     --pad-sheet    20–24 px inside sheets and dialogs
+     --gap-related  8 px between a label and its explanation
+     --gap-group    20–24 px between separate groups
+*/
+
+:root {
+  --t-body: 1.0625rem; /* 17 px */
+  --t-support: 0.9375rem; /* 15 px */
+  --t-meta: 0.875rem; /* 14 px, metadata only */
+  --t-feedback: clamp(1.4rem, 4.6vw, 1.75rem);
+  --lh-body: 1.55;
+  --gutter: clamp(16px, 4.5vw, 20px);
+  --pad-sheet: clamp(20px, 5.5vw, 24px);
+  --gap-related: 8px;
+  --gap-group: clamp(20px, 5vw, 24px);
+  --measure: 62ch;
+}
+
+body {
+  line-height: var(--lh-body);
+}
+
+/* Text never collides with icons or actions: flex rows wrap, and labels can break. */
+.btn,
+.btn-quiet,
+.btn-big,
+.chip,
+.help-option,
+.pick {
+  overflow-wrap: anywhere;
+  min-height: var(--target);
+}
+.btn,
+.btn-quiet,
+.btn-big {
+  white-space: normal;
+  text-align: center;
+  justify-content: center;
+  padding-block: 6px;
+}
+.row,
+.chips {
+  flex-wrap: wrap;
+}
+.icon {
+  flex: none;
+}
+
+/* Supporting words are quieter than the task, but still readable body text. */
+.note-text,
+.support,
+.lede {
+  font-size: var(--t-support);
+  line-height: var(--lh-body);
+  max-width: var(--measure);
+}
+
+/* ---------- Dialogs: one component for every modal (feedback, settings) ---------- */
+dialog.dlg {
+  border: 0;
+  padding: 0;
+  color: var(--ink);
+  background: var(--paper);
+  /* Portrait phone: a bottom sheet. */
+  margin: auto 0 0;
+  width: 100%;
+  max-width: 100%;
+  max-height: min(90dvh, 100% - 16px);
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  box-shadow: var(--shadow-sheet);
+  overflow: hidden;
+}
+dialog.dlg[open] {
+  display: flex;
+  flex-direction: column;
+  animation: dlg-up 200ms ease-out;
+}
+dialog.dlg::backdrop {
+  background: rgb(23 26 48 / 0.5);
+}
+.dlg-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--pad-sheet) calc(var(--pad-sheet) + env(safe-area-inset-right)) var(--gap-related) calc(var(--pad-sheet) + env(safe-area-inset-left));
+  display: grid;
+  /* Rows take their full height and the body scrolls; without this, rows shrink inside the
+     fixed-height dialog and wrapped labels spill out of their buttons at large text sizes. */
+  grid-auto-rows: max-content;
+  gap: var(--gap-group);
+  align-content: start;
+}
+.dlg-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--s3);
+}
+.dlg-close {
+  align-self: start;
+  margin: -8px -8px 0 0;
+}
+.dlg-foot {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap-reverse;
+  gap: var(--s3);
+  align-items: center;
+  justify-content: flex-end;
+  padding: var(--s3) calc(var(--pad-sheet) + env(safe-area-inset-right)) max(var(--s4), env(safe-area-inset-bottom)) calc(var(--pad-sheet) + env(safe-area-inset-left));
+  border-top: 1px solid var(--hairline);
+  background: var(--paper);
+}
+.dlg-foot .btn-big {
+  flex: 1 1 220px;
+}
+.dlg-foot .btn-quiet {
+  flex: 1 1 140px;
+}
+@keyframes dlg-up {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  dialog.dlg[open] {
+    animation: none;
+  }
+}
+/* Tablets and desktops: a centred dialog at a comfortable reading width (never a side panel). */
+@media (min-width: 600px) and (min-height: 520px) {
+  dialog.dlg {
+    margin: auto;
+    width: min(600px, 100% - 48px);
+    max-height: min(760px, 100dvh - 64px);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-pop);
+  }
+  .dlg-foot .btn-big {
+    flex: 0 1 auto;
+    min-width: 200px;
+  }
+  .dlg-foot .btn-quiet {
+    flex: 0 1 auto;
+  }
+}
+/* Short landscape phones: a focused full-screen review, words in a readable column. */
+@media (max-height: 519px) and (orientation: landscape) {
+  dialog.dlg {
+    margin: 0;
+    width: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    border-radius: 0;
+  }
+  .dlg-body {
+    padding-top: var(--s3);
+    gap: var(--s4);
+  }
+  .dlg-body > *,
+  .dlg-foot {
+    width: min(100%, 680px);
+    margin-inline: auto;
+  }
+  .dlg-foot {
+    border-top: 0;
+    padding-top: var(--s2);
+  }
+}
+
+/* ---------- Feedback ---------- */
+.fb-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--near-bg);
+  color: var(--near);
+}
+.tone-good .fb-mark {
+  background: var(--good-bg);
+  color: var(--good);
+}
+.tone-miss .fb-mark {
+  background: var(--miss-bg);
+  color: var(--miss);
+}
+.tone-unclear .fb-mark,
+.tone-free .fb-mark {
+  background: var(--dusk-soft);
+  color: var(--dusk);
+}
+.fb-title {
+  margin: 0;
+  font-weight: var(--w-display);
+  font-size: var(--t-feedback);
+  line-height: 1.15;
+  letter-spacing: -0.005em;
+  color: var(--ink);
+  outline-offset: 4px;
+}
+[data-presentation='studio'] .fb-title {
+  font-weight: 800;
+}
+.fb-tag {
+  margin: calc(var(--gap-group) * -1 + var(--gap-related)) 0 0;
+  font-size: var(--t-meta);
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+.fb-warning {
+  margin: 0;
+  display: flex;
+  gap: var(--s2);
+  align-items: flex-start;
+  color: var(--miss);
+  font-weight: 700;
+}
+.fb-words {
+  display: grid;
+  gap: var(--gap-related);
+  max-width: var(--measure);
+}
+.fb-observed {
+  margin: 0;
+  font-size: var(--t-do);
+  font-weight: 700;
+  line-height: 1.4;
+}
+.fb-why {
+  margin: 0;
+  font-size: var(--t-body);
+  line-height: var(--lh-body);
+  color: var(--ink);
+}
+.fb-compare {
+  justify-self: start;
+  width: auto;
+  max-width: 100%;
+  text-align: left;
+  justify-content: flex-start;
+}
+/* The heading takes focus when the dialog opens so it is read first; it is not a control. */
+.fb-title:focus,
+.dlg h2[tabindex='-1']:focus {
+  outline: none;
+  box-shadow: none;
+}
+.more-help {
+  border-top: 1px solid var(--hairline);
+  padding-top: var(--s3);
+}
+.more-help > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  min-height: var(--target);
+  font-weight: var(--w-control);
+  color: var(--dusk);
+  cursor: pointer;
+  list-style: none;
+}
+.more-help > summary::-webkit-details-marker {
+  display: none;
+}
+.more-help-body {
+  display: grid;
+  gap: var(--gap-group);
+  padding-top: var(--s3);
+}
+.help-options {
+  display: grid;
+  gap: var(--s2);
+}
+.help-option {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--s3);
+  align-items: center;
+  text-align: left;
+  padding: var(--s3) var(--s4);
+  border: 0;
+  border-radius: var(--r-md);
+  background: var(--paper-sunk);
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+.help-option[aria-pressed='true'] {
+  background: var(--dusk-soft);
+  box-shadow: inset 0 0 0 2px var(--dusk);
+}
+.help-option > span {
+  display: grid;
+  gap: 2px;
+}
+.help-title {
+  font-weight: 800;
+}
+.help-about {
+  font-size: var(--t-support);
+  color: var(--ink-soft);
+}
+.help-h {
+  margin: 0 0 calc(var(--gap-related) - var(--gap-group));
+  font-size: var(--t-support);
+  font-weight: 800;
+  color: var(--ink-soft);
+}
+.checkin-q {
+  margin: 0 0 var(--gap-related);
+  font-weight: 700;
+}
+.intent {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--gap-related);
+}
+.intent legend {
+  padding: 0;
+  margin-bottom: var(--gap-related);
+  font-weight: 800;
+  font-size: var(--t-do);
+}
+.free-done {
+  display: grid;
+  gap: var(--gap-related);
+}
+.lp-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+}
+.facts .fact-icon {
+  display: inline-grid;
+  place-items: center;
+}
+.trouble {
+  display: grid;
+  gap: var(--gap-related);
+}
+.trouble p {
+  margin: 0;
+}
+
+/* Large text and WCAG text spacing: rows wrap instead of pushing controls off the screen. */
+.play-bar {
+  flex-wrap: wrap;
+  row-gap: var(--gap-related);
+}
+.segment {
+  justify-content: center;
+  text-align: center;
+}
+.player-name {
+  max-width: 14ch;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  overflow-wrap: anywhere;
+  line-height: 1.15;
+}
+.setting-row .setting-label {
+  flex: 1 1 12rem;
+}
+
+/* ---------- Classes: learner side ---------- */
+.form-error {
+  margin: 0;
+  color: var(--miss);
+  font-weight: 700;
+}
+.sync-line {
+  margin: 0;
+  display: flex;
+  gap: var(--s2);
+  align-items: flex-start;
+  font-weight: 600;
+}
+.my-class > * + *,
+.join-form > * + * {
+  margin-top: var(--gap-related);
+}
+.from-teacher-card {
+  display: grid;
+  gap: var(--gap-related);
+  padding: var(--s4) 0;
+  border-bottom: 1px solid var(--hairline);
+}
+.from-teacher-card h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  margin: 0;
+  color: var(--dusk);
+}
+.ft-list {
+  display: grid;
+  gap: var(--s2);
+}
+.ft-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--s3);
+  width: 100%;
+  min-height: var(--target);
+  padding: var(--s3) var(--s4);
+  border: 0;
+  border-radius: var(--r-md);
+  background: var(--dusk-soft);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.ft-item .icon {
+  grid-row: 1 / span 2;
+  grid-column: 2;
+}
+.ft-title {
+  font-weight: 800;
+}
+.ft-note {
+  font-size: var(--t-support);
+  color: var(--ink-soft);
+}
+.suggest.from-teacher .btn-text {
+  margin-left: var(--s2);
+}
+
+/* ---------- Classes: teacher side ---------- */
+.board-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s3);
+  margin-bottom: var(--gap-related);
+}
+.board-head .h2 {
+  flex: 1 1 12rem;
+  margin: 0;
+}
+.meta-line {
+  font-size: var(--t-meta);
+  font-weight: 600;
+  color: var(--ink-soft);
+  margin: 0;
+}
+.class-list,
+.roster,
+.evidence-list {
+  display: grid;
+  gap: var(--s2);
+}
+.class-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--s3);
+  width: 100%;
+  max-width: 560px;
+  padding: var(--s3) var(--s4);
+  border: 0;
+  border-radius: var(--r-md);
+  background: var(--paper-sunk);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.class-item .icon {
+  grid-row: 1 / span 2;
+  grid-column: 2;
+}
+.class-name {
+  font-weight: 800;
+}
+.class-meta {
+  font-size: var(--t-support);
+  color: var(--ink-soft);
+}
+.inline-form {
+  align-items: flex-end;
+  gap: var(--s3);
+  margin-top: var(--gap-group);
+}
+.inline-form .field {
+  flex: 1 1 16rem;
+  margin: 0;
+}
+.assign-form {
+  display: grid;
+  gap: var(--gap-group);
+  max-width: 640px;
+}
+.assign-form .field {
+  margin: 0;
+}
+.checks {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--s2);
+}
+.checks legend {
+  padding: 0;
+  margin-bottom: var(--gap-related);
+}
+.check {
+  display: flex;
+  gap: var(--s3);
+  align-items: flex-start;
+  min-height: var(--target);
+  padding-top: var(--s2);
+}
+.check input {
+  width: 24px;
+  height: 24px;
+  flex: none;
+  margin: 0;
+  accent-color: var(--dusk);
+}
+.checks .field-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s2) var(--s3);
+  max-width: 520px;
+}
+.tally {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2) var(--s4);
+  margin: var(--gap-related) 0;
+}
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+}
+.st-ready {
+  color: var(--good);
+}
+.st-may-need-support {
+  color: var(--near);
+}
+.st-input-problem {
+  color: var(--miss);
+}
+.st-not-joined,
+.st-waiting-to-sync,
+.st-not-started {
+  color: var(--ink-soft);
+}
+.status-key {
+  display: grid;
+  gap: var(--s3);
+  margin: var(--s3) 0 0;
+}
+.status-key dt {
+  display: flex;
+  gap: var(--s2);
+  align-items: center;
+  font-weight: 800;
+}
+.status-key dd {
+  margin: 2px 0 0 calc(16px + var(--s2));
+  color: var(--ink-soft);
+}
+.link-btn {
+  border: 0;
+  background: none;
+  padding: var(--s2) 0;
+  min-height: var(--target);
+  color: var(--dusk);
+  font: inherit;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.roster-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s2) var(--s4);
+  padding: var(--s2) 0;
+  border-bottom: 1px solid var(--hairline);
+}
+.roster-name {
+  min-width: 8ch;
+}
+.roster-device {
+  flex: 1 1 14rem;
+  color: var(--ink-soft);
+  font-size: var(--t-support);
+}
+.seat-code code {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  padding: 2px 8px;
+  border-radius: var(--r-sm);
+  background: var(--sun-soft, var(--paper-sunk));
+}
+.assignment-line p {
+  margin: 0 0 var(--s1);
+}
+.evidence-list li {
+  display: grid;
+  gap: 2px;
+  padding: var(--s2) 0;
+  border-bottom: 1px solid var(--hairline);
+}
+.class-board > .dash-block,
+.student-review > .dash-block {
+  margin-top: var(--gap-group);
+}
+.ft-list,
+.class-list,
+.roster,
+.evidence-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+/* Headings take focus when a step changes so they are read first; they are not controls. */
+h1[tabindex='-1']:focus,
+h2[tabindex='-1']:focus {
+  outline: none;
+  box-shadow: none;
+}

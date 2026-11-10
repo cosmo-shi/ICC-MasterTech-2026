@@ -1,10 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { store } from '../store/db.ts';
 import { usePrefs } from '../state/prefs.tsx';
 import { SoundCheck } from '../ui/SoundCheck.tsx';
 import { Icon } from '../ui/icons.tsx';
 import { players, usePlayers } from '../store/profiles.ts';
 import { Avatar } from './EntryScreen.tsx';
+import { Dialog } from '../ui/Dialog.tsx';
+import { MyClassSection } from './MyClass.tsx';
 
 export function ControlsSheet({ onClose, onSwitchPlayer }: { onClose: () => void; onSwitchPlayer: () => void }) {
   const { prefs, set } = usePrefs();
@@ -22,12 +24,6 @@ export function ControlsSheet({ onClose, onSwitchPlayer }: { onClose: () => void
     players.remove(me.id);
     setForget('done');
   };
-  useEffect(() => {
-    ref.current?.querySelector<HTMLElement>('input, button')?.focus();
-    const esc = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
-    window.addEventListener('keydown', esc);
-    return () => window.removeEventListener('keydown', esc);
-  }, [onClose]);
 
   const toggle = (checked: boolean, onChange: (v: boolean) => void, label: string, help?: string) => (
     <label className="toggle">
@@ -56,10 +52,10 @@ export function ControlsSheet({ onClose, onSwitchPlayer }: { onClose: () => void
   );
 
   return (
-    <div id="controls-sheet" className="sheet" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div ref={ref} className="sheet-inner" role="dialog" aria-modal="true" aria-labelledby="settings-h">
+    <Dialog open onClose={onClose} labelledBy="settings-h" className="settings-dlg">
+      <div ref={ref} id="controls-sheet" className="dlg-body">
         <div className="sheet-head">
-          <h2 id="settings-h" className="title">
+          <h2 id="settings-h" className="title" tabIndex={-1}>
             Settings
           </h2>
           <button type="button" className="btn btn-primary" onClick={onClose}>
@@ -99,6 +95,7 @@ export function ControlsSheet({ onClose, onSwitchPlayer }: { onClose: () => void
             </p>
           )}
         </section>
+        <MyClassSection />
         <section className="sheet-group" aria-labelledby="sound-h">
           <h3 id="sound-h" className="group-h">
             Sound
@@ -146,13 +143,13 @@ export function ControlsSheet({ onClose, onSwitchPlayer }: { onClose: () => void
           </h3>
           {toggle(prefs.saveOnDevice, (v) => set('saveOnDevice', v), 'Keep my music on this device', prefs.saveOnDevice ? 'Kept in this browser.' : 'Off: forgotten when Carmen closes.')}
           <a className="sheet-link" href="#/music">
-            <Icon name="music" size={22} /> My music
+            <Icon name="music" size={24} /> My music
           </a>
         </section>
         <a className="sheet-link" href="#/teacher">
-          <Icon name="lock" size={22} /> Teacher
+          <Icon name="lock" size={24} /> Teacher
         </a>
       </div>
-    </div>
+    </Dialog>
   );
 }

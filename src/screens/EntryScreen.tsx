@@ -3,7 +3,8 @@ import { lessonById } from '../data/catalog.ts';
 import { START_AT } from '../data/curriculum.ts';
 import { type PathwayId, usePrefs } from '../state/prefs.tsx';
 import { COLOUR_NAMES, PLAYER_COLOURS, type Player, type PlayerColour, players, teacher, usePlayers } from '../store/profiles.ts';
-import { Horizon, Icon, type IconName, WelcomeArt, Wordmark } from '../ui/icons.tsx';
+import { Icon, type IconName } from '../ui/icons.tsx';
+import { Horizon, WelcomeArt, Wordmark } from '../ui/brand.tsx';
 
 export function Avatar({ player, size = 48 }: { player: Pick<Player, 'name' | 'colour'>; size?: number }) {
   return (
@@ -82,7 +83,7 @@ export function EntryScreen({ onDone, go, canClose, initial }: { onDone: () => v
       {progress[step] && (
         <div className="entry-bar">
           <button type="button" className="icon-btn quiet" aria-label="Back" onClick={() => setStep(back[step]!)}>
-            <Icon name="back" size={22} />
+            <Icon name="back" size={24} />
           </button>
           {!learning && (
             <div className="progress" role="progressbar" aria-label="Sign up" aria-valuemin={0} aria-valuemax={3} aria-valuenow={progress[step]}>
@@ -94,7 +95,7 @@ export function EntryScreen({ onDone, go, canClose, initial }: { onDone: () => v
       {step === 'teacher' && (
         <div className="entry-bar">
           <button type="button" className="icon-btn quiet" aria-label="Back" onClick={() => (initial ? go('#/play') : setStep(back.teacher!))}>
-            <Icon name="back" size={22} />
+            <Icon name="back" size={24} />
           </button>
         </div>
       )}
@@ -175,7 +176,7 @@ export function EntryScreen({ onDone, go, canClose, initial }: { onDone: () => v
             <div className="start-list" role="radiogroup" aria-label="Where to start">
               {STARTS.map((s) => (
                 <button key={s.id} type="button" role="radio" aria-checked={start === s.id} className={`start-card${start === s.id ? ' is-on' : ''}`} onClick={() => setStart(s.id)}>
-                  <Icon name={s.icon} size={40} />
+                  <Icon name={s.icon} size={48} />
                   <span>
                     <span className="start-title">{s.title}</span>
                     <span className="start-sub">{s.sub}</span>
@@ -211,7 +212,7 @@ export function EntryScreen({ onDone, go, canClose, initial }: { onDone: () => v
               <Icon name="play" size={24} /> Just play
             </button>
             <button type="button" className="btn-quiet btn-block" onClick={() => { setLearning(true); setStep('start'); }}>
-              <Icon name="learn" size={22} /> Start learning
+              <Icon name="learn" size={24} /> Start learning
             </button>
             <button type="button" className="btn-text" onClick={() => { onDone(); go('#/teacher'); }}>
               I’m a teacher
@@ -221,7 +222,7 @@ export function EntryScreen({ onDone, go, canClose, initial }: { onDone: () => v
         {step === 'pick' && (
           <>
             <button type="button" className="btn-quiet btn-block" onClick={justPlay}>
-              <Icon name="play" size={22} /> Just play, no name
+              <Icon name="play" size={24} /> Just play, no name
             </button>
             {canClose && (
               <button type="button" className="btn-quiet btn-block" onClick={onDone}>
@@ -229,7 +230,7 @@ export function EntryScreen({ onDone, go, canClose, initial }: { onDone: () => v
               </button>
             )}
             <button type="button" className="btn-text" onClick={() => { onDone(); go('#/teacher'); }}>
-              <Icon name="grownups" size={18} /> Teacher
+              <Icon name="grownups" size={20} /> Teacher
             </button>
           </>
         )}
@@ -301,7 +302,7 @@ export function TeacherDoor({ onOpen, heading }: { onOpen: () => void; heading?:
 
   return (
     <div className="pin">
-      <Icon name="grownups" size={40} />
+      <Icon name="grownups" size={48} />
       <h1 id="entry-h" ref={heading} tabIndex={-1} className="entry-title">
         {title}
       </h1>
@@ -325,7 +326,7 @@ export function TeacherDoor({ onOpen, heading }: { onOpen: () => void; heading?:
           0
         </button>
         <button type="button" className="pin-key" aria-label="Delete" onClick={() => setPin((p) => p.slice(0, -1))}>
-          <Icon name="back" size={22} />
+          <Icon name="back" size={24} />
         </button>
       </div>
     </div>

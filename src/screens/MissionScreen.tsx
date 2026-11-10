@@ -288,7 +288,7 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
     <div className="screen mission">
       <nav className="crumbs" aria-label="Breadcrumb">
         <button type="button" className="link" onClick={() => go('#/learn')}>
-          <Icon name="back" size={18} /> Learn
+          <Icon name="back" size={20} /> Learn
         </button>
       </nav>
       <header className="lesson-head">
@@ -325,7 +325,7 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
             <div className="row wrap">
               {recState !== 'countin' && recState !== 'recording' ? (
                 <button type="button" className="btn btn-coral btn-big" onClick={record}>
-                  <span aria-hidden="true">● </span>{phrase ? 'Record again' : `Record (${prefs.countIn} beats first)`}
+                  <Icon name="record" size={20} /> {phrase ? 'Record again' : `Record (${prefs.countIn} beats first)`}
                 </button>
               ) : (
                 <p className="status-big" role="status">
@@ -342,15 +342,12 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
                     <Notation phrase={phrase} />
                     <p className="note-text">Your timing has been tidied to the nearest half beat for the partner. Your exact playing is kept for your teacher.</p>
                     {analysis && (
-                      <div className={`coach ${analysis.source === 'local-model' ? 'coach-ai' : 'coach-tips'} compact`}>
-                        
-                        <p className="coach-obs">{coachText.observations[analysis.pattern]}</p>
-                      </div>
+                      <p className="fb-observed">{coachText.observations[analysis.pattern]}</p>
                     )}
                     {!sectionsOk && <p className="note-text">Both A and B need at least one sound. Try recording again.</p>}
                     <div className="row wrap">
                       <button type="button" className="btn-quiet" onClick={() => (player.playing ? player.stop() : void player.play([phrase], tempo, { totalTicks: phrase.totalTicks }))}>
-                        {player.playing ? 'Stop' : <><span aria-hidden="true">▶ </span>Hear my idea</>}
+                        <Icon name={player.playing ? 'stop' : 'playback'} size={20} /> {player.playing ? 'Stop' : 'Hear my idea'}
                       </button>
                       <button type="button" className="btn" onClick={() => setStep(2)} disabled={!sectionsOk}>
                         Next: choose a change
@@ -458,7 +455,7 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
                   </p>
                   <Notation phrase={phrase} />
                   <button type="button" className="btn-quiet" onClick={() => void clips.play([phrase], tempo, { totalTicks: phrase.totalTicks })}>
-                    <span aria-hidden="true">▶ </span>Play mine
+                    <Icon name="playback" size={20} /> Play mine
                   </button>
                 </div>
                 <div className="compare-col">
@@ -467,7 +464,7 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
                   </p>
                   <Notation phrase={{ ...phrase, events: reply.render.tracks[0].events }} />
                   <button type="button" className="btn btn-sun" onClick={() => void clips.play(reply.render.tracks, reply.render.tempoBpm, { totalTicks: reply.render.totalTicks })}>
-                    <span aria-hidden="true">▶ </span>Play the partner version
+                    <Icon name="playback" size={20} /> Play the partner version
                   </button>
                 </div>
               </div>
@@ -475,7 +472,7 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
                 <summary>Checked before it played</summary>
                 <ul>
                   {reply.verification.verified.map((v) => (
-                    <li key={v}>✓ {v}</li>
+                    <li key={v}><Icon name="check" size={16} /> {v}</li>
                   ))}
                   <li>
                     {reply.plan.provenance === 'learner-directed' ? 'You chose this change.' : 'Carmen chose this change.'}
@@ -548,7 +545,7 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
               <div className="row wrap">
                 {task.clips.map((c) => (
                   <button key={c.caption} type="button" className="btn-quiet" onClick={() => void clips.play([c.phrase], c.phrase.tempoBpm, { totalTicks: c.phrase.totalTicks })}>
-                    <span aria-hidden="true">▶ </span>{c.caption}
+                    <Icon name="playback" size={20} /> {c.caption}
                   </button>
                 ))}
               </div>
@@ -563,7 +560,7 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
                 </div>
               </fieldset>
               {answer && (
-                <p className="coach-obs" role="status">
+                <p className="fb-observed" role="status">
                   {answer === task.answer ? 'That matches the music.' : `The music was: ${task.options.find((o) => o.id === task.answer)?.label}. Want to listen again?`}
                 </p>
               )}

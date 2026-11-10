@@ -15,6 +15,7 @@
     "decisions": "node tools/decisions.mjs"
   },
   "dependencies": {
+    "lucide-react": "1.62.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "vexflow": "^5.0.0"

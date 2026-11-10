@@ -81,7 +81,9 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), 'VITE_')
   let authOrigin: string | null = null
   try {
-    if (env.VITE_SUPABASE_URL?.startsWith('https://')) authOrigin = new URL(env.VITE_SUPABASE_URL).origin
+    // https only; plain http only for a service on this computer (tools/verify-db).
+    const u = env.VITE_SUPABASE_URL ?? ''
+    if (u.startsWith('https://') || /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/|$)/.test(u)) authOrigin = new URL(u).origin
   } catch {
     authOrigin = null
   }

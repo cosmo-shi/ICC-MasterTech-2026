@@ -30,7 +30,7 @@ export function SoundCheck({ compact }: { compact?: boolean }) {
     <div className={`sound-check${compact ? ' compact' : ''}`}>
       <div className="row wrap">
         <button type="button" className="btn-quiet" onClick={run} disabled={stage === 'playing'}>
-          <Icon name="sound" size={22} /> {stage === 'playing' ? 'Playing the test…' : 'Play a test sound'}
+          <Icon name="sound" size={24} /> {stage === 'playing' ? 'Playing the test…' : 'Play a test sound'}
         </button>
       </div>
       <div role="status" className="sound-check-result">

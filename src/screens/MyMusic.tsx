@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { type CompositionRecord, type RecordingRecord, store } from '../store/db.ts';
-import { Icon, WelcomeArt } from '../ui/icons.tsx';
+import { Icon } from '../ui/icons.tsx';
+import { WelcomeArt } from '../ui/brand.tsx';
 import { usePlayer } from '../ui/usePlayer.ts';
 import { mine, players } from '../store/profiles.ts';
 
@@ -67,7 +68,7 @@ export function MyMusic({ go }: { go: (r: string) => void }) {
       <h1 className="h1">My music</h1>
       {!store.isPersistent && (
         <div className="save-status">
-          <Icon name="music" size={28} />
+          <Icon name="music" size={32} />
           <p>Saving is off, so this music goes when Carmen closes.</p>
         </div>
       )}
@@ -83,7 +84,7 @@ export function MyMusic({ go }: { go: (r: string) => void }) {
               setUndo(null);
             }}
           >
-            <Icon name="undo" size={18} /> Undo
+            <Icon name="undo" size={20} /> Undo
           </button>
         </div>
       )}
@@ -131,7 +132,7 @@ export function MyMusic({ go }: { go: (r: string) => void }) {
                 </div>
                 <div className="row wrap">
                   <button type="button" className="btn-quiet" onClick={() => play(c)} aria-label={`${playingId === c.id ? 'Stop' : 'Play'} ${c.title}`}>
-                    {playingId === c.id ? 'Stop' : <><span aria-hidden="true">▶ </span>Play</>}
+                    <Icon name={playingId === c.id ? 'stop' : 'playback'} size={20} /> {playingId === c.id ? 'Stop' : 'Play'}
                   </button>
                   <button
                     type="button"
@@ -144,7 +145,7 @@ export function MyMusic({ go }: { go: (r: string) => void }) {
                     Rename
                   </button>
                   <button type="button" className="btn-quiet" onClick={() => remove('compositions', c)} aria-label={`Delete ${c.title}`}>
-                    <Icon name="trash" size={18} /> Delete
+                    <Icon name="trash" size={20} /> Delete
                   </button>
                 </div>
               </>
@@ -185,7 +186,7 @@ export function MyMusic({ go }: { go: (r: string) => void }) {
                   <>
                     <div className="music-info">
                       <span className="music-title">
-                        <Icon name="mic" size={18} /> {r.title}
+                        <Icon name="mic" size={20} /> {r.title}
                       </span>
                       <span className="music-meta">
                         {r.instrument === 'piano' ? 'Piano' : 'Drum'} · {r.durationSec} s · {Math.max(1, Math.round(r.size / 1024))} KB
@@ -198,13 +199,13 @@ export function MyMusic({ go }: { go: (r: string) => void }) {
                         className="btn-quiet"
                         onClick={() => setListeningTo(listeningTo?.id === r.id ? null : { id: r.id, url: URL.createObjectURL(new Blob([r.bytes], { type: r.mime })) })}
                       >
-                        {listeningTo?.id === r.id ? 'Close' : <><span aria-hidden="true">▶ </span>Listen</>}
+                        <Icon name={listeningTo?.id === r.id ? 'close' : 'playback'} size={20} /> {listeningTo?.id === r.id ? 'Close' : 'Listen'}
                       </button>
                       <button type="button" className="btn-quiet" onClick={() => { setRenaming(r.id); setDraft(r.title); }}>
                         Rename
                       </button>
                       <button type="button" className="btn-quiet" onClick={() => remove('recordings', r)} aria-label={`Delete ${r.title}`}>
-                        <Icon name="trash" size={18} /> Delete
+                        <Icon name="trash" size={20} /> Delete
                       </button>
                     </div>
                   </>
