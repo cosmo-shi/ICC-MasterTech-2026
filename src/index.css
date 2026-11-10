@@ -5618,3 +5618,6 @@ details > summary {
 /* Lesson pages: the middle scrolls, the bottom button stays below it (never on top of it). */
 .lp-body { min-height: 0; }
 .lp-foot { flex: none; background: var(--paper); }
+.save-status { align-items: center; }
+.save-status p { margin: 0; }
+.save-status .icon { margin-top: 0; flex: none; }
