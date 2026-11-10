@@ -1,8 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { store } from '../store/db.ts';
 import { usePrefs } from '../state/prefs.tsx';
 import { SoundCheck } from '../ui/SoundCheck.tsx';
 import { Icon } from '../ui/icons.tsx';
-import { usePlayers } from '../store/profiles.ts';
+import { players, usePlayers } from '../store/profiles.ts';
 import { Avatar } from './EntryScreen.tsx';
 
 export function ControlsSheet({ onClose, onSwitchPlayer }: { onClose: () => void; onSwitchPlayer: () => void }) {
@@ -10,6 +11,17 @@ export function ControlsSheet({ onClose, onSwitchPlayer }: { onClose: () => void
   const { players: list, current } = usePlayers();
   const me = list.find((p) => p.id === current);
   const ref = useRef<HTMLDivElement>(null);
+  const [forget, setForget] = useState<'idle' | 'confirm' | 'done'>('idle');
+  // Remove this player's name and everything saved under it from this device.
+  const forgetMe = async () => {
+    if (!me) return;
+    for (const kind of ['compositions', 'attempts', 'recordings'] as const) {
+      const rows = await store.all<{ id: string; profileId?: string }>(kind);
+      for (const r of rows) if (r.profileId === me.id) await store.delete(kind, r.id);
+    }
+    players.remove(me.id);
+    setForget('done');
+  };
   useEffect(() => {
     ref.current?.querySelector<HTMLElement>('input, button')?.focus();
     const esc = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
@@ -65,6 +77,27 @@ export function ControlsSheet({ onClose, onSwitchPlayer }: { onClose: () => void
               Change player
             </button>
           </div>
+          {me && forget === 'idle' && (
+            <button type="button" className="btn-text" onClick={() => setForget('confirm')}>
+              Remove {me.name} from this device
+            </button>
+          )}
+          {me && forget === 'confirm' && (
+            <div className="row wrap" role="group" aria-label={`Remove ${me.name}?`}>
+              <span className="note-text">This deletes {me.name}’s name, music, recordings and lesson tries on this device.</span>
+              <button type="button" className="btn btn-coral" onClick={() => void forgetMe()}>
+                Yes, remove
+              </button>
+              <button type="button" className="btn-quiet" onClick={() => setForget('idle')}>
+                Keep
+              </button>
+            </div>
+          )}
+          {forget === 'done' && (
+            <p className="note-text" role="status">
+              Removed from this device.
+            </p>
+          )}
         </section>
         <section className="sheet-group" aria-labelledby="sound-h">
           <h3 id="sound-h" className="group-h">

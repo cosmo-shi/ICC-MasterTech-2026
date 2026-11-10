@@ -5534,3 +5534,7 @@ details > summary {
 .take-feedback p { margin: 0; }
 .sound-by-sound { margin-top: var(--s3); }
 .sound-by-sound summary { min-height: 44px; display: flex; align-items: center; font-weight: 700; color: var(--dusk); cursor: pointer; }
+.keep-card { grid-column: 1 / -1; display: grid; gap: var(--s1); padding: var(--s3) var(--s4); border-radius: var(--r-md); background: var(--dusk-soft); margin-top: var(--s2); }
+.keep-card p { margin: 0; }
+.keep-q { font-weight: 800; }
+.keep-card .row { margin-top: 0; align-items: end; }
