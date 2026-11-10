@@ -51,7 +51,12 @@ export function usePlayer() {
         if (b < totalBeats + (opts.tailBeats ?? 0)) raf.current = requestAnimationFrame(tick);
       };
       raf.current = requestAnimationFrame(tick);
-      const endMs = pb.beat0PerfMs - performance.now() + (totalBeats + (opts.tailBeats ?? 0.6)) * beatMs;
+      // End on the take's own length. The audio-clock estimate is capped by the scheduled length,
+      // so a wrong clock can never leave "Stop" showing long after the music has finished.
+      const tail = (opts.tailBeats ?? 0.6) * beatMs;
+      const byClock = pb.beat0PerfMs - performance.now() + totalBeats * beatMs + tail;
+      const byLength = pb.durationSec * 1000 + 150 + tail;
+      const endMs = Math.min(byClock, byLength);
       timer.current = window.setTimeout(() => {
         cancelAnimationFrame(raf.current);
         setPlaying(false);

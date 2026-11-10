@@ -1,6 +1,6 @@
 # Carmen status (branch `sc`)
 
-Last updated 9 November 2026. Plain facts only: what runs, how it was checked, and what is still missing.
+Last updated 10 November 2026. Plain facts only: what runs, how it was checked, and what is still missing.
 
 ## How it was checked
 
@@ -29,7 +29,7 @@ Not checked yet: a real screen reader (NVDA, VoiceOver), real tablets and Chrome
 - Five partner projects: record an idea, choose the change (or let the partner suggest one), predict, hear a verified partner version, keep yours or theirs, then a fresh independent task with no hints.
 - Coach: asks a question first, then gives one measured observation, and offers a checked musical reply. It never replies during an independent check.
 - Grown-ups view: evidence per activity split into independent and assisted, attempt details, teacher notes, privacy controls, delete everything, the model card summary and the self-check.
-- Saving is off by default; when on, records stay in this browser (IndexedDB). No accounts, no network calls, no microphone or camera.
+- Saving is off by default; when on, records stay in this browser (IndexedDB). No accounts, no network calls (teacher sign-in is the only exception, when configured), no camera; the microphone only on request (10 November).
 - Offline after the first visit (built app only).
 - Design direction from `docs/carmen/UX_JOURNEY_AND_VISUAL_DIRECTION.md`: a sound check with tips when nothing is heard, "Sound paused" recovery, an original icon set for navigation and pathways, "Bring back my last take", "Carry on from last time", honest save-location wording, "More detail" notes (open by default for Years 5–6 and older), a quieter studio presentation for older learners, and a "Before a class" check with activity notes and preview links for teachers.
 - Identity "Songbook Horizon" (2026-11-09, replaces Colour Bars): sunset landscape whose hills are stave lines, note-head sun, paper sheet for the work, instrument in a dark case; colour by role (sun = now, red = record, dusk = selected); Bagel Fat One for brand and titles, Figtree for the rest; one icon/illustration family; "what you played" note trail above the instrument; sticker tap-timeline feedback in lessons; optional Night mode (Day / Night / Same as device). Learner wording shortened; curriculum and class-talk notes in Grown-ups; learners see "Carmen · listened to your timing" only when the on-device model ran, otherwise "Carmen · tip". Checked with Playwright at 360 px and 1280 px in Day and Night (Play, drums, Learn, a lesson including feedback, a partner project, My music, Settings, Grown-ups): no console errors, no sideways scroll. Colour contrast checked by calculation for every text/background pair, not by an automated audit. Not checked: real devices, screen readers, audio latency, real multitouch.
@@ -89,6 +89,38 @@ momo asked for a real sign-up, a teacher area that a child can't get into, no di
 - **Checked:** `npm test` (153 pass), build, lint (0 errors). Playwright at 390 and 1280 px, light and dark: Learn, track switch, feedback with checks, listen check and result, read check, play check, Make with two versions, summary, Play, My music, teacher class and child.
 - **Not verified:** whether checks or supports help children; whether the model beats the rules for real learners (the seeded profile only illustrates states); check questions and supports are drafts pending a music educator; audio latency, real touch, screen readers.
 
+## Changed 10 November 2026 (Use my instrument, iPhone touch, teacher accounts, Just play)
+
+### Checks run on 10 November
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Type check, build | `npx tsc -b`, `npm run build` | Pass |
+| Lint | `npm run lint` | 0 errors, 14 warnings (fast-refresh hints) |
+| Unit tests | `npm test` | 200 pass. Two failed in one commit (efe85a5) and were fixed in the next (6984371) |
+| Touch (emulated) | `node tools/e2e-touch.mjs` | 11/11 pass in Chromium with touch emulation: three-finger chord, lifting one finger, glide over white and black keys while holding, touchcancel, leaving the screen, mouse glide, two drums at once |
+| Fake microphone | `node tools/e2e-listen.mjs` | 12/12 pass in dev and in the production build with its CSP; no network request leaves the device while listening |
+| Teacher sign-in | `node tools/e2e-teacher.mjs` | Pass against a stand-in service: code requested with the public key only, wrong code explained, first-use name, space with join code, data calls carry the session, sign-out. Session refresh and its failure are unit-tested |
+| Listening benchmark | `node tools/bench-listen/run.mjs` | See `docs/LISTENING.md`: 35/37 notes right and 2 unclear, 0 wrong, clean and with noise; taps 80/80 clean, 66/80 at 10 dB, 0 extra |
+| Screens | Playwright, 12 screens each at phone 390 px (Day, Night), tablet, desktop 1280 px (Day, Night), short landscape, larger text | No console errors; landscape welcome fixed after the first run hid Just play |
+
+**Not verified:** real iPhone and Android (touch, glide, latency, microphone, whether Safari honours echo cancellation being off, AudioWorklet timing on iOS); real rooms and acoustic pianos; real guitars (guitar listening stays hidden); a real Supabase project and its row-level security; screen readers; battery and CPU cost of listening. The phone checklist is `docs/UAT.md`.
+
+### Working
+- iPhone touch fix (1c5c0b0): each finger is tracked on its own, glide across keys, the audio clock no longer stalls after the page sleeps. Checked by emulation only.
+- Just play first: welcome shows Just play, Start learning, I'm a teacher. No name needed; a name is optional when saving, with what is stored and where. A player can be removed from this device with all their music.
+- Use my instrument (Play): on screen, MIDI or microphone; level meter; timing check (measures this device's delay); single-note pitch for piano, rhythm copy and free tapping; feedback; a separate Record that keeps audio only on this device; recordings in My music with Listen, Rename and Delete.
+- Microphone rules: asked only after the button is pressed, visible Listening with Stop, stops when leaving, hiding the tab or rotating away; no cloud fallback; never used for training.
+- Lessons: Play on my instrument (MIDI in every keyboard lesson, microphone taps in drum lessons after the timing check). Unclear takes and device-clock faults are said plainly, stored as unclear and carry no weight in the learner model.
+- Feedback in three parts (what happened, why it matters, next step) with Hear the difference and Try slower; per-sound marks behind "Sound by sound"; "Slower was on" when the model chose it.
+- Learn by instrument (Piano, Drums), then units, then steps; Carry on kept apart from Next on this instrument.
+- Delete in My music has an 8-second Undo.
+- Teacher accounts: Log in or Create account with a school email and a 6-digit code; refreshing session and sign-out; first-use name and teaching space (create, or join with a code). Permissions are enforced by row-level security in `supabase/migrations/`.
+- App icons: favicon, Apple touch icon, PWA icons including maskable, manifest colours. The Band characters are gone.
+
+### Blocked
+- Teacher accounts need a Supabase project: see `docs/SERVICES.md`. Until then the teacher page says so and offers only the device PIN, labelled "Device only. Not a school account."
+
 ## Draft
 
 - All lesson and project wording, sequencing and curriculum links. Not reviewed by a primary music teacher.
@@ -100,10 +132,14 @@ momo asked for a real sign-up, a teacher area that a child can't get into, no di
 ## Blocked
 
 - Teacher review of content: needs a primary music teacher.
+- School teacher accounts: need the Supabase project, the migration and the allowed school email domains (`docs/SERVICES.md`).
+- Physical phone sign-off: needs the `docs/UAT.md` run on a real iPhone and Android phone.
 
 ## Future
 
-- Device latency calibration (so "late" is not the device).
+- Guitar listening, after checks with real guitars.
+- Pitch listening in lessons (now only in Use my instrument), after real-room checks.
+- Teacher evidence shared through the teaching space (today evidence stays on each device).
 - Real-child timing data, collected with consent, to re-check the model.
 - More lessons per band, and keyboard chords and drum fills for older learners.
 - Export of teacher evidence (CSV or print).

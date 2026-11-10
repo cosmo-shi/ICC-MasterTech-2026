@@ -2,9 +2,11 @@ import { lessonStars, nextFor, reasonText } from '../ai/learner.ts';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { blurb, lessonById, missionById } from '../data/catalog.ts';
-import { type Activity, type TrackId, TRACKS, activityById, positionInTrack, trackActivities, trackById } from '../data/curriculum.ts';
+import { type Activity, type TrackId, activityById, positionInTrack, trackActivities, trackById } from '../data/curriculum.ts';
 import { Icon, type IconName } from '../ui/icons.tsx';
 import { useMyLearning } from '../ui/useAttempts.ts';
+import { usePrefs } from '../state/prefs.tsx';
+import type { InstrumentId } from '../music/events.ts';
 /** Three note heads: had a go, matched with practice, matched on your own. */
 export function Stars({ n, size = 18 }: { n: number; size?: number }) {
   return (
@@ -94,12 +96,29 @@ export function TrackProgress({ id, at, done }: { id: string; at: number; done: 
   );
 }
 
+/** Units of each instrument: the concept first, then its steps. Rhythm basics and Create are
+ *  shared ideas, played on whichever instrument is chosen. */
+const UNITS: Record<InstrumentId, { track: TrackId; title: string; about: string }[]> = {
+  keyboard: [
+    { track: 'foundations', title: 'Beat and rhythm', about: 'Steady beat, rests and quavers, played on the piano.' },
+    { track: 'piano', title: 'Notes and reading', about: 'Find the notes, read the stave, hold and rest.' },
+    { track: 'create', title: 'Make your own', about: 'Answer, build and add parts to your own music.' },
+  ],
+  drums: [
+    { track: 'foundations', title: 'Beat and rhythm', about: 'Steady beat, rests and quavers, played on the drums.' },
+    { track: 'drums', title: 'Grooves on the kit', about: 'Rock beat, hi-hat time and fills.' },
+    { track: 'create', title: 'Make your own', about: 'Answer, build and swap rhythms.' },
+  ],
+};
+const onInstrument = (a: Activity, inst: InstrumentId) => a.instrument === 'either' || a.instrument === inst;
+
 export function LearnScreen({ go }: { go: (r: string) => void }) {
   const { attempts, planning, overrides, context } = useMyLearning();
+  const { prefs, set } = usePrefs();
   const plan = nextFor(planning, overrides, context());
   const nextId = plan.next?.lessonId ?? 'L00';
   const nextAct = activityById(nextId)!;
-  const [track, setTrack] = useState<TrackId>(nextAct.track);
+  const [inst, setInst] = useState<InstrumentId>(nextAct.instrument === 'either' ? prefs.instrument : nextAct.instrument);
   const [open, setOpen] = useState<string | null>(null);
 
   const started = (id: string) => attempts.some((a) => a.activityId === id);
@@ -108,7 +127,15 @@ export function LearnScreen({ go }: { go: (r: string) => void }) {
   // Shown only when it is evidence (the model ran on this child's tries) or a teacher's choice.
   const why = plan.teacher ? 'Your teacher picked this for you.' : plan.provenance === 'learner-model' ? reasonText(plan) : '';
   const nextStars = starsFor(nextAct);
-  const list = trackActivities(track);
+  const instName = inst === 'drums' ? 'Drums' : 'Piano';
+  // The next step on this instrument, separate from the overall "carry on".
+  const instList = UNITS[inst].flatMap((u) => trackActivities(u.track).filter((a) => onInstrument(a, inst)));
+  const nextHere = instList.find((a) => starsFor(a) < 3 && a.prerequisites.every(started)) ?? instList.find((a) => starsFor(a) < 3);
+  const openLesson = (id: string) => {
+    const a = activityById(id)!;
+    if (a.instrument === 'either') set('instrument', inst);
+    go(a.kind === 'lesson' ? `#/lesson/${id}` : `#/mission/${id}`);
+  };
 
   return (
     <div className="screen learn">
@@ -119,15 +146,15 @@ export function LearnScreen({ go }: { go: (r: string) => void }) {
 
       <section className={`resume tr-${nextAct.track}`} aria-labelledby="resume-h">
         <div className="resume-top">
-          <span className="kicker">{nextStars ? 'Carry on' : 'Up next'}</span>
-          <TrackTag id={nextAct.track} />
+          <span className="kicker">{nextStars ? 'Carry on where you left off' : 'Up next'}</span>
+          <InstrumentLine a={nextAct} />
         </div>
         <h2 id="resume-h" className="resume-title">
           {titleOf(nextId)}
         </h2>
         <p className="resume-learn">{nextAct.learn}</p>
         <div className="resume-facts">
-          <InstrumentLine a={nextAct} />
+          <TrackTag id={nextAct.track} />
           <TrackProgress id={nextId} at={pos.index} done={(x) => starsFor(activityById(x)!) === 3} />
         </div>
         {why && (
@@ -140,52 +167,87 @@ export function LearnScreen({ go }: { go: (r: string) => void }) {
         </button>
       </section>
 
-      <div className="track-tabs" role="tablist" aria-label="Tracks">
-        {TRACKS.map((t) => (
-          <button key={t.id} type="button" role="tab" aria-selected={track === t.id} aria-controls="track-panel" className={`track-tab tr-${t.id}`} onClick={() => setTrack(t.id)}>
-            <Icon name={TRACK_ICON[t.id]} size={22} />
-            <span>{t.name}</span>
-          </button>
-        ))}
-      </div>
-
-      <div id="track-panel" role="tabpanel" className={`track-panel tr-${track}`}>
-        <div className="track-banner">
-          <h2 className="track-name">{trackById(track).name}</h2>
-          <p className="track-about">{trackById(track).about}</p>
+      <div className="learn-inst">
+        <h2 className="h2 learn-inst-h" id="inst-h">
+          Learn on
+        </h2>
+        <div className="segmented instrument-switch" role="radiogroup" aria-labelledby="inst-h">
+          {(['keyboard', 'drums'] as const).map((i) => (
+            <button
+              key={i}
+              type="button"
+              role="radio"
+              aria-checked={inst === i}
+              className="segment"
+              onClick={() => {
+                setInst(i);
+                set('instrument', i);
+              }}
+            >
+              <Icon name={i === 'keyboard' ? 'piano' : 'drum'} size={20} /> {i === 'keyboard' ? 'Piano' : 'Drums'}
+            </button>
+          ))}
         </div>
-        {track !== nextAct.track && <TrackPick list={list} starsFor={starsFor} started={started} onOpen={setOpen} />}
-        <ol className="nodes" aria-label={`${trackById(track).name} steps`}>
-          {list.map((a, i) => {
-            const here = a.id === nextId;
-            const stars = starsFor(a);
-            const state = stars === 3 ? 'done' : stars > 0 ? 'started' : 'new';
-            const project = a.kind === 'project';
-            return (
-              <li key={a.id} className={`node-li${here ? ' is-here' : ''}`} style={{ '--off': ZIG[i % ZIG.length] } as React.CSSProperties}>
-                {here && (
-                  <span className="node-bubble" aria-hidden="true">
-                    {stars ? 'Carry on' : 'Start'}
-                  </span>
-                )}
-                <button
-                  type="button"
-                  className={`node node-${state}${project ? ' node-project' : ''}${here ? ' node-here' : ''}`}
-                  aria-label={`Step ${i + 1}: ${titleOf(a.id)}. ${project ? (stars ? 'Started' : 'Project') : `${stars} of 3 stars`}${here ? '. Up next' : ''}`}
-                  aria-haspopup="dialog"
-                  onClick={() => setOpen(a.id)}
-                >
-                  <Icon name={state === 'done' ? 'check' : project ? 'music' : a.instrument === 'drums' ? 'drum' : a.instrument === 'keyboard' ? 'piano' : TRACK_ICON[a.track]} size={34} />
-                </button>
-                <span className="node-label">{titleOf(a.id)}</span>
-                {!project && <Stars n={stars} size={14} />}
-              </li>
-            );
-          })}
-        </ol>
       </div>
 
-      {open && <StopSheet id={open} stars={starsFor(activityById(open)!)} started={started} onClose={() => setOpen(null)} go={go} />}
+      {nextHere && !onInstrument(nextAct, inst) && (
+        <button type="button" className="track-pick" onClick={() => setOpen(nextHere.id)}>
+          <span className="kicker">Next on {instName}</span>
+          <span className="track-pick-title">{titleOf(nextHere.id)}</span>
+          <span className="track-pick-why">{starsFor(nextHere) ? 'You started this one.' : nextHere.prerequisites.every(started) ? 'You’ve tried what it builds on.' : 'The first step here.'}</span>
+        </button>
+      )}
+
+      {UNITS[inst].map((u) => {
+        const list = trackActivities(u.track).filter((a) => onInstrument(a, inst));
+        if (!list.length) return null;
+        return (
+          <section key={u.track} className={`unit tr-${u.track}`} aria-labelledby={`unit-${u.track}`}>
+            <div className="track-banner">
+              <h3 id={`unit-${u.track}`} className="track-name">
+                {u.title}
+              </h3>
+              <p className="track-about">{u.about}</p>
+            </div>
+            <ol className="nodes" aria-label={`${u.title} steps`}>
+              {list.map((a, i) => {
+                const here = a.id === nextId;
+                const stars = starsFor(a);
+                const state = stars === 3 ? 'done' : stars > 0 ? 'started' : 'new';
+                const project = a.kind === 'project';
+                return (
+                  <li key={a.id} className={`node-li${here ? ' is-here' : ''}`} style={{ '--off': ZIG[i % ZIG.length] } as React.CSSProperties}>
+                    {here && (
+                      <span className="node-bubble" aria-hidden="true">
+                        {stars ? 'Carry on' : 'Start'}
+                      </span>
+                    )}
+                    <button
+                      type="button"
+                      className={`node node-${state}${project ? ' node-project' : ''}${here ? ' node-here' : ''}`}
+                      aria-label={`Step ${i + 1}: ${titleOf(a.id)}. ${project ? (stars ? 'Started' : 'Project') : `${stars} of 3 stars`}${here ? '. Up next' : ''}`}
+                      aria-haspopup="dialog"
+                      onClick={() => setOpen(a.id)}
+                    >
+                      <Icon name={state === 'done' ? 'check' : project ? 'music' : inst === 'drums' ? 'drum' : 'piano'} size={34} />
+                    </button>
+                    <span className="node-label">{titleOf(a.id)}</span>
+                    {!project && <Stars n={stars} size={14} />}
+                  </li>
+                );
+              })}
+            </ol>
+          </section>
+        );
+      })}
+
+      <button type="button" className="track-pick listen-pick" onClick={() => go('#/play/instrument')}>
+        <span className="kicker">Your own instrument</span>
+        <span className="track-pick-title">Play a real piano, keyboard or drum</span>
+        <span className="track-pick-why">Carmen listens on this device, or through a MIDI cable.</span>
+      </button>
+
+      {open && <StopSheet id={open} stars={starsFor(activityById(open)!)} started={started} onClose={() => setOpen(null)} go={(r) => (r.startsWith('#/lesson/') || r.startsWith('#/mission/') ? openLesson(open) : go(r))} />}
     </div>
   );
 }
@@ -251,30 +313,5 @@ function StopSheet({ id, stars, started, onClose, go }: { id: string; stars: num
       </div>
     </div>,
     document.body,
-  );
-}
-
-/** When you switch tracks: where to begin in this one, and why, in one plain line. */
-function TrackPick({ list, starsFor, started, onOpen }: { list: Activity[]; starsFor: (a: Activity) => number; started: (id: string) => boolean; onOpen: (id: string) => void }) {
-  const ready = list.find((a) => starsFor(a) < 3 && a.prerequisites.every(started));
-  const pick = ready ?? list.find((a) => starsFor(a) < 3) ?? list[0];
-  const stars = starsFor(pick);
-  const missing = pick.prerequisites.filter((p) => !started(p));
-  // Nothing here is ready yet: point to what it builds on, and say why.
-  if (!ready && missing.length && !stars)
-    return (
-      <button type="button" className="track-pick" onClick={() => onOpen(missing[0])}>
-        <span className="kicker">Try this first</span>
-        <span className="track-pick-title">{titleOf(missing[0])}</span>
-        <span className="track-pick-why">{titleOf(pick.id)} builds on it.</span>
-      </button>
-    );
-  const why = stars ? 'You started this one.' : pick === list[0] ? 'The first step here.' : 'You’ve tried what it builds on.';
-  return (
-    <button type="button" className="track-pick" onClick={() => onOpen(pick.id)}>
-      <span className="kicker">{stars ? 'Carry on here' : 'Start here'}</span>
-      <span className="track-pick-title">{titleOf(pick.id)}</span>
-      <span className="track-pick-why">{why}</span>
-    </button>
   );
 }

@@ -56,6 +56,11 @@ export function PlayScreen({ go, makeFrom }: { go: (r: string) => void; makeFrom
             </button>
           ))}
         </div>
+        {!idea && (
+          <button type="button" className="input-chip" onClick={() => go('#/play/instrument')}>
+            <Icon name="listen" size={20} /> <span className="chip-long">Use my instrument</span><span className="chip-short">My instrument</span>
+          </button>
+        )}
         {latest && !idea && (
           <div className="last-piece">
             <button

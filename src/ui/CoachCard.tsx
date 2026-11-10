@@ -5,16 +5,19 @@ import { usePlayer } from './usePlayer.ts';
 interface Props {
   decision: CoachDecision;
   onChoice?: (choice: string) => void;
+  /** The take's own what/why/next is shown instead (lessons). */
+  hideObservation?: boolean;
 }
 
 /** One observation the try supports, and (when it passes the music check) a short example to hear.
  *  No labels about how it was worked out: the Teacher space shows that. */
-export function CoachCard({ decision, onChoice }: Props) {
+export function CoachCard({ decision, onChoice, hideObservation }: Props) {
   const player = usePlayer();
   const r = decision.reply;
+  if (hideObservation && !r) return null;
   return (
     <section className="coach" aria-label="What happened">
-      <p className="coach-obs">{decision.observation}</p>
+      {!hideObservation && <p className="coach-obs">{decision.observation}</p>}
       {r && (
         <div className="reply">
           <button

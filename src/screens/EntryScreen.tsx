@@ -3,7 +3,7 @@ import { lessonById } from '../data/catalog.ts';
 import { START_AT } from '../data/curriculum.ts';
 import { type PathwayId, usePrefs } from '../state/prefs.tsx';
 import { COLOUR_NAMES, PLAYER_COLOURS, type Player, type PlayerColour, players, teacher, usePlayers } from '../store/profiles.ts';
-import { Band, Horizon, Icon, type IconName, Wordmark } from '../ui/icons.tsx';
+import { Horizon, Icon, type IconName, WelcomeArt, Wordmark } from '../ui/icons.tsx';
 
 export function Avatar({ player, size = 48 }: { player: Pick<Player, 'name' | 'colour'>; size?: number }) {
   return (
@@ -54,9 +54,23 @@ export function EntryScreen({ onDone, go, canClose, initial }: { onDone: () => v
     go(route);
   };
   const first = lessonById(START_AT[start ?? 'F'].activity);
+  // No name, colour or level needed to make music. A name can be added later, when saving.
+  const [learning, setLearning] = useState(false);
+  const justPlay = () => {
+    players.choose('guest');
+    onDone();
+    go('#/play');
+  };
+  const learnAsGuest = () => {
+    players.choose('guest');
+    set('pathway', start ?? 'F');
+    onDone();
+    const lesson = lessonById(START_AT[start ?? 'F'].activity);
+    go(lesson ? `#/lesson/${lesson.id}` : '#/learn');
+  };
 
   const progress = { name: 1, look: 2, start: 3 } as Record<Step, number>;
-  const back: Partial<Record<Step, Step>> = { name: list.length ? 'pick' : 'welcome', look: 'name', start: 'look', teacher: list.length ? 'pick' : 'welcome' };
+  const back: Partial<Record<Step, Step>> = { name: list.length ? 'pick' : 'welcome', look: 'name', start: learning ? (list.length ? 'pick' : 'welcome') : 'look', teacher: list.length ? 'pick' : 'welcome' };
 
   return (
     <div className={`entry entry-${step}`} role="dialog" aria-modal="true" aria-labelledby="entry-h">
@@ -70,9 +84,11 @@ export function EntryScreen({ onDone, go, canClose, initial }: { onDone: () => v
           <button type="button" className="icon-btn quiet" aria-label="Back" onClick={() => setStep(back[step]!)}>
             <Icon name="back" size={22} />
           </button>
-          <div className="progress" role="progressbar" aria-label="Sign up" aria-valuemin={0} aria-valuemax={3} aria-valuenow={progress[step]}>
-            <span style={{ width: `${(progress[step] / 3) * 100}%` }} />
-          </div>
+          {!learning && (
+            <div className="progress" role="progressbar" aria-label="Sign up" aria-valuemin={0} aria-valuemax={3} aria-valuenow={progress[step]}>
+              <span style={{ width: `${(progress[step] / 3) * 100}%` }} />
+            </div>
+          )}
         </div>
       )}
       {step === 'teacher' && (
@@ -88,7 +104,7 @@ export function EntryScreen({ onDone, go, canClose, initial }: { onDone: () => v
           <>
             <div className="entry-hero">
               <Wordmark size={56} />
-              <Band width={240} />
+              <WelcomeArt width={260} />
             </div>
             <h1 id="entry-h" ref={heading} tabIndex={-1} className="entry-title">
               Make music. Find out how it works.
@@ -191,22 +207,28 @@ export function EntryScreen({ onDone, go, canClose, initial }: { onDone: () => v
       <div className="entry-foot">
         {step === 'welcome' && (
           <>
-            <button type="button" className="btn btn-big btn-block" onClick={() => setStep('name')}>
-              Get started
+            <button type="button" className="btn btn-big btn-block" onClick={justPlay}>
+              <Icon name="play" size={24} /> Just play
             </button>
-            <button type="button" className="btn-text" onClick={() => setStep('teacher')}>
+            <button type="button" className="btn-quiet btn-block" onClick={() => { setLearning(true); setStep('start'); }}>
+              <Icon name="learn" size={22} /> Start learning
+            </button>
+            <button type="button" className="btn-text" onClick={() => { onDone(); go('#/teacher'); }}>
               I’m a teacher
             </button>
           </>
         )}
         {step === 'pick' && (
           <>
+            <button type="button" className="btn-quiet btn-block" onClick={justPlay}>
+              <Icon name="play" size={22} /> Just play, no name
+            </button>
             {canClose && (
               <button type="button" className="btn-quiet btn-block" onClick={onDone}>
                 Back
               </button>
             )}
-            <button type="button" className="btn-text" onClick={() => setStep('teacher')}>
+            <button type="button" className="btn-text" onClick={() => { onDone(); go('#/teacher'); }}>
               <Icon name="grownups" size={18} /> Teacher
             </button>
           </>
@@ -222,8 +244,8 @@ export function EntryScreen({ onDone, go, canClose, initial }: { onDone: () => v
           </button>
         )}
         {step === 'start' && (
-          <button type="button" className="btn btn-big btn-block" disabled={!start} onClick={finishSignUp}>
-            Continue
+          <button type="button" className="btn btn-big btn-block" disabled={!start} onClick={learning ? learnAsGuest : finishSignUp}>
+            {learning ? 'Start' : 'Continue'}
           </button>
         )}
         {step === 'ready' && (

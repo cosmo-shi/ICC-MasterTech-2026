@@ -141,6 +141,17 @@ export const teacher = {
       return false;
     }
   },
+  /** Forgotten PIN: remove it and the teacher choices kept on this device. Learners' work stays. */
+  resetPin() {
+    try {
+      localStorage.removeItem(PIN_KEY);
+      localStorage.removeItem('carmen-teacher-overrides-v1');
+      sessionStorage.removeItem(OPEN_KEY);
+    } catch {
+      /* fine */
+    }
+    emit();
+  },
   open() {
     try {
       sessionStorage.setItem(OPEN_KEY, '1');

@@ -9,6 +9,10 @@ import { MyMusic } from './screens/MyMusic.tsx';
 import { ControlsSheet } from './screens/ControlsSheet.tsx';
 import { Avatar, EntryScreen } from './screens/EntryScreen.tsx';
 import { players, teacher, usePlayers } from './store/profiles.ts';
+import { InputLog } from './ui/InputLog.tsx';
+import { InstrumentScreen } from './screens/InstrumentScreen.tsx';
+import { TeacherWelcome } from './screens/TeacherWelcome.tsx';
+import { listening } from './input/session.ts';
 
 const MissionScreen = lazy(() => import('./screens/MissionScreen.tsx').then((m) => ({ default: m.MissionScreen })));
 const TheoryScreen = lazy(() => import('./screens/TheoryScreen.tsx').then((m) => ({ default: m.TheoryScreen })));
@@ -17,7 +21,11 @@ const Grownups = lazy(() => import('./screens/Grownups.tsx').then((m) => ({ defa
 function useHash(): [string, (h: string) => void] {
   const [hash, setHash] = useState(() => window.location.hash || '#/play');
   useEffect(() => {
-    const on = () => setHash(window.location.hash || '#/play');
+    const on = () => {
+      // Leaving a screen stops the microphone; it never follows the learner to another page.
+      listening.stopMic();
+      setHash(window.location.hash || '#/play');
+    };
     window.addEventListener('hashchange', on);
     return () => window.removeEventListener('hashchange', on);
   }, []);
@@ -64,12 +72,13 @@ function Shell() {
   else if (section === 'lesson' && arg) screen = <LessonScreen key={hash} lessonId={arg} view={sub} go={go} />;
   else if (section === 'mission' && arg) screen = <MissionScreen key={arg} missionId={arg} go={go} />;
   else if (section === 'music') screen = <MyMusic go={go} />;
-  else if (section === 'teacher' || section === 'grownups') screen = teacherOpen ? <Grownups go={go} /> : <EntryScreen initial="teacher" canClose onDone={() => undefined} go={go} />;
+  else if (section === 'teacher' || section === 'grownups') screen = teacherOpen ? <Grownups go={go} /> : <TeacherWelcome go={go} />;
+  else if (section === 'play' && arg === 'instrument') screen = <InstrumentScreen go={go} />;
   else screen = <PlayScreen key={hash} go={go} makeFrom={arg === 'make' ? sub : undefined} />;
 
   const current = section === 'lesson' || section === 'mission' || section === 'theory' ? '#/learn' : `#/${section || 'play'}`;
 
-  const scene = section === 'learn' || section === 'lesson' || section === 'mission' || section === 'theory' ? 'learn' : section === 'music' ? 'music' : section === 'teacher' ? 'quiet' : 'play';
+  const scene = (section === 'play' && arg === 'instrument') || section === 'learn' || section === 'lesson' || section === 'mission' || section === 'theory' ? 'learn' : section === 'music' ? 'music' : section === 'teacher' ? 'quiet' : 'play';
 
   const banner = saveError && (
     <p className="banner" role="alert">
@@ -86,6 +95,7 @@ function Shell() {
           <Suspense fallback={<p className="support">Loading…</p>}>{screen}</Suspense>
         </main>
         {showEntry && <EntryScreen canClose={!!who.current} onDone={() => setSwitching(false)} go={go} />}
+        <InputLog />
       </div>
     );
   }
@@ -124,8 +134,15 @@ function Shell() {
             <span className="tab-label">{n.label}</span>
           </a>
         ))}
+        <button type="button" className="tab-link rail-gear" aria-expanded={settingsOpen} aria-controls="controls-sheet" onClick={() => setSettingsOpen(!settingsOpen)}>
+          <span className="tab-icon">
+            <Icon name="gear" size={24} />
+          </span>
+          <span className="tab-label">Settings</span>
+        </button>
       </nav>
       {showEntry && <EntryScreen canClose={!!who.current} onDone={() => setSwitching(false)} go={go} />}
+      <InputLog />
       {settingsOpen && <ControlsSheet onClose={() => setSettingsOpen(false)} onSwitchPlayer={() => { setSettingsOpen(false); setSwitching(true); }} />}
       <main id="main" ref={mainRef} tabIndex={-1} className={`sheet-main stage-${section || 'play'}`}>
         {banner}

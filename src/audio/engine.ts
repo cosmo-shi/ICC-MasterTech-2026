@@ -157,7 +157,18 @@ class AudioEngine {
     gain.gain.value = gainValue;
     src.connect(gain).connect(dest ?? this.master);
     src.start(when);
+    this.starts.push(Math.max(when, this.ctx.currentTime));
+    if (this.starts.length > 96) this.starts.splice(0, this.starts.length - 96);
     return { src, gain, key: '', started: when };
+  }
+
+  /** Start times (audio-context seconds) of Carmen's own recent sounds, so a microphone does not
+   *  mistake them for the learner. */
+  private starts: number[] = [];
+  /** True if a sound heard at `heardCtx` is probably Carmen's own (round-trip delay `latency`). */
+  ownSoundAt(heardCtx: number, latency: number): boolean {
+    const t = heardCtx - latency;
+    return this.starts.some((s) => t > s - 0.04 && t < s + 0.12);
   }
 
   /** Live note-on. Returns false if sound is not ready. */
@@ -227,12 +238,12 @@ class AudioEngine {
   /** performance.now() time at which a given AudioContext time is heard. */
   ctxToPerfMs(ctxTime: number): number {
     if (!this.ctx) return performance.now();
-    const ts = this.ctx.getOutputTimestamp?.();
-    if (ts && ts.contextTime !== undefined && ts.performanceTime !== undefined && ts.performanceTime > 0) {
-      return ts.performanceTime + (ctxTime - ts.contextTime) * 1000;
-    }
-    const lat = (this.ctx.outputLatency || this.ctx.baseLatency || 0) * 1000;
-    return performance.now() + (ctxTime - this.ctx.currentTime) * 1000 + lat;
+    return mapCtxToPerf(ctxTime, {
+      now: performance.now(),
+      currentTime: this.ctx.currentTime,
+      latencySec: this.ctx.outputLatency || this.ctx.baseLatency || 0,
+      stamp: this.ctx.getOutputTimestamp?.(),
+    });
   }
 
   /**
@@ -293,6 +304,27 @@ class AudioEngine {
       },
     };
   }
+}
+
+/**
+ * Map an AudioContext time to performance.now() time.
+ *
+ * The output timestamp is the most precise source, but some browsers (seen in Safari) return a
+ * stale or zero contextTime once the context has run for a while. Used as-is, that makes the
+ * first beat look as far away as the context is old: the "count-in stalls" bug (10 Nov). So the
+ * stamp is used only when it agrees with the plain estimate from currentTime to within 250 ms.
+ */
+export function mapCtxToPerf(
+  ctxTime: number,
+  c: { now: number; currentTime: number; latencySec: number; stamp?: { contextTime?: number; performanceTime?: number } },
+): number {
+  const plain = c.now + (ctxTime - c.currentTime) * 1000 + c.latencySec * 1000;
+  const s = c.stamp;
+  if (s && s.contextTime !== undefined && s.performanceTime !== undefined && s.performanceTime > 0 && s.contextTime > 0) {
+    const precise = s.performanceTime + (ctxTime - s.contextTime) * 1000;
+    if (Math.abs(precise - plain) < 250) return precise;
+  }
+  return plain;
 }
 
 export const audio = new AudioEngine();

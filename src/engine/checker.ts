@@ -11,7 +11,9 @@ export interface CapturedInput {
   releaseMs?: number;
   midi?: number;
   sound?: DrumSound;
-  source: 'pointer' | 'key';
+  source: 'pointer' | 'key' | 'midi' | 'mic';
+  /** Heard through the microphone as a tap: which drum it was is not known, so it is not judged. */
+  soundUnknown?: boolean;
 }
 
 export type TimingClass = 'early' | 'onTime' | 'late';
@@ -75,6 +77,7 @@ function label(e: SoundingEvent | { midi?: number; sound?: DrumSound }): string 
 }
 
 function soundMatches(exp: SoundingEvent, inp: CapturedInput): boolean {
+  if (inp.soundUnknown) return true;
   if (exp.kind === 'note') return inp.midi === exp.midi;
   return inp.sound === exp.sound;
 }

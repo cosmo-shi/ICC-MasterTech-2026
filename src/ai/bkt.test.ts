@@ -44,6 +44,19 @@ describe('observations from checker facts', () => {
     expect(indep).toBeGreaterThan(prac);
     expect(prac).toBeGreaterThan(answer);
   });
+
+  it('gives an unclear listening take no weight at all, even as an independent check', () => {
+    expect(evidenceWeight(attempt('L01', { kind: 'independent', input: { mode: 'mic', unclear: true, reason: 'faint' } }))).toBe(0);
+    expect(evidenceWeight(attempt('L01', { input: { mode: 'mic', unclear: true, reason: 'device' } }))).toBe(0);
+    expect(evidenceWeight(attempt('L01', { input: { mode: 'mic' } }))).toBe(evidenceWeight(attempt('L01')));
+  });
+
+  it('leaves mastery unchanged by unclear takes', () => {
+    const clear = buildLearnerState([attempt('L02', {}, { restViolations: 1 })], INFOS);
+    const withUnclear = buildLearnerState([attempt('L02', {}, { restViolations: 1 }), ...[1, 2, 3].map(() => attempt('L02', { input: { mode: 'mic', unclear: true } }, { restViolations: 4 }))], INFOS);
+    const view = (st: typeof clear) => Object.entries(st.skills).map(([k, v]) => [k, v.p, v.observations, v.recent]);
+    expect(view(withUnclear)).toEqual(view(clear));
+  });
 });
 
 describe('learner state', () => {

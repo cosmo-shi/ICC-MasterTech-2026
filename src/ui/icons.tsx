@@ -35,7 +35,14 @@ type IconName =
   | 'close'
   | 'lock'
   | 'hint'
-  | 'star';
+  | 'star'
+  | 'rotate'
+  | 'mic'
+  | 'midi'
+  | 'guitar'
+  | 'trash'
+  | 'listen'
+  | 'record';
 
 const S = { fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
 
@@ -158,6 +165,46 @@ function paths(name: IconName) {
       );
     case 'star':
       return <Head x={12} y={12} scale={2.4} />;
+    case 'rotate': // a phone turning sideways
+      return (
+        <>
+          <rect x="3.5" y="9" width="17" height="10" rx="2.5" {...S} />
+          <path d="M7 5.5c2-2 6-2.4 8.6-.4M15.6 5.1l.4-2.6M15.6 5.1l-2.6.2" {...S} />
+        </>
+      );
+    case 'mic':
+      return (
+        <>
+          <rect x="9" y="3" width="6" height="11" rx="3" {...S} />
+          <path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7" {...S} />
+        </>
+      );
+    case 'midi': // a cable plug: a keyboard connected by wire
+      return (
+        <>
+          <rect x="3" y="12" width="18" height="8" rx="2.5" {...S} />
+          <path d="M8 12v4M12 12v4M16 12v4M12 12V8.5a3 3 0 0 1 3-3h3" {...S} />
+        </>
+      );
+    case 'guitar':
+      return (
+        <>
+          <path d="M14.5 9.5l5-5M17.5 3l3.5 3.5" {...S} />
+          <path d="M13.2 10.8c-1.4-1.4-3.4-1.4-4.2 0-.5.8-1.4 1-2.4 1.2-2.6.5-3.6 3.8-1.4 6 2.2 2.2 5.5 1.2 6-1.4.2-1 .4-1.9 1.2-2.4 1.4-.8 1.4-2.8-.2-4.4z" {...S} />
+          <Head x={9.6} y={14.4} scale={0.55} />
+        </>
+      );
+    case 'trash':
+      return <path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 12.5a1.5 1.5 0 0 0 1.5 1.5h6a1.5 1.5 0 0 0 1.5-1.5L17.5 7M10.5 11v6M13.5 11v6" {...S} />;
+    case 'listen': // sound arriving: three arcs and a note head
+      return (
+        <>
+          <Head x={7} y={15.5} />
+          <path d="M12.5 10.5a4 4 0 0 1 0 6M15.5 8a7.5 7.5 0 0 1 0 11M18.5 5.5a11 11 0 0 1 0 16" {...S} />
+        </>
+      );
+    case 'record':
+      return <circle cx="12" cy="12" r="6.5" fill="currentColor" />;
     case 'back':
       return <path d="M14.5 5.5L8 12l6.5 6.5" {...S} strokeWidth={2.4} />;
     case 'forward':
@@ -279,45 +326,45 @@ export function Horizon({ scene = 'play', className }: { scene?: Scene; classNam
   );
 }
 
-/** Three children making music, drawn with the same strokes and note-head shapes. Decorative. */
-export function Band({ width = 220 }: { width?: number }) {
-  const kid = (x: number, shirt: string, skin: string, hair: React.ReactNode, prop: React.ReactNode) => (
-    <g transform={`translate(${x} 0)`}>
-      <path d="M8 86c0-16 9-26 22-26s22 10 22 26z" fill={shirt} />
-      <circle cx="30" cy="38" r="17" fill={skin} />
-      {hair}
-      <ellipse cx="24" cy="40" rx="2.2" ry="1.7" transform="rotate(-20 24 40)" fill="#2a1736" />
-      <ellipse cx="36" cy="40" rx="2.2" ry="1.7" transform="rotate(-20 36 40)" fill="#2a1736" />
-      <path d="M25 47q5 4 10 0" fill="none" stroke="#2a1736" strokeWidth="2" strokeLinecap="round" />
-      {prop}
-    </g>
-  );
+/** Welcome art: the two instruments Carmen plays (keys and a drum head) under a phrase of
+ *  note heads on a curved stave. Same geometry as the icons: round strokes, tilted heads. Decorative. */
+export function WelcomeArt({ width = 260 }: { width?: number }) {
+  const keys = [0, 1, 2, 3, 4, 5, 6];
   return (
-    <svg className="band" width={width} height={(width * 90) / 220} viewBox="0 0 220 90" aria-hidden="true" focusable="false">
-      {kid(
-        8,
-        'var(--sky-mid)',
-        '#8d5524',
-        <path d="M13 36c0-13 8-20 17-20s17 7 17 20c-4-6-10-9-17-9s-13 3-17 9z" fill="#2a1736" />,
-        <g fill="none" stroke="var(--ink)" strokeWidth="2" strokeLinecap="round"><path d="M10 74h40" /><path d="M14 74v10M46 74v10" /></g>,
-      )}
-      {kid(
-        80,
-        'var(--sun)',
-        '#f1c27d',
-        <path d="M12 44c-3-18 6-27 18-27s21 9 18 27c-2-9-6-14-9-15-6 4-15 6-27 15z" fill="#b5481c" />,
-        <g><ellipse cx="54" cy="22" rx="3.2" ry="2.4" transform="rotate(-20 54 22)" fill="var(--ink)" /><path d="M57 21V8" stroke="var(--ink)" strokeWidth="2" strokeLinecap="round" /></g>,
-      )}
-      {kid(
-        152,
-        'var(--dusk)',
-        '#c68642',
-        <>
-          <circle cx="30" cy="20" r="8" fill="#2a1736" />
-          <path d="M14 36c2-11 8-15 16-15s14 4 16 15c-6-4-26-4-32 0z" fill="#2a1736" />
-        </>,
-        <g fill="none" stroke="var(--ink)" strokeWidth="2" strokeLinecap="round"><ellipse cx="30" cy="78" rx="14" ry="4" /></g>,
-      )}
+    <svg className="welcome-art" width={width} height={(width * 132) / 260} viewBox="0 0 260 132" aria-hidden="true" focusable="false">
+      <g fill="none" stroke="var(--welcome-line, var(--ink-soft))" strokeWidth="1.6" strokeLinecap="round" opacity="0.6">
+        {[0, 7, 14, 21, 28].map((d) => (
+          <path key={d} d={`M6 ${34 + d} C70 ${18 + d} 150 ${22 + d} 254 ${8 + d}`} />
+        ))}
+      </g>
+      {[
+        [44, 44, 'var(--sun)'],
+        [82, 33, 'var(--peri, var(--dusk))'],
+        [120, 33, 'var(--orchid, var(--dusk))'],
+        [158, 22, 'var(--sky-mid)'],
+        [204, 18, 'var(--sun)'],
+      ].map(([x, y, c], i) => (
+        <g key={i}>
+          <ellipse cx={x as number} cy={y as number} rx="9" ry="6.8" transform={`rotate(-20 ${x} ${y})`} fill={c as string} />
+          <path d={`M${(x as number) + 8} ${(y as number) - 2}V${(y as number) - 30}`} stroke="var(--ink)" strokeWidth="2.4" strokeLinecap="round" />
+        </g>
+      ))}
+      <g transform="translate(14 76)">
+        <rect x="0" y="0" width="150" height="50" rx="10" fill="var(--key-black, #23264a)" />
+        {keys.map((k) => (
+          <rect key={k} x={6 + k * 20} y="6" width="18" height="38" rx="3" fill="var(--key-white, #fffdfb)" />
+        ))}
+        {[0, 1, 3, 4, 5].map((k) => (
+          <rect key={k} x={19 + k * 20} y="6" width="10" height="22" rx="2" fill="var(--key-black, #23264a)" />
+        ))}
+        <rect x="26" y="6" width="18" height="38" rx="3" fill="var(--sun)" opacity="0.85" />
+      </g>
+      <g transform="translate(206 100)">
+        <ellipse cx="0" cy="0" rx="36" ry="13" fill="var(--pad, #f7c797)" />
+        <ellipse cx="0" cy="0" rx="36" ry="13" fill="none" stroke="var(--drum-rim, #7897d7)" strokeWidth="4" />
+        <path d="M-36 0v14c0 7 16 12 36 12s36-5 36-12V0" fill="none" stroke="var(--drum-rim, #7897d7)" strokeWidth="4" strokeLinejoin="round" />
+        <path d="M-28 -34l20 26M30 -40l-18 30" stroke="var(--ink)" strokeWidth="3" strokeLinecap="round" />
+      </g>
     </svg>
   );
 }

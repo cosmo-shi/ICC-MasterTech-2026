@@ -8,9 +8,42 @@ import { store } from '../store/db.ts';
 import { SoundCheck } from '../ui/SoundCheck.tsx';
 import type { Lesson } from '../music/lessons.ts';
 import { teacher } from '../store/profiles.ts';
+import { teacherAuth } from '../auth/teacherAuth.ts';
+import { currentSpace } from './TeacherWelcome.tsx';
 import { Icon, Wordmark } from '../ui/icons.tsx';
 import { ChildView, ClassView } from './TeacherDashboard.tsx';
 import learnerMetrics from '../../docs/learner-model-metrics.json';
+
+/** Who is signed in, which space, and Sign out; or plainly "device only" for the PIN view. */
+function AccountLine({ go }: { go: (h: string) => void }) {
+  const session = teacherAuth.current();
+  const space = currentSpace();
+  if (!session || !space)
+    return (
+      <p className="account-line">
+        <Icon name="lock" size={16} /> Device-only teacher view (PIN). Class data here comes from this device only.
+      </p>
+    );
+  return (
+    <p className="account-line">
+      <span>
+        {session.user.email} · <strong>{space.name}</strong>
+        {space.join_code && <> · join code <code>{space.join_code}</code></>}
+      </span>
+      <button
+        type="button"
+        className="btn-quiet small"
+        onClick={async () => {
+          await teacherAuth.signOut();
+          teacher.close();
+          go('#/play');
+        }}
+      >
+        Sign out
+      </button>
+    </p>
+  );
+}
 
 export function Grownups({ go }: { go: (h: string) => void }) {
   const { prefs, set, saveError } = usePrefs();
@@ -28,6 +61,7 @@ export function Grownups({ go }: { go: (h: string) => void }) {
           <Icon name="lock" size={18} /> Exit
         </button>
       </header>
+      <AccountLine go={go} />
       <div className="dash-tabs" role="tablist" aria-label="Teacher">
         {TABS.map(([id, label]) => (
           <button key={id} type="button" role="tab" id={`tab-${id}`} aria-selected={tab === id} aria-controls="gu-panel" className={`dash-tab${tab === id ? ' is-on' : ''}`} onClick={() => setTab(id)}>

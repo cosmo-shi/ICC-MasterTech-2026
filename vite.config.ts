@@ -3,25 +3,27 @@ import react from '@vitejs/plugin-react'
 import { createHash } from 'node:crypto'
 import { readdirSync, statSync } from 'node:fs'
 import { join, relative } from 'node:path'
-import { defineConfig, type Plugin } from 'vite'
+import { defineConfig, loadEnv, type Plugin } from 'vite'
 
 // Strict Content-Security-Policy for the built app only. The dev server injects an
 // inline React refresh script, so the policy is not applied there.
-const CSP = [
+// connect-src allows only this site, plus the teacher sign-in service when one is configured.
+// Recordings play from blob: URLs made on the device.
+const cspFor = (authOrigin: string | null) => [
   "default-src 'self'",
   "script-src 'self'",
   "style-src 'self' 'unsafe-inline'",
   "font-src 'self' data:",
   "img-src 'self' data:",
-  "media-src 'self'",
-  "connect-src 'self'",
+  "media-src 'self' blob:",
+  `connect-src 'self'${authOrigin ? ` ${authOrigin}` : ''}`,
   "worker-src 'self'",
   "object-src 'none'",
   "base-uri 'none'",
   "form-action 'none'",
 ].join('; ')
 
-const csp = (): Plugin => ({
+const csp = (CSP: string): Plugin => ({
   name: 'carmen-csp',
   apply: 'build',
   transformIndexHtml: (html) => html.replace('<meta charset="UTF-8" />', `<meta charset="UTF-8" />\n    <meta http-equiv="Content-Security-Policy" content="${CSP}" />`),
@@ -75,8 +77,16 @@ self.addEventListener('fetch', (e) => {
 })
 
 // https://vite.dev/config/
-export default defineConfig({
-  plugins: [react(), csp(), offline()],
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), 'VITE_')
+  let authOrigin: string | null = null
+  try {
+    if (env.VITE_SUPABASE_URL?.startsWith('https://')) authOrigin = new URL(env.VITE_SUPABASE_URL).origin
+  } catch {
+    authOrigin = null
+  }
+  return {
+  plugins: [react(), csp(cspFor(authOrigin)), offline()],
   build: {
     // The notation chunk (VexFlow with its embedded music font) is large but loaded on demand.
     chunkSizeWarningLimit: 800,
@@ -84,4 +94,5 @@ export default defineConfig({
   test: {
     include: ['src/**/*.test.ts'],
   },
+  }
 })

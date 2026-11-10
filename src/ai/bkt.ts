@@ -123,8 +123,11 @@ export function observationsFrom(attempt: Pick<AttemptRecord, 'summary'>, lesson
   return out;
 }
 
-/** How much one attempt counts. Independent checks count fully; help makes it count for less. */
-export function evidenceWeight(attempt: Pick<AttemptRecord, 'kind' | 'support'>): number {
+/** How much one attempt counts. Independent checks count fully; help makes it count for less;
+ *  an unclear listening take counts not at all. */
+export function evidenceWeight(attempt: Pick<AttemptRecord, 'kind' | 'support' | 'input'>): number {
+  // A try Carmen could not hear clearly says nothing about the learner: it never counts.
+  if (attempt.input?.unclear) return 0;
   if (attempt.kind === 'independent') return WEIGHTS.independent;
   if (attempt.kind !== 'practice') return 0;
   let w = attempt.support.hintLevel >= 3 ? WEIGHTS.answerHint : WEIGHTS.practice;

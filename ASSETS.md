@@ -54,3 +54,19 @@ Every third-party file shipped with Carmen. Checked 9 November 2026.
 ## Model
 
 - `src/ai/model.weights.json`: trained by this project from seeded synthetic data (`npm run train`). See `docs/MODEL_CARD.md`.
+
+## App icons (this project's own work, 10 Nov 2026)
+
+The mark (a note-head sun over two curved stave lines) on the Soft Light sky. Drawn for Carmen; no third-party artwork. PNGs are rendered from the same SVG by `node tools/make-icons.mjs`.
+
+| File | SHA-256 |
+|---|---|
+| `public/favicon.svg` | `8c05164fdee1cf2db44bef1a22a3f7b776781323cc8dcd064a4bf10288f5b8c7` |
+| `public/icons/apple-touch-icon.png` | `25f6f3cfa486cc7352fd73fd03e657ecb5d44ae97ecfba5308157891db60e13e` |
+| `public/icons/icon-192.png` | `27d6e518709db190b94d88c6702cce1e5087e88b6757b621e131fabe4954f0ea` |
+| `public/icons/icon-512.png` | `f9d527097f8dcfc8840a11ac896f246bf517f5649e02f954d3da5d4b6966e2a5` |
+| `public/icons/icon-maskable-512.png` | `9132bfdb7cec541d89679e4626d5612245f1d0175797f87b5bc123d00c6b60d4` |
+
+## Listening (no third-party code or data in the app)
+
+The microphone listener (`src/listen/`, `public/worklets/mic-tap.js`) is this project's own signal processing (YIN pitch, energy onsets). Pitchy and Basic Pitch were installed only for the benchmark in `tools/bench-listen` and are not bundled. No dataset or recording is shipped or used for training. See `docs/LISTENING.md` for licences checked.

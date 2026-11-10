@@ -6,6 +6,7 @@ import { type InstrumentId, type Phrase, TPQ } from '../music/events.ts';
 import { type CompositionRecord, newId, stamp, store } from '../store/db.ts';
 import { Icon } from '../ui/icons.tsx';
 import { usePrefs } from '../state/prefs.tsx';
+import { PLAYER_COLOURS, players, usePlayers } from '../store/profiles.ts';
 import { usePlayer } from '../ui/usePlayer.ts';
 import { type LiveEvent, Workspace } from '../ui/Workspace.tsx';
 
@@ -23,7 +24,10 @@ interface Props {
 /** Record as note events (never microphone audio), replay, name and save locally. No score. */
 export function CreatePanel({ instrument, activityId, onSaved, idea, onBackToLesson }: Props) {
   const [state, setState] = useState<'idle' | 'countin' | 'recording' | 'recorded'>('idle');
-  const { prefs } = usePrefs();
+  const { prefs, set } = usePrefs();
+  const who = usePlayers();
+  const [savedRec, setSavedRec] = useState<CompositionRecord | null>(null);
+  const [myName, setMyName] = useState('');
   const [click, setClick] = useState(prefs.metronomeOn);
   const [tempo, setTempo] = useState(idea ? idea.phrase.tempoBpm : prefs.metronomeTempo);
   const [phrase, setPhrase] = useState<Phrase | null>(null);
@@ -107,6 +111,7 @@ export function CreatePanel({ instrument, activityId, onSaved, idea, onBackToLes
     };
     try {
       await store.put('compositions', c);
+      setSavedRec(c);
       setSave('saved');
       onSaved?.(c);
     } catch {
@@ -197,8 +202,34 @@ export function CreatePanel({ instrument, activityId, onSaved, idea, onBackToLes
             {save === 'saved' ? 'Saved' : save === 'saving' ? 'Saving…' : 'Save'}
           </button>
           <p className="save-where" role="status">
-            {save === 'failed' ? 'That didn’t save. Your take is still here, so try again.' : !store.isPersistent ? 'Saving is off: this goes when Carmen closes.' : ''}
+            {save === 'failed' ? 'That didn’t save. Your take is still here, so try again.' : !store.isPersistent ? 'Saving is off: this goes when Carmen closes.' : save === 'saved' ? 'Saved in My music, in this browser on this device.' : ''}
           </p>
+          {save === 'saved' && savedRec && (!who.current || who.current === 'guest') && (
+            <form
+              className="keep-card"
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (!myName.trim()) return;
+                // Optional: a name keeps music and lessons together for next time. Stored on this device only.
+                const p = players.add(myName, PLAYER_COLOURS[who.players.length % PLAYER_COLOURS.length]);
+                set('saveOnDevice', true);
+                void store.put('compositions', { ...savedRec, profileId: p.id });
+                setSavedRec(null);
+              }}
+            >
+              <p className="keep-q">Find it again next time?</p>
+              <p className="note-text">Add your name. Carmen keeps your name and music in this browser on this device. Nothing is sent anywhere, and you can delete it in Settings.</p>
+              <div className="row wrap">
+                <label className="field">
+                  Your first name (optional)
+                  <input value={myName} maxLength={20} autoComplete="off" onChange={(e) => setMyName(e.target.value)} />
+                </label>
+                <button type="submit" className="btn" disabled={!myName.trim()}>
+                  Keep it
+                </button>
+              </div>
+            </form>
+          )}
         </div>
       )}
     </div>

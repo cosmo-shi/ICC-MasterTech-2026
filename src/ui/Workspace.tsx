@@ -5,6 +5,9 @@ import { usePrefs } from '../state/prefs.tsx';
 import { isBlackKey, midiToName } from '../music/theory.ts';
 import { Icon } from './icons.tsx';
 import { NoteTrail, Trail, type TrailNote } from './NoteTrail.tsx';
+import { GM_DRUMS, listening } from '../input/session.ts';
+import { midiInput } from '../input/midi.ts';
+import { InputStatus, PlayOnSheet, useListening } from './InputPanel.tsx';
 import { DrumKit, Drums, Keyboard, PADS, SIMPLE_PADS, type InputSource, keyToOffset, useComputerKeys, useWhiteCount } from './instruments.tsx';
 
 export interface LiveEvent {
@@ -13,6 +16,7 @@ export interface LiveEvent {
   sound?: DrumSound;
   t: number; // performance.now() domain (event.timeStamp)
   source: InputSource;
+  soundUnknown?: boolean;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -22,6 +26,44 @@ export function useAudioStatus() {
     () => `${audio.status}|${audio.error ?? ''}|${audio.ctx?.state ?? 'none'}`,
   );
 }
+
+// eslint-disable-next-line react-refresh/only-export-components
+export function useMedia(query: string): boolean {
+  return useSyncExternalStore(
+    (cb) => {
+      const mq = window.matchMedia?.(query);
+      mq?.addEventListener?.('change', cb);
+      return () => mq?.removeEventListener?.('change', cb);
+    },
+    () => !!window.matchMedia?.(query).matches,
+    () => false,
+  );
+}
+
+/** On a phone held upright, the piano is narrow. Suggest turning sideways once; never force it.
+ *  Dismissing it, or turning the phone, hides it for good. */
+function RotateTip() {
+  const { prefs, set } = usePrefs();
+  const phoneUpright = useMedia('(orientation: portrait) and (max-width: 600px) and (pointer: coarse)');
+  const sideways = useMedia('(orientation: landscape)');
+  useEffect(() => {
+    if (sideways && !prefs.rotateTipDismissed && phoneOrTablet()) set('rotateTipDismissed', true);
+  }, [sideways, prefs.rotateTipDismissed, set]);
+  if (prefs.rotateTipDismissed || !phoneUpright) return null;
+  return (
+    <div className="rotate-tip" role="note">
+      <Icon name="rotate" size={28} />
+      <p>
+        <strong>More room to play.</strong>
+        Turn your phone sideways to make the keys wider and easier to reach. You can keep playing upright.
+      </p>
+      <button type="button" className="icon-btn" aria-label="Dismiss: keep playing upright" onClick={() => set('rotateTipDismissed', true)}>
+        <Icon name="close" size={20} />
+      </button>
+    </div>
+  );
+}
+const phoneOrTablet = () => typeof window !== 'undefined' && !!window.matchMedia?.('(pointer: coarse)').matches;
 
 export function StartSound({ compact }: { compact?: boolean }) {
   const s = useAudioStatus();
@@ -40,6 +82,7 @@ export function StartSound({ compact }: { compact?: boolean }) {
         </>
       ) : (
         <>
+          {compact && <p>{audio.ctx ? 'Sound is paused.' : 'Sound is off.'}</p>}
           <button type="button" className="btn btn-big" onClick={() => audio.start()}>
             <Icon name="sound" size={24} /> {audio.ctx ? 'Turn sound back on' : 'Turn sound on'}
           </button>
@@ -61,6 +104,8 @@ interface Props {
   recording?: boolean;
   /** Controls that belong to the instrument (record, play back…), placed right above it. */
   dock?: ReactNode;
+  /** Offer "Play on": this screen, a MIDI instrument or (drums) taps into the microphone. */
+  playOn?: boolean;
 }
 
 // The full keyboard: C2 to C7, 36 white keys. The screen shows a window onto it.
@@ -131,7 +176,7 @@ function KeyNavigator({ first, count, onGo, onSettle }: { first: number; count: 
   );
 }
 
-export function Workspace({ instrument, onEvent, highlightNotes, highlightPads, startMidi = 60, label, trail, recording = false, dock }: Props) {
+export function Workspace({ instrument, onEvent, highlightNotes, highlightPads, startMidi = 60, label, trail, recording = false, dock, playOn }: Props) {
   const { prefs, set } = usePrefs();
   const [downNotes, setDownNotes] = useState<Set<number>>(new Set());
   const [downPads, setDownPads] = useState<Set<DrumSound>>(new Set());
@@ -163,6 +208,10 @@ export function Workspace({ instrument, onEvent, highlightNotes, highlightPads, 
     if (el) el.scrollLeft = (Math.min(first, RANGE_WHITES - whiteCount) * el.clientWidth) / whiteCount;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [whiteCount]);
+  // Computer-key letters: shown where there is a mouse or trackpad, hidden on touch screens
+  // (phones in either direction). Settings can force them on for a connected keyboard.
+  const finePointer = useMedia('(hover: hover) and (pointer: fine)');
+  const hints = !prefs.simplified && (prefs.keyHints === 'on' || (prefs.keyHints === 'auto' && finePointer));
   const pads = useMemo(() => (prefs.simplified ? PADS.filter((p) => SIMPLE_PADS.includes(p.sound)) : PADS), [prefs.simplified]);
   const [trailStore] = useState(() => new Trail());
   const held = useRef(new Map<number, TrailNote>());
@@ -184,10 +233,17 @@ export function Workspace({ instrument, onEvent, highlightNotes, highlightPads, 
     audio.setVolume(prefs.volume);
   }, [prefs.volume]);
 
+  // A press counts (sound, lit key, captured input) only if it actually sounded. If sound is not
+  // ready yet, the press starts it and the status line says so; nothing is recorded.
+  const heldNotes = useRef(new Set<number>());
   const noteDown = useCallback(
     (midi: number, t: number, source: InputSource) => {
-      if (!audio.running) void audio.start();
-      audio.noteOn(midi, 0.7);
+      if (!audio.running) {
+        void audio.start();
+        return;
+      }
+      if (!audio.noteOn(midi, 0.7)) return;
+      heldNotes.current.add(midi);
       setDownNotes((s) => new Set(s).add(midi));
       trailDown({ midi, start: performance.now() });
       onEvent?.({ type: 'down', midi, t, source });
@@ -196,6 +252,8 @@ export function Workspace({ instrument, onEvent, highlightNotes, highlightPads, 
   );
   const noteUp = useCallback(
     (midi: number, t: number) => {
+      if (!heldNotes.current.has(midi)) return; // never sounded, or already released
+      heldNotes.current.delete(midi);
       audio.noteOff(midi);
       trailUp(midi, performance.now());
       setDownNotes((s) => {
@@ -210,8 +268,11 @@ export function Workspace({ instrument, onEvent, highlightNotes, highlightPads, 
   );
   const hit = useCallback(
     (sound: DrumSound, t: number, source: InputSource) => {
-      if (!audio.running) void audio.start();
-      audio.drum(sound, 0.7);
+      if (!audio.running) {
+        void audio.start();
+        return;
+      }
+      if (!audio.drum(sound, 0.7)) return;
       setDownPads((s) => new Set(s).add(sound));
       const now = performance.now();
       trailDown({ sound, start: now, end: now + 100 });
@@ -225,25 +286,47 @@ export function Workspace({ instrument, onEvent, highlightNotes, highlightPads, 
     [onEvent, trailDown],
   );
 
-  // Release everything if the page loses focus, so no note gets stuck.
+  // Release everything if the page loses focus or this screen goes, so no note gets stuck.
+  // (The on-screen keys release their own fingers; this covers computer keys and MIDI.)
   useEffect(() => {
     const lost = () => {
       const t = performance.now();
-      setDownNotes((s) => {
-        s.forEach((m) => {
-          audio.noteOff(m);
-          onEvent?.({ type: 'up', midi: m, t, source: 'pointer' });
-        });
-        return new Set();
-      });
+      for (const m of [...heldNotes.current]) noteUp(m, t);
     };
+    const onVis = () => document.visibilityState === 'hidden' && lost();
     window.addEventListener('blur', lost);
-    document.addEventListener('visibilitychange', lost);
+    document.addEventListener('visibilitychange', onVis);
     return () => {
       window.removeEventListener('blur', lost);
-      document.removeEventListener('visibilitychange', lost);
+      document.removeEventListener('visibilitychange', onVis);
+      lost();
     };
-  }, [onEvent]);
+  }, [noteUp]);
+
+  // Instruments outside the screen. A MIDI keyboard plays the keys (an electronic kit plays the
+  // drums). The microphone hears taps on the drums only, and only once the timing check has been
+  // done: which drum was hit, or how hard, cannot be heard, so the sound is never judged.
+  useEffect(() => {
+    const offMidi = midiInput.listen((n) => {
+      if (instrument === 'keyboard') {
+        if (n.type === 'down') noteDown(n.midi, n.t, 'midi');
+        else noteUp(n.midi, n.t);
+      } else if (n.type === 'down') {
+        const sound = GM_DRUMS[n.midi];
+        if (sound) hit(sound, n.t, 'midi');
+      }
+    });
+    const offMic = listening.onHeard((h) => {
+      if (h.kind !== 'onset' || h.own || instrument !== 'drums' || listening.latency === null) return;
+      const now = performance.now();
+      trailDown({ sound: 'snare', start: now, end: now + 100 });
+      onEvent?.({ type: 'down', sound: 'snare', t: h.tPerf, source: 'mic', soundUnknown: true });
+    });
+    return () => {
+      offMidi();
+      offMic();
+    };
+  }, [instrument, noteDown, noteUp, hit, onEvent, trailDown]);
 
   useComputerKeys(
     true,
@@ -295,15 +378,27 @@ export function Workspace({ instrument, onEvent, highlightNotes, highlightPads, 
         ))}
       </div>
     ) : null;
+  const l = useListening();
+  const [playOnOpen, setPlayOnOpen] = useState(false);
+  const playOnChip =
+    playOn && l.mode === 'screen' ? (
+      <button type="button" className="chip play-on-chip" onClick={() => setPlayOnOpen(true)} aria-haspopup="dialog">
+        <Icon name="listen" size={18} /> Play on my instrument
+      </button>
+    ) : null;
   const centre = WHITES[Math.min(RANGE_WHITES - 1, shown + Math.floor(whiteCount / 2))];
 
   return (
     <section className={`workspace ws-${instrument}${dock ? ' has-dock' : ''}`} aria-label={label ?? (instrument === 'keyboard' ? 'Keyboard' : 'Drums')}>
       <StartSound compact />
+      {instrument === 'keyboard' && <RotateTip />}
       {trail && <NoteTrail trail={trailStore} recording={recording} clef={instrument === 'drums' ? 'drums' : centre < 57 ? 'bass' : 'treble'} letters={prefs.noteNames} />}
-      {(dock || drumView) && (
+      <InputStatus instrument={instrument} />
+      {playOnOpen && <PlayOnSheet instrument={instrument} onClose={() => setPlayOnOpen(false)} />}
+      {(dock || drumView || playOnChip) && (
         <div className="ws-bar">
           {dock}
+          {playOnChip}
           {drumView}
         </div>
       )}
@@ -332,7 +427,7 @@ export function Workspace({ instrument, onEvent, highlightNotes, highlightPads, 
               down={downNotes}
               highlight={highlightNotes}
               showNames={prefs.noteNames}
-              showKeyHints={!prefs.simplified}
+              showKeyHints={hints}
               onDown={noteDown}
               onUp={noteUp}
               label="Piano keys. Slide along the keys to glide. On a computer keyboard, A to K play the white keys from the first C on screen."
@@ -342,9 +437,9 @@ export function Workspace({ instrument, onEvent, highlightNotes, highlightPads, 
       ) : (
         <div ref={ref} className="pads-wrap">
           {prefs.drumView === 'kit' ? (
-            <DrumKit pads={pads} down={downPads} highlight={highlightPads} showKeyHints onHit={hit} />
+            <DrumKit pads={pads} down={downPads} highlight={highlightPads} showKeyHints={hints} onHit={hit} />
           ) : (
-            <Drums pads={pads} down={downPads} highlight={highlightPads} showKeyHints onHit={hit} />
+            <Drums pads={pads} down={downPads} highlight={highlightPads} showKeyHints={hints} onHit={hit} />
           )}
         </div>
       )}
