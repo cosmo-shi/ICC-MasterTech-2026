@@ -1,4 +1,3 @@
-import { LOOK } from '../state/look.ts';
 import { useMemo, useState } from 'react';
 import { LESSON_INFOS } from '../ai/learner.ts';
 import { lessonById } from '../data/catalog.ts';
@@ -95,7 +94,7 @@ export function MakeStep({ lessonId, go }: { lessonId: string; go: (r: string) =
     >
       <div className="make">
         <div className="make-head">
-          <p className="kicker">{LOOK ? 'Compose' : 'Make your own'}</p>
+          <p className="kicker">Compose</p>
           <h1 className="lp-title small" tabIndex={-1}>
             {spec.ask}
           </h1>

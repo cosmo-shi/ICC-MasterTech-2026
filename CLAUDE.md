@@ -45,10 +45,11 @@ Pure logic (music, checker, ai, verifier) lives in plain TS under `src/music`, `
 - Pitch, onset and duration are separate facts. Untimed pitch tasks get no timing penalty.
 - Australian terms: crotchet, quaver, minim, practise (verb).
 
-## Design ("Soft Light", momo 2026-11-09 evening: cat-swatch palette; replaces Songbook Horizon colours and fonts)
+## Design ("Soft Light" palette, momo 2026-11-09; layout and type "direction A", momo 2026-11-10; see docs/DESIGN_DIRECTION.md)
 - Palette from the sampled cat swatches (coral, peach, mist, sky, periwinkle, orchid), with tints and deep ink shades; same roles in Night mode. Softness from tinted paper, round shapes and gentle depth, not blurred gradients; no cat mascot. The header keeps the sunset-and-stave scene.
 - Colour has roles (tokens in `src/styles/tokens.css`): sky/hills = environment only; paper/ink = reading and playing; sun (coral) = "now" (main action, pressed key, current beat); record = recording only; dusk (periwinkle) = where you are; good/near/miss = feedback, always with words and a shape; track hues: Rhythm basics coral, Piano periwinkle, Drums sky, Create orchid.
-- Type: Nunito only (self-hosted, OFL). Roles by weight: 900 wordmark/titles/big feedback, 800 headings, 700 controls, 500 body.
+- Type (direction A, momo 10 Nov evening): Bricolage Grotesque for titles/headings (`--font-display`), Atkinson Hyperlegible Next for body and controls (`--font-ui`), Nunito only for the wordmark (`--font-wordmark`); ♯ ♭ ♮ from the Noto Music subset. All self-hosted, OFL. Weights: 800 titles, 700 headings, 650 controls, 400 body.
+- Copy: plain and direct ("The note was E. You played G."). Lesson titles say what you do. No subtitles that explain the app, no over-explaining.
 - Shape/space/elevation: 4-pt spacing (`--s1`…`--s7`), radii 10/16/28. Only playable things (keys, pads, Record) have a physical edge. Group by space and hairlines, not boxes, outlines or heavy shadows. The instrument sits in a dark case, centred, and is the biggest thing on Play.
 - Brand mark: note-head sun over two curved stave lines (`Logo`, `Wordmark`, `public/favicon.svg`, PNG icons from `tools/make-icons.mjs`). No people or Band characters (removed 10 Nov). Brand art (`src/ui/brand.tsx`) is separate from interface icons.
 - Interface icons: Lucide only (pinned, ISC, recorded in ASSETS.md), always through `Icon` in `src/ui/icons.tsx` with sizes 16/20/24/32/48 and `currentColor`. No hand-drawn icons, emoji or text symbols as icons. Every icon that carries meaning has words beside it. Notation, instruments and brand art are not icons.

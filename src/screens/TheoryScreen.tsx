@@ -3,10 +3,9 @@ import { THEORY, THEORY_GROUPS, type TheoryExample, topicById } from '../data/th
 import { Icon } from '../ui/icons.tsx';
 import { Notation } from '../ui/Notation.tsx';
 import { usePlayer } from '../ui/usePlayer.ts';
-import { LOOK } from '../state/look.ts';
 import { LearnTabs } from './LearnScreen.tsx';
 
-/** Design review (?look): each category keeps one track hue so it is findable by place, words and colour. */
+/** Each category keeps one track hue so it is findable by place, words and colour. */
 const GROUP_TONE: Record<string, string> = { 'Beat and rhythm': 'tr-foundations', 'High and low': 'tr-piano', 'How it sounds': 'tr-drums', 'Building music': 'tr-create' };
 const GROUP_ABOUT: Record<string, string> = {
   'Beat and rhythm': 'How music moves in time: the beat, note lengths, rests and bars.',
@@ -101,14 +100,14 @@ export function TheoryScreen({ topicId, go }: { topicId?: string; go: (r: string
   if (topic) {
     const lesson = topic.tryLesson ? lessonById(topic.tryLesson) : undefined;
     return (
-      <div className={`screen theory${LOOK ? ` lx lxt-topic ${GROUP_TONE[topic.group]}` : ''}`}>
+      <div className={`screen theory lx lxt-topic ${GROUP_TONE[topic.group]}`}>
         <nav className="crumbs" aria-label="Breadcrumb">
           <button type="button" className="link" onClick={() => go('#/theory')}>
             <Icon name="back" size={20} /> Music theory
           </button>
         </nav>
         <p className="kicker">{topic.group}</p>
-        <h1 className={LOOK ? 'lx-display lxt-topic-title' : 'h1'}>{topic.title}</h1>
+        <h1 className="lx-display lxt-topic-title">{topic.title}</h1>
         <p className="theory-short">{topic.short}</p>
         {topic.body.map((p) => (
           <p key={p} className="theory-body">
@@ -160,30 +159,5 @@ export function TheoryScreen({ topicId, go }: { topicId?: string; go: (r: string
     );
   }
 
-  if (LOOK) return <TheoryIndexLook go={go} />;
-  return (
-    <div className="screen theory">
-      <div className="learn-head">
-        <h1 className="h1">Learn</h1>
-        <LearnTabs at="theory" go={go} />
-      </div>
-      {THEORY_GROUPS.map((g) => (
-        <section key={g} className="theory-group" aria-labelledby={`g-${g}`}>
-          <h2 id={`g-${g}`} className="h3">
-            {g}
-          </h2>
-          <ul className="theory-list">
-            {THEORY.filter((t) => t.group === g).map((t) => (
-              <li key={t.id}>
-                <button type="button" className="theory-item" onClick={() => go(`#/theory/${t.id}`)}>
-                  <span className="theory-item-title">{t.title}</span>
-                  <span className="theory-item-short">{t.short}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))}
-    </div>
-  );
+  return <TheoryIndexLook go={go} />;
 }

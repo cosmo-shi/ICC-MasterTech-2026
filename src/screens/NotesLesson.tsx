@@ -1,4 +1,4 @@
-// L05 "Keyboard notes: C, D and E" as a full teaching sequence (video QA vertical slice):
+// L05 "Find C, D and E on the keyboard" as a full teaching sequence (video QA vertical slice):
 // hear → notice and name → show and connect → guided → independent → reflect and create.
 // The stave and the keys are always on the same screen, linked both ways. Untimed: pitch only.
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -17,7 +17,6 @@ import { Notation } from '../ui/Notation.tsx';
 import { MiniKeys, NotePair, WrongPairs, playOne } from '../ui/NotePair.tsx';
 import { usePlayer } from '../ui/usePlayer.ts';
 import { type LiveEvent, Workspace } from '../ui/Workspace.tsx';
-import { LOOK } from '../state/look.ts';
 import { LessonShell, type Stage } from './LessonShell.tsx';
 
 /** Explain → Demonstrate → Explore → Practise → Feedback → Continue, for each L05 step. */
@@ -188,8 +187,8 @@ export function NotesLesson({ go }: { go: (r: string) => void }) {
 
   let task: React.ReactNode;
   let foot: React.ReactNode;
-  // Design review (?look): say where the button goes, and which teaching stage this is.
-  const onward = LOOK ? `Next: ${L05_STEPS[index + 1]?.title ?? 'Finish the lesson'}` : 'Continue';
+  // The main button says where it goes.
+  const onward = `Next: ${L05_STEPS[index + 1]?.title ?? 'Finish the lesson'}`;
   const continueBtn = (label = onward, enabled = true) => (
     <button type="button" className="btn btn-big btn-block" onClick={next} disabled={!enabled}>
       {label}
@@ -200,7 +199,6 @@ export function NotesLesson({ go }: { go: (r: string) => void }) {
     case 'listen':
       task = (
         <>
-          <p className="kicker">Listen</p>
           <h1 className="lp-title small" tabIndex={-1}>{step.title}</h1>
           <p className="lp-say">{step.text}</p>
           <button type="button" className="btn-quiet" onClick={() => hear(phrase)} aria-pressed={player.playing}>
@@ -213,7 +211,6 @@ export function NotesLesson({ go }: { go: (r: string) => void }) {
     case 'find':
       task = (
         <>
-          <p className="kicker">{step.guided ? 'Find it' : 'Your turn'}</p>
           <h1 className="lp-title small" tabIndex={-1}>{step.title}</h1>
           {step.guided && facts && <p className="lp-say">{facts.keys}</p>}
           {!step.guided && hint && facts && <p className="lp-say">{facts.keys}</p>}
@@ -248,7 +245,6 @@ export function NotesLesson({ go }: { go: (r: string) => void }) {
     case 'copy':
       task = (
         <>
-          <p className="kicker">Copy</p>
           <h1 className="lp-title small" tabIndex={-1}>{step.title}</h1>
           <p className="lp-say">{step.id === 'up' ? 'Each note is one step higher. On the stave, each one sits a little higher too.' : 'Now the other way: each note one step lower, and lower on the stave.'}</p>
           <button type="button" className="btn-quiet" onClick={() => hear(phrase)}>
@@ -274,7 +270,6 @@ export function NotesLesson({ go }: { go: (r: string) => void }) {
     case 'link':
       task = (
         <>
-          <p className="kicker">Show and connect</p>
           <h1 className="lp-title small" tabIndex={-1}>{step.title}</h1>
           <p className="lp-say">Press C, D or E on the keys and watch the stave. Or tap a note on the stave to find its key.</p>
           {linked !== null && (
@@ -289,7 +284,6 @@ export function NotesLesson({ go }: { go: (r: string) => void }) {
     case 'independent':
       task = (
         <>
-          <p className="kicker">On your own</p>
           <h1 className="lp-title small" tabIndex={-1}>Read the stave and play these four notes</h1>
           <p className="lp-say">No letter names this time. Take as long as you need.</p>
         </>
@@ -301,9 +295,8 @@ export function NotesLesson({ go }: { go: (r: string) => void }) {
     case 'create':
       task = (
         <>
-          <p className="kicker">Make it yours</p>
           <h1 className="lp-title small" tabIndex={-1}>{step.title}</h1>
-          <p className="lp-say">Tap a note on the stave to choose it (note {pick + 1} is chosen). Then press any key to change it.</p>
+          <p className="lp-say">Tap a note on the stave, then press a key to change it.</p>
           <div className="lp-actions">
             <button type="button" className="btn-quiet" onClick={() => hear(phrase)}>
               <Icon name="playback" size={20} /> Play mine
@@ -320,7 +313,6 @@ export function NotesLesson({ go }: { go: (r: string) => void }) {
     case 'reflect':
       task = (
         <>
-          <p className="kicker">Think back</p>
           <h1 className="lp-title small" tabIndex={-1}>Which note was easiest to find?</h1>
           <div className="lp-actions" role="group" aria-label="Easiest note">
             {['C', 'D', 'E'].map((l) => (

@@ -125,7 +125,7 @@ export function InstrumentScreen({ go }: { go: (r: string) => void }) {
               </span>
             </button>
           </div>
-          <p className="note-text">Guitar isn’t ready yet: Carmen hasn’t been checked with real guitars.</p>
+          <p className="note-text">Guitar isn’t available yet.</p>
         </>
       )}
 

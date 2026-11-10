@@ -218,7 +218,7 @@ export function CreatePanel({ instrument, activityId, onSaved, idea, onBackToLes
               }}
             >
               <p className="keep-q">Find it again next time?</p>
-              <p className="note-text">Add your name. Carmen keeps your name and music in this browser on this device. Nothing is sent anywhere, and you can delete it in Settings.</p>
+              <p className="note-text">Add your name if you like. It stays on this device.</p>
               <div className="row wrap">
                 <label className="field">
                   Your first name (optional)

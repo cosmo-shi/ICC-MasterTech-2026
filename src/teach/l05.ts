@@ -1,4 +1,4 @@
-// L05 "Keyboard notes: C, D and E": the steps and every word the learner sees, grounded in the
+// L05 "Find C, D and E on the keyboard": the steps and every word the learner sees, grounded in the
 // notes involved. Pure logic, so it is tested without a browser (l05.test.ts).
 // Middle C = C4 = MIDI 60. Untimed: pitch only, no timing penalty anywhere in this lesson.
 import { isBlackKey, midiToLetter } from '../music/theory.ts';
@@ -84,7 +84,7 @@ export function sequenceResult(expected: number[], played: number[]): { ok: bool
   });
   if (played.length < expected.length) {
     const i = played.length;
-    return { ok: false, index: i, wrong, title: 'Keep going to the end', observed: i === 0 ? 'No notes came in.' : `The notes stopped after note ${i}.`, next: `The pattern has ${expected.length} notes. Note ${i + 1} is written as ${midiToLetter(expected[i])}.` };
+    return { ok: false, index: i, wrong, title: 'Keep going to the end', observed: i === 0 ? 'No notes came in.' : `The notes stopped after note ${i}.`, next: `There are ${expected.length} notes. Note ${i + 1} is ${midiToLetter(expected[i])}.` };
   }
   if (wrong.length) {
     const w = wrongNotesWords(wrong);
@@ -96,13 +96,13 @@ export function sequenceResult(expected: number[], played: number[]): { ok: bool
       pair: first,
       title: w.title,
       observed: w.observed,
-      next: wrong.length > 1 ? `Listen to each pair below, then play it again from note ${first.index + 1}.` : `Listen to ${midiToLetter(first.expected)} and ${midiToLetter(first.played)}, then play note ${first.index + 1} again.`,
+      next: wrong.length > 1 ? `Listen to each pair below, then try again from note ${first.index + 1}.` : `Listen to ${midiToLetter(first.expected)} and ${midiToLetter(first.played)}, then try again.`,
     };
   }
   if (played.length > expected.length) {
-    return { ok: false, index: expected.length, wrong, title: `Stop after note ${expected.length}`, observed: `All ${expected.length} notes matched, then there was an extra ${midiToLetter(played[expected.length])}.`, next: `The pattern ends after note ${expected.length}.` };
+    return { ok: false, index: expected.length, wrong, title: `Stop after note ${expected.length}`, observed: `All ${expected.length} notes were right, then you played an extra ${midiToLetter(played[expected.length])}.`, next: `There are only ${expected.length} notes.` };
   }
-  return { ok: true, index: -1, wrong, title: 'Every note matched', observed: `Every note matched: ${expected.map(midiToLetter).join(', ')}.`, next: '' };
+  return { ok: true, index: -1, wrong, title: 'Every note was right', observed: `You played ${expected.map(midiToLetter).join(', ')}. Every note was right.`, next: '' };
 }
 
 /** Says what a one-note change does to the tune. Free creation is described, never marked. */

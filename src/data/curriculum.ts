@@ -21,8 +21,8 @@ export interface Track {
 export const TRACKS: Track[] = [
   { id: 'foundations', name: 'Rhythm basics', about: 'Beat, rests and rhythm. Play them on drums or piano.', instrument: 'either' },
   { id: 'piano', name: 'Piano', about: 'Find the notes, read the stave, hold and rest.', instrument: 'keyboard' },
-  { id: 'drums', name: 'Drums', about: 'Grooves, hi-hat time and fills on the kit.', instrument: 'drums' },
-  { id: 'create', name: 'Create', about: 'Make your own music and play with a partner.', instrument: 'either' },
+  { id: 'drums', name: 'Drums', about: 'Rock beat, hi-hat and fills.', instrument: 'drums' },
+  { id: 'create', name: 'Create', about: 'Make up your own music.', instrument: 'either' },
 ];
 
 export interface Activity {
@@ -49,33 +49,33 @@ const A = (a: Activity) => a;
 
 export const ACTIVITIES: Activity[] = [
   // Rhythm basics: the same musical idea, with an exercise, controls and score for each instrument.
-  A({ id: 'L00', kind: 'lesson', track: 'foundations', learn: 'Explore how sounds start, stop and change.', instrument: 'either', controls: { drums: 'Any drum', keyboard: 'Any key' }, level: 1, reading: 'none', input: 'tap', crossInstrument: true, prerequisites: [] }),
-  A({ id: 'L01', kind: 'lesson', track: 'foundations', learn: 'Play along with a regular pulse.', instrument: 'either', controls: { drums: 'Bass drum', keyboard: 'Middle C' }, level: 1, reading: 'symbols', input: 'tap', crossInstrument: true, prerequisites: ['L00'] }),
-  A({ id: 'L02', kind: 'lesson', track: 'foundations', learn: 'Keep counting through a one-beat rest.', instrument: 'either', controls: { drums: 'Bass drum', keyboard: 'Middle C' }, level: 1, reading: 'symbols', input: 'tap', crossInstrument: true, prerequisites: ['L01'] }),
-  A({ id: 'L03', kind: 'lesson', track: 'foundations', learn: 'Play one crotchet or two even quavers per beat.', instrument: 'either', controls: { drums: 'Snare and bass drum', keyboard: 'Middle C' }, level: 2, reading: 'symbols', input: 'tap', crossInstrument: true, prerequisites: ['L02'] }),
+  A({ id: 'L00', kind: 'lesson', track: 'foundations', learn: 'Make a sound, stop it, then change it.', instrument: 'either', controls: { drums: 'Any drum', keyboard: 'Any key' }, level: 1, reading: 'none', input: 'tap', crossInstrument: true, prerequisites: [] }),
+  A({ id: 'L01', kind: 'lesson', track: 'foundations', learn: 'Tap along with a steady beat.', instrument: 'either', controls: { drums: 'Bass drum', keyboard: 'Middle C' }, level: 1, reading: 'symbols', input: 'tap', crossInstrument: true, prerequisites: ['L00'] }),
+  A({ id: 'L02', kind: 'lesson', track: 'foundations', learn: 'Leave one beat silent and keep counting.', instrument: 'either', controls: { drums: 'Bass drum', keyboard: 'Middle C' }, level: 1, reading: 'symbols', input: 'tap', crossInstrument: true, prerequisites: ['L01'] }),
+  A({ id: 'L03', kind: 'lesson', track: 'foundations', learn: 'Play one crotchet or two quavers on each beat.', instrument: 'either', controls: { drums: 'Snare and bass drum', keyboard: 'Middle C' }, level: 2, reading: 'symbols', input: 'tap', crossInstrument: true, prerequisites: ['L02'] }),
   A({ id: 'F_SOUND_STORY', kind: 'project', track: 'foundations', learn: 'Use loud and soft sounds to tell a story.', instrument: 'either', controls: { drums: 'Any drums', keyboard: 'Any keys' }, level: 1, reading: 'none', input: 'make', crossInstrument: true, prerequisites: ['L00'] }),
 
   // Piano.
-  A({ id: 'L04', kind: 'lesson', track: 'piano', learn: 'Listen and play notes that rise and fall.', instrument: 'keyboard', controls: { keyboard: 'Keys C, E, G' }, level: 1, reading: 'none', input: 'keys', prerequisites: ['L00'] }),
-  A({ id: 'L05', kind: 'lesson', track: 'piano', learn: 'Find the three keys and play a short pattern.', instrument: 'keyboard', controls: { keyboard: 'Keys C, D, E' }, level: 1, reading: 'none', input: 'keys', prerequisites: ['L04'] }),
-  A({ id: 'L06', kind: 'lesson', track: 'piano', learn: 'Read the notes on the stave and play the matching keys.', instrument: 'keyboard', controls: { keyboard: 'Keys C, D, E' }, level: 2, reading: 'stave', input: 'keys', prerequisites: ['L05'] }),
-  A({ id: 'P01', kind: 'lesson', track: 'piano', learn: 'Play five notes up and down the keyboard.', instrument: 'keyboard', controls: { keyboard: 'Keys C to G' }, level: 2, reading: 'stave', input: 'keys', prerequisites: ['L05'] }),
-  A({ id: 'L07', kind: 'lesson', track: 'piano', learn: 'Play one-beat and two-beat notes in 4/4 time.', instrument: 'keyboard', controls: { keyboard: 'Keys C, D, E, held down' }, level: 2, reading: 'stave', input: 'hold', prerequisites: ['L01', 'L05'] }),
-  A({ id: 'P34_MELODIC_REPLY', kind: 'project', track: 'piano', learn: 'Create a melody and compare a higher or lower reply.', instrument: 'keyboard', controls: { keyboard: 'Keys' }, level: 2, reading: 'stave', input: 'make', prerequisites: ['L05'] }),
+  A({ id: 'L04', kind: 'lesson', track: 'piano', learn: 'Hear which note is higher, then play them in order.', instrument: 'keyboard', controls: { keyboard: 'Keys C, E, G' }, level: 1, reading: 'none', input: 'keys', prerequisites: ['L00'] }),
+  A({ id: 'L05', kind: 'lesson', track: 'piano', learn: 'Find the three keys and play them in order.', instrument: 'keyboard', controls: { keyboard: 'Keys C, D, E' }, level: 1, reading: 'none', input: 'keys', prerequisites: ['L04'] }),
+  A({ id: 'L06', kind: 'lesson', track: 'piano', learn: 'Read each note on the stave and play its key.', instrument: 'keyboard', controls: { keyboard: 'Keys C, D, E' }, level: 2, reading: 'stave', input: 'keys', prerequisites: ['L05'] }),
+  A({ id: 'P01', kind: 'lesson', track: 'piano', learn: 'Play the five notes from C to G, up and down.', instrument: 'keyboard', controls: { keyboard: 'Keys C to G' }, level: 2, reading: 'stave', input: 'keys', prerequisites: ['L05'] }),
+  A({ id: 'L07', kind: 'lesson', track: 'piano', learn: 'Hold notes for one beat or two beats.', instrument: 'keyboard', controls: { keyboard: 'Keys C, D, E, held down' }, level: 2, reading: 'stave', input: 'hold', prerequisites: ['L01', 'L05'] }),
+  A({ id: 'P34_MELODIC_REPLY', kind: 'project', track: 'piano', learn: 'Play a short tune, then answer it higher or lower.', instrument: 'keyboard', controls: { keyboard: 'Keys' }, level: 2, reading: 'stave', input: 'make', prerequisites: ['L05'] }),
   A({ id: 'L08', kind: 'lesson', track: 'piano', learn: 'Read and play a two-bar melody with rests.', instrument: 'keyboard', controls: { keyboard: 'Keys C, D, E' }, level: 3, reading: 'stave', input: 'hold', prerequisites: ['L02', 'L06', 'L07'] }),
-  A({ id: 'P02', kind: 'lesson', track: 'piano', learn: 'Compare notes that move by step with notes that skip.', instrument: 'keyboard', controls: { keyboard: 'Keys C to G' }, level: 3, reading: 'stave', input: 'keys', prerequisites: ['P01', 'L06'] }),
-  A({ id: 'P03', kind: 'lesson', track: 'piano', learn: 'Read and play a short melody using the lower notes.', instrument: 'keyboard', controls: { keyboard: 'Low keys, C3 to G3' }, level: 4, reading: 'stave', input: 'keys', prerequisites: ['P02'] }),
+  A({ id: 'P02', kind: 'lesson', track: 'piano', learn: 'Play notes that move to the next key, and notes that skip one.', instrument: 'keyboard', controls: { keyboard: 'Keys C to G' }, level: 3, reading: 'stave', input: 'keys', prerequisites: ['P01', 'L06'] }),
+  A({ id: 'P03', kind: 'lesson', track: 'piano', learn: 'Read and play a short tune on the lower notes.', instrument: 'keyboard', controls: { keyboard: 'Low keys, C3 to G3' }, level: 4, reading: 'stave', input: 'keys', prerequisites: ['P02'] }),
 
   // Drums.
   A({ id: 'D01', kind: 'lesson', track: 'drums', learn: 'Play bass drum on beats 1 and 3, and snare on 2 and 4.', instrument: 'drums', controls: { drums: 'Bass drum and snare' }, level: 2, reading: 'symbols', input: 'tap', prerequisites: ['L01'] }),
-  A({ id: 'P12_RHYTHMIC_CONVERSATION', kind: 'project', track: 'drums', learn: 'Listen to a rhythm and create your answer.', instrument: 'drums', controls: { drums: 'Drums' }, level: 2, reading: 'symbols', input: 'make', prerequisites: ['L02'] }),
+  A({ id: 'P12_RHYTHMIC_CONVERSATION', kind: 'project', track: 'drums', learn: 'Hear a rhythm, then play your answer.', instrument: 'drums', controls: { drums: 'Drums' }, level: 2, reading: 'symbols', input: 'make', prerequisites: ['L02'] }),
   A({ id: 'D02', kind: 'lesson', track: 'drums', learn: 'Play steady quavers on the hi-hat with snare on beats 2 and 4.', instrument: 'drums', controls: { drums: 'Hi-hat, snare, bass drum' }, level: 3, reading: 'symbols', input: 'tap', prerequisites: ['D01', 'L03'] }),
-  A({ id: 'D03', kind: 'lesson', track: 'drums', learn: 'Play a short tom pattern ending on the crash cymbal.', instrument: 'drums', controls: { drums: 'Toms, snare, cymbal' }, level: 4, reading: 'symbols', input: 'tap', prerequisites: ['D02'] }),
+  A({ id: 'D03', kind: 'lesson', track: 'drums', learn: 'Play a short tom pattern that ends on the crash cymbal.', instrument: 'drums', controls: { drums: 'Toms, snare, cymbal' }, level: 4, reading: 'symbols', input: 'tap', prerequisites: ['D02'] }),
 
   // Create.
-  A({ id: 'L09', kind: 'lesson', track: 'create', learn: 'Create a short phrase in response to a musical idea.', instrument: 'either', controls: { drums: 'Drums and Record', keyboard: 'Keys and Record' }, level: 2, reading: 'none', input: 'make', crossInstrument: true, prerequisites: [] }),
-  A({ id: 'P56_FORM_AND_TEXTURE', kind: 'project', track: 'create', learn: 'Create two contrasting sections and arrange them into a piece.', instrument: 'either', controls: { drums: 'Drums and Record', keyboard: 'Keys and Record' }, level: 3, reading: 'symbols', input: 'make', crossInstrument: true, prerequisites: ['L03'] }),
-  A({ id: 'OLDER_EXTENSION', kind: 'project', track: 'create', learn: 'Add another musical part and decide how it changes the piece.', instrument: 'either', controls: { drums: 'Drums and Record', keyboard: 'Keys and Record' }, level: 4, reading: 'stave', input: 'make', crossInstrument: true, prerequisites: ['L08'] }),
+  A({ id: 'L09', kind: 'lesson', track: 'create', learn: 'Hear a short idea, then make up your own answer.', instrument: 'either', controls: { drums: 'Drums and Record', keyboard: 'Keys and Record' }, level: 2, reading: 'none', input: 'make', crossInstrument: true, prerequisites: [] }),
+  A({ id: 'P56_FORM_AND_TEXTURE', kind: 'project', track: 'create', learn: 'Make two different sections and put them in order.', instrument: 'either', controls: { drums: 'Drums and Record', keyboard: 'Keys and Record' }, level: 3, reading: 'symbols', input: 'make', crossInstrument: true, prerequisites: ['L03'] }),
+  A({ id: 'OLDER_EXTENSION', kind: 'project', track: 'create', learn: 'Add another part and hear how it changes your piece.', instrument: 'either', controls: { drums: 'Drums and Record', keyboard: 'Keys and Record' }, level: 4, reading: 'stave', input: 'make', crossInstrument: true, prerequisites: ['L08'] }),
 ];
 
 export const activityById = (id: string) => ACTIVITIES.find((a) => a.id === id);

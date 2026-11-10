@@ -66,7 +66,7 @@ export const TRICKY: Record<SkillId, string> = {
 
 export const CHECK_CARDS: Record<CheckKind, { title: string; about: string }> = {
   listen: { title: 'Listen', about: 'Hear two versions of your music and pick one.' },
-  read: { title: 'Read', about: 'One question about the written music.' },
+  read: { title: 'Read', about: 'One question about the music on the page.' },
   play: { title: 'Play', about: 'The same music with easier controls.' },
 };
 

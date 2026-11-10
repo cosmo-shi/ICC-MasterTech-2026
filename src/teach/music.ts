@@ -89,7 +89,7 @@ export interface WrongNote {
 const listWords = (xs: string[]) => (xs.length <= 1 ? xs.join('') : `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`);
 
 /**
- * Every wrong pitch in one attempt, in notation terms ("Note 3 is written as E. You played G."),
+ * Every wrong pitch in one attempt, in plain words ("Note 3 was E. You played G."),
  * not just the first one. `heard` is "You played", or "Carmen heard" for an estimate.
  */
 export function wrongNotesWords(wrong: WrongNote[], heard = 'You played'): { title: string; observed: string } {
@@ -98,10 +98,11 @@ export function wrongNotesWords(wrong: WrongNote[], heard = 'You played'): { tit
     if (l !== midiToLetter(other)) return l;
     return m === 60 ? 'middle C' : `${m > other ? 'a higher' : 'a lower'} ${l}`;
   };
-  const one = (w: WrongNote) => `Note ${w.index + 1} is written as ${midiToLetter(w.expected) === midiToLetter(w.played) && w.expected === 60 ? 'middle C' : midiToLetter(w.expected)}. ${heard} ${name(w.played, w.expected)}.`;
-  if (wrong.length === 1) return { title: `Note ${wrong[0].index + 1} should be ${midiToLetter(wrong[0].expected)}`, observed: one(wrong[0]) };
+  const right = (w: WrongNote) => (midiToLetter(w.expected) === midiToLetter(w.played) && w.expected === 60 ? 'middle C' : midiToLetter(w.expected));
+  const one = (w: WrongNote) => `Note ${w.index + 1} was ${right(w)}. ${heard} ${name(w.played, w.expected)}.`;
+  if (wrong.length === 1) return { title: `The note was ${right(wrong[0])}`, observed: one(wrong[0]) };
   return {
-    title: `Notes ${listWords(wrong.map((w) => String(w.index + 1)))} are different from the written music`,
+    title: `Notes ${listWords(wrong.map((w) => String(w.index + 1)))} were wrong`,
     observed: wrong.map(one).join(' '),
   };
 }

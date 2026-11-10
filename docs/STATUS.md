@@ -3,9 +3,13 @@
 Last updated 10 November 2026. Plain facts only: what runs, how it was checked, and what is still missing.
 
 
-## Visual direction review (branch `sc-visual-review`, local, 10 Nov)
+## Visual direction A (branch `sc-visual-review`, local, 10 Nov evening)
 
-- Draft: three Learn compositions and three type systems behind `?look=a|b|c` and `?type=1|2|3`; Theory, L05, creative entry and teacher proof in direction A. Not rolled out; waiting on momo's choice. See `docs/DESIGN_DIRECTION.md`.
+- Working: direction A is the app's design, with plain wording and clearer lesson titles. The landscape drum and stave fixes are in, and so are square pads on desktop. See `docs/DESIGN_DIRECTION.md`.
+- Checked:
+  - `npm test`, lint and build;
+  - `tools/e2e-video-qa.mjs`, `tools/e2e-touch.mjs` and `tools/e2e-devices.mjs`: Chromium emulating 9 iPhone, Android and iPad profiles, in light and dark.
+- Not checked: real devices, Safari/WebKit (not installed here), screen readers and audio latency.
 
 ## 10 Nov, video QA (sc 3b753e4 and later)
 

@@ -1,11 +1,8 @@
-import { FromTeacher } from './MyClass.tsx';
 import { lessonStars, nextFor, reasonText } from '../ai/learner.ts';
 import { useState } from 'react';
 import { blurb, lessonById, missionById } from '../data/catalog.ts';
 import { type Activity, type TrackId, activityById, lessonFor, positionInTrack, trackActivities, trackById } from '../data/curriculum.ts';
-import { Notation } from '../ui/Notation.tsx';
-import { LOOK } from '../state/look.ts';
-import { LearnLook, type LibItem, type Library } from './learn/LearnLooks.tsx';
+import { LearnLibrary, type LibItem, type Library } from './learn/Library.tsx';
 import { Icon, type IconName, type IconSize } from '../ui/icons.tsx';
 import { Dialog } from '../ui/Dialog.tsx';
 import { useMyLearning } from '../ui/useAttempts.ts';
@@ -104,13 +101,13 @@ export function TrackProgress({ id, at, done }: { id: string; at: number; done: 
 const UNITS: Record<InstrumentId, { track: TrackId; title: string; about: string }[]> = {
   keyboard: [
     { track: 'foundations', title: 'Beat and rhythm', about: 'Steady beat, rests and quavers, played on the piano.' },
-    { track: 'piano', title: 'Notes and reading', about: 'Find the notes, read the stave, hold and rest.' },
-    { track: 'create', title: 'Compose and create', about: 'Answer, build and add parts to your own music.' },
+    { track: 'piano', title: 'Notes and reading', about: 'Find notes, read the stave and hold notes.' },
+    { track: 'create', title: 'Compose and create', about: 'Make up your own music.' },
   ],
   drums: [
     { track: 'foundations', title: 'Beat and rhythm', about: 'Steady beat, rests and quavers, played on the drums.' },
-    { track: 'drums', title: 'Grooves on the kit', about: 'Rock beat, hi-hat time and fills.' },
-    { track: 'create', title: 'Compose and create', about: 'Answer, build and swap rhythms.' },
+    { track: 'drums', title: 'Grooves on the kit', about: 'Rock beat, hi-hat and fills.' },
+    { track: 'create', title: 'Compose and create', about: 'Make up your own rhythms.' },
   ],
 };
 const onInstrument = (a: Activity, inst: InstrumentId) => a.instrument === 'either' || a.instrument === inst;
@@ -126,159 +123,42 @@ export function LearnScreen({ go }: { go: (r: string) => void }) {
 
   const started = (id: string) => attempts.some((a) => a.activityId === id);
   const starsFor = (a: Activity) => (a.kind === 'lesson' ? lessonStars(attempts, a.id) : started(a.id) ? 3 : 0);
-  const pos = positionInTrack(nextId)!;
   // Shown only when it is evidence (the model ran on this child's tries) or a teacher's choice.
   const why = plan.teacher ? 'Your teacher picked this for you.' : plan.provenance === 'learner-model' ? reasonText(plan) : '';
-  const nextStars = starsFor(nextAct);
-  const instName = inst === 'drums' ? 'Drums' : 'Piano';
-  // The next step on this instrument, separate from the overall "carry on".
-  const instList = UNITS[inst].flatMap((u) => trackActivities(u.track).filter((a) => onInstrument(a, inst)));
-  const nextHere = instList.find((a) => starsFor(a) < 3 && a.prerequisites.every(started)) ?? instList.find((a) => starsFor(a) < 3);
   const openLesson = (id: string) => {
     const a = activityById(id)!;
     if (a.instrument === 'either') set('instrument', inst);
     go(a.kind === 'lesson' ? `#/lesson/${id}` : `#/mission/${id}`);
   };
 
-  // Design review: ?look=a|b|c shows one of three compositions of this same screen, same data.
-  if (LOOK) {
-    const item = (a: Activity): LibItem => {
-      const stars = starsFor(a);
-      const project = a.kind === 'project';
-      const state = project ? (stars ? 'started' : 'new') : stars === 3 ? 'done' : stars > 0 ? 'started' : 'new';
-      const base = lessonById(a.id);
-      return { a, title: titleOf(a.id), stars, state, here: a.id === nextId, preview: base ? (lessonFor(base, inst).practice ?? null) : null, open: () => openLesson(a.id), info: () => setOpen(a.id) };
-    };
-    const lib: Library = {
-      inst,
-      setInst: (i) => {
-        setInst(i);
-        set('instrument', i);
-      },
-      next: { ...item(nextAct), why },
-      units: UNITS[inst]
-        .filter((u) => u.track !== 'create')
-        .map((u) => ({ ...u, items: trackActivities(u.track).filter((a) => onInstrument(a, inst) && a.kind === 'lesson').map(item) }))
-        .filter((u) => u.items.length),
-      // Composing gets its own section: the create-unit lessons and every creative project.
-      projects: UNITS[inst].flatMap((u) => trackActivities(u.track)).filter((a) => onInstrument(a, inst) && (a.kind === 'project' || a.track === 'create')).map(item),
-      go,
-    };
-    return (
-      <>
-        <LearnLook look={LOOK} lib={lib} />
-        {open && <StopSheet id={open} stars={starsFor(activityById(open)!)} started={started} onClose={() => setOpen(null)} go={(r) => (r.startsWith('#/lesson/') || r.startsWith('#/mission/') ? openLesson(open) : go(r))} />}
-      </>
-    );
-  }
-
+  // One library object drives the screen: same data as the progress model, see learn/Library.tsx.
+  const item = (a: Activity): LibItem => {
+    const stars = starsFor(a);
+    const project = a.kind === 'project';
+    const state = project ? (stars ? 'started' : 'new') : stars === 3 ? 'done' : stars > 0 ? 'started' : 'new';
+    const base = lessonById(a.id);
+    return { a, title: titleOf(a.id), stars, state, here: a.id === nextId, preview: base ? (lessonFor(base, inst).practice ?? null) : null, open: () => openLesson(a.id), info: () => setOpen(a.id) };
+  };
+  const lib: Library = {
+    inst,
+    setInst: (i) => {
+      setInst(i);
+      set('instrument', i);
+    },
+    next: { ...item(nextAct), why },
+    units: UNITS[inst]
+      .filter((u) => u.track !== 'create')
+      .map((u) => ({ ...u, items: trackActivities(u.track).filter((a) => onInstrument(a, inst) && a.kind === 'lesson').map(item) }))
+      .filter((u) => u.items.length),
+    // Composing gets its own section: the create-unit lessons and every creative project.
+    projects: UNITS[inst].flatMap((u) => trackActivities(u.track)).filter((a) => onInstrument(a, inst) && (a.kind === 'project' || a.track === 'create')).map(item),
+    go,
+  };
   return (
-    <div className="screen learn">
-      <div className="learn-head">
-        <h1 className="h1">Learn</h1>
-        <LearnTabs at="path" go={go} />
-      </div>
-
-      <div className="learn-inst">
-        <h2 className="h2 learn-inst-h" id="inst-h">
-          Learn on
-        </h2>
-        <div className="segmented instrument-switch" role="radiogroup" aria-labelledby="inst-h">
-          {(['keyboard', 'drums'] as const).map((i) => (
-            <button
-              key={i}
-              type="button"
-              role="radio"
-              aria-checked={inst === i}
-              className="segment"
-              onClick={() => {
-                setInst(i);
-                set('instrument', i);
-              }}
-            >
-              <Icon name={i === 'keyboard' ? 'piano' : 'drum'} size={20} /> {i === 'keyboard' ? 'Piano' : 'Drums'}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <FromTeacher go={go} />
-
-      <section className={`resume tr-${nextAct.track}`} aria-labelledby="resume-h">
-        <div className="resume-top">
-          <span className="kicker">{nextStars ? 'Carry on where you left off' : 'Up next'}</span>
-          <InstrumentLine a={nextAct} />
-        </div>
-        <h2 id="resume-h" className="resume-title">
-          {titleOf(nextId)}
-        </h2>
-        <p className="resume-learn">{nextAct.learn}</p>
-        <div className="resume-facts">
-          <TrackTag id={nextAct.track} />
-          <TrackProgress id={nextId} at={pos.index} done={(x) => starsFor(activityById(x)!) === 3} />
-        </div>
-        {why && (
-          <p className="resume-why">
-            <Icon name="ear" size={20} /> {why}
-          </p>
-        )}
-        <button type="button" className="btn btn-big" onClick={() => go(nextAct.kind === 'lesson' ? `#/lesson/${nextId}` : `#/mission/${nextId}`)}>
-          {nextStars ? 'Keep going' : 'Start'}
-        </button>
-      </section>
-
-      {nextHere && !onInstrument(nextAct, inst) && (
-        <button type="button" className="track-pick" onClick={() => setOpen(nextHere.id)}>
-          <span className="kicker">Next on {instName}</span>
-          <span className="track-pick-title">{titleOf(nextHere.id)}</span>
-          <span className="track-pick-why">{starsFor(nextHere) ? 'You started this one.' : nextHere.prerequisites.every(started) ? 'You’ve tried what it builds on.' : 'The first step here.'}</span>
-        </button>
-      )}
-
-      {UNITS[inst].map((u) => {
-        const list = trackActivities(u.track).filter((a) => onInstrument(a, inst) && a.kind === 'lesson');
-        if (!list.length) return null;
-        return (
-          <section key={u.track} className={`lib-unit tr-${u.track}`} aria-labelledby={`unit-${u.track}`}>
-            <h2 id={`unit-${u.track}`} className="lib-unit-h">
-              {u.title}
-            </h2>
-            <p className="lib-unit-about">{u.about}</p>
-            <ol className="lib-rows">
-              {list.map((a) => (
-                <LibraryRow key={a.id} a={a} inst={inst} stars={starsFor(a)} here={a.id === nextId} onOpen={() => openLesson(a.id)} onInfo={() => setOpen(a.id)} />
-              ))}
-            </ol>
-          </section>
-        );
-      })}
-
-      {(() => {
-        const projects = UNITS[inst].flatMap((u) => trackActivities(u.track)).filter((a) => onInstrument(a, inst) && a.kind === 'project');
-        if (!projects.length) return null;
-        return (
-          <section className="lib-unit tr-create" aria-labelledby="unit-projects">
-            <h2 id="unit-projects" className="lib-unit-h">
-              Creative projects
-            </h2>
-            <p className="lib-unit-about">Make your own music. These are described, not marked.</p>
-            <ol className="lib-rows">
-              {projects.map((a) => (
-                <LibraryRow key={a.id} a={a} inst={inst} stars={starsFor(a)} here={a.id === nextId} onOpen={() => openLesson(a.id)} onInfo={() => setOpen(a.id)} />
-              ))}
-            </ol>
-          </section>
-        );
-      })()}
-
-      <button type="button" className="track-pick listen-pick" onClick={() => go('#/play/instrument')}>
-        <span className="kicker">Your own instrument</span>
-        <span className="track-pick-title">Play a real piano, keyboard or drum</span>
-        <span className="track-pick-why">Carmen listens on this device, or through a MIDI cable.</span>
-      </button>
-
+    <>
+      <LearnLibrary lib={lib} />
       {open && <StopSheet id={open} stars={starsFor(activityById(open)!)} started={started} onClose={() => setOpen(null)} go={(r) => (r.startsWith('#/lesson/') || r.startsWith('#/mission/') ? openLesson(open) : go(r))} />}
-    </div>
+    </>
   );
 }
 
@@ -337,36 +217,3 @@ function StopSheet({ id, stars, started, onClose, go }: { id: string; stars: num
   );
 }
 
-/** One library row: title, description, progress in words and a shape, a stave preview, and Start / Continue. */
-function LibraryRow({ a, inst, stars, here, onOpen, onInfo }: { a: Activity; inst: InstrumentId; stars: number; here: boolean; onOpen: () => void; onInfo: () => void }) {
-  const project = a.kind === 'project';
-  const state = project ? (stars ? 'started' : 'new') : stars === 3 ? 'done' : stars > 0 ? 'started' : 'new';
-  const base = lessonById(a.id);
-  const preview = base ? (lessonFor(base, inst).practice ?? null) : null;
-  const status = state === 'done' ? 'Completed' : state === 'started' ? (project ? 'Started' : `Started · ${stars} of 3`) : 'Not started';
-  return (
-    <li className={`lib-row is-${state}${here ? ' is-next' : ''}`}>
-      <div className="lib-text">
-        <h3 className="lib-title">{titleOf(a.id)}</h3>
-        <p className="lib-desc">{a.learn}</p>
-        <p className={`lib-status st-${state}`}>
-          <Icon name={state === 'done' ? 'good' : state === 'started' ? 'half' : 'ring'} size={16} /> {status}
-          {here && <span className="lib-next-tag">Up next</span>}
-        </p>
-      </div>
-      {preview && preview.events.length > 0 && (
-        <div className="lib-preview" aria-hidden="true">
-          <Notation phrase={preview} />
-        </div>
-      )}
-      <div className="lib-actions">
-        <button type="button" className={state === 'done' ? 'btn-quiet' : 'btn'} onClick={onOpen}>
-          {state === 'done' ? 'Practise again' : state === 'started' ? 'Continue' : 'Start'}
-        </button>
-        <button type="button" className="btn-text" onClick={onInfo} aria-haspopup="dialog">
-          About <span className="sr-only">{titleOf(a.id)}</span>
-        </button>
-      </div>
-    </li>
-  );
-}

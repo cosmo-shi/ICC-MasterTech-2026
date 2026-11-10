@@ -89,7 +89,7 @@ export function NotePair({ expected, played }: { expected: number; played: numbe
       <div className="np-buttons">
         <button type="button" className="btn-quiet np-btn np-good" onClick={() => hear('music')} aria-pressed={last === 'music'}>
           <Icon name="ear" size={20} /> Hear {exp}
-          <span className="np-sub">written note</span>
+          <span className="np-sub">the right note</span>
         </button>
         <button type="button" className="btn-quiet np-btn np-miss" onClick={() => hear('yours')} aria-pressed={last === 'yours'}>
           <Icon name="ear" size={20} /> Hear {got}
@@ -99,8 +99,8 @@ export function NotePair({ expected, played }: { expected: number; played: numbe
       <MiniKeys
         from={from}
         to={to}
-        label={`${exp}, the written note, and ${got}, the note you played`}
-        marks={{ [expected]: { tone: 'good', word: 'Written' }, [played]: { tone: 'miss', word: 'You' } }}
+        label={`${exp}, the right note, and ${got}, the note you played`}
+        marks={{ [expected]: { tone: 'good', word: 'Right' }, [played]: { tone: 'miss', word: 'You' } }}
         onKey={(m) => playOne(m)}
       />
       <Notation phrase={phrase} marks={[null, 'wrong']} />

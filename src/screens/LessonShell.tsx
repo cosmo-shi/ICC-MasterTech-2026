@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-import { LOOK } from '../state/look.ts';
 import { Icon } from '../ui/icons.tsx';
 
 export const STAGES = ['Explain', 'Demonstrate', 'Explore', 'Practise', 'Feedback', 'Continue'] as const;
@@ -25,7 +24,7 @@ export function LessonShell({
   sheet?: React.ReactNode;
   children: React.ReactNode;
   stepKey: string;
-  /** Design review only (?look): which teaching stage this step is. */
+  /** Which teaching stage this step is: Explain, Demonstrate, Explore, Practise, Feedback or Continue. */
   stage?: Stage;
 }) {
   const body = useRef<HTMLDivElement>(null);
@@ -44,7 +43,7 @@ export function LessonShell({
         </div>
         <div className="lp-side">{side}</div>
       </header>
-      {LOOK && stage && (
+      {stage && (
         <ol className="lx-stages" aria-label="Lesson stages">
           {STAGES.map((st, k) => (
             <li key={st} aria-current={st === stage ? 'step' : undefined} className={st === stage ? 'is-now' : STAGES.indexOf(stage) > k ? 'is-past' : ''}>

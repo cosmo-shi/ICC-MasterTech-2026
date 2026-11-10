@@ -1067,130 +1067,6 @@ h2[tabindex='-1']:focus {
   font-weight: 800;
 }
 
-/* ---- Lesson library (review branch): replaces the winding path ---- */
-.lib-unit {
-  display: grid;
-  gap: var(--s2);
-  margin-top: var(--s6, 32px);
-}
-.lib-unit-h {
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: 800;
-  padding-left: var(--s3);
-  border-left: 4px solid var(--track, var(--dusk));
-}
-.lib-unit.tr-foundations { --track: var(--tr-foundations); }
-.lib-unit.tr-piano { --track: var(--tr-piano); }
-.lib-unit.tr-drums { --track: var(--tr-drums); }
-.lib-unit.tr-create { --track: var(--tr-create); }
-.lib-unit-about {
-  margin: 0 0 var(--s2);
-  color: var(--ink-soft);
-}
-.lib-rows {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.lib-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-areas: 'text actions' 'preview preview';
-  gap: var(--s2) var(--s4);
-  align-items: center;
-  padding: var(--s4) 0;
-  border-top: 1px solid var(--hairline);
-}
-.lib-row:last-child {
-  border-bottom: 1px solid var(--hairline);
-}
-@media (min-width: 720px) {
-  .lib-row {
-    grid-template-columns: minmax(0, 1fr) 240px auto;
-    grid-template-areas: 'text preview actions';
-  }
-}
-.lib-text {
-  grid-area: text;
-  display: grid;
-  gap: 4px;
-}
-.lib-title {
-  margin: 0;
-  font-size: 1.0625rem;
-  font-weight: 800;
-}
-.lib-desc {
-  margin: 0;
-  font-weight: 500;
-  color: var(--ink-soft);
-}
-.lib-status {
-  margin: 0;
-  display: inline-flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--s2);
-  font-size: 0.875rem;
-  font-weight: 700;
-}
-.lib-status.st-done svg {
-  color: var(--good);
-}
-.lib-status.st-started svg {
-  color: var(--near);
-}
-.lib-status.st-new {
-  color: var(--ink-soft);
-}
-.lib-next-tag {
-  padding: 2px var(--s2);
-  border-radius: 999px;
-  background: var(--sun-tint);
-  color: var(--ink);
-}
-.lib-row.is-next .lib-title::before {
-  content: '';
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  margin: 0 var(--s2) 2px 0;
-  border-radius: 50%;
-  background: var(--sun);
-}
-.lib-preview {
-  grid-area: preview;
-  min-width: 0;
-}
-.lib-preview .notation {
-  margin: 0;
-}
-.lib-preview .notation-svg svg {
-  max-height: 64px;
-  width: 100%;
-}
-.lib-preview .drum-key {
-  display: none;
-}
-.lib-actions {
-  grid-area: actions;
-  display: grid;
-  justify-items: center;
-  gap: 4px;
-}
-.lib-actions .btn,
-.lib-actions .btn-quiet {
-  min-width: 112px;
-  min-height: var(--target);
-}
-.lib-preview .notation-svg {
-  min-height: 0;
-}
-.lib-preview .notation {
-  padding: 2px var(--s2);
-  max-width: 360px;
-}
 .test-banner {
   display: flex;
   flex-wrap: wrap;
@@ -1311,4 +1187,231 @@ h2[tabindex='-1']:focus {
 }
 .empty-state .h2 {
   margin-top: 0;
+}
+
+/* ===================== Type roles (direction A) ===================== */
+:is(h1, h2, h3, .h1, .h2, .lp-title, .resume-title, .fb-title, .teacher-title, .lx-display) {
+  font-family: var(--font-display);
+  letter-spacing: var(--display-tracking, 0);
+}
+/* Segmented switches (Lessons / Music theory, School / On this device) meet the 48 px target rule. */
+.segmented .segment { min-height: var(--target, 48px); }
+
+/* ===================== Learn library, Music theory, lesson stages (direction A, approved 10 Nov) ===================== */
+.lx { gap: var(--s6); }
+.lx-display { font-family: var(--font-display, var(--font-ui)); font-weight: var(--w-display, 900); line-height: 1.05; margin: 0; overflow-wrap: anywhere; }
+.lx-kicker { margin: 0; font-weight: var(--w-control, 700); font-size: 0.875rem; letter-spacing: 0.04em; text-transform: uppercase; }
+.lx-about, .lx-desc { margin: 0; color: var(--ink-soft); }
+.lx-desc { font-size: 0.9375rem; }
+.lx-why { margin: 0; font-size: 0.9375rem; }
+.lx-item-title { margin: 0; font-size: 1.125rem; font-weight: var(--w-head, 800); line-height: 1.25; overflow-wrap: anywhere; }
+.lx-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s3); }
+.lx-btn {
+  min-height: var(--target, 48px); padding: 0 var(--s5); border: 0; border-radius: var(--r-md);
+  background: var(--sun); color: var(--on-sun); font: inherit; font-family: var(--font-ui); font-weight: var(--w-control, 700); font-size: 1rem;
+  cursor: pointer;
+}
+.lx-btn:hover { background: var(--sun-deep); color: var(--paper); }
+.lx-btn-quiet { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 2px currentColor; }
+.lx-btn-quiet:hover { background: var(--paper-sunk); color: var(--ink); }
+.lx-link {
+  min-height: var(--target, 48px); padding: 0 var(--s2); border: 0; background: none; color: inherit;
+  font: inherit; font-family: var(--font-ui); font-weight: var(--w-control, 700); text-decoration: underline; text-underline-offset: 0.2em; cursor: pointer;
+}
+.lx-status { display: inline-flex; align-items: center; gap: var(--s1); font-size: 0.875rem; font-weight: var(--w-control, 700); color: var(--ink-soft); }
+.lx-status.st-done { color: var(--good); }
+.lx-status.st-started { color: var(--dusk); }
+.lx-preview { background: var(--paper); border-radius: var(--r-md); padding: var(--s2) var(--s3); color: var(--ink); min-width: 0; }
+.lx-preview svg { max-width: 100%; height: auto; }
+.lx-chosen { display: inline-flex; align-items: center; gap: var(--s1); font-size: 0.875rem; font-weight: var(--w-control, 700); }
+.lx-inst { display: grid; gap: var(--s3); grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.lx-inst-opt {
+  display: grid; gap: var(--s2); align-content: start; text-align: left; min-height: var(--target, 48px);
+  border: 0; border-radius: var(--r-lg); padding: var(--s4); font: inherit; color: var(--ink); cursor: pointer;
+}
+.lx-inst-name { display: inline-flex; align-items: center; gap: var(--s2); font-family: var(--font-display, var(--font-ui)); font-weight: var(--w-head, 800); font-size: 1.25rem; }
+.lx-inst-about { font-size: 0.9375rem; }
+.lx-inst-opt[aria-checked='true'] { box-shadow: inset 0 0 0 3px var(--ink); }
+
+/* Learn: big type, numbered chapters, rules not boxes */
+.lxa-head { display: grid; gap: var(--s4); }
+.lxa-title { font-size: clamp(3.25rem, 14vw, 7.5rem); letter-spacing: -0.03em; line-height: 0.9; }
+.lx-inst-words { display: flex; flex-wrap: wrap; gap: var(--s5); }
+.lx-inst-words .lx-inst-opt { padding: 0 0 var(--s1); background: none; border-radius: 0; box-shadow: none; display: flex; align-items: center; gap: var(--s3); }
+.lx-inst-words .lx-inst-name { font-size: clamp(1.5rem, 5vw, 2.25rem); color: var(--ink-soft); }
+.lx-inst-words .lx-inst-opt[aria-checked='true'] { box-shadow: inset 0 -5px 0 var(--sun); }
+.lx-inst-words .lx-inst-opt[aria-checked='true'] .lx-inst-name { color: var(--ink); }
+.lxa-feature {
+  display: grid; gap: var(--s5); padding: var(--s6) var(--s5); border-radius: var(--r-lg) var(--r-lg) var(--r-lg) var(--r-sm);
+  background: var(--tr); color: var(--on-sun);
+}
+.lxa-feature .lx-btn { background: var(--on-sun); color: var(--tr); }
+.lxa-feature .lx-btn:hover { background: var(--ink); color: var(--paper); }
+.lxa-feature .lx-kicker, .lxa-feature .lx-why { color: var(--on-sun); }
+.lxa-feature-text { display: grid; gap: var(--s3); align-content: start; }
+.lxa-feature-title { font-size: clamp(2rem, 7vw, 3.5rem); letter-spacing: -0.02em; }
+.lxa-feature-desc { margin: 0; font-size: 1.125rem; max-width: 34ch; }
+.lxa-feature-score .lx-preview { padding: var(--s4); border-radius: var(--r-md); }
+.lxa-unit { display: grid; gap: var(--s4); }
+.lxa-unit-head { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--s4); align-items: end; padding-bottom: var(--s3); border-bottom: 3px solid var(--tr); }
+.lxa-num { font-family: var(--font-display, var(--font-ui)); font-weight: var(--w-display, 900); font-size: clamp(3rem, 12vw, 5rem); line-height: 0.85; color: var(--tr-ink); }
+.lxa-unit-title { font-size: clamp(1.5rem, 5vw, 2.25rem); }
+.lxa-list { list-style: none; margin: 0; padding: 0; display: grid; }
+.lxa-item { display: grid; gap: var(--s3); padding: var(--s4) 0; border-bottom: 1px solid var(--hairline); }
+.lxa-item-text { display: grid; gap: var(--s1); }
+.lxa-item.is-next .lx-item-title { font-size: 1.375rem; }
+.lxa-item-act { display: flex; flex-wrap: wrap; gap: var(--s2); align-items: center; }
+.lxa-create { display: grid; gap: var(--s5); padding: var(--s6) var(--s5); border-radius: var(--r-lg); background: var(--tr-create-tint); }
+.lxa-create-title { font-size: clamp(2.25rem, 9vw, 4.5rem); color: var(--tr-create-ink); letter-spacing: -0.02em; }
+.lxa-create-lede { margin: 0; max-width: 46ch; font-size: 1.0625rem; }
+.lxa-create-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s5); }
+.lxa-create-list li { display: grid; gap: var(--s2); padding-top: var(--s3); border-top: 3px solid var(--tr-create); }
+@media (min-width: 900px) {
+  .lxa-head { grid-template-columns: minmax(0, 1fr) auto; align-items: end; }
+  .lxa-head .lx-inst { grid-column: 1 / -1; }
+  .lxa-feature { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); padding: var(--s7); align-items: center; }
+  .lxa-unit { grid-template-columns: 16rem minmax(0, 1fr); align-items: start; }
+  .lxa-unit-head { grid-template-columns: 1fr; border-bottom: 0; position: sticky; top: var(--s4); }
+  .lxa-item { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+  .lxa-create-list { grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
+}
+
+/* ---------- Music theory : categories by hue, place and words; every card has notation + sound ---------- */
+.lxt-head { display: grid; gap: var(--s3); }
+.lxt-title { font-size: clamp(2.5rem, 10vw, 5rem); letter-spacing: -0.02em; }
+.lxt-lede { margin: 0; font-size: 1.125rem; max-width: 40ch; }
+.lxt-jump { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.lxt-jump-link { display: inline-flex; align-items: center; min-height: var(--target, 48px); padding: 0 var(--s4); border-radius: 999px; background: var(--tr-tint); color: var(--tr-ink); font-weight: var(--w-control, 700); text-decoration: none; }
+.lxt-group { display: grid; gap: var(--s4); scroll-margin-top: var(--s4); }
+.lxt-group-head { display: grid; gap: var(--s1); padding: var(--s4) var(--s5); border-radius: var(--r-lg); background: var(--tr); color: var(--on-sun); }
+.lxt-group-head .lx-about { color: var(--on-sun); }
+.lxt-group-title { font-size: clamp(1.5rem, 6vw, 2.25rem); }
+.lxt-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s4); }
+.lxt-card { display: grid; gap: var(--s2); align-content: start; padding: var(--s4) 0; border-top: 3px solid var(--tr); }
+.lxt-card .lx-preview { background: var(--tr-tint); }
+.lxt-topic > .kicker { color: var(--tr-ink); }
+.lxt-topic-title { font-size: clamp(2.25rem, 9vw, 4rem); letter-spacing: -0.02em; }
+.lxt-topic .theory-example { background: var(--tr-tint); border-radius: var(--r-md); }
+@media (min-width: 700px) { .lxt-grid { grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); column-gap: var(--s5); } }
+@media (min-width: 900px) { .lxt-head { grid-template-columns: minmax(0, 1fr) auto; align-items: end; } .lxt-lede { grid-column: 1 / -1; } }
+
+/* ---------- Lesson : the six teaching stages, current one named in words and shape ---------- */
+.lx-stages { list-style: none; margin: 0; padding: 0 var(--s4) var(--s2); display: flex; gap: var(--s1); }
+.lx-stages li { flex: 1; display: grid; gap: 2px; justify-items: center; padding: var(--s1) 0; border-top: 4px solid var(--hairline); color: var(--ink-soft); font-size: 0.8125rem; font-weight: var(--w-control, 700); }
+.lx-stages li.is-past { border-top-color: var(--dusk); }
+.lx-stages li.is-now { border-top-color: var(--sun); color: var(--ink); }
+.lx-stage-n { display: none; }
+@media (max-width: 599px) {
+  .lx-stages li:not(.is-now) .lx-stage-w { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .lx-stages li:not(.is-now) { flex: 0 0 var(--s5); }
+  .lx-stages li.is-now { justify-items: start; }
+}
+.lp-title { font-family: var(--font-display); font-weight: var(--w-display); letter-spacing: var(--display-tracking, 0); }
+.lp-title.small { font-size: clamp(1.5rem, 6vw, 2.125rem); line-height: 1.1; }
+.lxt-card .lx-preview { background: none; padding: 0; }
+
+/* ---------- Teacher : same faces and hues, calmer and denser: numbers on hairlines, not tiles ---------- */
+.teacher-mode .teacher-title { font-family: var(--font-display); font-weight: var(--w-display); letter-spacing: var(--display-tracking, 0); }
+.teacher-mode .dash-stats { gap: 0; border-block: 1px solid var(--hairline); }
+.teacher-mode .dash-stats > li { background: none; border-radius: 0; padding: var(--s3) var(--s4); border-left: 1px solid var(--hairline); }
+.teacher-mode .dash-stats > li:first-child { border-left: 0; padding-left: 0; }
+.teacher-mode .stat-n { font-family: var(--font-display); font-weight: var(--w-display); font-size: 2.25rem; color: var(--dusk); }
+.teacher-mode :is(td, th) { padding-block: var(--s2); }
+/* Segmented switches (Lessons / Music theory, School / On this device) were 40 px tall; Carmen's rule is 48 px. */
+.segmented .segment { min-height: var(--target, 48px); }
+@media (max-width: 599px) { .lxa-feature .lx-preview-icon { display: none; } }
+@media (max-height: 500px) {
+  .lp-title.small { font-size: 1.25rem; }
+  .lx-stages { padding-bottom: 0; }
+  .lx-stages li { padding: 0; font-size: 0.75rem; }
+}
+
+/* ---------- Creative project entry : the orchid Compose identity, not marked ---------- */
+.lx-create-head { padding: var(--s5); border-radius: var(--r-lg) var(--r-lg) var(--r-lg) var(--r-sm); background: var(--tr-tint); }
+.lx-create-head .eyebrow { color: var(--tr-ink); }
+.lx-create-title { font-size: clamp(2rem, 8vw, 3.25rem); letter-spacing: -0.02em; color: var(--ink); }
+/* Small phones (about 568 px tall): the keys need the room, so the stage strip gives way to the
+   progress bar above it, and step titles step down a size. */
+@media (max-height: 640px) and (max-width: 599px) {
+  .lx-stages { display: none; }
+  .lp-title.small { font-size: 1.25rem; }
+}
+
+/* ---------- Drums: pads stay square, and short landscape keeps the stave (momo, 10 Nov evening) ----------
+   Pads were stretched into tall strips on desktop; they are now square tiles in one even grid. */
+.pads .pad { aspect-ratio: 1 / 1; min-height: 0; }
+@media (orientation: landscape) and (max-height: 500px) {
+  /* The stave column can never shrink to nothing (the drums tool row used to take all the width). */
+  .play .workspace.has-dock { grid-template-columns: minmax(160px, 1fr) auto; }
+  /* Drums: the stave and the kit on the left, Sound and the tools in a column on the right,
+     so the kit gets the height and the stave keeps its width. */
+  .play .workspace.has-dock:has(.pads-wrap) { grid-template-columns: minmax(0, 1fr) clamp(15rem, 40vw - 2rem, 20rem); grid-template-rows: auto minmax(0, 1fr); }
+  .play .workspace.has-dock:has(.pads-wrap) > .start-sound { grid-column: 2; grid-row: 1; align-self: start; padding: 0; background: none; }
+  .play .workspace.has-dock:has(.pads-wrap) > .start-sound > :not(button) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .play .workspace.has-dock:has(.pads-wrap) > .start-sound > button { width: 100%; }
+  .play .workspace.has-dock:has(.pads-wrap) > .trail { grid-column: 1; grid-row: 1; }
+  .play .workspace.has-dock:has(.pads-wrap) > .ws-bar {
+    grid-column: 2; grid-row: 2; align-self: start; margin: 0;
+    display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s1);
+  }
+  .play .workspace.has-dock:has(.pads-wrap) > .start-sound ~ .ws-bar { grid-row: 2; }
+  .play .workspace.has-dock:has(.pads-wrap) .dock { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s1); }
+  .play .workspace.has-dock:has(.pads-wrap) .dock > * { min-width: 0; justify-content: center; }
+  .play .workspace.has-dock:has(.pads-wrap) .drum-view { margin: 0; width: 100%; }
+  .play .workspace.has-dock:has(.pads-wrap) .drum-view .segment { flex: 1; min-height: var(--target, 48px); }
+  .play .workspace.has-dock:has(.pads-wrap) > .pads-wrap { grid-column: 1; grid-row: 2; }
+  /* The kit keeps its 16:10 shape and fits the case both ways (container units: Safari 16+, Chrome 105+). */
+  .pads-wrap:has(.kit) { container-type: size; min-height: 0; }
+  .kit { width: min(100cqw, 160cqh); height: auto; max-height: none; aspect-ratio: 16 / 10; }
+  /* Landscape always uses the wide arrangement, whatever the width. */
+  .kit .kit-part { left: var(--x); top: var(--y); width: var(--w); }
+  .play .pads .pad-name { font-size: 0.875rem; }
+  .kit-name { font-size: 0.6875rem; padding: 1px 4px; white-space: nowrap; }
+  /* Lessons: the tool row sits tight above the kit so the kit gets the height. */
+  .lp-instrument .workspace { gap: var(--s1); }
+  .lp-instrument .ws-bar { margin: 0; }
+  .kit .pad-key { display: none; }
+  .play .pads { height: 100%; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .play .pads .pad { aspect-ratio: auto; min-height: 0; gap: 2px; }
+}
+/* Narrow landscape phones (iPhone SE and similar): Record takes the full width of the tool column
+   and the three small tools share the row below it. */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 720px) {
+  .play .workspace.has-dock:has(.pads-wrap) .dock { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .play .workspace.has-dock:has(.pads-wrap) .dock > .rec { grid-column: 1 / -1; }
+}
+
+/* Teacher bar on 320 px phones: the logo mark stays, the word "carmen" gives way so Exit fits. */
+.teacher-title { min-width: 0; }
+@media (max-width: 360px) { .teacher-bar .wordmark-text { display: none; } }
+/* The test-data banner keeps a side gutter (and clears a notch in landscape). */
+.test-banner {
+  padding-block: var(--s2);
+  padding-left: max(var(--s4), env(safe-area-inset-left, 0px));
+  padding-right: max(var(--s4), env(safe-area-inset-right, 0px));
+}
+/* Phones in portrait use the taller kit arrangement, so the case takes the taller 100:86 shape too
+   (the bass drum used to hang out of the bottom of the case on Play). */
+@media (max-width: 600px) and (orientation: portrait) {
+  .play .pads-wrap .kit { aspect-ratio: 100 / 86; width: min(100%, calc(100cqh * 100 / 86)); }
+}
+.lxa-create-head { display: grid; gap: var(--s2); }
+.lx-display { line-height: 1.1; }
+/* Record's two lines had touching glyphs with the taller Atkinson letters. */
+.rec-text { line-height: 1.35; gap: 0; }
+/* Play on phones and tablets in portrait: the six pads fill the case as a 3 × 2 grid. */
+@media (max-width: 899px) and (min-height: 501px) {
+  .play .pads-wrap .pads { height: 100%; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 1fr; }
+  .play .pads-wrap .pad { aspect-ratio: auto; min-height: 0; gap: 2px; }
+  .play .pads-wrap .pad-name { font-size: 0.9375rem; }
+}
+/* Play on desktop: the six pads are one 3 × 2 block of squares, as big as the case allows, centred. */
+@media (min-width: 900px) and (min-height: 501px) {
+  .play .pads-wrap .pads {
+    height: 100%;
+    grid-template-columns: repeat(3, min(calc((100cqw - 20px) / 3), calc((100cqh - 24px) / 2)));
+    grid-auto-rows: auto;
+    justify-content: center;
+    align-content: center;
+  }
 }

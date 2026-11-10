@@ -1,6 +1,19 @@
-# Carmen visual direction: review
+# Carmen visual direction
 
-Branch `sc-visual-review` (local, from `sc` at 04e61ee). Nothing has been pushed, merged or rolled out. The three directions only appear when the URL has `?look=a`, `?look=b` or `?look=c`; without it the app is the same as `sc`, apart from one unit title ("Compose and create", see the copy audit).
+**Decision (momo, 10 Nov 2026, 20:52):** direction A, "expressive editorial", with Bricolage Grotesque and Atkinson Hyperlegible Next. It is now the app's design on branch `sc-visual-review`. The `?look` and `?type` switches, directions B and C, and the Cabin and Fraunces fonts have been removed. The sections below are the review record that led to the decision. Their URLs with `?look` no longer change anything.
+
+**Rolled out with the decision:**
+- Tokens: `--font-display`, `--font-ui`, `--font-wordmark` and weights in `tokens.css`.
+- Type roles, the Learn library, Music theory, lesson stages, the creative entry and the teacher styles in `system.css`.
+- Plain wording, following momo's 20:52 and 20:54 notes:
+  - feedback says "The note was E. You played G.";
+  - lesson titles say what you do, e.g. "Find C, D and E on the keyboard";
+  - no explanatory subtitles.
+- Landscape and drum fixes, following momo's 21:05 note:
+  - the stave is kept on phones in landscape;
+  - the kit fits its case in portrait and landscape;
+  - pads are square on desktop.
+- `tools/e2e-devices.mjs` checks for overlap, edge padding, cut-off text and sideways scrolling. It runs 9 emulated iPhone, Android and iPad profiles over 11 screens.
 
 ## How to review
 
