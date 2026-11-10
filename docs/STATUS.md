@@ -2,6 +2,14 @@
 
 Last updated 10 November 2026. Plain facts only: what runs, how it was checked, and what is still missing.
 
+
+## 10 Nov, video QA (sc 3b753e4 and later)
+
+- **Working:** stave redraws on resize/rotation and stays on screen with the keys at all 10 checked sizes (emulated, `node tools/e2e-video-qa.mjs`); wrong-note feedback with Hear E / Hear G, both keys and the stave; L05 as a full 11-step teaching sequence with the C♯ explainer; L01 beat foundations before the checked copy (starts slower); count-in shown 1 2 3 4; lesson titles from the brief; teacher wording from the brief's table.
+- **Draft:** all lesson content (pending a primary music educator). D01 and D02 patterns do not fully match their new descriptions (see docs/carmen-video-qa.md).
+- **Not started (waiting for momo):** lesson library replacing the path, teacher dashboard rebuild, Cabin vs Atkinson Hyperlegible Next, Phosphor evaluation.
+- **Unverified:** real iPhone/Android, audio latency, screen readers.
+
 ## Added 10 November 2026 (improvement brief): where things stand
 
 Full audit with before and after: `docs/AUDIT-2026-11-10.md`. This section is the current truth;
