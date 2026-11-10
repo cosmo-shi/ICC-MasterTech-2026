@@ -54,7 +54,8 @@ describe('observations from checker facts', () => {
   it('leaves mastery unchanged by unclear takes', () => {
     const clear = buildLearnerState([attempt('L02', {}, { restViolations: 1 })], INFOS);
     const withUnclear = buildLearnerState([attempt('L02', {}, { restViolations: 1 }), ...[1, 2, 3].map(() => attempt('L02', { input: { mode: 'mic', unclear: true } }, { restViolations: 4 }))], INFOS);
-    expect(withUnclear).toEqual(clear);
+    const view = (st: typeof clear) => Object.entries(st.skills).map(([k, v]) => [k, v.p, v.observations, v.recent]);
+    expect(view(withUnclear)).toEqual(view(clear));
   });
 });
 

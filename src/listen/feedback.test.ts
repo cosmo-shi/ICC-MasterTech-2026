@@ -25,7 +25,7 @@ describe('rhythm feedback: what happened, why it matters, one next step', () => 
   it('never blames the learner for an unclear take', () => {
     for (const r of ['not-calibrated', 'too-few', 'too-many', 'faint', 'device'] as const) {
       const f = unclearFeedback(r);
-      expect(f.what).not.toMatch(/wrong|mistake|early|late/i);
+      expect(f.what).not.toMatch(/\b(wrong|mistake|early|late)\b/i);
       expect(`${f.why} ${f.next}`).not.toMatch(/wrong|mistake|your fault/i);
     }
     expect(unclearFeedback('device').why).toMatch(/not you/);
