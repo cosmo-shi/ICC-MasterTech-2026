@@ -5528,3 +5528,5 @@ details > summary {
 .undo-bar .btn-quiet { color: var(--paper); border-color: color-mix(in srgb, var(--paper) 40%, transparent); background: transparent; }
 .recordings { margin-top: var(--s6); }
 .music-item audio { width: 100%; max-width: 420px; }
+.play-on-chip { white-space: nowrap; }
+.lp-instrument .input-status { align-self: flex-start; }

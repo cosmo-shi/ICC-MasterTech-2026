@@ -7,7 +7,7 @@ import { Icon } from './icons.tsx';
 import { NoteTrail, Trail, type TrailNote } from './NoteTrail.tsx';
 import { GM_DRUMS, listening } from '../input/session.ts';
 import { midiInput } from '../input/midi.ts';
-import { InputStatus } from './InputPanel.tsx';
+import { InputStatus, PlayOnSheet, useListening } from './InputPanel.tsx';
 import { DrumKit, Drums, Keyboard, PADS, SIMPLE_PADS, type InputSource, keyToOffset, useComputerKeys, useWhiteCount } from './instruments.tsx';
 
 export interface LiveEvent {
@@ -104,6 +104,8 @@ interface Props {
   recording?: boolean;
   /** Controls that belong to the instrument (record, play back…), placed right above it. */
   dock?: ReactNode;
+  /** Offer "Play on": this screen, a MIDI instrument or (drums) taps into the microphone. */
+  playOn?: boolean;
 }
 
 // The full keyboard: C2 to C7, 36 white keys. The screen shows a window onto it.
@@ -174,7 +176,7 @@ function KeyNavigator({ first, count, onGo, onSettle }: { first: number; count: 
   );
 }
 
-export function Workspace({ instrument, onEvent, highlightNotes, highlightPads, startMidi = 60, label, trail, recording = false, dock }: Props) {
+export function Workspace({ instrument, onEvent, highlightNotes, highlightPads, startMidi = 60, label, trail, recording = false, dock, playOn }: Props) {
   const { prefs, set } = usePrefs();
   const [downNotes, setDownNotes] = useState<Set<number>>(new Set());
   const [downPads, setDownPads] = useState<Set<DrumSound>>(new Set());
@@ -376,6 +378,14 @@ export function Workspace({ instrument, onEvent, highlightNotes, highlightPads, 
         ))}
       </div>
     ) : null;
+  const l = useListening();
+  const [playOnOpen, setPlayOnOpen] = useState(false);
+  const playOnChip =
+    playOn && l.mode === 'screen' ? (
+      <button type="button" className="chip play-on-chip" onClick={() => setPlayOnOpen(true)} aria-haspopup="dialog">
+        <Icon name="listen" size={18} /> Play on my instrument
+      </button>
+    ) : null;
   const centre = WHITES[Math.min(RANGE_WHITES - 1, shown + Math.floor(whiteCount / 2))];
 
   return (
@@ -384,9 +394,11 @@ export function Workspace({ instrument, onEvent, highlightNotes, highlightPads, 
       {instrument === 'keyboard' && <RotateTip />}
       {trail && <NoteTrail trail={trailStore} recording={recording} clef={instrument === 'drums' ? 'drums' : centre < 57 ? 'bass' : 'treble'} letters={prefs.noteNames} />}
       <InputStatus instrument={instrument} />
-      {(dock || drumView) && (
+      {playOnOpen && <PlayOnSheet instrument={instrument} onClose={() => setPlayOnOpen(false)} />}
+      {(dock || drumView || playOnChip) && (
         <div className="ws-bar">
           {dock}
+          {playOnChip}
           {drumView}
         </div>
       )}

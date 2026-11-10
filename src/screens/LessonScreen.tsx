@@ -33,6 +33,9 @@ import { MakeStep } from "./MakeStep.tsx";
 import { LessonShell } from "./LessonShell.tsx";
 import { topicById } from "../data/theory.ts";
 import type { CapturedInput } from "../engine/checker.ts";
+import { listening } from "../input/session.ts";
+import { rhythmClarity } from "../listen/compare.ts";
+import { unclearFeedback, type Feedback } from "../listen/feedback.ts";
 
 type Phase = "ready" | "countin" | "playing" | "review";
 type Mode = "practice" | "independent";
@@ -116,6 +119,13 @@ function AssessedLesson({ lessonId, go }: Props) {
   const checkId = useRef("");
   const largeBefore = useRef<boolean | null>(null);
   const recorder = useRef<Recorder | null>(null);
+  // Beat 1 of the current take, and whether the device's clock looked wrong when it was set.
+  const beat0Ref = useRef(0);
+  const clockFault = useRef(false);
+  // A take Carmen couldn't judge fairly (microphone unclear, device clock wrong): said plainly, never graded.
+  const [unclear, setUnclear] = useState<Feedback | null>(null);
+  // The microphone is for this lesson only.
+  useEffect(() => () => listening.stopMic(), []);
   const attemptId = useRef<string>("");
   const player = usePlayer();
   const listen = usePlayer();
@@ -207,6 +217,35 @@ function AssessedLesson({ lessonId, go }: Props) {
     if (!rec) return;
     recorder.current = null;
     rec.closeAll((totalBeats + 1) * (60000 / tempo));
+    const micTake = listening.mode === "mic" && target.instrument === "drums" && timed;
+    let unclearWhy: Parameters<typeof unclearFeedback>[0] | null = clockFault.current ? "device" : null;
+    if (!unclearWhy && micTake) {
+      const beatMs = 60000 / tempo;
+      const heard = listening.heardSince(beat0Ref.current - beatMs / 2).filter((h) => h.kind === "onset" && h.tPerf <= beat0Ref.current + (totalBeats + 0.75) * beatMs);
+      const clear = rhythmClarity(heard.map((h) => ({ kind: "onset" as const, time: h.time, strength: 0, confidence: h.kind === "onset" ? h.confidence : 0 })), expected.length, listening.latency !== null);
+      if (!clear.clear) unclearWhy = clear.reason ?? "too-few";
+    }
+    if (unclearWhy && !playCheck) {
+      // Kept for the record (the teacher can see it), with no weight as evidence.
+      const id = newId("att");
+      attemptId.current = id;
+      void store.put("attempts", {
+        id,
+        createdAt: stamp(),
+        activityId: lesson.id,
+        activityVersion: lesson.version,
+        kind: mode,
+        instrument: target.instrument,
+        tempoBpm: tempo,
+        support: { hintLevel: mode === "independent" ? 0 : hintLevel, heardExample: heardExample || demoWatched, largeControls: prefs.large, simplified: prefs.simplified, aiEnabled: prefs.aiEnabled, slower, counting: mode === "practice" && counting },
+        inputs: rec.inputs,
+        passed: false,
+        input: { mode: micTake ? "mic" : listening.mode, unclear: true, reason: unclearWhy },
+      } satisfies AttemptRecord);
+      setUnclear(unclearFeedback(unclearWhy));
+      setPhase("ready");
+      return;
+    }
     const res = checkAttempt(target, rec.inputs, lesson.assessment, tempo);
     if (playCheck) {
       // The playing check is one response about the controls: stored for the teacher, never evidence.
@@ -253,6 +292,7 @@ function AssessedLesson({ lessonId, go }: Props) {
         counting: mode === "practice" && counting,
       },
       inputs: rec.inputs,
+      input: listening.mode === "screen" ? undefined : { mode: listening.mode },
       summary: res.summary,
       passed: res.passed,
       checkerVersion: res.checkerVersion,
@@ -297,6 +337,8 @@ function AssessedLesson({ lessonId, go }: Props) {
     focusHint,
     playCheck,
     counting,
+    timed,
+    expected.length,
   ]);
 
   // "Hear it before each try" (a support the learner chose) plays the music, then starts.
@@ -316,15 +358,23 @@ function AssessedLesson({ lessonId, go }: Props) {
     setDecision(null);
     setLiveCount(0);
     setSaveState("idle");
+    setUnclear(null);
+    clockFault.current = false;
     if (!audio.running) await audio.start();
     if (timed) {
       setPhase("countin");
       await player.play([], tempo, {
         countInBeats: prefs.countIn,
-        click: true,
+        // With the microphone on, only the count-in clicks: the learner's taps are all it should hear.
+        click: !(listening.listening && target.instrument === "drums"),
         totalTicks: target.totalTicks,
         tailBeats: 0.75,
         onBeat0: (pb) => {
+          const wait = pb.beat0PerfMs - performance.now();
+          // The first beat should be one count-in away. If the clock says otherwise, the device is
+          // at fault (seen in Safari), and this take is not marked.
+          if (wait < -50 || wait > prefs.countIn * (60000 / tempo) + 1500) clockFault.current = true;
+          beat0Ref.current = pb.beat0PerfMs;
           recorder.current = new Recorder(pb.beat0PerfMs);
           window.setTimeout(
             () => setPhase((p) => (p === "countin" ? "playing" : p)),
@@ -565,6 +615,15 @@ function AssessedLesson({ lessonId, go }: Props) {
               ))}
             </ol>
           )}
+          {unclear && phase === "ready" && (
+            <div className="listen-feedback" role="status">
+              <p className="fb-what">{unclear.what}</p>
+              <p className="fb-why">{unclear.why}</p>
+              <p className="fb-next">
+                <Icon name="forward" size={18} /> {unclear.next}
+              </p>
+            </div>
+          )}
           <div className="lp-music">
             {notation}
             {counting && mode === "practice" && <BeatCount phrase={target} now={phase === "playing" ? beatNow : null} />}
@@ -642,6 +701,7 @@ function AssessedLesson({ lessonId, go }: Props) {
             onEvent={onEvent}
             highlightNotes={highlightNotes}
             highlightPads={highlightPads}
+            playOn
           />
         </div>
       </div>
