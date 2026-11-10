@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { type CompositionRecord, store } from '../store/db.ts';
 import { Band, Icon } from '../ui/icons.tsx';
 import { usePlayer } from '../ui/usePlayer.ts';
+import { mine, players } from '../store/profiles.ts';
 
 export function MyMusic({ go }: { go: (r: string) => void }) {
   const [items, setItems] = useState<CompositionRecord[] | null>(null);
@@ -15,11 +16,16 @@ export function MyMusic({ go }: { go: (r: string) => void }) {
   useEffect(() => {
     const load = () =>
       store.all<CompositionRecord>('compositions').then(
-        (r) => setItems(r.sort((a, b) => b.createdAt - a.createdAt)),
+        (r) => setItems(r.filter(mine).sort((a, b) => b.createdAt - a.createdAt)),
         () => setError('Your saved music could not be opened in this browser.'),
       );
     load();
-    return store.subscribe(load);
+    const off1 = store.subscribe(load);
+    const off2 = players.subscribe(load);
+    return () => {
+      off1();
+      off2();
+    };
   }, []);
 
   const play = (c: CompositionRecord) => {
@@ -35,14 +41,12 @@ export function MyMusic({ go }: { go: (r: string) => void }) {
   return (
     <div className="screen mymusic">
       <h1 className="h1">My music</h1>
-      <div className="save-status">
-        <Icon name={store.isPersistent ? 'saved' : 'music'} size={28} />
-        <p>
-          {store.isPersistent
-            ? 'Kept in this browser on this device only. Anyone using this browser can see it, and clearing browser data deletes it.'
-            : 'Saving is off, so this music goes when Carmen closes. A grown-up can turn saving on in Grown-ups.'}
-        </p>
-      </div>
+      {!store.isPersistent && (
+        <div className="save-status">
+          <Icon name="music" size={28} />
+          <p>Saving is off, so this music goes when Carmen closes.</p>
+        </div>
+      )}
       {error && <p className="note-text">{error}</p>}
       {items && items.length === 0 && (
         <div className="panel empty">

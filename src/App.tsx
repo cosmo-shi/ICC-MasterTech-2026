@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { audio } from './audio/engine.ts';
 import { PrefsProvider, usePrefs } from './state/prefs.tsx';
 import { Horizon, Icon, Wordmark } from './ui/icons.tsx';
@@ -7,8 +7,11 @@ import { LearnScreen } from './screens/LearnScreen.tsx';
 import { LessonScreen } from './screens/LessonScreen.tsx';
 import { MyMusic } from './screens/MyMusic.tsx';
 import { ControlsSheet } from './screens/ControlsSheet.tsx';
+import { Avatar, EntryScreen } from './screens/EntryScreen.tsx';
+import { players, teacher, usePlayers } from './store/profiles.ts';
 
 const MissionScreen = lazy(() => import('./screens/MissionScreen.tsx').then((m) => ({ default: m.MissionScreen })));
+const TheoryScreen = lazy(() => import('./screens/TheoryScreen.tsx').then((m) => ({ default: m.TheoryScreen })));
 const Grownups = lazy(() => import('./screens/Grownups.tsx').then((m) => ({ default: m.Grownups })));
 
 function useHash(): [string, (h: string) => void] {
@@ -39,7 +42,16 @@ function Shell() {
   const setSettingsOpen = (open: boolean) => setSettingsAt(open ? hash : null);
   const { saveError } = usePrefs();
   const mainRef = useRef<HTMLElement>(null);
-  const [, section, arg] = hash.split('/');
+  const [, section, arg, sub] = hash.split('/');
+  const who = usePlayers();
+  const me = who.players.find((p) => p.id === who.current);
+  const [switching, setSwitching] = useState(false);
+  const teacherOpen = useSyncExternalStore(players.subscribe, teacher.isOpen, teacher.isOpen);
+  const showEntry = switching || (!who.current && section !== 'teacher' && section !== 'grownups');
+
+  useEffect(() => {
+    if (section === 'grownups') window.location.replace('#/teacher');
+  }, [section]);
 
   useEffect(() => {
     mainRef.current?.focus({ preventScroll: true });
@@ -48,15 +60,35 @@ function Shell() {
 
   let screen: React.ReactNode;
   if (section === 'learn') screen = <LearnScreen go={go} />;
-  else if (section === 'lesson' && arg) screen = <LessonScreen lessonId={arg} go={go} />;
+  else if (section === 'theory') screen = <TheoryScreen topicId={arg} go={go} />;
+  else if (section === 'lesson' && arg) screen = <LessonScreen key={hash} lessonId={arg} view={sub} go={go} />;
   else if (section === 'mission' && arg) screen = <MissionScreen key={arg} missionId={arg} go={go} />;
   else if (section === 'music') screen = <MyMusic go={go} />;
-  else if (section === 'grownups') screen = <Grownups />;
-  else screen = <PlayScreen go={go} />;
+  else if (section === 'teacher' || section === 'grownups') screen = teacherOpen ? <Grownups go={go} /> : <EntryScreen initial="teacher" canClose onDone={() => undefined} go={go} />;
+  else screen = <PlayScreen key={hash} go={go} makeFrom={arg === 'make' ? sub : undefined} />;
 
-  const current = section === 'lesson' || section === 'mission' ? '#/learn' : `#/${section || 'play'}`;
+  const current = section === 'lesson' || section === 'mission' || section === 'theory' ? '#/learn' : `#/${section || 'play'}`;
 
-  const scene = section === 'learn' || section === 'lesson' || section === 'mission' ? 'learn' : section === 'music' ? 'music' : section === 'grownups' ? 'quiet' : 'play';
+  const scene = section === 'learn' || section === 'lesson' || section === 'mission' || section === 'theory' ? 'learn' : section === 'music' ? 'music' : section === 'teacher' ? 'quiet' : 'play';
+
+  const banner = saveError && (
+    <p className="banner" role="alert">
+      {saveError}
+    </p>
+  );
+
+  // Lessons and the teacher space take the whole screen: no tabs, one thing at a time.
+  if (section === 'lesson' || section === 'teacher' || section === 'grownups') {
+    return (
+      <div className={`app-full scene-${scene} full-${section}`}>
+        <main id="main" ref={mainRef} tabIndex={-1} className="full-main">
+          {banner}
+          <Suspense fallback={<p className="support">Loading…</p>}>{screen}</Suspense>
+        </main>
+        {showEntry && <EntryScreen canClose={!!who.current} onDone={() => setSwitching(false)} go={go} />}
+      </div>
+    );
+  }
 
   return (
     <div className={`app scene-${scene}`}>
@@ -71,6 +103,10 @@ function Shell() {
           <Wordmark size={28} />
         </a>
         <div className="top-actions">
+          <button type="button" className="player-chip" onClick={() => setSwitching(true)} aria-label={me ? `Playing as ${me.name}. Change player` : 'Choose who is playing'}>
+            {me ? <Avatar player={me} size={32} /> : <span className="avatar c-guest" style={{ width: 32, height: 32 }} aria-hidden="true">?</span>}
+            <span className="player-name">{me ? me.name : 'Guest'}</span>
+          </button>
           <button type="button" className="icon-btn" onClick={() => audio.stopAll()} aria-label="Stop all sound">
             <Icon name="stop" size={20} />
           </button>
@@ -88,20 +124,11 @@ function Shell() {
             <span className="tab-label">{n.label}</span>
           </a>
         ))}
-        <a href="#/grownups" className="tab-link tab-grownups" aria-current={current === '#/grownups' ? 'page' : undefined}>
-          <span className="tab-icon">
-            <Icon name="grownups" size={24} />
-          </span>
-          <span className="tab-label">Grown-ups</span>
-        </a>
       </nav>
-      {settingsOpen && <ControlsSheet onClose={() => setSettingsOpen(false)} />}
+      {showEntry && <EntryScreen canClose={!!who.current} onDone={() => setSwitching(false)} go={go} />}
+      {settingsOpen && <ControlsSheet onClose={() => setSettingsOpen(false)} onSwitchPlayer={() => { setSettingsOpen(false); setSwitching(true); }} />}
       <main id="main" ref={mainRef} tabIndex={-1} className={`sheet-main stage-${section || 'play'}`}>
-        {saveError && (
-          <p className="banner" role="alert">
-            {saveError}
-          </p>
-        )}
+        {banner}
         <Suspense fallback={<p className="support">Loading…</p>}>{screen}</Suspense>
       </main>
     </div>

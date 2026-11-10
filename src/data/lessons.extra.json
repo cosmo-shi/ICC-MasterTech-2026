@@ -1,0 +1,1333 @@
+{
+ "schemaVersion": "1",
+ "lessons": [
+  {
+   "version": "1.0.0-draft",
+   "reviewStatus": "draft_pending_primary_music_educator",
+   "licence": "CC-BY-SA-4.0",
+   "sourceIds": [
+    "OMT_RHYTHM"
+   ],
+   "contentNotes": "Original Carmen draft activity.",
+   "id": "D01",
+   "title": "Bass drum and snare",
+   "goal": "Drum kit",
+   "objective": "Play a basic rock beat: bass drum on beats 1 and 3, snare on beats 2 and 4.",
+   "prerequisites": [
+    "L01"
+   ],
+   "supportedInstruments": [
+    "drums"
+   ],
+   "instruction": "Bass drum on 1 and 3. Snare on 2 and 4.",
+   "explanation": "Most pop songs sit on this beat. The low bass drum and the sharp snare take turns.",
+   "tempoBpm": 80,
+   "assessment": {
+    "mode": "timed-onsets",
+    "score": true,
+    "checkPitch": false,
+    "checkDuration": false,
+    "onTimeWindow": {
+     "beats": 0.2,
+     "maxMs": 150
+    }
+   },
+   "practice": {
+    "id": "D01-practice",
+    "instrument": "drums",
+    "totalBeats": 8,
+    "timeSignature": [
+     4,
+     4
+    ],
+    "beatUnit": "crotchet",
+    "events": [
+     {
+      "id": "D01-practice-e1",
+      "kind": "drum",
+      "onsetBeats": 0,
+      "durationBeats": 1,
+      "soundId": "kick",
+      "velocity": 0.7
+     },
+     {
+      "id": "D01-practice-e2",
+      "kind": "drum",
+      "onsetBeats": 1,
+      "durationBeats": 1,
+      "soundId": "snare",
+      "velocity": 0.7
+     },
+     {
+      "id": "D01-practice-e3",
+      "kind": "drum",
+      "onsetBeats": 2,
+      "durationBeats": 1,
+      "soundId": "kick",
+      "velocity": 0.7
+     },
+     {
+      "id": "D01-practice-e4",
+      "kind": "drum",
+      "onsetBeats": 3,
+      "durationBeats": 1,
+      "soundId": "snare",
+      "velocity": 0.7
+     },
+     {
+      "id": "D01-practice-e5",
+      "kind": "drum",
+      "onsetBeats": 4,
+      "durationBeats": 1,
+      "soundId": "kick",
+      "velocity": 0.7
+     },
+     {
+      "id": "D01-practice-e6",
+      "kind": "drum",
+      "onsetBeats": 5,
+      "durationBeats": 1,
+      "soundId": "snare",
+      "velocity": 0.7
+     },
+     {
+      "id": "D01-practice-e7",
+      "kind": "drum",
+      "onsetBeats": 6,
+      "durationBeats": 1,
+      "soundId": "kick",
+      "velocity": 0.7
+     },
+     {
+      "id": "D01-practice-e8",
+      "kind": "drum",
+      "onsetBeats": 7,
+      "durationBeats": 1,
+      "soundId": "snare",
+      "velocity": 0.7
+     }
+    ]
+   },
+   "independent": {
+    "id": "D01-independent",
+    "instrument": "drums",
+    "totalBeats": 8.0,
+    "timeSignature": [
+     4,
+     4
+    ],
+    "beatUnit": "crotchet",
+    "events": [
+     {
+      "id": "D01-independent-e1",
+      "kind": "drum",
+      "onsetBeats": 0,
+      "durationBeats": 1,
+      "soundId": "kick",
+      "velocity": 0.7
+     },
+     {
+      "id": "D01-independent-e2",
+      "kind": "drum",
+      "onsetBeats": 1,
+      "durationBeats": 1,
+      "soundId": "snare",
+      "velocity": 0.7
+     },
+     {
+      "id": "D01-independent-e3",
+      "kind": "drum",
+      "onsetBeats": 2,
+      "durationBeats": 0.5,
+      "soundId": "kick",
+      "velocity": 0.7
+     },
+     {
+      "id": "D01-independent-e4",
+      "kind": "drum",
+      "onsetBeats": 2.5,
+      "durationBeats": 0.5,
+      "soundId": "kick",
+      "velocity": 0.7
+     },
+     {
+      "id": "D01-independent-e5",
+      "kind": "drum",
+      "onsetBeats": 3.0,
+      "durationBeats": 1,
+      "soundId": "snare",
+      "velocity": 0.7
+     },
+     {
+      "id": "D01-independent-e6",
+      "kind": "drum",
+      "onsetBeats": 4.0,
+      "durationBeats": 1,
+      "soundId": "kick",
+      "velocity": 0.7
+     },
+     {
+      "id": "D01-independent-e7",
+      "kind": "drum",
+      "onsetBeats": 5.0,
+      "durationBeats": 1,
+      "soundId": "snare",
+      "velocity": 0.7
+     },
+     {
+      "id": "D01-independent-e8",
+      "kind": "drum",
+      "onsetBeats": 6.0,
+      "durationBeats": 0.5,
+      "soundId": "kick",
+      "velocity": 0.7
+     },
+     {
+      "id": "D01-independent-e9",
+      "kind": "drum",
+      "onsetBeats": 6.5,
+      "durationBeats": 0.5,
+      "soundId": "kick",
+      "velocity": 0.7
+     },
+     {
+      "id": "D01-independent-e10",
+      "kind": "drum",
+      "onsetBeats": 7.0,
+      "durationBeats": 1,
+      "soundId": "snare",
+      "velocity": 0.7
+     }
+    ]
+   },
+   "hints": [
+    {
+     "level": "question",
+     "text": "Which drum comes on beat 1?"
+    },
+    {
+     "level": "clue",
+     "text": "Say 'boom, tap, boom, tap' as you play."
+    },
+    {
+     "level": "answer",
+     "text": "Bass drum, snare, bass drum, snare. Watch the lit drums.",
+     "action": "play-demo"
+    }
+   ],
+   "strategyIds": [
+    "hear-example",
+    "slower-pulse"
+   ],
+   "creationPrompt": "Make your own beat with the bass drum and snare."
+  },
+  {
+   "version": "1.0.0-draft",
+   "reviewStatus": "draft_pending_primary_music_educator",
+   "licence": "CC-BY-SA-4.0",
+   "sourceIds": [
+    "OMT_RHYTHM"
+   ],
+   "contentNotes": "Original Carmen draft activity.",
+   "id": "D02",
+   "title": "Keep time on the hi-hat",
+   "goal": "Drum kit",
+   "objective": "Play steady quavers on the hi-hat with the snare on beats 2 and 4.",
+   "prerequisites": [
+    "D01",
+    "L03"
+   ],
+   "supportedInstruments": [
+    "drums"
+   ],
+   "instruction": "Hi-hat in quavers. Snare on 2 and 4.",
+   "explanation": "Drummers keep time with small even sounds on the hi-hat. Two hi-hat taps fit in each beat.",
+   "tempoBpm": 72,
+   "assessment": {
+    "mode": "timed-onsets",
+    "score": true,
+    "checkPitch": false,
+    "checkDuration": false,
+    "onTimeWindow": {
+     "beats": 0.15,
+     "maxMs": 120
+    }
+   },
+   "practice": {
+    "id": "D02-practice",
+    "instrument": "drums",
+    "totalBeats": 4.0,
+    "timeSignature": [
+     4,
+     4
+    ],
+    "beatUnit": "crotchet",
+    "events": [
+     {
+      "id": "D02-practice-e1",
+      "kind": "drum",
+      "onsetBeats": 0,
+      "durationBeats": 0.5,
+      "soundId": "hihat",
+      "velocity": 0.7
+     },
+     {
+      "id": "D02-practice-e2",
+      "kind": "drum",
+      "onsetBeats": 0.5,
+      "durationBeats": 0.5,
+      "soundId": "hihat",
+      "velocity": 0.7
+     },
+     {
+      "id": "D02-practice-e3",
+      "kind": "drum",
+      "onsetBeats": 1.0,
+      "durationBeats": 0.5,
+      "soundId": "snare",
+      "velocity": 0.7
+     },
+     {
+      "id": "D02-practice-e4",
+      "kind": "drum",
+      "onsetBeats": 1.5,
+      "durationBeats": 0.5,
+      "soundId": "hihat",
+      "velocity": 0.7
+     },
+     {
+      "id": "D02-practice-e5",
+      "kind": "drum",
+      "onsetBeats": 2.0,
+      "durationBeats": 0.5,
+      "soundId": "hihat",
+      "velocity": 0.7
+     },
+     {
+      "id": "D02-practice-e6",
+      "kind": "drum",
+      "onsetBeats": 2.5,
+      "durationBeats": 0.5,
+      "soundId": "hihat",
+      "velocity": 0.7
+     },
+     {
+      "id": "D02-practice-e7",
+      "kind": "drum",
+      "onsetBeats": 3.0,
+      "durationBeats": 0.5,
+      "soundId": "snare",
+      "velocity": 0.7
+     },
+     {
+      "id": "D02-practice-e8",
+      "kind": "drum",
+      "onsetBeats": 3.5,
+      "durationBeats": 0.5,
+      "soundId": "hihat",
+      "velocity": 0.7
+     }
+    ]
+   },
+   "independent": {
+    "id": "D02-independent",
+    "instrument": "drums",
+    "totalBeats": 4.0,
+    "timeSignature": [
+     4,
+     4
+    ],
+    "beatUnit": "crotchet",
+    "events": [
+     {
+      "id": "D02-independent-e1",
+      "kind": "drum",
+      "onsetBeats": 0,
+      "durationBeats": 0.5,
+      "soundId": "kick",
+      "velocity": 0.7
+     },
+     {
+      "id": "D02-independent-e2",
+      "kind": "drum",
+      "onsetBeats": 0.5,
+      "durationBeats": 0.5,
+      "soundId": "hihat",
+      "velocity": 0.7
+     },
+     {
+      "id": "D02-independent-e3",
+      "kind": "drum",
+      "onsetBeats": 1.0,
+      "durationBeats": 0.5,
+      "soundId": "snare",
+      "velocity": 0.7
+     },
+     {
+      "id": "D02-independent-e4",
+      "kind": "drum",
+      "onsetBeats": 1.5,
+      "durationBeats": 0.5,
+      "soundId": "hihat",
+      "velocity": 0.7
+     },
+     {
+      "id": "D02-independent-e5",
+      "kind": "drum",
+      "onsetBeats": 2.0,
+      "durationBeats": 0.5,
+      "soundId": "kick",
+      "velocity": 0.7
+     },
+     {
+      "id": "D02-independent-e6",
+      "kind": "drum",
+      "onsetBeats": 2.5,
+      "durationBeats": 0.5,
+      "soundId": "kick",
+      "velocity": 0.7
+     },
+     {
+      "id": "D02-independent-e7",
+      "kind": "drum",
+      "onsetBeats": 3.0,
+      "durationBeats": 0.5,
+      "soundId": "snare",
+      "velocity": 0.7
+     },
+     {
+      "id": "D02-independent-e8",
+      "kind": "drum",
+      "onsetBeats": 3.5,
+      "durationBeats": 0.5,
+      "soundId": "hihat",
+      "velocity": 0.7
+     }
+    ]
+   },
+   "hints": [
+    {
+     "level": "question",
+     "text": "How many hi-hat taps fit in one beat?"
+    },
+    {
+     "level": "clue",
+     "text": "Count 1 and 2 and. The snare lands on 2 and 4."
+    },
+    {
+     "level": "answer",
+     "text": "Tap, tap, snare, tap. Watch the lit drums.",
+     "action": "play-demo"
+    }
+   ],
+   "strategyIds": [
+    "hear-example",
+    "slower-pulse"
+   ],
+   "creationPrompt": "Add your own bass drum taps under the hi-hat."
+  },
+  {
+   "version": "1.0.0-draft",
+   "reviewStatus": "draft_pending_primary_music_educator",
+   "licence": "CC-BY-SA-4.0",
+   "sourceIds": [
+    "OMT_RHYTHM"
+   ],
+   "contentNotes": "Original Carmen draft activity.",
+   "id": "D03",
+   "title": "Play a drum fill",
+   "goal": "Drum kit",
+   "objective": "Play a one-bar fill moving from high tom to low tom, ending on the cymbal.",
+   "prerequisites": [
+    "D02"
+   ],
+   "supportedInstruments": [
+    "drums"
+   ],
+   "instruction": "High tom, low tom, then crash!",
+   "explanation": "A fill is a short run around the drums that leads into the next part of a song.",
+   "tempoBpm": 76,
+   "assessment": {
+    "mode": "timed-onsets",
+    "score": true,
+    "checkPitch": false,
+    "checkDuration": false,
+    "onTimeWindow": {
+     "beats": 0.2,
+     "maxMs": 140
+    }
+   },
+   "practice": {
+    "id": "D03-practice",
+    "instrument": "drums",
+    "totalBeats": 4.0,
+    "timeSignature": [
+     4,
+     4
+    ],
+    "beatUnit": "crotchet",
+    "events": [
+     {
+      "id": "D03-practice-e1",
+      "kind": "drum",
+      "onsetBeats": 0,
+      "durationBeats": 0.5,
+      "soundId": "tomHigh",
+      "velocity": 0.7
+     },
+     {
+      "id": "D03-practice-e2",
+      "kind": "drum",
+      "onsetBeats": 0.5,
+      "durationBeats": 0.5,
+      "soundId": "tomHigh",
+      "velocity": 0.7
+     },
+     {
+      "id": "D03-practice-e3",
+      "kind": "drum",
+      "onsetBeats": 1.0,
+      "durationBeats": 0.5,
+      "soundId": "tomLow",
+      "velocity": 0.7
+     },
+     {
+      "id": "D03-practice-e4",
+      "kind": "drum",
+      "onsetBeats": 1.5,
+      "durationBeats": 0.5,
+      "soundId": "tomLow",
+      "velocity": 0.7
+     },
+     {
+      "id": "D03-practice-e5",
+      "kind": "drum",
+      "onsetBeats": 2.0,
+      "durationBeats": 0.5,
+      "soundId": "snare",
+      "velocity": 0.7
+     },
+     {
+      "id": "D03-practice-e6",
+      "kind": "drum",
+      "onsetBeats": 2.5,
+      "durationBeats": 0.5,
+      "soundId": "snare",
+      "velocity": 0.7
+     },
+     {
+      "id": "D03-practice-e7",
+      "kind": "drum",
+      "onsetBeats": 3.0,
+      "durationBeats": 1,
+      "soundId": "crash",
+      "velocity": 0.7
+     }
+    ]
+   },
+   "independent": {
+    "id": "D03-independent",
+    "instrument": "drums",
+    "totalBeats": 4.0,
+    "timeSignature": [
+     4,
+     4
+    ],
+    "beatUnit": "crotchet",
+    "events": [
+     {
+      "id": "D03-independent-e1",
+      "kind": "drum",
+      "onsetBeats": 0,
+      "durationBeats": 0.5,
+      "soundId": "snare",
+      "velocity": 0.7
+     },
+     {
+      "id": "D03-independent-e2",
+      "kind": "drum",
+      "onsetBeats": 0.5,
+      "durationBeats": 0.5,
+      "soundId": "tomHigh",
+      "velocity": 0.7
+     },
+     {
+      "id": "D03-independent-e3",
+      "kind": "drum",
+      "onsetBeats": 1.0,
+      "durationBeats": 0.5,
+      "soundId": "tomHigh",
+      "velocity": 0.7
+     },
+     {
+      "id": "D03-independent-e4",
+      "kind": "drum",
+      "onsetBeats": 1.5,
+      "durationBeats": 0.5,
+      "soundId": "tomLow",
+      "velocity": 0.7
+     },
+     {
+      "id": "D03-independent-e5",
+      "kind": "drum",
+      "onsetBeats": 2.0,
+      "durationBeats": 0.5,
+      "soundId": "tomLow",
+      "velocity": 0.7
+     },
+     {
+      "id": "D03-independent-e6",
+      "kind": "drum",
+      "onsetBeats": 2.5,
+      "durationBeats": 0.5,
+      "soundId": "kick",
+      "velocity": 0.7
+     },
+     {
+      "id": "D03-independent-e7",
+      "kind": "drum",
+      "onsetBeats": 3.0,
+      "durationBeats": 1,
+      "soundId": "crash",
+      "velocity": 0.7
+     }
+    ]
+   },
+   "hints": [
+    {
+     "level": "question",
+     "text": "Do the drums go from high to low, or low to high?"
+    },
+    {
+     "level": "clue",
+     "text": "Move left to right across the toms, two taps each."
+    },
+    {
+     "level": "answer",
+     "text": "High tom twice, low tom twice, snare twice, crash. Watch the lit drums.",
+     "action": "play-demo"
+    }
+   ],
+   "strategyIds": [
+    "hear-example",
+    "slower-pulse"
+   ],
+   "creationPrompt": "Make a fill of your own that ends on the cymbal."
+  },
+  {
+   "version": "1.0.0-draft",
+   "reviewStatus": "draft_pending_primary_music_educator",
+   "licence": "CC-BY-SA-4.0",
+   "sourceIds": [
+    "OMT_RHYTHM"
+   ],
+   "contentNotes": "Original Carmen draft activity.",
+   "id": "P01",
+   "title": "Five notes, C to G",
+   "goal": "Keyboard",
+   "objective": "Play the five notes C D E F G up and back down, one finger on each key.",
+   "prerequisites": [
+    "L05"
+   ],
+   "supportedInstruments": [
+    "keyboard"
+   ],
+   "instruction": "Go up from C to G, then back down.",
+   "explanation": "Put one finger on each key from C to G. Your thumb plays C.",
+   "tempoBpm": 80,
+   "assessment": {
+    "mode": "pitch-sequence",
+    "score": true,
+    "checkPitch": true,
+    "checkTiming": false,
+    "checkDuration": false
+   },
+   "practice": {
+    "id": "P01-practice",
+    "instrument": "keyboard",
+    "totalBeats": 12,
+    "timeSignature": [
+     4,
+     4
+    ],
+    "beatUnit": "crotchet",
+    "events": [
+     {
+      "id": "P01-practice-e1",
+      "kind": "note",
+      "onsetBeats": 0,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 60,
+       "name": "C4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P01-practice-e2",
+      "kind": "note",
+      "onsetBeats": 1,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 62,
+       "name": "D4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P01-practice-e3",
+      "kind": "note",
+      "onsetBeats": 2,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 64,
+       "name": "E4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P01-practice-e4",
+      "kind": "note",
+      "onsetBeats": 3,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 65,
+       "name": "F4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P01-practice-e5",
+      "kind": "note",
+      "onsetBeats": 4,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 67,
+       "name": "G4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P01-practice-e6",
+      "kind": "note",
+      "onsetBeats": 5,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 65,
+       "name": "F4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P01-practice-e7",
+      "kind": "note",
+      "onsetBeats": 6,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 64,
+       "name": "E4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P01-practice-e8",
+      "kind": "note",
+      "onsetBeats": 7,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 62,
+       "name": "D4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P01-practice-e9",
+      "kind": "note",
+      "onsetBeats": 8,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 60,
+       "name": "C4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P01-practice-e10",
+      "kind": "rest",
+      "onsetBeats": 9,
+      "durationBeats": 3
+     }
+    ]
+   },
+   "independent": {
+    "id": "P01-independent",
+    "instrument": "keyboard",
+    "totalBeats": 12,
+    "timeSignature": [
+     4,
+     4
+    ],
+    "beatUnit": "crotchet",
+    "events": [
+     {
+      "id": "P01-independent-e1",
+      "kind": "note",
+      "onsetBeats": 0,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 67,
+       "name": "G4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P01-independent-e2",
+      "kind": "note",
+      "onsetBeats": 1,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 65,
+       "name": "F4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P01-independent-e3",
+      "kind": "note",
+      "onsetBeats": 2,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 64,
+       "name": "E4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P01-independent-e4",
+      "kind": "note",
+      "onsetBeats": 3,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 62,
+       "name": "D4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P01-independent-e5",
+      "kind": "note",
+      "onsetBeats": 4,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 60,
+       "name": "C4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P01-independent-e6",
+      "kind": "note",
+      "onsetBeats": 5,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 62,
+       "name": "D4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P01-independent-e7",
+      "kind": "note",
+      "onsetBeats": 6,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 64,
+       "name": "E4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P01-independent-e8",
+      "kind": "note",
+      "onsetBeats": 7,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 65,
+       "name": "F4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P01-independent-e9",
+      "kind": "note",
+      "onsetBeats": 8,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 67,
+       "name": "G4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P01-independent-e10",
+      "kind": "rest",
+      "onsetBeats": 9,
+      "durationBeats": 3
+     }
+    ]
+   },
+   "hints": [
+    {
+     "level": "question",
+     "text": "Which note is in the middle of C and G?"
+    },
+    {
+     "level": "clue",
+     "text": "Each note is the next white key along."
+    },
+    {
+     "level": "answer",
+     "text": "C D E F G F E D C. The keys are lit.",
+     "action": "play-demo"
+    }
+   ],
+   "strategyIds": [
+    "hear-example"
+   ],
+   "creationPrompt": "Make a tune that only uses C to G."
+  },
+  {
+   "version": "1.0.0-draft",
+   "reviewStatus": "draft_pending_primary_music_educator",
+   "licence": "CC-BY-SA-4.0",
+   "sourceIds": [
+    "OMT_RHYTHM"
+   ],
+   "contentNotes": "Original Carmen draft activity.",
+   "id": "P02",
+   "title": "Steps and skips",
+   "goal": "Keyboard",
+   "objective": "Tell steps (next key) from skips (missing one key) and play C E G.",
+   "prerequisites": [
+    "P01",
+    "L06"
+   ],
+   "supportedInstruments": [
+    "keyboard"
+   ],
+   "instruction": "Skip up C, E, G, then step back down.",
+   "explanation": "A step goes to the very next note. A skip jumps over one. On the stave a skip goes line to line.",
+   "tempoBpm": 80,
+   "assessment": {
+    "mode": "pitch-sequence",
+    "score": true,
+    "checkPitch": true,
+    "checkTiming": false,
+    "checkDuration": false
+   },
+   "practice": {
+    "id": "P02-practice",
+    "instrument": "keyboard",
+    "totalBeats": 8,
+    "timeSignature": [
+     4,
+     4
+    ],
+    "beatUnit": "crotchet",
+    "events": [
+     {
+      "id": "P02-practice-e1",
+      "kind": "note",
+      "onsetBeats": 0,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 60,
+       "name": "C4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P02-practice-e2",
+      "kind": "note",
+      "onsetBeats": 1,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 64,
+       "name": "E4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P02-practice-e3",
+      "kind": "note",
+      "onsetBeats": 2,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 67,
+       "name": "G4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P02-practice-e4",
+      "kind": "note",
+      "onsetBeats": 3,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 65,
+       "name": "F4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P02-practice-e5",
+      "kind": "note",
+      "onsetBeats": 4,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 64,
+       "name": "E4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P02-practice-e6",
+      "kind": "note",
+      "onsetBeats": 5,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 62,
+       "name": "D4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P02-practice-e7",
+      "kind": "note",
+      "onsetBeats": 6,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 60,
+       "name": "C4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P02-practice-e8",
+      "kind": "rest",
+      "onsetBeats": 7,
+      "durationBeats": 1
+     }
+    ]
+   },
+   "independent": {
+    "id": "P02-independent",
+    "instrument": "keyboard",
+    "totalBeats": 8,
+    "timeSignature": [
+     4,
+     4
+    ],
+    "beatUnit": "crotchet",
+    "events": [
+     {
+      "id": "P02-independent-e1",
+      "kind": "note",
+      "onsetBeats": 0,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 67,
+       "name": "G4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P02-independent-e2",
+      "kind": "note",
+      "onsetBeats": 1,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 64,
+       "name": "E4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P02-independent-e3",
+      "kind": "note",
+      "onsetBeats": 2,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 60,
+       "name": "C4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P02-independent-e4",
+      "kind": "note",
+      "onsetBeats": 3,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 62,
+       "name": "D4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P02-independent-e5",
+      "kind": "note",
+      "onsetBeats": 4,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 64,
+       "name": "E4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P02-independent-e6",
+      "kind": "note",
+      "onsetBeats": 5,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 65,
+       "name": "F4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P02-independent-e7",
+      "kind": "note",
+      "onsetBeats": 6,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 67,
+       "name": "G4"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P02-independent-e8",
+      "kind": "rest",
+      "onsetBeats": 7,
+      "durationBeats": 1
+     }
+    ]
+   },
+   "hints": [
+    {
+     "level": "question",
+     "text": "Did the notes jump, or move to the next key?"
+    },
+    {
+     "level": "clue",
+     "text": "Skip one white key each time on the way up."
+    },
+    {
+     "level": "answer",
+     "text": "C E G, then F E D C. The keys are lit.",
+     "action": "play-demo"
+    }
+   ],
+   "strategyIds": [
+    "hear-example"
+   ],
+   "creationPrompt": "Make a tune with two skips and two steps."
+  },
+  {
+   "version": "1.0.0-draft",
+   "reviewStatus": "draft_pending_primary_music_educator",
+   "licence": "CC-BY-SA-4.0",
+   "sourceIds": [
+    "OMT_RHYTHM"
+   ],
+   "contentNotes": "Original Carmen draft activity.",
+   "id": "P03",
+   "title": "Low notes, bass clef",
+   "goal": "Keyboard",
+   "objective": "Read and play a short low melody on the bass clef stave (C3 to G3).",
+   "prerequisites": [
+    "P02"
+   ],
+   "supportedInstruments": [
+    "keyboard"
+   ],
+   "instruction": "Play the low notes from the bass clef.",
+   "explanation": "Low notes use the bass clef. Its top space is G and the C here is one octave below middle C.",
+   "tempoBpm": 80,
+   "assessment": {
+    "mode": "pitch-sequence",
+    "score": true,
+    "checkPitch": true,
+    "checkTiming": false,
+    "checkDuration": false
+   },
+   "practice": {
+    "id": "P03-practice",
+    "instrument": "keyboard",
+    "totalBeats": 8,
+    "timeSignature": [
+     4,
+     4
+    ],
+    "beatUnit": "crotchet",
+    "events": [
+     {
+      "id": "P03-practice-e1",
+      "kind": "note",
+      "onsetBeats": 0,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 48,
+       "name": "C3"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P03-practice-e2",
+      "kind": "note",
+      "onsetBeats": 1,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 52,
+       "name": "E3"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P03-practice-e3",
+      "kind": "note",
+      "onsetBeats": 2,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 55,
+       "name": "G3"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P03-practice-e4",
+      "kind": "note",
+      "onsetBeats": 3,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 52,
+       "name": "E3"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P03-practice-e5",
+      "kind": "note",
+      "onsetBeats": 4,
+      "durationBeats": 2,
+      "pitch": {
+       "midi": 48,
+       "name": "C3"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P03-practice-e6",
+      "kind": "rest",
+      "onsetBeats": 6,
+      "durationBeats": 2
+     }
+    ]
+   },
+   "independent": {
+    "id": "P03-independent",
+    "instrument": "keyboard",
+    "totalBeats": 8,
+    "timeSignature": [
+     4,
+     4
+    ],
+    "beatUnit": "crotchet",
+    "events": [
+     {
+      "id": "P03-independent-e1",
+      "kind": "note",
+      "onsetBeats": 0,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 55,
+       "name": "G3"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P03-independent-e2",
+      "kind": "note",
+      "onsetBeats": 1,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 53,
+       "name": "F3"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P03-independent-e3",
+      "kind": "note",
+      "onsetBeats": 2,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 52,
+       "name": "E3"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P03-independent-e4",
+      "kind": "note",
+      "onsetBeats": 3,
+      "durationBeats": 1,
+      "pitch": {
+       "midi": 50,
+       "name": "D3"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P03-independent-e5",
+      "kind": "note",
+      "onsetBeats": 4,
+      "durationBeats": 2,
+      "pitch": {
+       "midi": 48,
+       "name": "C3"
+      },
+      "velocity": 0.7
+     },
+     {
+      "id": "P03-independent-e6",
+      "kind": "rest",
+      "onsetBeats": 6,
+      "durationBeats": 2
+     }
+    ]
+   },
+   "hints": [
+    {
+     "level": "question",
+     "text": "Are these notes above or below middle C?"
+    },
+    {
+     "level": "clue",
+     "text": "Find the C one octave down from middle C. Use the arrows to move left."
+    },
+    {
+     "level": "answer",
+     "text": "Low C, E, G, E, C. The keys are lit.",
+     "action": "play-demo"
+    }
+   ],
+   "strategyIds": [
+    "hear-example"
+   ],
+   "creationPrompt": "Make a low tune to go under a friend's high one."
+  }
+ ]
+}

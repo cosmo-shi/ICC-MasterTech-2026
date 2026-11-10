@@ -36,6 +36,8 @@ export interface ExtraFact {
   onsetBeats: number;
   inRest: boolean;
   restId?: string;
+  /** The written beat (1-based) of the rest it landed in, so feedback names the rest, not the nearby beat. */
+  restBeat?: number;
   playedLabel: string;
 }
 
@@ -65,7 +67,7 @@ export interface CheckResult {
   beatMs: number;
 }
 
-export const CHECKER_VERSION = '1.0.0';
+export const CHECKER_VERSION = '1.1.0';
 
 function label(e: SoundingEvent | { midi?: number; sound?: DrumSound }): string {
   if ('kind' in e) return e.kind === 'note' ? `midi:${e.midi}` : `drum:${e.sound}`;
@@ -152,7 +154,10 @@ export function checkAttempt(target: Phrase, inputs: CapturedInput[], a: Assessm
   const timed = a.checkTiming;
   const onTimeMs = Math.min(a.onTimeWindow.beats * beatMs, a.onTimeWindow.maxMs);
   const durTolMs = Math.min(a.durationTolerance.beats * beatMs, a.durationTolerance.maxMs);
-  const soundMatters = a.checkPitch;
+  // Which drum counts when a pattern uses more than one kind of drum (for example snare and bass drum),
+  // because the music then asks for a particular drum. A one-drum pulse lesson accepts any drum.
+  const drumKinds = new Set(expected.filter((e) => e.kind === 'drum').map((e) => (e as { sound: DrumSound }).sound));
+  const soundMatters = a.checkPitch || drumKinds.size > 1;
   const candidate = candidateWindowMs(expected, tempoBpm, onTimeMs);
 
   const matchCost = (e: SoundingEvent, inp: CapturedInput): number => {
@@ -218,6 +223,7 @@ export function checkAttempt(target: Phrase, inputs: CapturedInput[], a: Assessm
         onsetBeats: inp.onsetMs / beatMs,
         inRest: a.checkRestViolations && !!rest,
         restId: rest?.id,
+        restBeat: rest ? Math.floor(rest.onset / TPQ) + 1 : undefined,
         playedLabel: label(inp),
       });
       ii++;

@@ -106,7 +106,7 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
     setKept(null);
     setRecState('countin');
     await player.play([], tempo, {
-      countInBeats: 4,
+      countInBeats: prefs.countIn,
       click: true,
       totalTicks: beats * TPQ,
       tailBeats: 0.5,
@@ -270,7 +270,7 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
       case 'section_order':
         return 'Play B first, then A';
       case 'add_part':
-        return p.part === 'pulse' ? 'Add a steady click' : p.part === 'backbeat' ? 'Add a snare on beats 2 and 4' : 'Add a long low note';
+        return p.part === 'pulse' ? 'Add a metronome beat' : p.part === 'backbeat' ? 'Add a snare on beats 2 and 4' : 'Add a long low note';
       default:
         return 'Echo';
     }
@@ -321,11 +321,11 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
                 ))}
               </div>
             )}
-            <BeatDots beats={recState === 'countin' ? 4 : beats} current={recState === 'countin' ? 4 + (player.beat ?? -4) : player.beat ?? -1} countIn={recState === 'countin'} />
+            <BeatDots beats={recState === 'countin' ? prefs.countIn : beats} current={recState === 'countin' ? prefs.countIn + (player.beat ?? -prefs.countIn) : player.beat ?? -1} countIn={recState === 'countin'} />
             <div className="row wrap">
               {recState !== 'countin' && recState !== 'recording' ? (
                 <button type="button" className="btn btn-coral btn-big" onClick={record}>
-                  <span aria-hidden="true">● </span>{phrase ? 'Record again' : 'Record (4 clicks first)'}
+                  <span aria-hidden="true">● </span>{phrase ? 'Record again' : `Record (${prefs.countIn} beats first)`}
                 </button>
               ) : (
                 <p className="status-big" role="status">
@@ -336,14 +336,14 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
             {phrase && (
               <>
                 {soundingInPhrase.length === 0 ? (
-                  <p className="note-text">No sounds were recorded. Try again and play while the clicks go.</p>
+                  <p className="note-text">No sounds were recorded. Try again and play along with the metronome.</p>
                 ) : (
                   <>
                     <Notation phrase={phrase} />
                     <p className="note-text">Your timing has been tidied to the nearest half beat for the partner. Your exact playing is kept for your teacher.</p>
                     {analysis && (
                       <div className={`coach ${analysis.source === 'local-model' ? 'coach-ai' : 'coach-tips'} compact`}>
-                        <p className="coach-label">{analysis.source === 'local-model' ? 'Carmen listened to your timing, on this device' : 'A tip'}</p>
+                        
                         <p className="coach-obs">{coachText.observations[analysis.pattern]}</p>
                       </div>
                     )}
@@ -400,7 +400,7 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
               {op === 'add_part' &&
                 (['pulse', 'backbeat', 'drone'] as const).map((p) => (
                   <ChoiceChip key={p} on={params?.op === 'add_part' && params.part === p} onClick={() => { setParams({ op: 'add_part', part: p, tempoScale: 1 }); setParamsBy('learner'); }}>
-                    {p === 'pulse' ? 'A steady click' : p === 'backbeat' ? 'Snare on 2 and 4' : 'A long low note'}
+                    {p === 'pulse' ? 'A metronome beat' : p === 'backbeat' ? 'Snare on 2 and 4' : 'A long low note'}
                   </ChoiceChip>
                 ))}
               {(op === 'add_part' || op === 'dynamics' || op === 'section_order') && (
@@ -414,7 +414,7 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
           {params && paramsBy !== 'learner' && (
             <p className="note-text">
               {paramsBy === 'partner-model'
-                ? `Carmen listened to your timing and suggests: ${describeParams(params)}. You can pick something else.`
+                ? `Try this: ${describeParams(params)}. You can pick something else.`
                 : `Carmen suggests: ${describeParams(params)}. You can pick something else.`}
             </p>
           )}
@@ -478,7 +478,7 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
                     <li key={v}>✓ {v}</li>
                   ))}
                   <li>
-                    Who chose the change: {reply.plan.provenance === 'learner-directed' ? 'you' : reply.plan.provenance === 'local-model' ? 'Carmen, from how it heard your timing' : 'Carmen, using a set rule'}.
+                    {reply.plan.provenance === 'learner-directed' ? 'You chose this change.' : 'Carmen chose this change.'}
                   </li>
                 </ul>
               </details>

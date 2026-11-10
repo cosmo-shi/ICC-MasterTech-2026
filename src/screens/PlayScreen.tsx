@@ -3,7 +3,9 @@ import { usePrefs } from '../state/prefs.tsx';
 import { type CompositionRecord, store } from '../store/db.ts';
 import { Icon } from '../ui/icons.tsx';
 import { usePlayer } from '../ui/usePlayer.ts';
+import { mine, players } from '../store/profiles.ts';
 import { CreatePanel } from './CreatePanel.tsx';
+import { lessonById } from '../data/catalog.ts';
 
 /** The most recent saved piece, so a learner can pick up where they left off. */
 function useLatestPiece(): CompositionRecord | null {
@@ -11,18 +13,26 @@ function useLatestPiece(): CompositionRecord | null {
   useEffect(() => {
     const load = () =>
       store.all<CompositionRecord>('compositions').then(
-        (r) => setLatest(r.sort((a, b) => b.createdAt - a.createdAt)[0] ?? null),
+        (r) => setLatest(r.filter(mine).sort((a, b) => b.createdAt - a.createdAt)[0] ?? null),
         () => setLatest(null),
       );
     load();
-    return store.subscribe(load);
+    const off1 = store.subscribe(load);
+    const off2 = players.subscribe(load);
+    return () => {
+      off1();
+      off2();
+    };
   }, []);
   return latest;
 }
 
-export function PlayScreen({ go }: { go: (r: string) => void }) {
+export function PlayScreen({ go, makeFrom }: { go: (r: string) => void; makeFrom?: string }) {
   const { prefs, set } = usePrefs();
-  const [instrument, setInstrument] = useState(prefs.instrument);
+  const from = makeFrom ? lessonById(makeFrom) : undefined;
+  const ideaPhrase = from ? (from.practice ?? from.independent) : null;
+  const idea = from && ideaPhrase ? { title: from.title, lessonId: from.id, phrase: ideaPhrase } : undefined;
+  const [instrument, setInstrument] = useState(idea ? idea.phrase.instrument : prefs.instrument);
   const latest = useLatestPiece();
   const player = usePlayer();
   return (
@@ -46,7 +56,7 @@ export function PlayScreen({ go }: { go: (r: string) => void }) {
             </button>
           ))}
         </div>
-        {latest && (
+        {latest && !idea && (
           <div className="last-piece">
             <button
               type="button"
@@ -68,7 +78,7 @@ export function PlayScreen({ go }: { go: (r: string) => void }) {
           </div>
         )}
       </div>
-      <CreatePanel key={instrument} instrument={instrument} />
+      <CreatePanel key={instrument} instrument={instrument} idea={idea} activityId={idea?.lessonId} onBackToLesson={idea ? () => go(`#/lesson/${idea.lessonId}/summary`) : undefined} />
     </div>
   );
 }

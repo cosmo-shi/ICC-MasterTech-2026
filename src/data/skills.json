@@ -1,0 +1,186 @@
+{
+  "status": "draft \u2014 written for the prototype, not yet reviewed by a primary music educator",
+  "skills": [
+    {
+      "id": "pulse",
+      "label": "the beat",
+      "params": {
+        "pInit": 0.42,
+        "pLearn": 0.04,
+        "pSlip": 0.21,
+        "pGuess": 0.35
+      },
+      "startingParams": {
+        "pInit": 0.2,
+        "pLearn": 0.15,
+        "pSlip": 0.1,
+        "pGuess": 0.2
+      }
+    },
+    {
+      "id": "rests",
+      "label": "rests",
+      "params": {
+        "pInit": 0.49,
+        "pLearn": 0.02,
+        "pSlip": 0.15,
+        "pGuess": 0.32
+      },
+      "startingParams": {
+        "pInit": 0.2,
+        "pLearn": 0.15,
+        "pSlip": 0.1,
+        "pGuess": 0.25
+      }
+    },
+    {
+      "id": "subdivision",
+      "label": "two sounds in a beat",
+      "params": {
+        "pInit": 0.22,
+        "pLearn": 0.01,
+        "pSlip": 0.3,
+        "pGuess": 0.25
+      },
+      "startingParams": {
+        "pInit": 0.15,
+        "pLearn": 0.12,
+        "pSlip": 0.1,
+        "pGuess": 0.15
+      }
+    },
+    {
+      "id": "pitch",
+      "label": "the right notes",
+      "params": {
+        "pInit": 0.48,
+        "pLearn": 0.06,
+        "pSlip": 0.26,
+        "pGuess": 0.31
+      },
+      "startingParams": {
+        "pInit": 0.2,
+        "pLearn": 0.15,
+        "pSlip": 0.1,
+        "pGuess": 0.1
+      }
+    },
+    {
+      "id": "reading",
+      "label": "reading notes",
+      "params": {
+        "pInit": 0.27,
+        "pLearn": 0.15,
+        "pSlip": 0.3,
+        "pGuess": 0.23
+      },
+      "startingParams": {
+        "pInit": 0.15,
+        "pLearn": 0.12,
+        "pSlip": 0.1,
+        "pGuess": 0.1
+      }
+    },
+    {
+      "id": "duration",
+      "label": "holding notes",
+      "params": {
+        "pInit": 0.51,
+        "pLearn": 0.04,
+        "pSlip": 0.16,
+        "pGuess": 0.32
+      },
+      "startingParams": {
+        "pInit": 0.15,
+        "pLearn": 0.12,
+        "pSlip": 0.12,
+        "pGuess": 0.15
+      }
+    }
+  ],
+  "lessons": {
+    "L01": [
+      "pulse"
+    ],
+    "L02": [
+      "pulse",
+      "rests"
+    ],
+    "L03": [
+      "pulse",
+      "rests",
+      "subdivision"
+    ],
+    "L04": [
+      "pitch"
+    ],
+    "L05": [
+      "pitch"
+    ],
+    "L06": [
+      "pitch",
+      "reading"
+    ],
+    "L07": [
+      "pitch",
+      "duration",
+      "pulse"
+    ],
+    "L08": [
+      "reading",
+      "duration",
+      "rests",
+      "pulse"
+    ],
+    "D01": [
+      "pulse"
+    ],
+    "D02": [
+      "pulse",
+      "subdivision"
+    ],
+    "D03": [
+      "subdivision"
+    ],
+    "P01": [
+      "pitch"
+    ],
+    "P02": [
+      "pitch",
+      "reading"
+    ],
+    "P03": [
+      "pitch",
+      "reading"
+    ]
+  },
+  "weights": {
+    "independent": 1,
+    "practice": 0.6,
+    "answerHint": 0.2,
+    "slowerOrHeard": 0.8
+  },
+  "thresholds": {
+    "minObservations": 2,
+    "growing": 0.4,
+    "nearly": 0.6,
+    "secure": 0.85,
+    "pulseOnTimeShare": 0.8
+  },
+  "reasons": {
+    "practise-pulse": "Your last {count} tries were often off the beat.",
+    "practise-rests": "Your last {count} tries had a tap in a rest.",
+    "practise-subdivision": "Two sounds in one beat was tricky {count} times.",
+    "practise-pitch": "Your last {count} tries had a different note.",
+    "practise-reading": "Reading the notes was tricky {count} times.",
+    "practise-duration": "Your last {count} tries let a note go too soon or too late.",
+    "move-on": "You played {skill} well {count} times. Ready for something new.",
+    "route": "This is next on your route.",
+    "review": "Another go at {skill} will help it stick."
+  },
+  "suggestions": {
+    "slower": "Try it slower",
+    "listen-first": "Listen first"
+  },
+  "paramsSource": "Fitted by maximum likelihood to 800 simulated learners x 16 tries (seed 1) by npm run fit:learner. Simulated data only: not fitted to children. startingParams are the reviewed hand values."
+}

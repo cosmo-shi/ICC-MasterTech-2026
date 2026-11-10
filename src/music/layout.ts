@@ -33,3 +33,64 @@ export function layoutBar(events: readonly MusicEvent[], barStart: number, barLe
   fill(barStart + barLen);
   return out;
 }
+
+/** One drawable item in a bar. `tie` = this sound carries on into the next item (draw a tie). */
+export type DrawnEvent = MusicEvent & { tie?: boolean; continued?: boolean };
+
+const WRITABLE = [1920, 1440, 960, 720, 480, 360, 240, 120];
+
+/** Split a length into writable note values, largest first (e.g. 1200 = 960 + 240). */
+export function splitLength(len: number): number[] {
+  const out: number[] = [];
+  let left = len;
+  while (left >= 120) {
+    const z = WRITABLE.find((w) => w <= left)!;
+    out.push(z);
+    left -= z;
+  }
+  return out;
+}
+
+/**
+ * Every bar of a phrase laid out for drawing, keeping the true length of each sound:
+ * a sound longer than one note value, or one that crosses a barline, is drawn as tied notes.
+ * Gaps become rests. Overlapping sounds (chords) draw the first sound only.
+ */
+export function layoutBars(events: readonly MusicEvent[], totalTicks: number, barLen: number): DrawnEvent[][] {
+  const bars: DrawnEvent[][] = [];
+  const sounding = events.filter((e) => e.kind !== 'rest').sort((a, b) => a.onset - b.onset);
+  // Clip each sound so it ends by the next onset (one line of music).
+  const clipped = sounding
+    .filter((e, i) => i === 0 || e.onset >= sounding[i - 1].onset + 1)
+    .map((e, i, arr) => ({ e, end: Math.min(e.onset + e.duration, arr[i + 1]?.onset ?? Infinity, totalTicks) }));
+  const nBars = Math.max(1, Math.ceil(totalTicks / barLen));
+  for (let b = 0; b < nBars; b++) {
+    const start = b * barLen;
+    const stop = start + barLen;
+    const out: DrawnEvent[] = [];
+    let cursor = start;
+    const rest = (until: number) => {
+      for (const z of splitLength(until - cursor)) {
+        out.push({ id: `gap-${cursor}`, kind: 'rest', onset: cursor, duration: z });
+        cursor += z;
+      }
+      cursor = until;
+    };
+    for (const { e, end } of clipped) {
+      if (end <= start || e.onset >= stop) continue;
+      const from = Math.max(e.onset, start);
+      const to = Math.min(end, stop);
+      if (from > cursor) rest(from);
+      const pieces = splitLength(to - from);
+      pieces.forEach((z, i) => {
+        const last = i === pieces.length - 1;
+        out.push({ ...e, id: `${e.id}@${cursor}`, onset: cursor, duration: z, continued: cursor > e.onset || undefined, tie: !last || (last && to < end) || undefined } as DrawnEvent);
+        cursor += z;
+      });
+      cursor = to;
+    }
+    if (cursor < stop) rest(stop);
+    bars.push(out);
+  }
+  return bars;
+}

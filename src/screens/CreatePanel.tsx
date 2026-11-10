@@ -5,6 +5,7 @@ import { Recorder } from '../music/capture.ts';
 import { type InstrumentId, type Phrase, TPQ } from '../music/events.ts';
 import { type CompositionRecord, newId, stamp, store } from '../store/db.ts';
 import { Icon } from '../ui/icons.tsx';
+import { usePrefs } from '../state/prefs.tsx';
 import { usePlayer } from '../ui/usePlayer.ts';
 import { type LiveEvent, Workspace } from '../ui/Workspace.tsx';
 
@@ -14,13 +15,17 @@ interface Props {
   instrument: InstrumentId;
   activityId?: string;
   onSaved?: (c: CompositionRecord) => void;
+  /** "Make it yours": a lesson's idea to start from. */
+  idea?: { title: string; phrase: Phrase };
+  onBackToLesson?: () => void;
 }
 
 /** Record as note events (never microphone audio), replay, name and save locally. No score. */
-export function CreatePanel({ instrument, activityId, onSaved }: Props) {
+export function CreatePanel({ instrument, activityId, onSaved, idea, onBackToLesson }: Props) {
   const [state, setState] = useState<'idle' | 'countin' | 'recording' | 'recorded'>('idle');
-  const [click, setClick] = useState(false);
-  const [tempo, setTempo] = useState(90);
+  const { prefs } = usePrefs();
+  const [click, setClick] = useState(prefs.metronomeOn);
+  const [tempo, setTempo] = useState(idea ? idea.phrase.tempoBpm : prefs.metronomeTempo);
   const [phrase, setPhrase] = useState<Phrase | null>(null);
   const [previous, setPrevious] = useState<{ phrase: Phrase; title: string } | null>(null);
   const [title, setTitle] = useState('');
@@ -57,7 +62,7 @@ export function CreatePanel({ instrument, activityId, onSaved }: Props) {
     if (click) {
       setState('countin');
       await clickPlayer.play([], tempo, {
-        countInBeats: 4,
+        countInBeats: prefs.countIn,
         click: true,
         totalTicks: Math.floor((MAX_SECONDS * tempo) / 60) * TPQ,
         onBeat0: (pb) => {
@@ -118,7 +123,7 @@ export function CreatePanel({ instrument, activityId, onSaved }: Props) {
         <span className="rec-dot" aria-hidden="true" />
         <span className="rec-text">
           <span className="rec-label">{recording ? (state === 'countin' ? 'Get ready' : 'Stop') : phrase ? 'Record again' : 'Record'}</span>
-          <span className="rec-sub">{state === 'countin' ? 'Four clicks, then play' : state === 'recording' ? 'Recording…' : click ? `Click at ${tempo}` : 'Tap to start'}</span>
+          <span className="rec-sub">{state === 'countin' ? `${prefs.countIn} beats, then play` : state === 'recording' ? 'Recording…' : click ? `Metronome ${tempo}` : 'Tap to start'}</span>
         </span>
       </button>
       <button
@@ -135,13 +140,13 @@ export function CreatePanel({ instrument, activityId, onSaved }: Props) {
         <Icon name="undo" size={22} />
         <span>Undo</span>
       </button>
-      <button type="button" className="tool tool-toggle" aria-pressed={click} disabled={recording} onClick={() => setClick((c) => !c)} aria-label="Steady click while recording">
+      <button type="button" className="tool tool-toggle" aria-pressed={click} disabled={recording} onClick={() => setClick((c) => !c)} aria-label="Metronome while recording">
         <Icon name="click" size={22} />
-        <span>Click</span>
+        <span>Metronome</span>
       </button>
       {click && !recording && (
         <label className="speed">
-          Click speed
+          Speed
           <input type="range" min={60} max={140} step={5} value={tempo} onChange={(e) => setTempo(Number(e.target.value))} aria-valuetext={`${tempo} beats a minute`} />
           <span>{tempo}</span>
         </label>
@@ -149,8 +154,35 @@ export function CreatePanel({ instrument, activityId, onSaved }: Props) {
     </div>
   );
 
+  const ideaPlayer = player;
   return (
     <div className="create">
+      {idea && (
+        <section className="idea" aria-labelledby="idea-h">
+          <div>
+            <p className="kicker">Make it yours</p>
+            <h2 id="idea-h" className="h3 idea-title">
+              Start from “{idea.title}”
+            </h2>
+            <p className="support">Hear the idea, then record your own version. Change a note, change the rhythm, or add an ending.</p>
+          </div>
+          <div className="row wrap">
+            <button
+              type="button"
+              className="btn-quiet"
+              disabled={recording}
+              onClick={() => (ideaPlayer.playing ? ideaPlayer.stop() : void ideaPlayer.play([idea.phrase], idea.phrase.tempoBpm, { totalTicks: idea.phrase.totalTicks }))}
+            >
+              <Icon name={ideaPlayer.playing ? 'stop' : 'playback'} size={18} /> {ideaPlayer.playing ? 'Stop' : 'Hear the idea'}
+            </button>
+            {onBackToLesson && (
+              <button type="button" className="btn-quiet" onClick={onBackToLesson}>
+                Lesson summary
+              </button>
+            )}
+          </div>
+        </section>
+      )}
       <Workspace instrument={instrument} onEvent={onEvent} trail recording={state === 'recording'} dock={dock} />
       <p className="status-line" role="status">
         {state === 'recorded' && phrase && !phrase.events.length && 'Nothing recorded. Press Record, then play.'}
@@ -165,15 +197,7 @@ export function CreatePanel({ instrument, activityId, onSaved }: Props) {
             {save === 'saved' ? 'Saved' : save === 'saving' ? 'Saving…' : 'Save'}
           </button>
           <p className="save-where" role="status">
-            {save === 'failed'
-              ? 'That didn’t save. Your take is still here, so try again.'
-              : save === 'saved'
-                ? store.isPersistent
-                  ? 'In My music on this device.'
-                  : 'In My music until you close Carmen.'
-                : store.isPersistent
-                  ? 'Saves to My music on this device.'
-                  : 'Saves to My music until you close Carmen.'}
+            {save === 'failed' ? 'That didn’t save. Your take is still here, so try again.' : !store.isPersistent ? 'Saving is off: this goes when Carmen closes.' : ''}
           </p>
         </div>
       )}

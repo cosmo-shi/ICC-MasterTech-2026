@@ -2,9 +2,13 @@ import { useEffect, useRef } from 'react';
 import { usePrefs } from '../state/prefs.tsx';
 import { SoundCheck } from '../ui/SoundCheck.tsx';
 import { Icon } from '../ui/icons.tsx';
+import { usePlayers } from '../store/profiles.ts';
+import { Avatar } from './EntryScreen.tsx';
 
-export function ControlsSheet({ onClose }: { onClose: () => void }) {
+export function ControlsSheet({ onClose, onSwitchPlayer }: { onClose: () => void; onSwitchPlayer: () => void }) {
   const { prefs, set } = usePrefs();
+  const { players: list, current } = usePlayers();
+  const me = list.find((p) => p.id === current);
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     ref.current?.querySelector<HTMLElement>('input, button')?.focus();
@@ -24,6 +28,21 @@ export function ControlsSheet({ onClose }: { onClose: () => void }) {
     </label>
   );
 
+  const segmented = <T extends string | number>(label: string, id: string, value: T, options: readonly (readonly [T, string])[], onPick: (v: T) => void) => (
+    <div className="setting-row">
+      <span id={id} className="setting-label">
+        {label}
+      </span>
+      <div className="segmented" role="radiogroup" aria-labelledby={id}>
+        {options.map(([v, l]) => (
+          <button key={String(v)} type="button" role="radio" aria-checked={value === v} className="segment" onClick={() => onPick(v)}>
+            {l}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
     <div id="controls-sheet" className="sheet" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div ref={ref} className="sheet-inner" role="dialog" aria-modal="true" aria-labelledby="settings-h">
@@ -35,6 +54,18 @@ export function ControlsSheet({ onClose }: { onClose: () => void }) {
             Done
           </button>
         </div>
+        <section className="sheet-group" aria-labelledby="who-h">
+          <h3 id="who-h" className="group-h">
+            Who’s playing
+          </h3>
+          <div className="setting-row">
+            {me ? <Avatar player={me} size={40} /> : null}
+            <span className="setting-label">{me ? me.name : 'Guest: nothing is kept after you close Carmen'}</span>
+            <button type="button" className="btn-quiet" onClick={onSwitchPlayer}>
+              Change player
+            </button>
+          </div>
+        </section>
         <section className="sheet-group" aria-labelledby="sound-h">
           <h3 id="sound-h" className="group-h">
             Sound
@@ -45,23 +76,23 @@ export function ControlsSheet({ onClose }: { onClose: () => void }) {
           </label>
           <SoundCheck compact />
         </section>
+        <section className="sheet-group" aria-labelledby="metro-h">
+          <h3 id="metro-h" className="group-h">
+            Metronome
+          </h3>
+          {toggle(prefs.metronomeOn, (v) => set('metronomeOn', v), 'Metronome on when I start Play', 'You can still turn it on or off next to Record.')}
+          <label className="field-inline">
+            Speed in Play
+            <input type="range" min={60} max={140} step={5} value={prefs.metronomeTempo} onChange={(e) => set('metronomeTempo', Number(e.target.value))} aria-valuetext={`${prefs.metronomeTempo} beats a minute`} />
+            <span className="setting-value">{prefs.metronomeTempo}</span>
+          </label>
+          {segmented('Beats before you play', 'countin-l', prefs.countIn, [[2, '2 beats'], [4, '4 beats']] as const, (v) => set('countIn', v))}
+        </section>
         <section className="sheet-group" aria-labelledby="look-h">
           <h3 id="look-h" className="group-h">
             Look
           </h3>
-          <div className="segmented" role="radiogroup" aria-labelledby="look-h">
-            {(
-              [
-                ['light', 'Day'],
-                ['dark', 'Night'],
-                ['system', 'Same as device'],
-              ] as const
-            ).map(([v, l]) => (
-              <button key={v} type="button" role="radio" aria-checked={prefs.theme === v} className="segment" onClick={() => set('theme', v)}>
-                {l}
-              </button>
-            ))}
-          </div>
+          {segmented('Day or night', 'theme-l', prefs.theme, [['light', 'Day'], ['dark', 'Night'], ['system', 'Same as device']] as const, (v) => set('theme', v))}
           {toggle(prefs.contrast === 'high', (v) => set('contrast', v ? 'high' : 'normal'), 'Strong contrast')}
           {toggle(prefs.motion === 'reduced', (v) => set('motion', v ? 'reduced' : 'system'), 'Less movement')}
         </section>
@@ -71,11 +102,21 @@ export function ControlsSheet({ onClose }: { onClose: () => void }) {
           </h3>
           {toggle(prefs.large, (v) => set('large', v), 'Bigger keys')}
           {toggle(prefs.simplified, (v) => set('simplified', v), 'Fewer keys', 'One octave, four drums.')}
-          {toggle(prefs.noteNames, (v) => set('noteNames', v), 'Note letters on keys')}
+          {toggle(prefs.noteNames, (v) => set('noteNames', v), 'Note letters', 'On the keys and under the notes you play.')}
+          {segmented('Drums look like', 'drums-l', prefs.drumView, [['kit', 'Drum kit'], ['pads', 'Pads']] as const, (v) => set('drumView', v))}
           {toggle(prefs.aiEnabled, (v) => set('aiEnabled', v), 'Timing helper', 'Carmen listens to your timing, on this device. Off: simple tips.')}
         </section>
-        <a className="sheet-link" href="#/grownups">
-          <Icon name="grownups" size={22} /> For teachers and parents
+        <section className="sheet-group" aria-labelledby="save-h">
+          <h3 id="save-h" className="group-h">
+            Saving
+          </h3>
+          {toggle(prefs.saveOnDevice, (v) => set('saveOnDevice', v), 'Keep my music on this device', prefs.saveOnDevice ? 'Kept in this browser.' : 'Off: forgotten when Carmen closes.')}
+          <a className="sheet-link" href="#/music">
+            <Icon name="music" size={22} /> My music
+          </a>
+        </section>
+        <a className="sheet-link" href="#/teacher">
+          <Icon name="lock" size={22} /> Teacher
         </a>
       </div>
     </div>

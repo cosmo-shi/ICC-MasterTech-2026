@@ -22,6 +22,8 @@ export interface CoachDecision {
   patternSource: 'local-model' | 'rules' | 'none';
   pattern?: Pattern | 'insufficient';
   model?: ModelResult;
+  /** True when the on-device learner model chose which fact to ask about first. */
+  focusFromLearner?: boolean;
   reply?: { plan: ReplyPlan; render: ReplyRender; verification: Verification; replyText: string; sourcePhrase: Phrase };
   replyRejected?: string[];
   label: 'AI coach' | 'Coach tips';
@@ -72,6 +74,8 @@ export interface CoachContext {
   aiEnabled: boolean;
   independentCheck: boolean;
   tempoBpm: number;
+  /** From the learner model: ask about this first, but only if this attempt shows it. */
+  focusHint?: Focus;
 }
 
 export function decide(ctx: CoachContext): CoachDecision {
@@ -110,28 +114,39 @@ export function decide(ctx: CoachContext): CoachDecision {
   let focus: Focus;
   let observation: string;
   let evidence: string[] = [];
+
+  // The learner model may move one recurring skill to the front, only if this attempt shows it.
+  const hint = ctx.aiEnabled && !ctx.independentCheck ? ctx.focusHint : undefined;
+  const hinted =
+    (hint === 'sound' && !!wrong) ||
+    (hint === 'rest' && !!restHit) ||
+    (hint === 'timing' && !!(timingOff && pattern)) ||
+    (hint === 'duration' && !!durationOff)
+      ? hint
+      : undefined;
+
   if (s.expected === 0 || ctx.inputs.length === 0) {
     focus = 'insufficient';
     observation = o.insufficient;
-  } else if (wrong) {
+  } else if (wrong && (!hinted || hinted === 'sound')) {
     focus = 'sound';
     observation = wrong.expectedLabel.startsWith('midi:')
       ? fill(o.wrongNote, { count: wrong.index + 1, played: labelToText(wrong.playedLabel), expected: labelToText(wrong.expectedLabel) })
       : fill(o.wrongDrum, { count: wrong.index + 1 });
     evidence = [wrong.factId];
-  } else if (restHit) {
+  } else if (restHit && (!hinted || hinted === 'rest')) {
     focus = 'rest';
-    observation = fill(o.rest, { beat: Math.floor(restHit.onsetBeats) + 1 });
+    observation = fill(o.rest, { beat: restHit.restBeat ?? Math.floor(restHit.onsetBeats) + 1 });
     evidence = [restHit.factId];
-  } else if (missed) {
+  } else if (missed && !hinted) {
     focus = 'missing';
     observation = fill(o.missed, { count: missed.index + 1 });
     evidence = [missed.factId];
-  } else if (extra) {
+  } else if (extra && !hinted) {
     focus = 'missing';
     observation = fill(o.extra, { beat: Math.floor(extra.onsetBeats) + 1 });
     evidence = [extra.factId];
-  } else if (timingOff && pattern) {
+  } else if (timingOff && pattern && (!hinted || hinted === 'timing')) {
     focus = 'timing';
     observation = o[pattern];
     evidence = result.facts.filter((f) => f.timing && f.timing !== 'onTime').map((f) => f.factId);
@@ -155,7 +170,8 @@ export function decide(ctx: CoachContext): CoachDecision {
     patternSource,
     pattern,
     model,
-    label: patternSource === 'local-model' && focus === 'timing' ? 'AI coach' : 'Coach tips',
+    focusFromLearner: !!hinted && focus === hinted,
+    label: (patternSource === 'local-model' && focus === 'timing') || (!!hinted && focus === hinted) ? 'AI coach' : 'Coach tips',
   };
 
   // Musical reply — never during an independent check.

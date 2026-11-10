@@ -14,4 +14,12 @@ if (import.meta.env.PROD && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js').catch(() => undefined)
   })
+  // When a newer version takes over, reload once so the page and its files match.
+  let reloaded = false
+  const hadController = !!navigator.serviceWorker.controller
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!hadController || reloaded) return
+    reloaded = true
+    window.location.reload()
+  })
 }

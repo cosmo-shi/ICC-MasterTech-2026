@@ -64,7 +64,7 @@ interface SeedPattern {
   events: SeedEvent[];
 }
 
-const DRUM_MAP: Record<string, DrumSound> = { kick: 'kick', snare: 'snare', hihat: 'hihat', 'hi-hat': 'hihat', tom: 'tomHigh', crash: 'crash' };
+const DRUM_MAP: Record<string, DrumSound> = { kick: 'kick', snare: 'snare', hihat: 'hihat', 'hi-hat': 'hihat', tom: 'tomHigh', tomHigh: 'tomHigh', tomLow: 'tomLow', crash: 'crash' };
 
 export function patternToPhrase(p: SeedPattern, tempoBpm: number): Phrase {
   const events: MusicEvent[] = p.events.map((e) => {

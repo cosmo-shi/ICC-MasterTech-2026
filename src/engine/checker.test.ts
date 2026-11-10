@@ -92,6 +92,17 @@ describe('checker', () => {
     expect(r.facts.map((f) => f.inputId)).toEqual(inputs.map((i) => i.id));
   });
 
+  it('a tap just before a rest names the rest’s beat, not the beat before it', () => {
+    const p = L('L02').practice!;
+    const inputs = perfect(p);
+    const beatMs = 60000 / p.tempoBpm;
+    inputs.push({ id: 'early', onsetMs: beatMs * 0.95, sound: 'kick', source: 'pointer' }); // just before beat 2, a rest
+    const r = checkAttempt(p, inputs, L('L02').assessment, p.tempoBpm);
+    const x = r.extras.find((e) => e.inputId === 'early')!;
+    expect(x.inRest).toBe(true);
+    expect(x.restBeat).toBe(2);
+  });
+
   it('an extra note does not shift the rest of the alignment', () => {
     const l = L('L03');
     const inputs = perfect(l.practice!);

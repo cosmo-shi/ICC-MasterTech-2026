@@ -63,7 +63,7 @@ export function FactList({ result }: { result: CheckResult }) {
       </ol>
       {result.extras.length > 0 && (
         <p className="fact-extra">
-          {result.extras.filter((x) => x.inRest).length > 0 && <>Tap in a rest: beat {result.extras.filter((x) => x.inRest).map((x) => Math.floor(x.onsetBeats) + 1).join(', ')}. </>}
+          {result.extras.filter((x) => x.inRest).length > 0 && <>Tap in a rest: beat {[...new Set(result.extras.filter((x) => x.inRest).map((x) => x.restBeat ?? Math.floor(x.onsetBeats) + 1))].join(', ')}. </>}
           {result.extras.filter((x) => !x.inRest).length > 0 && <>Extra sounds: {result.extras.filter((x) => !x.inRest).length}.</>}
         </p>
       )}
