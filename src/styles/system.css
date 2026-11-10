@@ -1066,3 +1066,128 @@ h2[tabindex='-1']:focus {
   margin: 0 0 var(--s1);
   font-weight: 800;
 }
+
+/* ---- Lesson library (review branch): replaces the winding path ---- */
+.lib-unit {
+  display: grid;
+  gap: var(--s2);
+  margin-top: var(--s6, 32px);
+}
+.lib-unit-h {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  padding-left: var(--s3);
+  border-left: 4px solid var(--track, var(--dusk));
+}
+.lib-unit.tr-foundations { --track: var(--tr-foundations); }
+.lib-unit.tr-piano { --track: var(--tr-piano); }
+.lib-unit.tr-drums { --track: var(--tr-drums); }
+.lib-unit.tr-create { --track: var(--tr-create); }
+.lib-unit-about {
+  margin: 0 0 var(--s2);
+  color: var(--ink-soft);
+}
+.lib-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.lib-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: 'text actions' 'preview preview';
+  gap: var(--s2) var(--s4);
+  align-items: center;
+  padding: var(--s4) 0;
+  border-top: 1px solid var(--hairline);
+}
+.lib-row:last-child {
+  border-bottom: 1px solid var(--hairline);
+}
+@media (min-width: 720px) {
+  .lib-row {
+    grid-template-columns: minmax(0, 1fr) 240px auto;
+    grid-template-areas: 'text preview actions';
+  }
+}
+.lib-text {
+  grid-area: text;
+  display: grid;
+  gap: 4px;
+}
+.lib-title {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 800;
+}
+.lib-desc {
+  margin: 0;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+.lib-status {
+  margin: 0;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s2);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+.lib-status.st-done svg {
+  color: var(--good);
+}
+.lib-status.st-started svg {
+  color: var(--near);
+}
+.lib-status.st-new {
+  color: var(--ink-soft);
+}
+.lib-next-tag {
+  padding: 2px var(--s2);
+  border-radius: 999px;
+  background: var(--sun-tint);
+  color: var(--ink);
+}
+.lib-row.is-next .lib-title::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin: 0 var(--s2) 2px 0;
+  border-radius: 50%;
+  background: var(--sun);
+}
+.lib-preview {
+  grid-area: preview;
+  min-width: 0;
+}
+.lib-preview .notation {
+  margin: 0;
+}
+.lib-preview .notation-svg svg {
+  max-height: 64px;
+  width: 100%;
+}
+.lib-preview .drum-key {
+  display: none;
+}
+.lib-actions {
+  grid-area: actions;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+}
+.lib-actions .btn,
+.lib-actions .btn-quiet {
+  min-width: 112px;
+  min-height: var(--target);
+}
+.lib-preview .notation-svg {
+  min-height: 0;
+}
+.lib-preview .notation {
+  padding: 2px var(--s2);
+  max-width: 360px;
+}
