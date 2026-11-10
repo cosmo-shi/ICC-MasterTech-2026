@@ -5,6 +5,9 @@ import { usePrefs } from '../state/prefs.tsx';
 import { isBlackKey, midiToName } from '../music/theory.ts';
 import { Icon } from './icons.tsx';
 import { NoteTrail, Trail, type TrailNote } from './NoteTrail.tsx';
+import { GM_DRUMS, listening } from '../input/session.ts';
+import { midiInput } from '../input/midi.ts';
+import { InputStatus } from './InputPanel.tsx';
 import { DrumKit, Drums, Keyboard, PADS, SIMPLE_PADS, type InputSource, keyToOffset, useComputerKeys, useWhiteCount } from './instruments.tsx';
 
 export interface LiveEvent {
@@ -298,6 +301,31 @@ export function Workspace({ instrument, onEvent, highlightNotes, highlightPads, 
     };
   }, [noteUp]);
 
+  // Instruments outside the screen. A MIDI keyboard plays the keys (an electronic kit plays the
+  // drums). The microphone hears taps on the drums only, and only once the timing check has been
+  // done: which drum was hit, or how hard, cannot be heard, so the sound is never judged.
+  useEffect(() => {
+    const offMidi = midiInput.listen((n) => {
+      if (instrument === 'keyboard') {
+        if (n.type === 'down') noteDown(n.midi, n.t, 'midi');
+        else noteUp(n.midi, n.t);
+      } else if (n.type === 'down') {
+        const sound = GM_DRUMS[n.midi];
+        if (sound) hit(sound, n.t, 'midi');
+      }
+    });
+    const offMic = listening.onHeard((h) => {
+      if (h.kind !== 'onset' || h.own || instrument !== 'drums' || listening.latency === null) return;
+      const now = performance.now();
+      trailDown({ sound: 'snare', start: now, end: now + 100 });
+      onEvent?.({ type: 'down', sound: 'snare', t: h.tPerf, source: 'mic', soundUnknown: true });
+    });
+    return () => {
+      offMidi();
+      offMic();
+    };
+  }, [instrument, noteDown, noteUp, hit, onEvent, trailDown]);
+
   useComputerKeys(
     true,
     (key, t) => {
@@ -355,6 +383,7 @@ export function Workspace({ instrument, onEvent, highlightNotes, highlightPads, 
       <StartSound compact />
       {instrument === 'keyboard' && <RotateTip />}
       {trail && <NoteTrail trail={trailStore} recording={recording} clef={instrument === 'drums' ? 'drums' : centre < 57 ? 'bass' : 'treble'} letters={prefs.noteNames} />}
+      <InputStatus instrument={instrument} />
       {(dock || drumView) && (
         <div className="ws-bar">
           {dock}

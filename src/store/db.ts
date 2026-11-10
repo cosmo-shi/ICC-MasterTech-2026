@@ -56,6 +56,9 @@ export interface AttemptRecord {
   probe?: { skill: string; check: 'listen' | 'read' | 'play'; right: boolean; offeredBy: 'learner-model' | 'rules'; support?: string; supportTaken?: boolean };
   /** The local player this belongs to (see profiles.ts). Missing = a guest or older record. */
   profileId?: string;
+  /** How the playing reached Carmen. Missing = on screen. `unclear`: the listener could not tell
+   *  what was played, so the try is kept for the record but never counts as evidence. */
+  input?: { mode: 'screen' | 'midi' | 'mic'; reliability?: number; unclear?: boolean; reason?: string };
 }
 
 export interface CompositionRecord {

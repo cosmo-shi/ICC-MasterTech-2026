@@ -20,6 +20,7 @@ class Midi {
   devices: string[] = [];
   private access: Access | null = null;
   private onNote: ((n: MidiNote) => void) | null = null;
+  private noteListeners = new Set<(n: MidiNote) => void>();
   private subs = new Set<() => void>();
 
   get supported(): boolean {
@@ -35,9 +36,17 @@ class Midi {
     this.subs.forEach((f) => f());
   }
 
+  /** Hear every note while connected (the instrument on screen uses this). */
+  listen(fn: (n: MidiNote) => void) {
+    this.noteListeners.add(fn);
+    return () => {
+      this.noteListeners.delete(fn);
+    };
+  }
+
   /** Ask for MIDI (no system-exclusive messages). Call from a press. */
-  async connect(onNote: (n: MidiNote) => void): Promise<boolean> {
-    this.onNote = onNote;
+  async connect(onNote?: (n: MidiNote) => void): Promise<boolean> {
+    this.onNote = onNote ?? null;
     if (!this.supported) {
       this.state = 'unsupported';
       this.emit();
@@ -69,11 +78,18 @@ class Midi {
 
   private message(data: Uint8Array, t: number) {
     const parsed = parseMidi(data);
-    if (parsed) this.onNote?.({ ...parsed, t });
+    if (!parsed) return;
+    const n = { ...parsed, t };
+    this.onNote?.(n);
+    this.noteListeners.forEach((f) => f(n));
   }
 
   disconnect() {
-    if (this.access) for (const i of this.access.inputs.values()) i.onmidimessage = null;
+    if (this.access) {
+      for (const i of this.access.inputs.values()) i.onmidimessage = null;
+      this.access.onstatechange = null;
+    }
+    this.access = null;
     this.onNote = null;
     if (this.state !== 'unsupported') this.state = 'off';
     this.emit();

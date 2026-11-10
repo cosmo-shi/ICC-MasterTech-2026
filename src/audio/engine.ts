@@ -157,7 +157,18 @@ class AudioEngine {
     gain.gain.value = gainValue;
     src.connect(gain).connect(dest ?? this.master);
     src.start(when);
+    this.starts.push(Math.max(when, this.ctx.currentTime));
+    if (this.starts.length > 96) this.starts.splice(0, this.starts.length - 96);
     return { src, gain, key: '', started: when };
+  }
+
+  /** Start times (audio-context seconds) of Carmen's own recent sounds, so a microphone does not
+   *  mistake them for the learner. */
+  private starts: number[] = [];
+  /** True if a sound heard at `heardCtx` is probably Carmen's own (round-trip delay `latency`). */
+  ownSoundAt(heardCtx: number, latency: number): boolean {
+    const t = heardCtx - latency;
+    return this.starts.some((s) => t > s - 0.04 && t < s + 0.12);
   }
 
   /** Live note-on. Returns false if sound is not ready. */
