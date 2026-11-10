@@ -9,7 +9,7 @@
 import type { CoachDecision } from '../ai/coach.ts';
 import type { CheckResult, EventFact } from '../engine/checker.ts';
 import { type Phrase, TPQ, soundingEvents } from '../music/events.ts';
-import { evenlySpaced, lengthName, pitchRelation, placeName, rhythmMix, soundWord, spans } from './music.ts';
+import { type WrongNote, wrongNotesWords, evenlySpaced, lengthName, pitchRelation, placeName, rhythmMix, soundWord, spans } from './music.ts';
 
 export type FeedbackTone = 'good' | 'near' | 'miss' | 'unclear';
 export type NextStep = 'retry' | 'independent' | 'continue';
@@ -28,6 +28,10 @@ export interface AttemptFeedback {
   compare?: { kind: 'reply' | 'difference'; label: string };
   /** Facts this feedback rests on (for the teacher's view). */
   evidenceFactIds: string[];
+  /** A wrong pitch, so the learner can hear and see the two notes side by side (video QA PED-01). */
+  pair?: WrongNote;
+  /** Every wrong pitch in the attempt, in order. */
+  pairs?: WrongNote[];
 }
 
 export interface AttemptContext {
@@ -66,11 +70,11 @@ export function attemptFeedback(ctx: AttemptContext): AttemptFeedback {
   }
 
   if (result.passed) {
-    const observed = result.timed ? `Every ${noun} matched, and ${s.onTime} of ${s.expected} landed with the beat.` : `Every note matched, in order.`;
+    const observed = result.timed ? `Every ${noun} was right, and ${s.onTime} of ${s.expected} were on the beat.` : `Every note was right, in order.`;
     if (independent) return { ...base, title: 'You did it on your own', observed, why: 'You played it with no hints and no help, so you can use this in your own music.', next: 'continue', nextLabel: 'Continue' };
     return {
       ...base,
-      title: 'That matched',
+      title: 'That was right',
       observed,
       why: 'Next, a new one with the same idea, on your own. That shows you can do it without help.',
       next: 'independent',
@@ -84,20 +88,26 @@ export function attemptFeedback(ctx: AttemptContext): AttemptFeedback {
       const f = result.facts.find((x) => x.status === 'wrong')!;
       const n = f.index + 1;
       if (f.expectedLabel.startsWith('midi:')) {
-        const exp = Number(f.expectedLabel.slice(5));
-        const got = Number(f.playedLabel?.slice(5));
+        // Every wrong note, not just the first (momo, 10 Nov).
+        const wrong = result.facts
+          .filter((x) => x.status === 'wrong' && x.expectedLabel.startsWith('midi:') && x.playedLabel?.startsWith('midi:'))
+          .map((x) => ({ index: x.index, expected: Number(x.expectedLabel.slice(5)), played: Number(x.playedLabel!.slice(5)) }));
+        const w = wrongNotesWords(wrong.length ? wrong : [{ index: f.index, expected: Number(f.expectedLabel.slice(5)), played: NaN }], heard);
+        const first = wrong[0];
         return {
           ...base,
-          title: `Note ${n} is ${soundWord(f.expectedLabel)}`,
-          observed: `${heard} ${soundWord(f.playedLabel)} for note ${n}. The music has ${soundWord(f.expectedLabel)}.`,
-          why: `${Number.isFinite(got) ? pitchRelation(exp, got) + ' ' : ''}Each note has its own place on the stave, so the tune changes shape when one moves.`,
+          title: w.title,
+          observed: w.observed,
+          why: `${first ? pitchRelation(first.expected, first.played) + ' ' : ''}Each note has its own place on the stave, so the tune changes shape when one moves.`,
+          nextLabel: wrong.length > 1 ? `Start from note ${first.index + 1}` : 'Try that note',
           compare: difference,
+          ...(first && input !== 'mic' ? { pair: first, pairs: wrong } : {}),
         };
       }
       return {
         ...base,
-        title: `Sound ${n} is ${soundWord(f.expectedLabel)}`,
-        observed: `You played ${soundWord(f.playedLabel)} for sound ${n}. The pattern has ${soundWord(f.expectedLabel)} there.`,
+        title: `Sound ${n} was ${soundWord(f.expectedLabel)}`,
+        observed: `Sound ${n} was ${soundWord(f.expectedLabel)}. You played ${soundWord(f.playedLabel)}.`,
         why: 'Each drum has its own sound, high or low. This pattern is made of those sounds in order.',
         compare: difference,
       };
@@ -109,9 +119,9 @@ export function attemptFeedback(ctx: AttemptContext): AttemptFeedback {
       const restLen = rest ? lengthName(rest.duration) : null;
       return {
         ...base,
-        title: `Leave ${where} quiet`,
-        observed: `${input === 'mic' ? 'Carmen heard a sound' : `You played`} on ${where}, which is a rest.`,
-        why: `A rest is silence you still count${restLen ? ` (this one lasts ${restLen.beats})` : ''}. That gap is part of the rhythm.`,
+        title: `${cap(where)} is a rest`,
+        observed: `${input === 'mic' ? 'Carmen heard a sound' : `You played`} on ${where}, which is a${restLen ? ` ${restLen.name}` : ''} rest.`,
+        why: `Keep counting, but leave that ${restLen && restLen.name !== 'crotchet' ? 'space' : 'beat'} silent${restLen ? ` (it lasts ${restLen.beats})` : ''}. Listen to the example, then try again.`,
         compare: reply ?? difference,
       };
     }
@@ -167,7 +177,7 @@ export function attemptFeedback(ctx: AttemptContext): AttemptFeedback {
     case 'timing':
       return { ...base, ...timingWords(ctx, noun, reply ?? difference) };
     default:
-      return { ...base, title: 'Nearly', observed: `${s.correctSound} of ${s.expected} ${noun}s matched.`, why: 'Listen once more, then try again.', compare: difference };
+      return { ...base, title: `${s.correctSound} of ${s.expected} ${noun}s were right`, observed: `${s.correctSound} of ${s.expected} ${noun}s were right.`, why: 'Hear the music once more and follow the stave as it plays, then try again.', compare: difference };
   }
 }
 
@@ -192,21 +202,21 @@ function timingWords(ctx: AttemptContext, noun: string, compare: AttemptFeedback
       };
     case 'late':
       return {
-        title: 'Play as the click lands',
+        title: 'Play with the click',
         observed: `${lead}most of your ${plural} came a little after the beat.`.replace(/^./, (c) => c.toUpperCase()),
         why: 'Each sound has its own place on the beat. Getting ready during the count-in helps you land with it.',
         compare,
       };
     case 'speedingUp':
       return {
-        title: 'Hold the speed to the end',
+        title: 'Keep the same speed to the end',
         observed: `${lead}you started with the beat, then got faster.`.replace(/^./, (c) => c.toUpperCase()),
         why: even ? 'The beat stays the same speed all the way through.' : `The beat stays the same speed all the way through, even when the ${mix} change length on top of it.`,
         compare,
       };
     case 'slowingDown':
       return {
-        title: 'Hold the speed to the end',
+        title: 'Keep the same speed to the end',
         observed: `${lead}you started with the beat, then got slower.`.replace(/^./, (c) => c.toUpperCase()),
         why: even ? 'The beat stays the same speed all the way to the last sound.' : `The beat stays the same speed all the way through, even when the ${mix} change length on top of it.`,
         compare,
@@ -216,7 +226,7 @@ function timingWords(ctx: AttemptContext, noun: string, compare: AttemptFeedback
       // that was furthest from its place, and the place it belongs.
       if (even && decision.pattern === 'uneven')
         return {
-          title: 'Keep the spaces the same',
+          title: 'Keep the gaps between sounds the same',
           observed: `${lead}some ${plural} came early and some late.`.replace(/^./, (c) => c.toUpperCase()),
           why: 'In this pattern every sound is the same distance from the next, so every space matches.',
           compare,
@@ -224,7 +234,7 @@ function timingWords(ctx: AttemptContext, noun: string, compare: AttemptFeedback
       const where = offEv ? placeName(offEv.onset, target) : null;
       const len = offEv ? lengthName(offEv.duration) : null;
       return {
-        title: even ? 'Count the beat as you play' : 'Count the beat under the rhythm',
+        title: even ? 'Count the beat as you play' : 'Count the beat while you play',
         observed: off && where
           ? `${lead}${noun} ${off.index + 1} came ${off.timing}. It belongs on ${where}.`.replace(/^./, (c) => c.toUpperCase())
           : `${lead}some ${plural} came early and some late.`.replace(/^./, (c) => c.toUpperCase()),

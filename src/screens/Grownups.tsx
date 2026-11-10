@@ -54,6 +54,8 @@ export function Grownups({ go }: { go: (h: string) => void }) {
   const model = loadModel();
   const [tab, setTab] = useState<Tab>(() => (teacherAuth.current() && currentSpace() ? 'classes' : 'class'));
   const [childId, setChildId] = useState<string | null>(null);
+  const [mode, setMode] = useState<Mode>(() => (teacherAuth.current() && currentSpace() ? 'school' : 'device'));
+  const shown = mode === 'school' ? 'classes' : tab === 'classes' ? 'class' : tab;
   return (
     <div className="screen grownups">
       <header className="teacher-bar">
@@ -64,20 +66,32 @@ export function Grownups({ go }: { go: (h: string) => void }) {
         </button>
       </header>
       <AccountLine go={go} />
-      <div className="dash-tabs" role="tablist" aria-label="Teacher">
-        {TABS.map(([id, label]) => (
-          <button key={id} type="button" role="tab" id={`tab-${id}`} aria-selected={tab === id} aria-controls="gu-panel" className={`dash-tab${tab === id ? ' is-on' : ''}`} onClick={() => setTab(id)}>
-            {label}
+      <div className="segmented teacher-mode" role="radiogroup" aria-label="Where the practice comes from">
+        {(
+          [
+            ['school', 'School'],
+            ['device', 'On this device'],
+          ] as const
+        ).map(([m, l]) => (
+          <button key={m} type="button" role="radio" aria-checked={mode === m} className="segment" onClick={() => setMode(m)}>
+            {l}
           </button>
         ))}
       </div>
-      <div id="gu-panel" role="tabpanel" aria-labelledby={`tab-${tab}`}>
-        {tab === 'class' && (
-          <ClassView openChild={(id) => { setChildId(id); setTab('child'); }} />
+      {mode === 'device' && <div className="dash-tabs" role="tablist" aria-label="On this device">
+        {TABS.map(([id, label]) => (
+          <button key={id} type="button" role="tab" id={`tab-${id}`} aria-selected={shown === id} aria-controls="gu-panel" className={`dash-tab${shown === id ? ' is-on' : ''}`} onClick={() => setTab(id)}>
+            {label}
+          </button>
+        ))}
+      </div>}
+      <div id="gu-panel" role={mode === 'device' ? 'tabpanel' : undefined} aria-labelledby={mode === 'device' ? `tab-${shown}` : undefined}>
+        {(shown === 'class' || shown === 'progress' || shown === 'assign') && (
+          <ClassView key={shown} part={shown === 'class' ? 'overview' : shown} go={go} openChild={(id) => { setChildId(id); setTab('child'); }} />
         )}
-        {tab === 'classes' && <TeacherClasses space={currentSpace()} onSignedOut={() => { teacher.close(); go('#/teacher'); }} />}
-        {tab === 'child' && <ChildView childId={childId} setChild={setChildId} />}
-        {tab === 'lessons' && (
+        {shown === 'classes' && <TeacherClasses space={currentSpace()} onSignedOut={() => { teacher.close(); go('#/teacher'); }} />}
+        {shown === 'child' && <ChildView childId={childId} setChild={setChildId} />}
+        {shown === 'lessons' && (
           <>
         <section className="panel" aria-labelledby="content-h">
           <h2 id="content-h" className="h2">
@@ -165,7 +179,7 @@ export function Grownups({ go }: { go: (h: string) => void }) {
             </section>
           </>
         )}
-        {tab === 'ai' && (
+        {shown === 'ai' && (
           <>
         <section className="panel" aria-labelledby="ai-h">
           <h2 id="ai-h" className="h2">
@@ -193,7 +207,7 @@ export function Grownups({ go }: { go: (h: string) => void }) {
             </section>
           </>
         )}
-        {tab === 'device' && (
+        {shown === 'device' && (
           <>
             <ClassReadiness />
         <section className="panel" aria-labelledby="priv-h">
@@ -288,15 +302,18 @@ export function Grownups({ go }: { go: (h: string) => void }) {
   );
 }
 
+/** Two modes: School (classes across devices, needs school accounts) and On this device. */
 const TABS = [
-  ['classes', 'Classes'],
-  ['class', 'This device'],
+  ['class', 'Overview'],
+  ['assign', 'Assignments'],
   ['child', 'Students'],
+  ['progress', 'Progress'],
   ['lessons', 'Lessons'],
-  ['ai', 'AI'],
+  ['ai', 'How progress works'],
   ['device', 'Device'],
 ] as const;
-type Tab = (typeof TABS)[number][0];
+type Mode = 'school' | 'device';
+type Tab = (typeof TABS)[number][0] | 'classes';
 
 function AiSelfCheck() {
   const [res, setRes] = useState<SelfCheck | null>(null);

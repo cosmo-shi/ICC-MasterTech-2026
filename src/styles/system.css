@@ -655,3 +655,763 @@ h2[tabindex='-1']:focus {
   outline: none;
   box-shadow: none;
 }
+
+/* ---- Play: the stave and the instrument share every screen (video QA MOB-01/02) ----
+   The stave never disappears. Short landscape puts it beside Record, like desktop;
+   small portrait phones shrink the chrome, not the stave or the keys. */
+@media (orientation: landscape) and (max-height: 500px) {
+  .play .trail {
+    display: block;
+    height: 52px;
+  }
+  .play .workspace.has-dock {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto auto minmax(0, 1fr);
+    column-gap: var(--s3);
+    row-gap: var(--s2);
+    height: 100%;
+  }
+  .play .workspace.has-dock > * {
+    grid-column: 1 / -1;
+  }
+  .play .workspace.has-dock > .trail {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .play .workspace.has-dock > .ws-bar {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: center;
+  }
+  .play .workspace.has-dock > .kb-wrap,
+  .play .workspace.has-dock > .pads-wrap {
+    grid-row: 4;
+    min-height: 0;
+    height: 100%;
+  }
+  .play-bar .input-chip .chip-long {
+    display: none;
+  }
+  .play-bar .input-chip .chip-short {
+    display: inline;
+  }
+}
+@media (orientation: portrait) and (max-height: 700px) {
+  .play .trail {
+    height: 56px;
+  }
+  .start-sound.compact {
+    flex-wrap: nowrap;
+    padding: 4px 4px 4px var(--s3);
+  }
+  .play .rec-sub {
+    display: none;
+  }
+}
+@media (max-width: 360px) {
+  .play-bar .instrument-switch .segment {
+    min-width: 0;
+    padding: 0 var(--s2);
+  }
+  .play-bar .instrument-switch .segment svg {
+    display: none;
+  }
+  .play-bar .input-chip {
+    padding: 0 var(--s2);
+  }
+}
+@media (max-width: 360px), (orientation: portrait) and (max-height: 640px) {
+  /* The button already says it: keep one row so the keys stay on screen. */
+  .start-sound.compact > p {
+    display: none;
+  }
+  .start-sound.compact .btn {
+    width: 100%;
+    white-space: nowrap;
+  }
+  .play .kb-top {
+    margin-bottom: 4px;
+  }
+}
+@media (orientation: portrait) and (max-height: 640px) {
+  .play {
+    gap: var(--s2);
+  }
+  .play .trail {
+    height: 48px;
+  }
+  .play .rec {
+    min-height: var(--target);
+  }
+  .play .rec-dot {
+    width: 32px;
+    height: 32px;
+  }
+  .play .workspace .kb {
+    min-height: 120px;
+  }
+}
+
+/* ---- Wrong-note pair and small keyboards (video QA PED-01, L05) ---- */
+.note-pair {
+  display: grid;
+  gap: var(--s3);
+}
+.np-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s2);
+}
+.np-btn {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: var(--s2);
+  min-height: 56px;
+  text-align: left;
+  font-weight: var(--w-control, 700);
+}
+.np-btn .np-sub {
+  grid-column: 2;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+}
+.np-good {
+  box-shadow: inset 4px 0 0 var(--good);
+}
+.np-miss {
+  box-shadow: inset 4px 0 0 var(--miss);
+}
+.np-btn[aria-pressed='true'] {
+  background: var(--sun-tint);
+}
+.np-caption {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+}
+.note-pair .notation-svg {
+  max-width: 280px;
+}
+.minikeys {
+  position: relative;
+  height: 112px;
+  border-radius: var(--r-sm);
+  background: var(--case);
+  padding: 6px;
+  box-sizing: border-box;
+}
+.minikeys .mk {
+  position: absolute;
+  top: 6px;
+  margin: 0;
+  padding: 0 0 6px;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  font: inherit;
+  cursor: pointer;
+}
+.minikeys .mk-w {
+  bottom: 6px;
+  background: var(--key-white);
+  border-right: 2px solid var(--case);
+  border-radius: 0 0 6px 6px;
+  color: var(--ink);
+  font-weight: 700;
+}
+.minikeys .mk-b {
+  height: 58%;
+  z-index: 1;
+  background: var(--key-black);
+  border-radius: 0 0 4px 4px;
+  color: #fff;
+}
+.minikeys .mk-good {
+  background: var(--good-bg);
+  box-shadow: inset 0 -6px 0 var(--good);
+}
+.minikeys .mk-miss {
+  background: var(--miss-bg);
+  box-shadow: inset 0 -6px 0 var(--miss);
+}
+.minikeys .mk-now {
+  background: var(--sun-tint);
+  box-shadow: inset 0 -6px 0 var(--sun);
+}
+.minikeys .mk-b.mk-good,
+.minikeys .mk-b.mk-miss,
+.minikeys .mk-b.mk-now {
+  color: var(--ink);
+}
+.minikeys .mk-word {
+  font-size: 0.625rem;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+.minikeys .mk-name {
+  font-size: 0.875rem;
+}
+
+/* ---- L05 teaching sequence ---- */
+.lp-say {
+  margin: 0;
+  font-weight: 500;
+}
+.lp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+  align-items: center;
+}
+.lp-check {
+  display: flex;
+  gap: var(--s2);
+  align-items: flex-start;
+  margin: 0;
+  padding: var(--s2) var(--s3);
+  border-radius: var(--r-md);
+}
+.lp-check p {
+  margin: 0;
+}
+.lp-check.is-good {
+  background: var(--good-bg);
+  color: var(--ink);
+}
+.lp-check.is-good svg {
+  color: var(--good);
+}
+.lp-check.is-miss {
+  background: var(--near-bg);
+  color: var(--ink);
+}
+.lp-check.is-miss svg {
+  color: var(--near);
+}
+.explainer-lines {
+  margin: 0;
+  padding-left: 1.2em;
+  display: grid;
+  gap: var(--s1);
+}
+.l05 .note-pair .notation,
+.l05 .note-pair .np-caption {
+  display: none; /* the lesson's own stave shows the pair; keys and buttons stay */
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  /* The stave leads the task column, so it is on screen beside the keys (video QA MOB-03). */
+  .lp-try .lp-task {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s2);
+  }
+  .lp-try .lp-task > .lp-music {
+    order: -1;
+    flex: none;
+  }
+  .l05 .lp-say {
+    font-size: 0.9375rem;
+  }
+}
+
+/* ---- L01 beat foundations ---- */
+.beat-lesson {
+  display: grid;
+  gap: var(--s4);
+  justify-items: center;
+  text-align: center;
+  max-width: 560px;
+  margin: 0 auto;
+}
+.beat-big {
+  display: flex;
+  gap: var(--s3);
+  justify-content: center;
+}
+.beat-big .beat {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  background: var(--paper-sunk);
+  color: var(--ink);
+}
+.beat-big .beat.is-now {
+  background: var(--sun);
+  color: var(--on-sun);
+  transform: scale(1.12);
+}
+.beat-big .beat.is-rest {
+  outline: 2px dashed var(--ink-faint);
+  outline-offset: -2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .beat-big .beat.is-now {
+    transform: none;
+  }
+}
+.big-pad {
+  width: min(240px, 60vw);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 0;
+  background: var(--pad);
+  box-shadow: inset 0 0 0 10px var(--drum-rim), 0 6px 0 var(--pad-edge);
+  font: inherit;
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: var(--ink);
+  touch-action: manipulation;
+  cursor: pointer;
+}
+.big-pad.is-down,
+.sound-pad.is-down {
+  background: var(--sun-tint);
+  transform: translateY(3px);
+  box-shadow: inset 0 0 0 10px var(--drum-rim), 0 3px 0 var(--pad-edge);
+}
+.sound-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--s3);
+  width: 100%;
+}
+.sound-pad {
+  display: grid;
+  gap: var(--s1);
+  align-content: center;
+  min-height: 140px;
+  padding: var(--s3);
+  border: 0;
+  border-radius: var(--r-lg);
+  background: var(--pad);
+  box-shadow: 0 6px 0 var(--pad-edge);
+  font: inherit;
+  color: var(--ink);
+  touch-action: manipulation;
+  cursor: pointer;
+}
+.sound-name {
+  font-weight: 800;
+  font-size: 1.125rem;
+}
+.sound-what {
+  font-size: 0.9375rem;
+}
+.sound-heard {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--good);
+}
+.beat-lesson .notation {
+  width: 100%;
+}
+@media (orientation: portrait) {
+  /* The drum kit stays big enough to hit in a lesson, even with the help chips above it. */
+  .lp-try .lp-instrument:has(.ws-drums) {
+    min-height: 260px;
+  }
+}
+@media (orientation: portrait) and (max-height: 760px) {
+  .l05 .kb-top {
+    display: none;
+  }
+  .l05 .lp-music .notation-svg svg {
+    max-height: 96px;
+  }
+  .lp-try.l05 .lp-instrument {
+    min-height: 150px;
+  }
+}
+@media (orientation: landscape) and (max-height: 360px) {
+  .play .workspace .kb-wrap,
+  .play .workspace .pads-wrap,
+  .play .workspace .kb {
+    min-height: 0;
+  }
+}
+@media (orientation: portrait) and (max-height: 640px) {
+  .l05 .lp-music .notation-svg svg {
+    max-height: 72px;
+  }
+  .l05 .lp-music .notation {
+    padding-block: 0;
+  }
+  .l05 .lp-actions .btn-quiet {
+    min-height: var(--target);
+  }
+}
+.wrong-pairs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--s4);
+}
+.wp-h {
+  margin: 0 0 var(--s1);
+  font-weight: 800;
+}
+
+.test-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s2);
+  background: var(--near-bg);
+  color: var(--ink);
+  border: 2px dashed var(--near);
+}
+.test-banner a {
+  margin-left: auto;
+  font-weight: 700;
+}
+
+/* ---- Teacher (review branch): modes, progress table and list, support plan, assignments ---- */
+.teacher-mode {
+  margin: var(--s3) 0;
+}
+.skill-grid th,
+.skill-grid td {
+  white-space: normal;
+  vertical-align: top;
+}
+.skill-grid thead th {
+  min-width: 96px;
+  overflow-wrap: anywhere;
+}
+.skill-grid tbody th,
+.skill-grid thead th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--paper);
+  box-shadow: 1px 0 0 var(--hairline);
+}
+.skill-list {
+  display: none;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+@media (max-width: 640px) {
+  .dash .table-wrap:has(.skill-grid) {
+    display: none;
+  }
+  .skill-list {
+    display: grid;
+    gap: 0;
+  }
+  .skill-list > li {
+    padding: var(--s3) 0;
+    border-top: 1px solid var(--hairline);
+  }
+  .skill-list dl {
+    margin: var(--s2) 0 0;
+    display: grid;
+    gap: 4px;
+  }
+  .skill-list dl > div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--s3);
+  }
+  .skill-list dt {
+    font-weight: 700;
+  }
+  .skill-list dd {
+    margin: 0;
+    text-align: right;
+  }
+}
+.sp-rec {
+  margin: 0 0 var(--s3);
+  padding: var(--s3);
+  border-radius: var(--r-md);
+  background: var(--paper-sunk);
+}
+.sp-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--s2);
+}
+.sp-row {
+  display: flex;
+  gap: var(--s3);
+  align-items: flex-start;
+  min-height: var(--target);
+  cursor: pointer;
+}
+.sp-row input {
+  width: 24px;
+  height: 24px;
+  margin-top: 2px;
+  flex: none;
+}
+.sp-label {
+  font-weight: 700;
+}
+.assign-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.assign-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: var(--s3);
+  align-items: center;
+  padding: var(--s3) 0;
+  border-top: 1px solid var(--hairline);
+}
+@media (max-width: 560px) {
+  .assign-row {
+    grid-template-columns: 1fr;
+  }
+}
+.empty-state .h2 {
+  margin-top: 0;
+}
+
+/* ===================== Type roles (direction A) ===================== */
+:is(h1, h2, h3, .h1, .h2, .lp-title, .resume-title, .fb-title, .teacher-title, .lx-display) {
+  font-family: var(--font-display);
+  letter-spacing: var(--display-tracking, 0);
+}
+/* Segmented switches (Lessons / Music theory, School / On this device) meet the 48 px target rule. */
+.segmented .segment { min-height: var(--target, 48px); }
+
+/* ===================== Learn library, Music theory, lesson stages (direction A, approved 10 Nov) ===================== */
+.lx { gap: var(--s6); }
+.lx-display { font-family: var(--font-display, var(--font-ui)); font-weight: var(--w-display, 900); line-height: 1.05; margin: 0; overflow-wrap: anywhere; }
+.lx-kicker { margin: 0; font-weight: var(--w-control, 700); font-size: 0.875rem; letter-spacing: 0.04em; text-transform: uppercase; }
+.lx-about, .lx-desc { margin: 0; color: var(--ink-soft); }
+.lx-desc { font-size: 0.9375rem; }
+.lx-why { margin: 0; font-size: 0.9375rem; }
+.lx-item-title { margin: 0; font-size: 1.125rem; font-weight: var(--w-head, 800); line-height: 1.25; overflow-wrap: anywhere; }
+.lx-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s3); }
+.lx-btn {
+  min-height: var(--target, 48px); padding: 0 var(--s5); border: 0; border-radius: var(--r-md);
+  background: var(--sun); color: var(--on-sun); font: inherit; font-family: var(--font-ui); font-weight: var(--w-control, 700); font-size: 1rem;
+  cursor: pointer;
+}
+.lx-btn:hover { background: var(--sun-deep); color: var(--paper); }
+.lx-btn-quiet { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 2px currentColor; }
+.lx-btn-quiet:hover { background: var(--paper-sunk); color: var(--ink); }
+.lx-link {
+  min-height: var(--target, 48px); padding: 0 var(--s2); border: 0; background: none; color: inherit;
+  font: inherit; font-family: var(--font-ui); font-weight: var(--w-control, 700); text-decoration: underline; text-underline-offset: 0.2em; cursor: pointer;
+}
+.lx-status { display: inline-flex; align-items: center; gap: var(--s1); font-size: 0.875rem; font-weight: var(--w-control, 700); color: var(--ink-soft); }
+.lx-status.st-done { color: var(--good); }
+.lx-status.st-started { color: var(--dusk); }
+.lx-preview { background: var(--paper); border-radius: var(--r-md); padding: var(--s2) var(--s3); color: var(--ink); min-width: 0; }
+.lx-preview svg { max-width: 100%; height: auto; }
+.lx-chosen { display: inline-flex; align-items: center; gap: var(--s1); font-size: 0.875rem; font-weight: var(--w-control, 700); }
+.lx-inst { display: grid; gap: var(--s3); grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.lx-inst-opt {
+  display: grid; gap: var(--s2); align-content: start; text-align: left; min-height: var(--target, 48px);
+  border: 0; border-radius: var(--r-lg); padding: var(--s4); font: inherit; color: var(--ink); cursor: pointer;
+}
+.lx-inst-name { display: inline-flex; align-items: center; gap: var(--s2); font-family: var(--font-display, var(--font-ui)); font-weight: var(--w-head, 800); font-size: 1.25rem; }
+.lx-inst-about { font-size: 0.9375rem; }
+.lx-inst-opt[aria-checked='true'] { box-shadow: inset 0 0 0 3px var(--ink); }
+
+/* Learn: big type, numbered chapters, rules not boxes */
+.lxa-head { display: grid; gap: var(--s4); }
+.lxa-title { font-size: clamp(3.25rem, 14vw, 7.5rem); letter-spacing: -0.03em; line-height: 0.9; }
+.lx-inst-words { display: flex; flex-wrap: wrap; gap: var(--s5); }
+.lx-inst-words .lx-inst-opt { padding: 0 0 var(--s1); background: none; border-radius: 0; box-shadow: none; display: flex; align-items: center; gap: var(--s3); }
+.lx-inst-words .lx-inst-name { font-size: clamp(1.5rem, 5vw, 2.25rem); color: var(--ink-soft); }
+.lx-inst-words .lx-inst-opt[aria-checked='true'] { box-shadow: inset 0 -5px 0 var(--sun); }
+.lx-inst-words .lx-inst-opt[aria-checked='true'] .lx-inst-name { color: var(--ink); }
+.lxa-feature {
+  display: grid; gap: var(--s5); padding: var(--s6) var(--s5); border-radius: var(--r-lg) var(--r-lg) var(--r-lg) var(--r-sm);
+  background: var(--tr); color: var(--on-sun);
+}
+.lxa-feature .lx-btn { background: var(--on-sun); color: var(--tr); }
+.lxa-feature .lx-btn:hover { background: var(--ink); color: var(--paper); }
+.lxa-feature .lx-kicker, .lxa-feature .lx-why { color: var(--on-sun); }
+.lxa-feature-text { display: grid; gap: var(--s3); align-content: start; }
+.lxa-feature-title { font-size: clamp(2rem, 7vw, 3.5rem); letter-spacing: -0.02em; }
+.lxa-feature-desc { margin: 0; font-size: 1.125rem; max-width: 34ch; }
+.lxa-feature-score .lx-preview { padding: var(--s4); border-radius: var(--r-md); }
+.lxa-unit { display: grid; gap: var(--s4); }
+.lxa-unit-head { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--s4); align-items: end; padding-bottom: var(--s3); border-bottom: 3px solid var(--tr); }
+.lxa-num { font-family: var(--font-display, var(--font-ui)); font-weight: var(--w-display, 900); font-size: clamp(3rem, 12vw, 5rem); line-height: 0.85; color: var(--tr-ink); }
+.lxa-unit-title { font-size: clamp(1.5rem, 5vw, 2.25rem); }
+.lxa-list { list-style: none; margin: 0; padding: 0; display: grid; }
+.lxa-item { display: grid; gap: var(--s3); padding: var(--s4) 0; border-bottom: 1px solid var(--hairline); }
+.lxa-item-text { display: grid; gap: var(--s1); }
+.lxa-item.is-next .lx-item-title { font-size: 1.375rem; }
+.lxa-item-act { display: flex; flex-wrap: wrap; gap: var(--s2); align-items: center; }
+.lxa-create { display: grid; gap: var(--s5); padding: var(--s6) var(--s5); border-radius: var(--r-lg); background: var(--tr-create-tint); }
+.lxa-create-title { font-size: clamp(2.25rem, 9vw, 4.5rem); color: var(--tr-create-ink); letter-spacing: -0.02em; }
+.lxa-create-lede { margin: 0; max-width: 46ch; font-size: 1.0625rem; }
+.lxa-create-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s5); }
+.lxa-create-list li { display: grid; gap: var(--s2); padding-top: var(--s3); border-top: 3px solid var(--tr-create); }
+@media (min-width: 900px) {
+  .lxa-head { grid-template-columns: minmax(0, 1fr) auto; align-items: end; }
+  .lxa-head .lx-inst { grid-column: 1 / -1; }
+  .lxa-feature { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); padding: var(--s7); align-items: center; }
+  .lxa-unit { grid-template-columns: 16rem minmax(0, 1fr); align-items: start; }
+  .lxa-unit-head { grid-template-columns: 1fr; border-bottom: 0; position: sticky; top: var(--s4); }
+  .lxa-item { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+  .lxa-create-list { grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
+}
+
+/* ---------- Music theory : categories by hue, place and words; every card has notation + sound ---------- */
+.lxt-head { display: grid; gap: var(--s3); }
+.lxt-title { font-size: clamp(2.5rem, 10vw, 5rem); letter-spacing: -0.02em; }
+.lxt-lede { margin: 0; font-size: 1.125rem; max-width: 40ch; }
+.lxt-jump { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.lxt-jump-link { display: inline-flex; align-items: center; min-height: var(--target, 48px); padding: 0 var(--s4); border-radius: 999px; background: var(--tr-tint); color: var(--tr-ink); font-weight: var(--w-control, 700); text-decoration: none; }
+.lxt-group { display: grid; gap: var(--s4); scroll-margin-top: var(--s4); }
+.lxt-group-head { display: grid; gap: var(--s1); padding: var(--s4) var(--s5); border-radius: var(--r-lg); background: var(--tr); color: var(--on-sun); }
+.lxt-group-head .lx-about { color: var(--on-sun); }
+.lxt-group-title { font-size: clamp(1.5rem, 6vw, 2.25rem); }
+.lxt-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s4); }
+.lxt-card { display: grid; gap: var(--s2); align-content: start; padding: var(--s4) 0; border-top: 3px solid var(--tr); }
+.lxt-card .lx-preview { background: var(--tr-tint); }
+.lxt-topic > .kicker { color: var(--tr-ink); }
+.lxt-topic-title { font-size: clamp(2.25rem, 9vw, 4rem); letter-spacing: -0.02em; }
+.lxt-topic .theory-example { background: var(--tr-tint); border-radius: var(--r-md); }
+@media (min-width: 700px) { .lxt-grid { grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); column-gap: var(--s5); } }
+@media (min-width: 900px) { .lxt-head { grid-template-columns: minmax(0, 1fr) auto; align-items: end; } .lxt-lede { grid-column: 1 / -1; } }
+
+/* ---------- Lesson : the six teaching stages, current one named in words and shape ---------- */
+.lx-stages { list-style: none; margin: 0; padding: 0 var(--s4) var(--s2); display: flex; gap: var(--s1); }
+.lx-stages li { flex: 1; display: grid; gap: 2px; justify-items: center; padding: var(--s1) 0; border-top: 4px solid var(--hairline); color: var(--ink-soft); font-size: 0.8125rem; font-weight: var(--w-control, 700); }
+.lx-stages li.is-past { border-top-color: var(--dusk); }
+.lx-stages li.is-now { border-top-color: var(--sun); color: var(--ink); }
+.lx-stage-n { display: none; }
+@media (max-width: 599px) {
+  .lx-stages li:not(.is-now) .lx-stage-w { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .lx-stages li:not(.is-now) { flex: 0 0 var(--s5); }
+  .lx-stages li.is-now { justify-items: start; }
+}
+.lp-title { font-family: var(--font-display); font-weight: var(--w-display); letter-spacing: var(--display-tracking, 0); }
+.lp-title.small { font-size: clamp(1.5rem, 6vw, 2.125rem); line-height: 1.1; }
+.lxt-card .lx-preview { background: none; padding: 0; }
+
+/* ---------- Teacher : same faces and hues, calmer and denser: numbers on hairlines, not tiles ---------- */
+.teacher-mode .teacher-title { font-family: var(--font-display); font-weight: var(--w-display); letter-spacing: var(--display-tracking, 0); }
+.teacher-mode .dash-stats { gap: 0; border-block: 1px solid var(--hairline); }
+.teacher-mode .dash-stats > li { background: none; border-radius: 0; padding: var(--s3) var(--s4); border-left: 1px solid var(--hairline); }
+.teacher-mode .dash-stats > li:first-child { border-left: 0; padding-left: 0; }
+.teacher-mode .stat-n { font-family: var(--font-display); font-weight: var(--w-display); font-size: 2.25rem; color: var(--dusk); }
+.teacher-mode :is(td, th) { padding-block: var(--s2); }
+/* Segmented switches (Lessons / Music theory, School / On this device) were 40 px tall; Carmen's rule is 48 px. */
+.segmented .segment { min-height: var(--target, 48px); }
+@media (max-width: 599px) { .lxa-feature .lx-preview-icon { display: none; } }
+@media (max-height: 500px) {
+  .lp-title.small { font-size: 1.25rem; }
+  .lx-stages { padding-bottom: 0; }
+  .lx-stages li { padding: 0; font-size: 0.75rem; }
+}
+
+/* ---------- Creative project entry : the orchid Compose identity, not marked ---------- */
+.lx-create-head { padding: var(--s5); border-radius: var(--r-lg) var(--r-lg) var(--r-lg) var(--r-sm); background: var(--tr-tint); }
+.lx-create-head .eyebrow { color: var(--tr-ink); }
+.lx-create-title { font-size: clamp(2rem, 8vw, 3.25rem); letter-spacing: -0.02em; color: var(--ink); }
+/* Small phones (about 568 px tall): the keys need the room, so the stage strip gives way to the
+   progress bar above it, and step titles step down a size. */
+@media (max-height: 640px) and (max-width: 599px) {
+  .lx-stages { display: none; }
+  .lp-title.small { font-size: 1.25rem; }
+}
+
+/* ---------- Drums: pads stay square, and short landscape keeps the stave (momo, 10 Nov evening) ----------
+   Pads were stretched into tall strips on desktop; they are now square tiles in one even grid. */
+.pads .pad { aspect-ratio: 1 / 1; min-height: 0; }
+@media (orientation: landscape) and (max-height: 500px) {
+  /* The stave column can never shrink to nothing (the drums tool row used to take all the width). */
+  .play .workspace.has-dock { grid-template-columns: minmax(160px, 1fr) auto; }
+  /* Drums: the stave and the kit on the left, Sound and the tools in a column on the right,
+     so the kit gets the height and the stave keeps its width. */
+  .play .workspace.has-dock:has(.pads-wrap) { grid-template-columns: minmax(0, 1fr) clamp(15rem, 40vw - 2rem, 20rem); grid-template-rows: auto minmax(0, 1fr); }
+  .play .workspace.has-dock:has(.pads-wrap) > .start-sound { grid-column: 2; grid-row: 1; align-self: start; padding: 0; background: none; }
+  .play .workspace.has-dock:has(.pads-wrap) > .start-sound > :not(button) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .play .workspace.has-dock:has(.pads-wrap) > .start-sound > button { width: 100%; }
+  .play .workspace.has-dock:has(.pads-wrap) > .trail { grid-column: 1; grid-row: 1; }
+  .play .workspace.has-dock:has(.pads-wrap) > .ws-bar {
+    grid-column: 2; grid-row: 2; align-self: start; margin: 0;
+    display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s1);
+  }
+  .play .workspace.has-dock:has(.pads-wrap) > .start-sound ~ .ws-bar { grid-row: 2; }
+  .play .workspace.has-dock:has(.pads-wrap) .dock { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s1); }
+  .play .workspace.has-dock:has(.pads-wrap) .dock > * { min-width: 0; justify-content: center; }
+  .play .workspace.has-dock:has(.pads-wrap) .drum-view { margin: 0; width: 100%; }
+  .play .workspace.has-dock:has(.pads-wrap) .drum-view .segment { flex: 1; min-height: var(--target, 48px); }
+  .play .workspace.has-dock:has(.pads-wrap) > .pads-wrap { grid-column: 1; grid-row: 2; }
+  /* The kit keeps its 16:10 shape and fits the case both ways (container units: Safari 16+, Chrome 105+). */
+  .pads-wrap:has(.kit) { container-type: size; min-height: 0; }
+  .kit { width: min(100cqw, 160cqh); height: auto; max-height: none; aspect-ratio: 16 / 10; }
+  /* Landscape always uses the wide arrangement, whatever the width. */
+  .kit .kit-part { left: var(--x); top: var(--y); width: var(--w); }
+  .play .pads .pad-name { font-size: 0.875rem; }
+  .kit-name { font-size: 0.6875rem; padding: 1px 4px; white-space: nowrap; }
+  /* Lessons: the tool row sits tight above the kit so the kit gets the height. */
+  .lp-instrument .workspace { gap: var(--s1); }
+  .lp-instrument .ws-bar { margin: 0; }
+  .kit .pad-key { display: none; }
+  .play .pads { height: 100%; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .play .pads .pad { aspect-ratio: auto; min-height: 0; gap: 2px; }
+}
+/* Narrow landscape phones (iPhone SE and similar): Record takes the full width of the tool column
+   and the three small tools share the row below it. */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 720px) {
+  .play .workspace.has-dock:has(.pads-wrap) .dock { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .play .workspace.has-dock:has(.pads-wrap) .dock > .rec { grid-column: 1 / -1; }
+}
+
+/* Teacher bar on 320 px phones: the logo mark stays, the word "carmen" gives way so Exit fits. */
+.teacher-title { min-width: 0; }
+@media (max-width: 360px) { .teacher-bar .wordmark-text { display: none; } }
+/* The test-data banner keeps a side gutter (and clears a notch in landscape). */
+.test-banner {
+  padding-block: var(--s2);
+  padding-left: max(var(--s4), env(safe-area-inset-left, 0px));
+  padding-right: max(var(--s4), env(safe-area-inset-right, 0px));
+}
+/* Phones in portrait use the taller kit arrangement, so the case takes the taller 100:86 shape too
+   (the bass drum used to hang out of the bottom of the case on Play). */
+@media (max-width: 600px) and (orientation: portrait) {
+  .play .pads-wrap .kit { aspect-ratio: 100 / 86; width: min(100%, calc(100cqh * 100 / 86)); }
+}
+.lxa-create-head { display: grid; gap: var(--s2); }
+.lx-display { line-height: 1.1; }
+/* Record's two lines had touching glyphs with the taller Atkinson letters. */
+.rec-text { line-height: 1.35; gap: 0; }
+/* Play on phones and tablets in portrait: the six pads fill the case as a 3 × 2 grid. */
+@media (max-width: 899px) and (min-height: 501px) {
+  .play .pads-wrap .pads { height: 100%; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 1fr; }
+  .play .pads-wrap .pad { aspect-ratio: auto; min-height: 0; gap: 2px; }
+  .play .pads-wrap .pad-name { font-size: 0.9375rem; }
+}
+/* Play on desktop: the six pads are one 3 × 2 block of squares, as big as the case allows, centred. */
+@media (min-width: 900px) and (min-height: 501px) {
+  .play .pads-wrap .pads {
+    height: 100%;
+    grid-template-columns: repeat(3, min(calc((100cqw - 20px) / 3), calc((100cqh - 24px) / 2)));
+    grid-auto-rows: auto;
+    justify-content: center;
+    align-content: center;
+  }
+}

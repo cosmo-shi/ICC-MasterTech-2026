@@ -14,6 +14,9 @@ import {
 import { usePrefs } from "../state/prefs.tsx";
 import { type AttemptRecord, newId, stamp, store } from "../store/db.ts";
 import { BeatDots, FactList, factMark } from "../ui/common.tsx";
+import { WrongPairs } from "../ui/NotePair.tsx";
+import { NotesLesson } from "./NotesLesson.tsx";
+import { BeatLesson } from "./BeatLesson.tsx";
 import { FeedbackSheet } from "../ui/FeedbackSheet.tsx";
 import { attemptFeedback, unclearAttempt } from "../teach/attempt.ts";
 import { MoreDetail } from "../ui/MoreDetail.tsx";
@@ -68,10 +71,15 @@ export function LessonScreen({ lessonId, go, view }: Props) {
     lesson.assessment.mode === "creative-completion"
   )
     return <FreeLesson lesson={lesson} go={go} />;
-  return <AssessedLesson key={lessonId} lessonId={lessonId} go={go} />;
+  // L05 is the full teaching sequence (video QA vertical slice); other lessons use the shared flow.
+  if (lessonId === "L05") return <NotesLesson go={go} />;
+  // L01 starts with the beat foundations (pulse, one drum, three sounds, rests), then the checked
+  // copy starts slower (video QA PED-02).
+  if (lessonId === "L01" && view !== "practise") return <BeatLesson go={go} onPractise={() => go("#/lesson/L01/practise")} />;
+  return <AssessedLesson key={lessonId} lessonId={lessonId} go={go} startAt={view === "practise" ? "try" : undefined} />;
 }
 
-function AssessedLesson({ lessonId, go }: Props) {
+function AssessedLesson({ lessonId, go, startAt }: Props & { startAt?: "try" }) {
   const base = lessonById(lessonId)!;
   const { prefs, set: setPref } = usePrefs();
   const act = activityById(lessonId);
@@ -80,19 +88,20 @@ function AssessedLesson({ lessonId, go }: Props) {
   const [inst, setInst] = useState<InstrumentId>(() => instrumentFor(lessonId, base.practice?.instrument ?? prefs.instrument));
   const lesson = useMemo(() => lessonFor(base, inst), [base, inst]);
   // Bayesian learner model: how much support to offer at the start, and which fact to talk about first.
-  const { planning, context } = useMyLearning();
+  const { planning, context, overrides: myOverrides } = useMyLearning();
   const tctx = context({ currentLessonId: lessonId });
   const support = supportFor(planning, lessonId, tctx);
   const focusHint = coachFocus(planning, lessonId, tctx);
   const pathway = pathwayById(prefs.pathway);
   // Supports the learner's teacher switched on (class link). They start on; the learner can still change them.
   const { link: myClass } = useMyClass();
-  const fromTeacher = classSupports(myClass, lessonId);
+  // Plus the supports a teacher set for this learner on this device (Teacher > Students > Support plan).
+  const fromTeacher = { ...classSupports(myClass, lessonId), ...Object.fromEntries((myOverrides.supports ?? []).map((k) => [k, true])) } as ReturnType<typeof classSupports>;
   const teacherOn = (Object.keys(fromTeacher) as SupportId[]).filter((k) => fromTeacher[k] && k in SUPPORTS);
   const [mode, setMode] = useState<Mode>("practice");
-  const [stage, setStage] = useState<"hear" | "learn" | "try">("hear");
+  const [stage, setStage] = useState<"hear" | "learn" | "try">(startAt ?? "hear");
   const [phase, setPhase] = useState<Phase>("ready");
-  const [slowerChoice, setSlowerChoice] = useState<boolean | null>(null);
+  const [slowerChoice, setSlowerChoice] = useState<boolean | null>(startAt === "try" ? true : null);
   // Starts slower when the model suggests it; the learner can always switch it off.
   const slower = mode === "practice" && (slowerChoice ?? (support.start.includes("slower") || !!fromTeacher.slower));
   const setSlower = (f: (s: boolean) => boolean) => setSlowerChoice(f(slower));
@@ -882,9 +891,18 @@ function AssessedLesson({ lessonId, go }: Props) {
               ? { label: fb.nextLabel, onClick: () => { recordChoice("make"); go(`#/lesson/${lesson.id}/make`); } }
               : { label: fb.nextLabel, onClick: retry }
         }
-        secondary={result.passed ? { label: "Again", onClick: retry } : { label: "Finish for now", onClick: toSummary }}
+        secondary={
+          result.passed
+            ? { label: "Again", onClick: retry }
+            : mode === "practice"
+              ? { label: "Show me how", onClick: () => { setSheetOpen(false); void watchDemo(); } }
+              : { label: "Finish for now", onClick: toSummary }
+        }
         moreHelp={
           <>
+            {!result.passed && mode === "practice" && (
+              <button type="button" className="btn-text" onClick={toSummary}>Finish for now</button>
+            )}
             {!result.passed && mode === "practice" && (
               <div className="help-options" role="group" aria-label="Ways to practise">
                 {timed && (
@@ -936,7 +954,9 @@ function AssessedLesson({ lessonId, go }: Props) {
             <FactList result={result} />
           </>
         }
-      />
+      >
+        {fb.pairs && <WrongPairs wrong={fb.pairs} />}
+      </FeedbackSheet>
     ) : null;
 
   const side =

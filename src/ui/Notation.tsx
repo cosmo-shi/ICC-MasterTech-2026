@@ -24,16 +24,38 @@ interface Props {
   activeIndex?: number;
   marks?: (string | null)[]; // per sounding event: 'ok' | 'wrong' | 'missed' | 'early' | 'late'
   hidePitchNames?: boolean;
+  /** Tapping a note on the stave (stave → key linking). Index counts every note and rest in order. */
+  onNoteTap?: (index: number) => void;
 }
 
-export function Notation({ phrase, activeIndex, marks }: Props) {
+export function Notation({ phrase, activeIndex, marks, onNoteTap }: Props) {
+  const tapRef = useRef(onNoteTap);
+  useEffect(() => {
+    tapRef.current = onNoteTap;
+  });
   const ref = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
+  // Redraw when the space changes (rotation, split screen, the phone's address bar, large text).
+  // Drawing at a stale width is what left the stave empty or cropped on phones (video QA MOB-01).
+  const [boxWidth, setBoxWidth] = useState(0);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const measure = () => setBoxWidth(Math.round(el.clientWidth));
+    measure();
+    const ro = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(measure);
+    ro?.observe(el);
+    window.visualViewport?.addEventListener('resize', measure);
+    return () => {
+      ro?.disconnect();
+      window.visualViewport?.removeEventListener('resize', measure);
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
     const el = ref.current;
-    if (!el) return;
+    if (!el || boxWidth === 0) return; // not laid out yet (hidden or mid-rotation): draw when it has a size
     import('vexflow/bravura')
       .then(async (mod) => {
         const VF = mod.default;
@@ -45,7 +67,7 @@ export function Notation({ phrase, activeIndex, marks }: Props) {
         const barLen = barTicks(phrase.meter);
         const laid = layoutBars(phrase.events, phrase.totalTicks, barLen);
         const bars = laid.length;
-        const width = Math.max(280, Math.min(el.clientWidth || 560, 760 * Math.max(1, bars / 2)));
+        const width = Math.max(240, Math.min(boxWidth, 760 * Math.max(1, bars / 2)));
         const renderer = new VF.Renderer(el, VF.Renderer.Backends.SVG);
         renderer.resize(width, 140);
         const ctx = renderer.getContext();
@@ -100,13 +122,34 @@ export function Notation({ phrase, activeIndex, marks }: Props) {
         const svg = el.querySelector('svg');
         svg?.setAttribute('aria-hidden', 'true');
         svg?.setAttribute('focusable', 'false');
+        // Scale with the box instead of overflowing it if it shrinks before the next redraw.
+        svg?.setAttribute('viewBox', `0 0 ${width} 140`);
+        svg?.style.setProperty('max-width', '100%');
+        svg?.style.setProperty('height', 'auto');
+        if (svg && tapRef.current) {
+          svg.style.cursor = 'pointer';
+          svg.addEventListener('click', (ev) => {
+            const groups = [...el.querySelectorAll('.vf-stavenote')];
+            let best = -1;
+            let bestD = Infinity;
+            groups.forEach((g, i) => {
+              const r = g.getBoundingClientRect();
+              const d = Math.abs(r.left + r.width / 2 - ev.clientX);
+              if (d < bestD) {
+                bestD = d;
+                best = i;
+              }
+            });
+            if (best >= 0) tapRef.current?.(best);
+          });
+        }
         setFailed(false);
       })
       .catch(() => !cancelled && setFailed(true));
     return () => {
       cancelled = true;
     };
-  }, [phrase, activeIndex, marks]);
+  }, [phrase, activeIndex, marks, boxWidth]);
 
   return (
     <figure className="notation">

@@ -14,7 +14,7 @@ export function BeatDots({ beats, current, countIn }: { beats: number; current: 
     <div className={`beats${countIn ? ' is-countin' : ''}`} aria-hidden="true">
       {Array.from({ length: beats }, (_, i) => (
         <span key={i} className={`beat${i === current ? ' is-now' : ''}${i % 4 === 0 ? ' is-bar' : ''}`}>
-          {countIn ? beats - i : i + 1}
+          {i + 1}
         </span>
       ))}
     </div>

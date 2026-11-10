@@ -1,6 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { Icon } from '../ui/icons.tsx';
 
+export const STAGES = ['Explain', 'Demonstrate', 'Explore', 'Practise', 'Feedback', 'Continue'] as const;
+export type Stage = (typeof STAGES)[number];
+
 /** The full-screen lesson frame: close, progress, one step at a time, one big button at the bottom. */
 export function LessonShell({
   step,
@@ -11,6 +14,7 @@ export function LessonShell({
   sheet,
   children,
   stepKey,
+  stage,
 }: {
   step: number;
   steps: number;
@@ -20,6 +24,8 @@ export function LessonShell({
   sheet?: React.ReactNode;
   children: React.ReactNode;
   stepKey: string;
+  /** Which teaching stage this step is: Explain, Demonstrate, Explore, Practise, Feedback or Continue. */
+  stage?: Stage;
 }) {
   const body = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -37,6 +43,16 @@ export function LessonShell({
         </div>
         <div className="lp-side">{side}</div>
       </header>
+      {stage && (
+        <ol className="lx-stages" aria-label="Lesson stages">
+          {STAGES.map((st, k) => (
+            <li key={st} aria-current={st === stage ? 'step' : undefined} className={st === stage ? 'is-now' : STAGES.indexOf(stage) > k ? 'is-past' : ''}>
+              <span className="lx-stage-n" aria-hidden="true">{k + 1}</span>
+              <span className="lx-stage-w">{st}</span>
+            </li>
+          ))}
+        </ol>
+      )}
       <div className="lp-body" ref={body} key={stepKey}>
         {children}
       </div>

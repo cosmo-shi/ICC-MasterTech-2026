@@ -25,7 +25,7 @@
       },
       "contentNotes": "Original activity wording and symbolic patterns informed by the attributed open theory sources. Not a copied song or teacher-approved sequence.",
       "id": "L00",
-      "title": "Make a sound",
+      "title": "Sound and silence",
       "goal": "Explore",
       "objective": "Make, stop and change a sound using comfortable controls.",
       "prerequisites": [],
@@ -80,7 +80,7 @@
       },
       "contentNotes": "Original activity wording and symbolic patterns informed by the attributed open theory sources. Not a copied song or teacher-approved sequence.",
       "id": "L01",
-      "title": "Find the pulse",
+      "title": "Steady beat",
       "goal": "Rhythm",
       "objective": "Play an even pulse with a short pattern.",
       "prerequisites": [
@@ -263,7 +263,7 @@
       },
       "contentNotes": "Original activity wording and symbolic patterns informed by the attributed open theory sources. Not a copied song or teacher-approved sequence.",
       "id": "L02",
-      "title": "Leave a space",
+      "title": "Crotchet rests",
       "goal": "Rhythm",
       "objective": "Keep the pulse through a one-beat rest.",
       "prerequisites": [
@@ -406,7 +406,7 @@
       },
       "contentNotes": "Original activity wording and symbolic patterns informed by the attributed open theory sources. Not a copied song or teacher-approved sequence.",
       "id": "L03",
-      "title": "Two sounds in a beat",
+      "title": "Crotchets and quavers",
       "goal": "Rhythm",
       "objective": "Compare one crotchet with two quavers in a crotchet-beat exercise.",
       "prerequisites": [
@@ -585,7 +585,7 @@
       },
       "contentNotes": "Original activity wording and symbolic patterns informed by the attributed open theory sources. Not a copied song or teacher-approved sequence.",
       "id": "L04",
-      "title": "Higher and lower",
+      "title": "High and low notes",
       "goal": "Notes",
       "objective": "Compare pitches and follow a short pitch contour.",
       "prerequisites": [
@@ -756,7 +756,7 @@
       },
       "contentNotes": "Original activity wording and symbolic patterns informed by the attributed open theory sources. Not a copied song or teacher-approved sequence.",
       "id": "L05",
-      "title": "Meet C, D and E",
+      "title": "Find C, D and E on the keyboard",
       "goal": "Notes",
       "objective": "Connect three note names with their keyboard positions.",
       "prerequisites": [
@@ -927,7 +927,7 @@
       },
       "contentNotes": "Original activity wording and symbolic patterns informed by the attributed open theory sources. Not a copied song or teacher-approved sequence.",
       "id": "L06",
-      "title": "Read a small melody",
+      "title": "Read C, D and E on the stave",
       "goal": "Reading music",
       "objective": "Connect C4, D4 and E4 on a treble stave with played notes.",
       "prerequisites": [
@@ -1107,7 +1107,7 @@
       },
       "contentNotes": "Original activity wording and symbolic patterns informed by the attributed open theory sources. Not a copied song or teacher-approved sequence.",
       "id": "L07",
-      "title": "Hold a sound",
+      "title": "Minims and crotchets",
       "goal": "Rhythm and notes",
       "objective": "Distinguish two-beat and one-beat held notes in 4/4.",
       "prerequisites": [
@@ -1269,7 +1269,7 @@
       },
       "contentNotes": "Original activity wording and symbolic patterns informed by the attributed open theory sources. Not a copied song or teacher-approved sequence.",
       "id": "L08",
-      "title": "Read, play and rest",
+      "title": "Read a melody with rests",
       "goal": "Reading music",
       "objective": "Combine familiar pitches, durations and rests in two bars.",
       "prerequisites": [
@@ -1502,7 +1502,7 @@
       },
       "contentNotes": "Original activity wording and symbolic patterns informed by the attributed open theory sources. Not a copied song or teacher-approved sequence.",
       "id": "L09",
-      "title": "Make a musical answer",
+      "title": "Answer a musical idea",
       "goal": "Create",
       "objective": "Create, revise and save an original musical response.",
       "prerequisites": [],

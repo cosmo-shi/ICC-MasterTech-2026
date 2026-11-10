@@ -34,8 +34,8 @@ export function CheckPanel({
   const listen = useMemo(() => {
     if (kind !== 'listen' || !take) return null;
     const c = listenCheck(take, target, skill);
-    const right = c ? { phrase: c.version.phrase, says: c.version.says } : { phrase: target, says: 'This is the written music' };
-    const ask = c ? c.ask : 'Which one is the written music?';
+    const right = c ? { phrase: c.version.phrase, says: c.version.says } : { phrase: target, says: 'This is the lesson’s music' };
+    const ask = c ? c.ask : 'Which one is the lesson’s music?';
     const flip = seed % 2 === 1;
     const opts = [
       { id: 'mine', phrase: take, says: 'Your try, as you played it' },

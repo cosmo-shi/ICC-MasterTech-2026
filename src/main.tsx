@@ -4,6 +4,10 @@ import './index.css'
 import './styles/system.css'
 import App from './App.tsx'
 import { startClassSync } from './sync/index.ts'
+import { TEST_DATA } from './fixtures/testMode.ts'
+import { fixtureAttempts } from './fixtures/teacherFixtures.ts'
+import { store } from './store/db.ts'
+
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -21,7 +25,9 @@ if (typeof window !== 'undefined' && window.visualViewport) {
 }
 
 // Class link: does nothing until this device joins a class.
-startClassSync()
+// Test data mode (?testdata): made-up records in memory only, and nothing is synced.
+if (TEST_DATA) store.loadTestData(fixtureAttempts())
+else startClassSync()
 
 // Offline cache (built app only). Failure just means no offline copy; the app still works.
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {

@@ -1,3 +1,4 @@
+import { TEST_DATA } from '../fixtures/testMode.ts';
 // What Carmen's learning decisions are built on. The learner model is Bayesian Knowledge
 // Tracing (bkt.ts, on-device, per skill). This file turns its posterior estimates into the few
 // decisions the app actually makes, and keeps the evidence for each one so a teacher can see
@@ -29,12 +30,12 @@ export interface SkillInfo {
 }
 
 export const SKILLS: SkillInfo[] = [
-  { id: 'pulse', name: 'Keeping the beat', teacher: 'Sounds land within the on-time window of the beat', theory: 'pulse' },
+  { id: 'pulse', name: 'Pulse', teacher: 'Sounds land within the on-time window of the beat', theory: 'pulse' },
   { id: 'rests', name: 'Rests', teacher: 'No sound during written rests', theory: 'rests' },
-  { id: 'subdivision', name: 'Two sounds in a beat', teacher: 'Quaver pairs land on time against the beat', theory: 'quavers' },
-  { id: 'pitch', name: 'The right notes', teacher: 'Every expected key was played (untimed tasks have no timing penalty)', theory: 'note-names' },
-  { id: 'reading', name: 'Reading notes', teacher: 'Right keys when the task is read from the stave', theory: 'stave' },
-  { id: 'duration', name: 'Holding notes', teacher: 'Notes held for their written length', theory: 'note-values' },
+  { id: 'subdivision', name: 'Subdivision', teacher: 'Quaver pairs land on time against the beat', theory: 'quavers' },
+  { id: 'pitch', name: 'Pitch accuracy', teacher: 'Every expected key was played (untimed tasks have no timing penalty)', theory: 'note-names' },
+  { id: 'reading', name: 'Notation reading', teacher: 'Right keys when the task is read from the stave', theory: 'stave' },
+  { id: 'duration', name: 'Note duration', teacher: 'Notes held for their written length', theory: 'note-values' },
 ];
 export const skillById = (id: SkillId) => SKILLS.find((s) => s.id === id)!;
 
@@ -50,10 +51,13 @@ export interface TeacherOverrides {
   skills: Partial<Record<SkillId, SkillOverride>>;
   /** A teacher-chosen next activity, shown to the child instead of the model's. */
   next?: string;
+  /** Supports the teacher switched on for this learner on this device (ids from checkin.ts SUPPORTS). */
+  supports?: string[];
 }
 const OVR_KEY = 'carmen-teacher-overrides-v1';
 const ovrListeners = new Set<() => void>();
 function readAll(): Record<string, TeacherOverrides> {
+  if (TEST_DATA) return {};
   try {
     return JSON.parse(localStorage.getItem(OVR_KEY) ?? '{}');
   } catch {
@@ -65,7 +69,7 @@ export const teacherOverrides = {
   get: (playerId?: string): TeacherOverrides => (playerId && overrides[playerId]) || { skills: {} },
   set(playerId: string, o: TeacherOverrides) {
     overrides = { ...overrides, [playerId]: o };
-    try {
+    if (!TEST_DATA) try {
       localStorage.setItem(OVR_KEY, JSON.stringify(overrides));
     } catch {
       /* kept for this visit */
@@ -197,8 +201,8 @@ export function suggestGroups(byChild: { id: string; estimates: SkillEstimate[] 
 
 /** Teacher words for a band. Never a percentage or a diagnosis. */
 export const BAND_WORDS: Record<Band, string> = {
-  new: 'Not enough tries yet',
+  new: 'Limited evidence',
   growing: 'Still learning',
-  nearly: 'Nearly there',
+  nearly: 'Almost secure',
   secure: 'Secure on their own',
 };

@@ -15,6 +15,27 @@
      track hues      — Rhythm basics coral, Piano periwinkle, Drums sky, Create orchid
 */
 
+/* Type (direction A, momo 10 Nov): Bricolage Grotesque for titles and headings, Atkinson Hyperlegible
+   Next for reading and controls, Nunito only for the wordmark. ♯ ♭ ♮ come from a Noto Music subset,
+   because none of these faces has them. All self-hosted, SIL OFL 1.1 (ASSETS.md). */
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  src: url('/fonts/BricolageGrotesque-wght.woff2') format('woff2');
+  font-weight: 200 800;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Atkinson Hyperlegible Next';
+  src: url('/fonts/AtkinsonHyperlegibleNext-wght.woff2') format('woff2');
+  font-weight: 200 800;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Carmen Music';
+  src: url('/fonts/NotoMusic-symbols.woff2') format('woff2');
+  unicode-range: U+266D-266F;
+  font-display: swap;
+}
 @font-face {
   font-family: 'Nunito';
   src: url('/fonts/Nunito-wght.woff2') format('woff2');
@@ -118,12 +139,16 @@
   --shadow-pop: 0 12px 32px rgb(35 38 74 / 0.18);
 
   /* Type: one family, Nunito. Weight and size give the roles. */
-  --font-brand: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-ui: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --w-display: 900; /* wordmark, screen titles, big feedback */
-  --w-head: 800;
-  --w-control: 700;
-  --w-body: 500;
+  --font-wordmark: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Carmen Music', 'Bricolage Grotesque', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-brand: var(--font-display); /* older name, kept so existing title rules use the display face */
+  --font-ui: 'Carmen Music', 'Atkinson Hyperlegible Next', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body: var(--font-ui);
+  --display-tracking: -0.02em;
+  --w-display: 800; /* screen titles, big feedback (Bricolage's heaviest) */
+  --w-head: 700;
+  --w-control: 650;
+  --w-body: 400;
   --t-title: clamp(1.8rem, 5.5vw, 2.35rem);
   --t-head: 1.25rem;
   --t-do: 1.2rem;

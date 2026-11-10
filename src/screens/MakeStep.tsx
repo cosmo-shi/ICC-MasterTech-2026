@@ -94,7 +94,7 @@ export function MakeStep({ lessonId, go }: { lessonId: string; go: (r: string) =
     >
       <div className="make">
         <div className="make-head">
-          <p className="kicker">Make your own</p>
+          <p className="kicker">Compose</p>
           <h1 className="lp-title small" tabIndex={-1}>
             {spec.ask}
           </h1>

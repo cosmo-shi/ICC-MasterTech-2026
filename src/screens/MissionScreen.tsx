@@ -291,11 +291,15 @@ export function MissionScreen({ missionId, go }: { missionId: string; go: (r: st
           <Icon name="back" size={20} /> Learn
         </button>
       </nav>
-      <header className="lesson-head">
+      <header className="lesson-head lx-create-head tr-create">
         <div>
-          <p className="eyebrow">Partner project</p>
-          <h1 className="h1">{mission.title}</h1>
-          <p className="lede">{fewWords ? mission.steps[0] : blurb(mission.id, mission.objective)}</p>
+          <p className="eyebrow">Compose and create · partner project</p>
+          <h1 className="lx-display lx-create-title">{mission.title}</h1>
+          {(() => {
+            const lede = fewWords ? mission.steps[0] : blurb(mission.id, mission.objective);
+            // Some projects' first step repeats the title word for word; don't say it twice.
+            return lede.trim() === mission.title.trim() ? null : <p className="lede">{lede}</p>;
+          })()}
           {mission.band === 'F' && <p className="note-text">A grown-up can help with the buttons. The music choices are yours.</p>}
         </div>
       </header>

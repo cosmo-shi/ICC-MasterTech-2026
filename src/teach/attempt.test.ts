@@ -25,9 +25,9 @@ const withRest = phrase([drum('a', 0, 1), drum('b', 1, 1), drum('c', 2, 1), rest
 describe('feedback for one attempt: one observation, why, one next step', () => {
   it('a tap in a rest names the beat to leave quiet and why the gap matters', () => {
     const f = feedback(withRest, taps([0, 1000, 2000, 3000]));
-    expect(f.title).toBe('Leave beat 4 quiet');
-    expect(f.observed).toMatch(/beat 4, which is a rest/);
-    expect(f.why).toMatch(/silence you still count/);
+    expect(f.title).toBe('Beat 4 is a rest');
+    expect(f.observed).toMatch(/beat 4, which is a crotchet rest/);
+    expect(f.why).toMatch(/Keep counting, but leave that beat silent/);
     expect(f.compare?.kind).toBe('reply');
   });
 
@@ -48,16 +48,19 @@ describe('feedback for one attempt: one observation, why, one next step', () => 
     const fast = phrase([0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5].map((b, i) => drum(`q${i}`, b, 0.5)));
     const t = [0, 480, 940, 1390, 1830, 2270, 2710, 3150];
     const f = feedback(fast, taps(t));
-    expect(f.title).toBe('Hold the speed to the end');
+    expect(f.title).toBe('Keep the same speed to the end');
   });
 
   it('a wrong note names both notes and how they relate', () => {
     const tune = phrase([60, 62, 64].map((m, i) => ({ id: `n${i}`, kind: 'note' as const, onset: i * TPQ, duration: TPQ, midi: m, velocity: 0.7 })), 'keyboard');
     const untimed: Assessment = { ...timed, mode: 'pitch-sequence', checkPitch: true, checkTiming: false };
     const f = feedback(tune, [60, 62, 65].map((m, i) => ({ id: `i${i}`, onsetMs: i * 1000, midi: m, source: 'pointer' as const })), untimed);
-    expect(f.title).toBe('Note 3 is E');
-    expect(f.observed).toBe('You played F for note 3. The music has E.');
+    expect(f.title).toBe('The note was E');
+    expect(f.observed).toBe('Note 3 was E. You played F.');
     expect(f.why).toMatch(/E is the next note lower than F/);
+    // Paired comparison: the two notes can be heard and seen side by side.
+    expect(f.pairs).toEqual([{ index: 2, expected: 64, played: 65 }]);
+    expect(f.nextLabel).toBe('Try that note');
   });
 
   it('an attempt that stopped early is asked to carry on, not marked as missing notes', () => {
@@ -101,5 +104,17 @@ describe('feedback for one attempt: one observation, why, one next step', () => 
     }
     expect(unclearAttempt('device').why).toMatch(/not you/);
     expect(unclearAttempt('too-few').advice).toMatch(/screen/);
+  });
+});
+
+describe('several wrong notes in one attempt', () => {
+  it('names every wrong note, not only the first', () => {
+    const tune = phrase([60, 62, 64, 60].map((m, i) => ({ id: `n${i}`, kind: 'note' as const, onset: i * TPQ, duration: TPQ, midi: m, velocity: 0.7 })), 'keyboard');
+    const untimed: Assessment = { ...timed, mode: 'pitch-sequence', checkPitch: true, checkTiming: false };
+    const f = feedback(tune, [60, 65, 67, 60].map((m, i) => ({ id: `i${i}`, onsetMs: i * 1000, midi: m, source: 'pointer' as const })), untimed);
+    expect(f.title).toBe('Notes 2 and 3 were wrong');
+    expect(f.observed).toBe('Note 2 was D. You played F. Note 3 was E. You played G.');
+    expect(f.pairs?.map((p) => p.index)).toEqual([1, 2]);
+    expect(f.nextLabel).toBe('Start from note 2');
   });
 });
