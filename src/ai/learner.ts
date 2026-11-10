@@ -1,3 +1,4 @@
+import { TEST_DATA } from '../fixtures/testMode.ts';
 // What Carmen's learning decisions are built on. The learner model is Bayesian Knowledge
 // Tracing (bkt.ts, on-device, per skill). This file turns its posterior estimates into the few
 // decisions the app actually makes, and keeps the evidence for each one so a teacher can see
@@ -50,10 +51,13 @@ export interface TeacherOverrides {
   skills: Partial<Record<SkillId, SkillOverride>>;
   /** A teacher-chosen next activity, shown to the child instead of the model's. */
   next?: string;
+  /** Supports the teacher switched on for this learner on this device (ids from checkin.ts SUPPORTS). */
+  supports?: string[];
 }
 const OVR_KEY = 'carmen-teacher-overrides-v1';
 const ovrListeners = new Set<() => void>();
 function readAll(): Record<string, TeacherOverrides> {
+  if (TEST_DATA) return {};
   try {
     return JSON.parse(localStorage.getItem(OVR_KEY) ?? '{}');
   } catch {
@@ -65,7 +69,7 @@ export const teacherOverrides = {
   get: (playerId?: string): TeacherOverrides => (playerId && overrides[playerId]) || { skills: {} },
   set(playerId: string, o: TeacherOverrides) {
     overrides = { ...overrides, [playerId]: o };
-    try {
+    if (!TEST_DATA) try {
       localStorage.setItem(OVR_KEY, JSON.stringify(overrides));
     } catch {
       /* kept for this visit */

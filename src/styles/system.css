@@ -1066,3 +1066,249 @@ h2[tabindex='-1']:focus {
   margin: 0 0 var(--s1);
   font-weight: 800;
 }
+
+/* ---- Lesson library (review branch): replaces the winding path ---- */
+.lib-unit {
+  display: grid;
+  gap: var(--s2);
+  margin-top: var(--s6, 32px);
+}
+.lib-unit-h {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  padding-left: var(--s3);
+  border-left: 4px solid var(--track, var(--dusk));
+}
+.lib-unit.tr-foundations { --track: var(--tr-foundations); }
+.lib-unit.tr-piano { --track: var(--tr-piano); }
+.lib-unit.tr-drums { --track: var(--tr-drums); }
+.lib-unit.tr-create { --track: var(--tr-create); }
+.lib-unit-about {
+  margin: 0 0 var(--s2);
+  color: var(--ink-soft);
+}
+.lib-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.lib-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: 'text actions' 'preview preview';
+  gap: var(--s2) var(--s4);
+  align-items: center;
+  padding: var(--s4) 0;
+  border-top: 1px solid var(--hairline);
+}
+.lib-row:last-child {
+  border-bottom: 1px solid var(--hairline);
+}
+@media (min-width: 720px) {
+  .lib-row {
+    grid-template-columns: minmax(0, 1fr) 240px auto;
+    grid-template-areas: 'text preview actions';
+  }
+}
+.lib-text {
+  grid-area: text;
+  display: grid;
+  gap: 4px;
+}
+.lib-title {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 800;
+}
+.lib-desc {
+  margin: 0;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+.lib-status {
+  margin: 0;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s2);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+.lib-status.st-done svg {
+  color: var(--good);
+}
+.lib-status.st-started svg {
+  color: var(--near);
+}
+.lib-status.st-new {
+  color: var(--ink-soft);
+}
+.lib-next-tag {
+  padding: 2px var(--s2);
+  border-radius: 999px;
+  background: var(--sun-tint);
+  color: var(--ink);
+}
+.lib-row.is-next .lib-title::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin: 0 var(--s2) 2px 0;
+  border-radius: 50%;
+  background: var(--sun);
+}
+.lib-preview {
+  grid-area: preview;
+  min-width: 0;
+}
+.lib-preview .notation {
+  margin: 0;
+}
+.lib-preview .notation-svg svg {
+  max-height: 64px;
+  width: 100%;
+}
+.lib-preview .drum-key {
+  display: none;
+}
+.lib-actions {
+  grid-area: actions;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+}
+.lib-actions .btn,
+.lib-actions .btn-quiet {
+  min-width: 112px;
+  min-height: var(--target);
+}
+.lib-preview .notation-svg {
+  min-height: 0;
+}
+.lib-preview .notation {
+  padding: 2px var(--s2);
+  max-width: 360px;
+}
+.test-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s2);
+  background: var(--near-bg);
+  color: var(--ink);
+  border: 2px dashed var(--near);
+}
+.test-banner a {
+  margin-left: auto;
+  font-weight: 700;
+}
+
+/* ---- Teacher (review branch): modes, progress table and list, support plan, assignments ---- */
+.teacher-mode {
+  margin: var(--s3) 0;
+}
+.skill-grid th,
+.skill-grid td {
+  white-space: normal;
+  vertical-align: top;
+}
+.skill-grid thead th {
+  min-width: 96px;
+  overflow-wrap: anywhere;
+}
+.skill-grid tbody th,
+.skill-grid thead th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--paper);
+  box-shadow: 1px 0 0 var(--hairline);
+}
+.skill-list {
+  display: none;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+@media (max-width: 640px) {
+  .dash .table-wrap:has(.skill-grid) {
+    display: none;
+  }
+  .skill-list {
+    display: grid;
+    gap: 0;
+  }
+  .skill-list > li {
+    padding: var(--s3) 0;
+    border-top: 1px solid var(--hairline);
+  }
+  .skill-list dl {
+    margin: var(--s2) 0 0;
+    display: grid;
+    gap: 4px;
+  }
+  .skill-list dl > div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--s3);
+  }
+  .skill-list dt {
+    font-weight: 700;
+  }
+  .skill-list dd {
+    margin: 0;
+    text-align: right;
+  }
+}
+.sp-rec {
+  margin: 0 0 var(--s3);
+  padding: var(--s3);
+  border-radius: var(--r-md);
+  background: var(--paper-sunk);
+}
+.sp-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--s2);
+}
+.sp-row {
+  display: flex;
+  gap: var(--s3);
+  align-items: flex-start;
+  min-height: var(--target);
+  cursor: pointer;
+}
+.sp-row input {
+  width: 24px;
+  height: 24px;
+  margin-top: 2px;
+  flex: none;
+}
+.sp-label {
+  font-weight: 700;
+}
+.assign-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.assign-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: var(--s3);
+  align-items: center;
+  padding: var(--s3) 0;
+  border-top: 1px solid var(--hairline);
+}
+@media (max-width: 560px) {
+  .assign-row {
+    grid-template-columns: 1fr;
+  }
+}
+.empty-state .h2 {
+  margin-top: 0;
+}

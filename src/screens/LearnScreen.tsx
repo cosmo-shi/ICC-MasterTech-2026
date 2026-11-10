@@ -2,7 +2,8 @@ import { FromTeacher } from './MyClass.tsx';
 import { lessonStars, nextFor, reasonText } from '../ai/learner.ts';
 import { useState } from 'react';
 import { blurb, lessonById, missionById } from '../data/catalog.ts';
-import { type Activity, type TrackId, activityById, positionInTrack, trackActivities, trackById } from '../data/curriculum.ts';
+import { type Activity, type TrackId, activityById, lessonFor, positionInTrack, trackActivities, trackById } from '../data/curriculum.ts';
+import { Notation } from '../ui/Notation.tsx';
 import { Icon, type IconName, type IconSize } from '../ui/icons.tsx';
 import { Dialog } from '../ui/Dialog.tsx';
 import { useMyLearning } from '../ui/useAttempts.ts';
@@ -25,7 +26,7 @@ export function LearnTabs({ at, go }: { at: 'path' | 'theory'; go: (r: string) =
   return (
     <div className="segmented learn-tabs" role="tablist" aria-label="Learn">
       <button type="button" role="tab" aria-selected={at === 'path'} className="segment" onClick={() => go('#/learn')}>
-        <Icon name="learn" size={20} /> Pathway
+        <Icon name="learn" size={20} /> Lessons
       </button>
       <button type="button" role="tab" aria-selected={at === 'theory'} className="segment" onClick={() => go('#/theory')}>
         <Icon name="notes" size={20} /> Music theory
@@ -68,7 +69,6 @@ function Level({ n }: { n: number }) {
   );
 }
 
-const ZIG = [0, 1, 2, 1, 0, -1, -2, -1];
 
 /** Track name as a label with its icon: one fact, not squeezed into a sentence. */
 export function TrackTag({ id }: { id: TrackId }) {
@@ -145,6 +145,29 @@ export function LearnScreen({ go }: { go: (r: string) => void }) {
         <LearnTabs at="path" go={go} />
       </div>
 
+      <div className="learn-inst">
+        <h2 className="h2 learn-inst-h" id="inst-h">
+          Learn on
+        </h2>
+        <div className="segmented instrument-switch" role="radiogroup" aria-labelledby="inst-h">
+          {(['keyboard', 'drums'] as const).map((i) => (
+            <button
+              key={i}
+              type="button"
+              role="radio"
+              aria-checked={inst === i}
+              className="segment"
+              onClick={() => {
+                setInst(i);
+                set('instrument', i);
+              }}
+            >
+              <Icon name={i === 'keyboard' ? 'piano' : 'drum'} size={20} /> {i === 'keyboard' ? 'Piano' : 'Drums'}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <FromTeacher go={go} />
 
       <section className={`resume tr-${nextAct.track}`} aria-labelledby="resume-h">
@@ -170,29 +193,6 @@ export function LearnScreen({ go }: { go: (r: string) => void }) {
         </button>
       </section>
 
-      <div className="learn-inst">
-        <h2 className="h2 learn-inst-h" id="inst-h">
-          Learn on
-        </h2>
-        <div className="segmented instrument-switch" role="radiogroup" aria-labelledby="inst-h">
-          {(['keyboard', 'drums'] as const).map((i) => (
-            <button
-              key={i}
-              type="button"
-              role="radio"
-              aria-checked={inst === i}
-              className="segment"
-              onClick={() => {
-                setInst(i);
-                set('instrument', i);
-              }}
-            >
-              <Icon name={i === 'keyboard' ? 'piano' : 'drum'} size={20} /> {i === 'keyboard' ? 'Piano' : 'Drums'}
-            </button>
-          ))}
-        </div>
-      </div>
-
       {nextHere && !onInstrument(nextAct, inst) && (
         <button type="button" className="track-pick" onClick={() => setOpen(nextHere.id)}>
           <span className="kicker">Next on {instName}</span>
@@ -202,47 +202,40 @@ export function LearnScreen({ go }: { go: (r: string) => void }) {
       )}
 
       {UNITS[inst].map((u) => {
-        const list = trackActivities(u.track).filter((a) => onInstrument(a, inst));
+        const list = trackActivities(u.track).filter((a) => onInstrument(a, inst) && a.kind === 'lesson');
         if (!list.length) return null;
         return (
-          <section key={u.track} className={`unit tr-${u.track}`} aria-labelledby={`unit-${u.track}`}>
-            <div className="track-banner">
-              <h3 id={`unit-${u.track}`} className="track-name">
-                {u.title}
-              </h3>
-              <p className="track-about">{u.about}</p>
-            </div>
-            <ol className="nodes" aria-label={`${u.title} steps`}>
-              {list.map((a, i) => {
-                const here = a.id === nextId;
-                const stars = starsFor(a);
-                const state = stars === 3 ? 'done' : stars > 0 ? 'started' : 'new';
-                const project = a.kind === 'project';
-                return (
-                  <li key={a.id} className={`node-li${here ? ' is-here' : ''}`} style={{ '--off': ZIG[i % ZIG.length] } as React.CSSProperties}>
-                    {here && (
-                      <span className="node-bubble" aria-hidden="true">
-                        {stars ? 'Carry on' : 'Start'}
-                      </span>
-                    )}
-                    <button
-                      type="button"
-                      className={`node node-${state}${project ? ' node-project' : ''}${here ? ' node-here' : ''}`}
-                      aria-label={`Step ${i + 1}: ${titleOf(a.id)}. ${project ? (stars ? 'Started' : 'Project') : `${stars} of 3 stars`}${here ? '. Up next' : ''}`}
-                      aria-haspopup="dialog"
-                      onClick={() => setOpen(a.id)}
-                    >
-                      <Icon name={state === 'done' ? 'check' : project ? 'music' : inst === 'drums' ? 'drum' : 'piano'} size={32} />
-                    </button>
-                    <span className="node-label">{titleOf(a.id)}</span>
-                    {!project && <Stars n={stars} size={16} />}
-                  </li>
-                );
-              })}
+          <section key={u.track} className={`lib-unit tr-${u.track}`} aria-labelledby={`unit-${u.track}`}>
+            <h2 id={`unit-${u.track}`} className="lib-unit-h">
+              {u.title}
+            </h2>
+            <p className="lib-unit-about">{u.about}</p>
+            <ol className="lib-rows">
+              {list.map((a) => (
+                <LibraryRow key={a.id} a={a} inst={inst} stars={starsFor(a)} here={a.id === nextId} onOpen={() => openLesson(a.id)} onInfo={() => setOpen(a.id)} />
+              ))}
             </ol>
           </section>
         );
       })}
+
+      {(() => {
+        const projects = UNITS[inst].flatMap((u) => trackActivities(u.track)).filter((a) => onInstrument(a, inst) && a.kind === 'project');
+        if (!projects.length) return null;
+        return (
+          <section className="lib-unit tr-create" aria-labelledby="unit-projects">
+            <h2 id="unit-projects" className="lib-unit-h">
+              Creative projects
+            </h2>
+            <p className="lib-unit-about">Make your own music. These are described, not marked.</p>
+            <ol className="lib-rows">
+              {projects.map((a) => (
+                <LibraryRow key={a.id} a={a} inst={inst} stars={starsFor(a)} here={a.id === nextId} onOpen={() => openLesson(a.id)} onInfo={() => setOpen(a.id)} />
+              ))}
+            </ol>
+          </section>
+        );
+      })()}
 
       <button type="button" className="track-pick listen-pick" onClick={() => go('#/play/instrument')}>
         <span className="kicker">Your own instrument</span>
@@ -307,5 +300,39 @@ function StopSheet({ id, stars, started, onClose, go }: { id: string; stars: num
         </button>
       </div>
     </Dialog>
+  );
+}
+
+/** One library row: title, description, progress in words and a shape, a stave preview, and Start / Continue. */
+function LibraryRow({ a, inst, stars, here, onOpen, onInfo }: { a: Activity; inst: InstrumentId; stars: number; here: boolean; onOpen: () => void; onInfo: () => void }) {
+  const project = a.kind === 'project';
+  const state = project ? (stars ? 'started' : 'new') : stars === 3 ? 'done' : stars > 0 ? 'started' : 'new';
+  const base = lessonById(a.id);
+  const preview = base ? (lessonFor(base, inst).practice ?? null) : null;
+  const status = state === 'done' ? 'Completed' : state === 'started' ? (project ? 'Started' : `Started · ${stars} of 3`) : 'Not started';
+  return (
+    <li className={`lib-row is-${state}${here ? ' is-next' : ''}`}>
+      <div className="lib-text">
+        <h3 className="lib-title">{titleOf(a.id)}</h3>
+        <p className="lib-desc">{a.learn}</p>
+        <p className={`lib-status st-${state}`}>
+          <Icon name={state === 'done' ? 'good' : state === 'started' ? 'half' : 'ring'} size={16} /> {status}
+          {here && <span className="lib-next-tag">Up next</span>}
+        </p>
+      </div>
+      {preview && preview.events.length > 0 && (
+        <div className="lib-preview" aria-hidden="true">
+          <Notation phrase={preview} />
+        </div>
+      )}
+      <div className="lib-actions">
+        <button type="button" className={state === 'done' ? 'btn-quiet' : 'btn'} onClick={onOpen}>
+          {state === 'done' ? 'Practise again' : state === 'started' ? 'Continue' : 'Start'}
+        </button>
+        <button type="button" className="btn-text" onClick={onInfo} aria-haspopup="dialog">
+          About <span className="sr-only">{titleOf(a.id)}</span>
+        </button>
+      </div>
+    </li>
   );
 }

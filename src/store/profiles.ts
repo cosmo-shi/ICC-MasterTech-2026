@@ -1,3 +1,5 @@
+import { TEST_DATA } from '../fixtures/testMode.ts';
+import { FIXTURE_PLAYERS } from '../fixtures/teacherFixtures.ts';
 // "Who's playing?" — local players on a shared device. No accounts, no passwords, no email,
 // nothing sent anywhere. A player is a first name or nickname and a colour, kept in this
 // browser only. Work is tagged with the player so a class can share tablets.
@@ -30,6 +32,8 @@ interface State {
 }
 
 function read(): State {
+  // Test data mode: made-up learners in memory only, never mixed with this device's players.
+  if (TEST_DATA) return { players: FIXTURE_PLAYERS, current: null };
   try {
     const players = JSON.parse(localStorage.getItem(KEY) ?? '[]') as Player[];
     const current = sessionStorage.getItem(CURRENT) ?? localStorage.getItem(CURRENT);
@@ -44,6 +48,7 @@ const listeners = new Set<() => void>();
 const emit = () => listeners.forEach((f) => f());
 
 function save() {
+  if (TEST_DATA) return;
   try {
     localStorage.setItem(KEY, JSON.stringify(state.players));
     if (state.current) {
@@ -169,6 +174,7 @@ export const teacher = {
     emit();
   },
   isOpen(): boolean {
+    if (TEST_DATA) return true; // made-up learners only, so the teacher view opens without a PIN
     try {
       return sessionStorage.getItem(OPEN_KEY) === '1';
     } catch {

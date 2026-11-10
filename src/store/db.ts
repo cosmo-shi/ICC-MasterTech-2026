@@ -129,9 +129,19 @@ class LocalStore {
     });
   }
 
+  /** Test data mode: memory only, filled with made-up records; the device is never opened. */
+  loadTestData(attempts: unknown[]) {
+    this.testData = true;
+    this.persistent = false;
+    for (const st of STORES) this.mem[st].clear();
+    for (const a of attempts) this.mem.attempts.set((a as { id: string }).id, a);
+    this.emit();
+  }
+  private testData = false;
+
   /** Switch between memory-only and on-device saving. Moving to device copies this session's records. */
   async setPersistent(on: boolean): Promise<void> {
-    if (on === this.persistent) return;
+    if (this.testData || on === this.persistent) return;
     if (on) {
       try {
         this.db = await this.open();

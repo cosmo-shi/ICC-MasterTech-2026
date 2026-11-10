@@ -91,7 +91,7 @@ export function TeacherClasses({ space, onSignedOut }: { space: TeachingSpace | 
         <p>
           {teacherAuth.configured
             ? 'Classes need a school account. You’re using the device-only PIN view, which shows only what was played on this device.'
-            : 'School accounts aren’t set up for this copy of Carmen, so classes can’t be shared across devices yet. The Class and Students tabs show what was played on this device.'}
+            : 'School accounts are not available in this version. Choose “On this device” to see practice recorded on this device.'}
         </p>
       </section>
     );

@@ -88,14 +88,15 @@ function AssessedLesson({ lessonId, go, startAt }: Props & { startAt?: "try" }) 
   const [inst, setInst] = useState<InstrumentId>(() => instrumentFor(lessonId, base.practice?.instrument ?? prefs.instrument));
   const lesson = useMemo(() => lessonFor(base, inst), [base, inst]);
   // Bayesian learner model: how much support to offer at the start, and which fact to talk about first.
-  const { planning, context } = useMyLearning();
+  const { planning, context, overrides: myOverrides } = useMyLearning();
   const tctx = context({ currentLessonId: lessonId });
   const support = supportFor(planning, lessonId, tctx);
   const focusHint = coachFocus(planning, lessonId, tctx);
   const pathway = pathwayById(prefs.pathway);
   // Supports the learner's teacher switched on (class link). They start on; the learner can still change them.
   const { link: myClass } = useMyClass();
-  const fromTeacher = classSupports(myClass, lessonId);
+  // Plus the supports a teacher set for this learner on this device (Teacher > Students > Support plan).
+  const fromTeacher = { ...classSupports(myClass, lessonId), ...Object.fromEntries((myOverrides.supports ?? []).map((k) => [k, true])) } as ReturnType<typeof classSupports>;
   const teacherOn = (Object.keys(fromTeacher) as SupportId[]).filter((k) => fromTeacher[k] && k in SUPPORTS);
   const [mode, setMode] = useState<Mode>("practice");
   const [stage, setStage] = useState<"hear" | "learn" | "try">(startAt ?? "hear");

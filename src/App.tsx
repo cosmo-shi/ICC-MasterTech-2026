@@ -12,6 +12,7 @@ import { Avatar, EntryScreen } from './screens/EntryScreen.tsx';
 import { players, teacher, usePlayers } from './store/profiles.ts';
 import { InputLog } from './ui/InputLog.tsx';
 import { InstrumentScreen } from './screens/InstrumentScreen.tsx';
+import { TEST_DATA } from './fixtures/testMode.ts';
 import { TeacherWelcome } from './screens/TeacherWelcome.tsx';
 import { listening } from './input/session.ts';
 
@@ -81,10 +82,19 @@ function Shell() {
 
   const scene = (section === 'play' && arg === 'instrument') || section === 'learn' || section === 'lesson' || section === 'mission' || section === 'theory' ? 'learn' : section === 'music' ? 'music' : section === 'teacher' ? 'quiet' : 'play';
 
-  const banner = saveError && (
-    <p className="banner" role="alert">
-      {saveError}
-    </p>
+  const banner = (
+    <>
+      {TEST_DATA && (
+        <p className="banner test-banner" role="note">
+          <Icon name="info" size={20} /> <strong>Test data.</strong> Made-up learners for previewing the teacher screens. Nothing is saved. <a href={window.location.pathname + window.location.hash}>Leave test data</a>
+        </p>
+      )}
+      {saveError && (
+        <p className="banner" role="alert">
+          {saveError}
+        </p>
+      )}
+    </>
   );
 
   // Lessons and the teacher space take the whole screen: no tabs, one thing at a time.
