@@ -1191,3 +1191,124 @@ h2[tabindex='-1']:focus {
   padding: 2px var(--s2);
   max-width: 360px;
 }
+.test-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s2);
+  background: var(--near-bg);
+  color: var(--ink);
+  border: 2px dashed var(--near);
+}
+.test-banner a {
+  margin-left: auto;
+  font-weight: 700;
+}
+
+/* ---- Teacher (review branch): modes, progress table and list, support plan, assignments ---- */
+.teacher-mode {
+  margin: var(--s3) 0;
+}
+.skill-grid th,
+.skill-grid td {
+  white-space: normal;
+  vertical-align: top;
+}
+.skill-grid thead th {
+  min-width: 96px;
+  overflow-wrap: anywhere;
+}
+.skill-grid tbody th,
+.skill-grid thead th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--paper);
+  box-shadow: 1px 0 0 var(--hairline);
+}
+.skill-list {
+  display: none;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+@media (max-width: 640px) {
+  .dash .table-wrap:has(.skill-grid) {
+    display: none;
+  }
+  .skill-list {
+    display: grid;
+    gap: 0;
+  }
+  .skill-list > li {
+    padding: var(--s3) 0;
+    border-top: 1px solid var(--hairline);
+  }
+  .skill-list dl {
+    margin: var(--s2) 0 0;
+    display: grid;
+    gap: 4px;
+  }
+  .skill-list dl > div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--s3);
+  }
+  .skill-list dt {
+    font-weight: 700;
+  }
+  .skill-list dd {
+    margin: 0;
+    text-align: right;
+  }
+}
+.sp-rec {
+  margin: 0 0 var(--s3);
+  padding: var(--s3);
+  border-radius: var(--r-md);
+  background: var(--paper-sunk);
+}
+.sp-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--s2);
+}
+.sp-row {
+  display: flex;
+  gap: var(--s3);
+  align-items: flex-start;
+  min-height: var(--target);
+  cursor: pointer;
+}
+.sp-row input {
+  width: 24px;
+  height: 24px;
+  margin-top: 2px;
+  flex: none;
+}
+.sp-label {
+  font-weight: 700;
+}
+.assign-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.assign-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: var(--s3);
+  align-items: center;
+  padding: var(--s3) 0;
+  border-top: 1px solid var(--hairline);
+}
+@media (max-width: 560px) {
+  .assign-row {
+    grid-template-columns: 1fr;
+  }
+}
+.empty-state .h2 {
+  margin-top: 0;
+}
