@@ -35,7 +35,7 @@ export function noteFeedback(v: NoteVerdict): { what: string; why: string; next:
       const up = v.semitones > 0;
       const near = Math.abs(v.semitones) <= 2;
       return {
-        what: `That sounded like ${name(v.heard)}. The note asked for is ${name(v.target)}.`,
+        what: `That sounded like ${name(v.heard)}. The note to play is ${name(v.target)}.`,
         why: near ? `${name(v.heard)} is right next to ${name(v.target)}, a little ${up ? 'higher' : 'lower'}.` : `${name(v.heard)} is ${up ? 'higher' : 'lower'} than ${name(v.target)}.`,
         next: `Hear ${name(v.target)}, then move ${up ? 'down' : 'up'} to find it.`,
         counts: true,

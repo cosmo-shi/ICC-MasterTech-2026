@@ -52,7 +52,7 @@ export function MiniKeys({ from, to, marks, onKey, label }: { from: number; to: 
 }
 
 /**
- * The wrong-note comparison: the note the music asked for and the note that was played, each one
+ * The wrong-note comparison: the written note and the note that was played, each one
  * audible, on the keys and on the stave, side by side (video QA PED-01).
  */
 export function NotePair({ expected, played }: { expected: number; played: number }) {
@@ -89,7 +89,7 @@ export function NotePair({ expected, played }: { expected: number; played: numbe
       <div className="np-buttons">
         <button type="button" className="btn-quiet np-btn np-good" onClick={() => hear('music')} aria-pressed={last === 'music'}>
           <Icon name="ear" size={20} /> Hear {exp}
-          <span className="np-sub">the music</span>
+          <span className="np-sub">written note</span>
         </button>
         <button type="button" className="btn-quiet np-btn np-miss" onClick={() => hear('yours')} aria-pressed={last === 'yours'}>
           <Icon name="ear" size={20} /> Hear {got}
@@ -99,8 +99,8 @@ export function NotePair({ expected, played }: { expected: number; played: numbe
       <MiniKeys
         from={from}
         to={to}
-        label={`${exp}, the note the music asked for, and ${got}, the note you played`}
-        marks={{ [expected]: { tone: 'good', word: 'Music' }, [played]: { tone: 'miss', word: 'You' } }}
+        label={`${exp}, the written note, and ${got}, the note you played`}
+        marks={{ [expected]: { tone: 'good', word: 'Written' }, [played]: { tone: 'miss', word: 'You' } }}
         onKey={(m) => playOne(m)}
       />
       <Notation phrase={phrase} marks={[null, 'wrong']} />
@@ -108,5 +108,21 @@ export function NotePair({ expected, played }: { expected: number; played: numbe
         On the stave: {exp} first, then {got}, {expected === played ? 'the same' : expected > played ? `lower` : `higher`}.
       </p>
     </div>
+  );
+}
+
+/** One comparison per wrong note, labelled by its place in the music (all of them, in order). */
+export function WrongPairs({ wrong }: { wrong: { index: number; expected: number; played: number }[] }) {
+  if (!wrong.length) return null;
+  if (wrong.length === 1) return <NotePair expected={wrong[0].expected} played={wrong[0].played} />;
+  return (
+    <ol className="wrong-pairs">
+      {wrong.map((w) => (
+        <li key={w.index}>
+          <p className="wp-h">Note {w.index + 1}</p>
+          <NotePair expected={w.expected} played={w.played} />
+        </li>
+      ))}
+    </ol>
   );
 }

@@ -2,6 +2,7 @@
 // notes involved. Pure logic, so it is tested without a browser (l05.test.ts).
 // Middle C = C4 = MIDI 60. Untimed: pitch only, no timing penalty anywhere in this lesson.
 import { isBlackKey, midiToLetter } from '../music/theory.ts';
+import { type WrongNote, wrongNotesWords } from './music.ts';
 
 export const C4 = 60;
 export const D4 = 62;
@@ -75,30 +76,33 @@ export function judgeTap(target: number, got: number): TapResult {
   };
 }
 
-/** Compares a played sequence with the expected one, untimed. The first difference is the one point. */
-export function sequenceResult(expected: number[], played: number[]): { ok: boolean; index: number; observed: string; next: string; pair?: { expected: number; played: number } } {
-  for (let i = 0; i < expected.length; i++) {
-    const got = played[i];
-    if (got === undefined) {
-      return { ok: false, index: i, observed: `${i === 0 ? 'No notes came in.' : `The notes stopped after note ${i}.`}`, next: `The pattern has ${expected.length} notes. Note ${i + 1} is ${midiToLetter(expected[i])}.` };
-    }
-    if (got !== expected[i]) {
-      const want = midiToLetter(expected[i]);
-      const name = midiToLetter(got);
-      const sameLetter = want === name;
-      return {
-        ok: false,
-        index: i,
-        observed: sameLetter ? `Note ${i + 1} was a ${name} in another octave. The music asked for the ${want} near middle C.` : `Note ${i + 1} was ${name}. The music asked for ${want}.`,
-        next: `Hear ${want} and ${name}, then try that note.`,
-        pair: { expected: expected[i], played: got },
-      };
-    }
+/** Compares a played sequence with the expected one, untimed. Every wrong note is named, in order. */
+export function sequenceResult(expected: number[], played: number[]): { ok: boolean; index: number; observed: string; next: string; title: string; pair?: WrongNote; wrong: WrongNote[] } {
+  const wrong: WrongNote[] = [];
+  expected.forEach((m, i) => {
+    if (played[i] !== undefined && played[i] !== m) wrong.push({ index: i, expected: m, played: played[i] });
+  });
+  if (played.length < expected.length) {
+    const i = played.length;
+    return { ok: false, index: i, wrong, title: 'Keep going to the end', observed: i === 0 ? 'No notes came in.' : `The notes stopped after note ${i}.`, next: `The pattern has ${expected.length} notes. Note ${i + 1} is written as ${midiToLetter(expected[i])}.` };
+  }
+  if (wrong.length) {
+    const w = wrongNotesWords(wrong);
+    const first = wrong[0];
+    return {
+      ok: false,
+      index: first.index,
+      wrong,
+      pair: first,
+      title: w.title,
+      observed: w.observed,
+      next: wrong.length > 1 ? `Listen to each pair below, then play it again from note ${first.index + 1}.` : `Listen to ${midiToLetter(first.expected)} and ${midiToLetter(first.played)}, then play note ${first.index + 1} again.`,
+    };
   }
   if (played.length > expected.length) {
-    return { ok: false, index: expected.length, observed: `All ${expected.length} notes matched, then there was an extra ${midiToLetter(played[expected.length])}.`, next: `Stop after note ${expected.length}: the pattern ends there.` };
+    return { ok: false, index: expected.length, wrong, title: `Stop after note ${expected.length}`, observed: `All ${expected.length} notes matched, then there was an extra ${midiToLetter(played[expected.length])}.`, next: `The pattern ends after note ${expected.length}.` };
   }
-  return { ok: true, index: -1, observed: `Every note matched: ${expected.map(midiToLetter).join(', ')}.`, next: '' };
+  return { ok: true, index: -1, wrong, title: 'Every note matched', observed: `Every note matched: ${expected.map(midiToLetter).join(', ')}.`, next: '' };
 }
 
 /** Says what a one-note change does to the tune. Free creation is described, never marked. */

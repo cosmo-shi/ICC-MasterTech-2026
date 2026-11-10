@@ -14,7 +14,7 @@ import {
 import { usePrefs } from "../state/prefs.tsx";
 import { type AttemptRecord, newId, stamp, store } from "../store/db.ts";
 import { BeatDots, FactList, factMark } from "../ui/common.tsx";
-import { NotePair } from "../ui/NotePair.tsx";
+import { WrongPairs } from "../ui/NotePair.tsx";
 import { NotesLesson } from "./NotesLesson.tsx";
 import { BeatLesson } from "./BeatLesson.tsx";
 import { FeedbackSheet } from "../ui/FeedbackSheet.tsx";
@@ -954,7 +954,7 @@ function AssessedLesson({ lessonId, go, startAt }: Props & { startAt?: "try" }) 
           </>
         }
       >
-        {fb.pair && <NotePair expected={fb.pair.expected} played={fb.pair.played} />}
+        {fb.pairs && <WrongPairs wrong={fb.pairs} />}
       </FeedbackSheet>
     ) : null;
 

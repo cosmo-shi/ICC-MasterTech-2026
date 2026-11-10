@@ -14,7 +14,7 @@ import { Dialog } from '../ui/Dialog.tsx';
 import { FeedbackSheet } from '../ui/FeedbackSheet.tsx';
 import { Icon } from '../ui/icons.tsx';
 import { Notation } from '../ui/Notation.tsx';
-import { MiniKeys, NotePair, playOne } from '../ui/NotePair.tsx';
+import { MiniKeys, NotePair, WrongPairs, playOne } from '../ui/NotePair.tsx';
 import { usePlayer } from '../ui/usePlayer.ts';
 import { type LiveEvent, Workspace } from '../ui/Workspace.tsx';
 import { LessonShell } from './LessonShell.tsx';
@@ -177,7 +177,8 @@ export function NotesLesson({ go }: { go: (r: string) => void }) {
 
   const activeIndex =
     player.beat !== null ? player.beat : step.kind === 'link' && linked !== null ? notes.indexOf(linked) : step.kind === 'create' ? pick : step.kind === 'copy' || step.kind === 'independent' ? (seq ? undefined : played.length) : undefined;
-  const marks = seq && !seq.ok && seq.pair ? notes.map((_, i) => (i === seq.index ? 'wrong' : i < seq.index ? 'ok' : null)) : undefined;
+  // Every wrong note is marked on the stave, not just the first.
+  const marks = seq && !seq.ok && seq.wrong.length ? notes.map((_, i) => (seq.wrong.some((w) => w.index === i) ? 'wrong' : 'ok')) : undefined;
 
   const facts = step.kind === 'find' ? NOTES[midiToLetter(step.target) as 'C' | 'D' | 'E'] : null;
 
@@ -251,11 +252,11 @@ export function NotesLesson({ go }: { go: (r: string) => void }) {
             <div className={`lp-check ${seq.ok ? 'is-good' : 'is-miss'}`} role="status">
               <Icon name={seq.ok ? 'good' : 'near'} size={24} />
               <p>
-                <strong>{seq.observed}</strong> {seq.next}
+                <strong>{seq.ok ? seq.observed : seq.title}.</strong> {seq.ok ? '' : `${seq.observed} ${seq.next}`}
               </p>
             </div>
           )}
-          {seq?.pair && <NotePair expected={seq.pair.expected} played={seq.pair.played} />}
+          {seq && <WrongPairs wrong={seq.wrong} />}
         </>
       );
       foot = done ? continueBtn() : seq ? (
@@ -338,15 +339,15 @@ export function NotesLesson({ go }: { go: (r: string) => void }) {
             open={sheetOpen}
             onClose={() => setSheetOpen(false)}
             tone={seq.ok ? 'good' : 'miss'}
-            title={seq.ok ? 'You read it and played it on your own' : `Note ${seq.index + 1} is ${midiToLetter(notes[seq.index] ?? C4)}`}
+            title={seq.ok ? 'You read it and played it on your own' : seq.title}
             observed={seq.observed}
             why={seq.ok ? 'Reading the stave and finding the keys without letter names is what this lesson is for.' : 'Each line and space on the stave is one key. Find the landmark, then count.'}
             tag="On your own"
             warning={saveFailed ? 'This try couldn’t be saved on this device, so it won’t show in your progress.' : undefined}
-            primary={seq.ok ? { label: 'Continue', onClick: next } : { label: seq.pair ? 'Try that note' : 'Try again', onClick: tryAgain }}
+            primary={seq.ok ? { label: 'Continue', onClick: next } : { label: seq.wrong.length === 1 ? 'Try that note' : 'Try again', onClick: tryAgain }}
             secondary={seq.ok ? undefined : { label: 'Show me how', onClick: () => { setSheetOpen(false); hear(original); } }}
           >
-            {seq.pair && <NotePair expected={seq.pair.expected} played={seq.pair.played} />}
+            <WrongPairs wrong={seq.wrong} />
           </FeedbackSheet>
         )}
         <Dialog open={sharpOpen} onClose={() => setSharpOpen(false)} labelledBy="sharp-t" className="explainer">

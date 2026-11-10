@@ -9,7 +9,7 @@
 import type { CoachDecision } from '../ai/coach.ts';
 import type { CheckResult, EventFact } from '../engine/checker.ts';
 import { type Phrase, TPQ, soundingEvents } from '../music/events.ts';
-import { evenlySpaced, lengthName, pitchRelation, placeName, rhythmMix, soundWord, spans } from './music.ts';
+import { type WrongNote, wrongNotesWords, evenlySpaced, lengthName, pitchRelation, placeName, rhythmMix, soundWord, spans } from './music.ts';
 
 export type FeedbackTone = 'good' | 'near' | 'miss' | 'unclear';
 export type NextStep = 'retry' | 'independent' | 'continue';
@@ -29,7 +29,9 @@ export interface AttemptFeedback {
   /** Facts this feedback rests on (for the teacher's view). */
   evidenceFactIds: string[];
   /** A wrong pitch, so the learner can hear and see the two notes side by side (video QA PED-01). */
-  pair?: { index: number; expected: number; played: number };
+  pair?: WrongNote;
+  /** Every wrong pitch in the attempt, in order. */
+  pairs?: WrongNote[];
 }
 
 export interface AttemptContext {
@@ -86,16 +88,20 @@ export function attemptFeedback(ctx: AttemptContext): AttemptFeedback {
       const f = result.facts.find((x) => x.status === 'wrong')!;
       const n = f.index + 1;
       if (f.expectedLabel.startsWith('midi:')) {
-        const exp = Number(f.expectedLabel.slice(5));
-        const got = Number(f.playedLabel?.slice(5));
+        // Every wrong note, not just the first (momo, 10 Nov).
+        const wrong = result.facts
+          .filter((x) => x.status === 'wrong' && x.expectedLabel.startsWith('midi:') && x.playedLabel?.startsWith('midi:'))
+          .map((x) => ({ index: x.index, expected: Number(x.expectedLabel.slice(5)), played: Number(x.playedLabel!.slice(5)) }));
+        const w = wrongNotesWords(wrong.length ? wrong : [{ index: f.index, expected: Number(f.expectedLabel.slice(5)), played: NaN }], heard);
+        const first = wrong[0];
         return {
           ...base,
-          title: `Note ${n} is ${soundWord(f.expectedLabel)}`,
-          observed: `${heard} ${soundWord(f.playedLabel)} for note ${n}. The music asked for ${soundWord(f.expectedLabel)}.`,
-          why: `${Number.isFinite(got) ? pitchRelation(exp, got) + ' ' : ''}Each note has its own place on the stave, so the tune changes shape when one moves.`,
-          nextLabel: 'Try that note',
+          title: w.title,
+          observed: w.observed,
+          why: `${first ? pitchRelation(first.expected, first.played) + ' ' : ''}Each note has its own place on the stave, so the tune changes shape when one moves.`,
+          nextLabel: wrong.length > 1 ? `Start from note ${first.index + 1}` : 'Try that note',
           compare: difference,
-          ...(Number.isFinite(got) && input !== 'mic' ? { pair: { index: f.index, expected: exp, played: got } } : {}),
+          ...(first && input !== 'mic' ? { pair: first, pairs: wrong } : {}),
         };
       }
       return {

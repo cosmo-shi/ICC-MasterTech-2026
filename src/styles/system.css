@@ -849,7 +849,9 @@ h2[tabindex='-1']:focus {
   color: var(--ink);
 }
 .minikeys .mk-word {
-  font-size: 0.75rem;
+  font-size: 0.625rem;
+  max-width: 100%;
+  overflow-wrap: anywhere;
   font-weight: 800;
   line-height: 1;
   margin-bottom: 2px;
@@ -1052,4 +1054,15 @@ h2[tabindex='-1']:focus {
   .l05 .lp-actions .btn-quiet {
     min-height: var(--target);
   }
+}
+.wrong-pairs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--s4);
+}
+.wp-h {
+  margin: 0 0 var(--s1);
+  font-weight: 800;
 }
