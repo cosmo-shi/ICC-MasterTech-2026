@@ -25,9 +25,9 @@ const withRest = phrase([drum('a', 0, 1), drum('b', 1, 1), drum('c', 2, 1), rest
 describe('feedback for one attempt: one observation, why, one next step', () => {
   it('a tap in a rest names the beat to leave quiet and why the gap matters', () => {
     const f = feedback(withRest, taps([0, 1000, 2000, 3000]));
-    expect(f.title).toBe('Leave beat 4 quiet');
-    expect(f.observed).toMatch(/beat 4, which is a rest/);
-    expect(f.why).toMatch(/silence you still count/);
+    expect(f.title).toBe('Beat 4 is a rest');
+    expect(f.observed).toMatch(/beat 4, which is a crotchet rest/);
+    expect(f.why).toMatch(/Keep counting, but leave that beat silent/);
     expect(f.compare?.kind).toBe('reply');
   });
 
@@ -56,8 +56,11 @@ describe('feedback for one attempt: one observation, why, one next step', () => 
     const untimed: Assessment = { ...timed, mode: 'pitch-sequence', checkPitch: true, checkTiming: false };
     const f = feedback(tune, [60, 62, 65].map((m, i) => ({ id: `i${i}`, onsetMs: i * 1000, midi: m, source: 'pointer' as const })), untimed);
     expect(f.title).toBe('Note 3 is E');
-    expect(f.observed).toBe('You played F for note 3. The music has E.');
+    expect(f.observed).toBe('You played F for note 3. The music asked for E.');
     expect(f.why).toMatch(/E is the next note lower than F/);
+    // Paired comparison: the two notes can be heard and seen side by side.
+    expect(f.pair).toEqual({ index: 2, expected: 64, played: 65 });
+    expect(f.nextLabel).toBe('Try that note');
   });
 
   it('an attempt that stopped early is asked to carry on, not marked as missing notes', () => {

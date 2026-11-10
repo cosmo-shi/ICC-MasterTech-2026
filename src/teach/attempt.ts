@@ -28,6 +28,8 @@ export interface AttemptFeedback {
   compare?: { kind: 'reply' | 'difference'; label: string };
   /** Facts this feedback rests on (for the teacher's view). */
   evidenceFactIds: string[];
+  /** A wrong pitch, so the learner can hear and see the two notes side by side (video QA PED-01). */
+  pair?: { index: number; expected: number; played: number };
 }
 
 export interface AttemptContext {
@@ -89,9 +91,11 @@ export function attemptFeedback(ctx: AttemptContext): AttemptFeedback {
         return {
           ...base,
           title: `Note ${n} is ${soundWord(f.expectedLabel)}`,
-          observed: `${heard} ${soundWord(f.playedLabel)} for note ${n}. The music has ${soundWord(f.expectedLabel)}.`,
+          observed: `${heard} ${soundWord(f.playedLabel)} for note ${n}. The music asked for ${soundWord(f.expectedLabel)}.`,
           why: `${Number.isFinite(got) ? pitchRelation(exp, got) + ' ' : ''}Each note has its own place on the stave, so the tune changes shape when one moves.`,
+          nextLabel: 'Try that note',
           compare: difference,
+          ...(Number.isFinite(got) && input !== 'mic' ? { pair: { index: f.index, expected: exp, played: got } } : {}),
         };
       }
       return {
@@ -109,9 +113,9 @@ export function attemptFeedback(ctx: AttemptContext): AttemptFeedback {
       const restLen = rest ? lengthName(rest.duration) : null;
       return {
         ...base,
-        title: `Leave ${where} quiet`,
-        observed: `${input === 'mic' ? 'Carmen heard a sound' : `You played`} on ${where}, which is a rest.`,
-        why: `A rest is silence you still count${restLen ? ` (this one lasts ${restLen.beats})` : ''}. That gap is part of the rhythm.`,
+        title: `${cap(where)} is a rest`,
+        observed: `${input === 'mic' ? 'Carmen heard a sound' : `You played`} on ${where}, which is a${restLen ? ` ${restLen.name}` : ''} rest.`,
+        why: `Keep counting, but leave that ${restLen && restLen.name !== 'crotchet' ? 'space' : 'beat'} silent${restLen ? ` (it lasts ${restLen.beats})` : ''}. Listen to the example, then try again.`,
         compare: reply ?? difference,
       };
     }
@@ -167,7 +171,7 @@ export function attemptFeedback(ctx: AttemptContext): AttemptFeedback {
     case 'timing':
       return { ...base, ...timingWords(ctx, noun, reply ?? difference) };
     default:
-      return { ...base, title: 'Nearly', observed: `${s.correctSound} of ${s.expected} ${noun}s matched.`, why: 'Listen once more, then try again.', compare: difference };
+      return { ...base, title: `${s.correctSound} of ${s.expected} ${noun}s matched`, observed: `${s.correctSound} of ${s.expected} ${noun}s matched the music.`, why: 'Hear the music once more and follow the stave as it plays, then try again.', compare: difference };
   }
 }
 
