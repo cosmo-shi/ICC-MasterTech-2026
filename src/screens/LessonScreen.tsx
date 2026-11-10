@@ -14,6 +14,8 @@ import {
 import { usePrefs } from "../state/prefs.tsx";
 import { type AttemptRecord, newId, stamp, store } from "../store/db.ts";
 import { CoachCard } from "../ui/CoachCard.tsx";
+import { ListenCoachCard } from "../ui/ListenCoachCard.tsx";
+import { coachCopy, type ListenCoach } from "../ai/listenCoach.ts";
 import { BeatDots, FactList, LiveStatus, factMark } from "../ui/common.tsx";
 import { MoreDetail } from "../ui/MoreDetail.tsx";
 import { Notation, describePhrase } from "../ui/Notation.tsx";
@@ -96,6 +98,7 @@ function AssessedLesson({ lessonId, go }: Props) {
   const [heardExample, setHeardExample] = useState(false);
   const [result, setResult] = useState<CheckResult | null>(null);
   const [decision, setDecision] = useState<CoachDecision | null>(null);
+  const [coach, setCoach] = useState<ListenCoach | null>(null);
   const [saveState, setSaveState] = useState<
     "idle" | "saving" | "saved" | "failed"
   >("idle");
@@ -269,6 +272,8 @@ function AssessedLesson({ lessonId, go }: Props) {
     });
     setResult(res);
     setDecision(d);
+    // The coach's read of the timing; never during an on-your-own check.
+    setCoach(mode === "practice" ? coachCopy(res, target, inputsToPhrase(rec.inputs, target, tempo), prefs.aiEnabled) : null);
     setPhase("review");
     setTakeInputs(rec.inputs);
     setTries((t) => t + 1);
@@ -855,7 +860,11 @@ function AssessedLesson({ lessonId, go }: Props) {
               </button>
             )}
           </div>
-          <CoachCard decision={decision} onChoice={recordChoice} hideObservation />
+          {coach ? (
+            <ListenCoachCard coach={coach} onHear={(id) => recordChoice(`hear-reply:${id}`)} />
+          ) : (
+            <CoachCard decision={decision} onChoice={recordChoice} hideObservation />
+          )}
           <details className="sound-by-sound">
             <summary>Sound by sound</summary>
             <FactList result={result} />

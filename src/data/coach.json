@@ -31,7 +31,8 @@
     "target-slower": "Hear the pattern slowly, then try with it.",
     "target-echo": "Hear the music once more.",
     "mine-with-rest": "Hear your pattern with that beat left quiet.",
-    "mine-echo": "Hear exactly what you played."
+    "mine-echo": "Hear exactly what you played.",
+    "free-steady": "Hear your sounds placed on a steady beat, with the metronome."
   },
   "choices": {
     "retry": "Try again",

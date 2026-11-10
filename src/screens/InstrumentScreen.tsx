@@ -15,6 +15,9 @@ import type { Assessment } from '../music/lessons.ts';
 import { type MusicEvent, type Phrase, TPQ } from '../music/events.ts';
 import { midiToLetter } from '../music/theory.ts';
 import { inputsToPhrase } from '../ai/coach.ts';
+import { coachCopy, coachFree, type ListenCoach } from '../ai/listenCoach.ts';
+import { usePrefs } from '../state/prefs.tsx';
+import { ListenCoachCard } from '../ui/ListenCoachCard.tsx';
 import { newId, store, type RecordingRecord } from '../store/db.ts';
 import { players } from '../store/profiles.ts';
 import { Icon } from '../ui/icons.tsx';
@@ -253,7 +256,7 @@ function CheckStep({ inst, via, onNext }: { inst: Inst; via: Via; onNext: () => 
   );
 }
 
-function FeedbackCard({ f, children }: { f: Feedback; children?: React.ReactNode }) {
+function FeedbackCard({ f, coach, children }: { f: Feedback; coach?: ListenCoach | null; children?: React.ReactNode }) {
   return (
     <div className="listen-feedback" role="status" aria-live="polite">
       <p className="fb-what">{f.what}</p>
@@ -261,6 +264,7 @@ function FeedbackCard({ f, children }: { f: Feedback; children?: React.ReactNode
       <p className="fb-next">
         <Icon name="forward" size={18} /> {f.next}
       </p>
+      {coach && <ListenCoachCard coach={coach} />}
       <div className="row wrap">{children}</div>
     </div>
   );
@@ -302,16 +306,17 @@ function NoteActivity({ via }: { via: Via }) {
         const heard: HeardNote = { kind: 'note', time: 0, midi: n.midi, cents: 0, confidence: 1, agreement: 1 };
         settle(compareNote(target, heard));
       });
+    // Keep listening until a clear note: a knock, a voice or a note still settling doesn't end the
+    // try. If only unclear sounds come for 4 seconds, say so (never a wrong note).
     const off = l.onHeard((h) => {
       if (h.own) return;
       if (h.kind === 'onset') {
         setLive('Hearing a sound…');
-        // A sound with no steady pitch: say so, never call it a wrong note.
-        pendingOnset = window.setTimeout(() => settle(compareNote(target, undefined)), 900);
-      } else {
-        setLive(h.confidence >= 0.6 ? `Heard ${midiToLetter(h.midi)}` : 'Not a clear note');
+        if (pendingOnset === null) pendingOnset = window.setTimeout(() => settle(compareNote(target, undefined)), 4000);
+      } else if (h.confidence >= 0.6) {
+        setLive(`Heard ${midiToLetter(h.midi)}`);
         settle(compareNote(target, h));
-      }
+      } else setLive('Not a clear note yet. Let it ring.');
     });
     return () => {
       off();
@@ -350,9 +355,14 @@ function NoteActivity({ via }: { via: Via }) {
             <Icon name="sound" size={22} /> Hear it
           </button>
           {waiting ? (
-            <p className="live-heard" role="status">
-              <span className="mic-dot" aria-hidden="true" /> {live || `Play ${midiToLetter(target)}`}
-            </p>
+            <>
+              <p className="live-heard" role="status">
+                <span className="mic-dot" aria-hidden="true" /> {live || `Play ${midiToLetter(target)}`}
+              </p>
+              <button type="button" className="btn-quiet" onClick={() => setWaiting(false)}>
+                <Icon name="stop" size={20} /> Stop
+              </button>
+            </>
           ) : (
             <button type="button" className="btn btn-big" onClick={() => { player.stop(); setWaiting(true); setLive(''); }}>
               <Icon name="listen" size={24} /> Play it
@@ -417,7 +427,8 @@ function RhythmActivity({ via }: { via: Via }) {
   const [which, setWhich] = useState(0);
   const [tempo, setTempo] = useState(80);
   const [phase, setPhase] = useState<'ready' | 'countin' | 'playing' | 'done'>('ready');
-  const [result, setResult] = useState<{ res?: CheckResult; f: Feedback; take?: Phrase } | null>(null);
+  const [result, setResult] = useState<{ res?: CheckResult; f: Feedback; take?: Phrase; coach?: ListenCoach | null } | null>(null);
+  const { prefs } = usePrefs();
   const phrase = useMemo(() => rhythmPhrase(which, tempo), [which, tempo]);
   const midiTaps = useRef<number[]>([]);
   const deviceFault = useRef(false);
@@ -474,7 +485,8 @@ function RhythmActivity({ via }: { via: Via }) {
       inputs = midiTaps.current.filter((t) => t >= from && t <= to).map((t, i) => ({ id: `midi${i}`, onsetMs: t - beat0, source: 'midi' as const, sound: 'snare' as const, soundUnknown: true }));
     }
     const res = checkAttempt(phrase, inputs, ASSESS, tempo);
-    setResult({ res, f: rhythmFeedback(res), take: inputsToPhrase(inputs, phrase, tempo) });
+    const take = inputsToPhrase(inputs, phrase, tempo);
+    setResult({ res, f: rhythmFeedback(res), take, coach: coachCopy(res, phrase, take, prefs.aiEnabled) });
   };
   const difference = () => {
     if (!result?.take) return;
@@ -507,7 +519,7 @@ function RhythmActivity({ via }: { via: Via }) {
         </div>
       )}
       {result && (
-        <FeedbackCard f={result.f}>
+        <FeedbackCard f={result.f} coach={result.coach}>
           {result.f.compare && result.take && (
             <button type="button" className="btn-quiet" onClick={difference}>
               <Icon name="ear" size={22} /> Hear the difference
@@ -537,6 +549,8 @@ function FreeActivity({ inst, via }: { inst: Inst; via: Via }) {
   const [notes, setNotes] = useState<{ midi: number; t: number }[]>([]);
   const [taps, setTaps] = useState<{ time: number }[]>([]);
   const [done, setDone] = useState('');
+  const [coach, setCoach] = useState<ListenCoach | null>(null);
+  const { prefs } = usePrefs();
   useEffect(() => {
     if (via === 'mic') l.setPitch(inst === 'piano');
   }, [l, via, inst]);
@@ -557,6 +571,7 @@ function FreeActivity({ inst, via }: { inst: Inst; via: Via }) {
   const stop = () => {
     setOn(false);
     setDone(inst === 'piano' ? describeFreePlay(notes) : describeTaps(taps));
+    setCoach(freeCoach(inst, notes, taps, prefs.aiEnabled));
   };
   const replay = () => {
     if (!notes.length) return;
@@ -585,13 +600,14 @@ function FreeActivity({ inst, via }: { inst: Inst; via: Via }) {
       {done && (
         <div className="listen-feedback" role="status">
           <p className="fb-what">{done}</p>
+          {coach && <ListenCoachCard coach={coach} />}
           <div className="row wrap">
             {inst === 'piano' && notes.length > 1 && (
               <button type="button" className="btn-quiet" onClick={replay}>
                 <Icon name="playback" size={22} /> Hear what Carmen heard
               </button>
             )}
-            <button type="button" className="btn" onClick={() => { setNotes([]); setTaps([]); setDone(''); setOn(true); }}>
+            <button type="button" className="btn" onClick={() => { setNotes([]); setTaps([]); setDone(''); setCoach(null); setOn(true); }}>
               Play again
             </button>
           </div>
@@ -601,10 +617,42 @@ function FreeActivity({ inst, via }: { inst: Inst; via: Via }) {
   );
 }
 
+/** The coach's read of free play: piano notes when there are enough, otherwise the taps. */
+function freeCoach(inst: Inst, notes: { midi: number; t: number }[], taps: { time: number }[], ai: boolean): ListenCoach | null {
+  if (inst === 'piano' && notes.length >= 4)
+    return coachFree(
+      notes.map((n) => n.t / 1000),
+      ai,
+      'keyboard',
+      notes.map((n) => n.midi),
+    );
+  return coachFree(
+    taps.map((t) => t.time),
+    ai,
+    inst === 'piano' ? 'keyboard' : 'drums',
+  );
+}
+
 /** Record keeps the microphone sound, separately from listening. Saved only on this device. */
 function RecordBar({ inst, activity }: { inst: Inst; activity: Activity }) {
-  useListening();
+  const l = useListening();
+  const { prefs } = usePrefs();
   const [state, setState] = useState<'idle' | 'recording' | 'review' | 'saved' | 'failed'>('idle');
+  // While recording, Carmen also listens, so the take gets feedback when it stops.
+  const heard = useRef<{ notes: { midi: number; t: number }[]; taps: { time: number }[] }>({ notes: [], taps: [] });
+  const [count, setCount] = useState(0);
+  const [take, setTake] = useState<{ what: string; coach: ListenCoach | null } | null>(null);
+  useEffect(() => {
+    if (state !== 'recording') return;
+    return l.onHeard((h) => {
+      if (h.own) return;
+      if (h.kind === 'note' && h.confidence >= 0.6) heard.current.notes.push({ midi: h.midi, t: h.tPerf });
+      if (h.kind === 'onset') {
+        heard.current.taps.push({ time: h.time });
+        setCount((c) => c + 1);
+      }
+    });
+  }, [state, l]);
   const [clip, setClip] = useState<{ blob: Blob; durationSec: number; url: string } | null>(null);
   const [title, setTitle] = useState('');
   const limit = useRef(0);
@@ -626,6 +674,14 @@ function RecordBar({ inst, activity }: { inst: Inst; activity: Activity }) {
   const stop = async () => {
     window.clearTimeout(limit.current);
     const r = await mic.stopRecording();
+    const { notes, taps } = heard.current;
+    const what =
+      taps.length === 0 && notes.length === 0
+        ? 'Carmen didn’t hear any playing in this recording. It may have been too quiet, or too far from the microphone.'
+        : inst === 'piano' && notes.length
+          ? `Carmen heard ${describeFreePlay(notes).replace(/^./, (c) => c.toLowerCase())}`
+          : `Carmen heard ${describeTaps(taps).replace(/^./, (c) => c.toLowerCase())}`;
+    setTake({ what, coach: freeCoach(inst, notes, taps, prefs.aiEnabled) });
     if (!r || r.blob.size === 0) {
       setState('failed');
       return;
@@ -635,6 +691,9 @@ function RecordBar({ inst, activity }: { inst: Inst; activity: Activity }) {
     setState('review');
   };
   const start = () => {
+    heard.current = { notes: [], taps: [] };
+    setCount(0);
+    setTake(null);
     if (!mic.startRecording()) {
       setState('failed');
       return;
@@ -675,11 +734,17 @@ function RecordBar({ inst, activity }: { inst: Inst; activity: Activity }) {
       )}
       {state === 'recording' && (
         <p className="recording-now" role="status">
-          <span className="rec-dot is-on" aria-hidden="true" /> Recording. The sound is being kept.
+          <span className="rec-dot is-on" aria-hidden="true" /> Recording{count ? `: ${count} ${count === 1 ? 'sound' : 'sounds'} heard` : '. Play when you’re ready'}.
           <button type="button" className="btn" onClick={() => void stop()}>
             <Icon name="stop" size={20} /> Stop recording
           </button>
         </p>
+      )}
+      {take && state !== 'idle' && state !== 'recording' && (
+        <div className="listen-feedback" role="status" aria-live="polite">
+          <p className="fb-what">{take.what}</p>
+          {take.coach && <ListenCoachCard coach={take.coach} />}
+        </div>
       )}
       {state === 'review' && clip && (
         <form
@@ -703,7 +768,7 @@ function RecordBar({ inst, activity }: { inst: Inst; activity: Activity }) {
             <button type="submit" className="btn">
               <Icon name="saved" size={20} /> Save
             </button>
-            <button type="button" className="btn-quiet" onClick={() => { setClip(null); setState('idle'); }}>
+            <button type="button" className="btn-quiet" onClick={() => { setClip(null); setTake(null); setState('idle'); }}>
               <Icon name="trash" size={20} /> Delete it
             </button>
           </div>

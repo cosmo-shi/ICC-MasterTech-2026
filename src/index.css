@@ -287,7 +287,7 @@ code {
 @media (min-width: 900px) {
   .app {
     display: grid;
-    grid-template-columns: 232px minmax(0, 1fr);
+    grid-template-columns: 248px minmax(0, 1fr);
     grid-template-rows: auto 1fr;
   }
   .backdrop {
@@ -296,14 +296,14 @@ code {
     height: auto;
   }
   .horizon {
-    width: 264px;
+    width: 248px;
     height: 230px;
   }
   .topbar {
     grid-column: 1;
     grid-row: 1;
     height: auto;
-    padding: var(--s5) var(--s5) var(--s5);
+    padding: var(--s5) var(--s4) var(--s5);
     flex-direction: column;
     align-items: flex-start;
     gap: var(--s4);
@@ -427,6 +427,7 @@ code {
   color: var(--ink);
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: var(--s2);
 }
 .btn-quiet:hover {
@@ -5520,7 +5521,8 @@ details > summary {
 
 .record-bar { border-top: 1px solid var(--hairline); padding-top: var(--s4); display: grid; gap: var(--s3); width: 100%; }
 .rec-btn { justify-self: start; }
-.rec-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--record); display: inline-block; }
+.record-bar .rec-dot, .recording-now .rec-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--record); display: inline-block; }
+.record-bar .rec-dot::after { content: none; }
 .recording-now { display: flex; align-items: center; gap: var(--s3); flex-wrap: wrap; margin: 0; font-weight: 800; color: var(--record-deep); }
 .rec-review { display: grid; gap: var(--s2); }
 .rec-review audio { width: 100%; max-width: 420px; }
@@ -5562,3 +5564,57 @@ details > summary {
   .entry-welcome .entry-title { margin: var(--s5) 0 0; font-size: 1.4rem; color: var(--on-sky); position: relative; }
   .entry-welcome .entry-foot { grid-column: 2; grid-row: 1; align-content: center; padding: var(--s4) calc(var(--s4) + env(safe-area-inset-right)) var(--s4) var(--s4); width: 100%; }
 }
+
+/* Coach's read of the timing (Use my instrument, recordings, lessons). */
+.listen-coach { display: grid; gap: var(--s1); padding: var(--s3) var(--s4); border-radius: var(--r-md); background: var(--dusk-soft); max-width: 60ch; }
+.listen-coach p { margin: 0; }
+.lc-source { display: flex; align-items: center; gap: var(--s2); font-size: var(--t-support); font-weight: 800; color: var(--dusk); }
+.lc-obs { font-weight: 700; }
+.lc-tip { color: var(--ink-soft); }
+.lc-reply { display: grid; gap: var(--s1); justify-items: start; margin-top: var(--s2); }
+.listen-feedback .listen-coach { margin-top: var(--s2); }
+.check-sheet .listen-coach { margin: var(--s2) 0 var(--s3); }
+.rec-result { display: grid; gap: var(--s3); }
+
+/* Layout fixes (10 Nov review): nothing overlaps, buttons centred. */
+@media (min-width: 900px) {
+  .topbar .top-actions { width: 100%; }
+  .topbar .player-chip { flex: 1; min-width: 0; }
+}
+@media (max-width: 419px) {
+  /* The name would push into the wordmark; the avatar and its label stay. */
+  .topbar .player-name { display: none; }
+  .topbar .player-chip { padding: 0 6px; }
+}
+.entry-welcome .entry-hero { gap: var(--s5); }
+.entry-welcome .entry-title { margin: var(--s6) 0 var(--s4); }
+@media (min-width: 700px) and (min-height: 700px) {
+  /* On big screens the choices follow the title instead of sitting at the bottom. */
+  .entry.entry-welcome .entry-body { flex: none; }
+  .entry.entry-welcome .entry-foot { padding-top: var(--s4); }
+}
+/* A row of chips that scrolls sideways fades at its edge, so a cut chip reads as "more". */
+.lp-tools { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); padding-right: 28px; }
+@media (min-width: 900px) { .lp-tools { -webkit-mask-image: none; mask-image: none; padding-right: 0; } }
+/* The feedback sheet scrolls inside itself; its buttons never cover its words. */
+.check-inner { flex: 1 1 auto; min-height: 0; }
+.check-foot { flex: none; border-top: 1px solid var(--hairline); background: var(--paper); }
+/* Short landscape phones: feedback opens at the side, like on a big screen, so the music stays in view. */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1099px) {
+  .check-sheet { left: auto; top: 0; width: min(440px, 58vw); max-height: none; border-radius: var(--r-lg) 0 0 var(--r-lg); border-top: 0; border-left: 6px solid var(--near); padding-right: env(safe-area-inset-right); }
+  .check-sheet.tone-good { border-left-color: var(--good); }
+  .check-sheet.tone-miss { border-left-color: var(--miss); }
+  .check-inner { padding-top: var(--s3); }
+  .check-title { font-size: 1.4rem; }
+}
+/* Scrolling sign-up lists start at the top instead of being centred past the edge. */
+.entry:not(.entry-welcome):not(.entry-pick) .entry-body { justify-content: flex-start; }
+.entry:not(.entry-welcome):not(.entry-pick) .entry-body > :first-child { margin-top: auto; }
+.entry:not(.entry-welcome):not(.entry-pick) .entry-body > :last-child { margin-bottom: auto; }
+.entry-bar { background: var(--paper); }
+.entry-welcome .entry-bar { background: transparent; }
+.rec { justify-content: center; }
+.chip-example { text-align: left; }
+/* Lesson pages: the middle scrolls, the bottom button stays below it (never on top of it). */
+.lp-body { min-height: 0; }
+.lp-foot { flex: none; background: var(--paper); }
