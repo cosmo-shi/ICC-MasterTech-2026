@@ -44,7 +44,7 @@ Audit of the `sc` build at `69ce33f` (same app source as `main` at `338508b`), r
   - A saved recording can't be played straight after it is made.
 - **Target:**
   - Saving as a guest offers "Add your name" (optional) and says it is kept on this device only.
-  - Delete gets a 6-second Undo.
+  - Delete gets an 8-second Undo.
   - Playback starts sound on the tap, or says it is loading.
   - Playback ends on the take's own length.
   - Microphone recordings, kept only when Record is used, are listed with their size and a Delete button.
@@ -58,7 +58,7 @@ Audit of the `sc` build at `69ce33f` (same app source as `main` at `338508b`), r
   - A denied permission leaves the on-screen instrument and MIDI working.
   - Leaving the screen, hiding the tab or a phone call stops the microphone.
   - **Record** (keeping audio) is a separate, explicit control.
-  - Lessons get a "Play on: screen / my instrument" switch where the activity is supported (beat and rest lessons by taps, single-note piano lessons by pitch, every keyboard lesson by MIDI).
+  - Lessons get a "Play on" switch where the activity is supported: every keyboard lesson by MIDI, drum and rhythm lessons by microphone taps after the timing check. Single-note pitch by microphone is in Use my instrument only, until it is checked in real rooms.
 
 ## 6. Teacher registration, login, setup and daily use
 
@@ -83,3 +83,9 @@ Audit of the `sc` build at `69ce33f` (same app source as `main` at `338508b`), r
 | Count-in or playback clock wrong | Long stall | Clock checked; a take with a broken clock is not graded |
 | Rotation mid-lesson | Layout breaks in landscape | Landscape layout; stage, mode and notes kept, held notes released |
 | Reload mid-lesson | Back to step 1 | Stage restored |
+
+## Built on 10 November
+
+Journeys 1 to 6 are built as targeted above, with the changes noted (8-second Undo; microphone in
+lessons is taps only). Screens for each journey at phone, tablet, desktop, short landscape and larger
+text, in Day and Night, are in the delivery flow map. Phone checks still to run are in `docs/UAT.md`.
