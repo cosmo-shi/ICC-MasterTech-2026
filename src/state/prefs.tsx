@@ -23,6 +23,10 @@ export interface Prefs {
   /** Play starts with the metronome on, at this speed. */
   metronomeOn: boolean;
   metronomeTempo: number;
+  /** Computer-key letters on the instrument: auto = only with a mouse or trackpad. */
+  keyHints: 'auto' | 'on' | 'off';
+  /** The landscape suggestion on phones was dismissed. */
+  rotateTipDismissed: boolean;
 }
 
 const DEFAULTS: Prefs = {
@@ -42,6 +46,8 @@ const DEFAULTS: Prefs = {
   countIn: 4,
   metronomeOn: false,
   metronomeTempo: 90,
+  keyHints: 'auto',
+  rotateTipDismissed: false,
 };
 
 const KEY = 'carmen-prefs-v1';

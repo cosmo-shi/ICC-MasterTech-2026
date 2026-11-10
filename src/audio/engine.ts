@@ -227,12 +227,12 @@ class AudioEngine {
   /** performance.now() time at which a given AudioContext time is heard. */
   ctxToPerfMs(ctxTime: number): number {
     if (!this.ctx) return performance.now();
-    const ts = this.ctx.getOutputTimestamp?.();
-    if (ts && ts.contextTime !== undefined && ts.performanceTime !== undefined && ts.performanceTime > 0) {
-      return ts.performanceTime + (ctxTime - ts.contextTime) * 1000;
-    }
-    const lat = (this.ctx.outputLatency || this.ctx.baseLatency || 0) * 1000;
-    return performance.now() + (ctxTime - this.ctx.currentTime) * 1000 + lat;
+    return mapCtxToPerf(ctxTime, {
+      now: performance.now(),
+      currentTime: this.ctx.currentTime,
+      latencySec: this.ctx.outputLatency || this.ctx.baseLatency || 0,
+      stamp: this.ctx.getOutputTimestamp?.(),
+    });
   }
 
   /**
@@ -293,6 +293,27 @@ class AudioEngine {
       },
     };
   }
+}
+
+/**
+ * Map an AudioContext time to performance.now() time.
+ *
+ * The output timestamp is the most precise source, but some browsers (seen in Safari) return a
+ * stale or zero contextTime once the context has run for a while. Used as-is, that makes the
+ * first beat look as far away as the context is old: the "count-in stalls" bug (10 Nov). So the
+ * stamp is used only when it agrees with the plain estimate from currentTime to within 250 ms.
+ */
+export function mapCtxToPerf(
+  ctxTime: number,
+  c: { now: number; currentTime: number; latencySec: number; stamp?: { contextTime?: number; performanceTime?: number } },
+): number {
+  const plain = c.now + (ctxTime - c.currentTime) * 1000 + c.latencySec * 1000;
+  const s = c.stamp;
+  if (s && s.contextTime !== undefined && s.performanceTime !== undefined && s.performanceTime > 0 && s.contextTime > 0) {
+    const precise = s.performanceTime + (ctxTime - s.contextTime) * 1000;
+    if (Math.abs(precise - plain) < 250) return precise;
+  }
+  return plain;
 }
 
 export const audio = new AudioEngine();

@@ -1,6 +1,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { DrumSound } from '../music/events.ts';
 import { isBlackKey, midiToLetter, midiToName } from '../music/theory.ts';
+import { ContactTracker } from '../input/contacts.ts';
+import { inputDebug } from '../input/debug.ts';
 
 export type InputSource = 'pointer' | 'key';
 
@@ -41,8 +43,15 @@ interface KeyboardProps {
   style?: React.CSSProperties;
 }
 
-/** Piano keys. A finger (or mouse) can slide from key to key: each new key sounds as you
- *  reach it and the last one stops, like a glissando on a real piano. */
+/** Piano keys. Each finger is tracked on its own (see input/contacts.ts): several fingers play
+ *  a chord, a finger slides from key to key like a glissando, and lifting one finger never
+ *  stops another finger's note.
+ *
+ *  Touch screens use touch events: on iPhone a touch belongs to the element it started on, and
+ *  touchmove keeps arriving there with the finger's position, so the key under the finger is
+ *  found by position. Mouse and pen use pointer events with window listeners, so a note ends
+ *  only on pointerup or pointercancel, never because the pointer "left" an element. Touch-sourced
+ *  pointer events are ignored where touch events exist, so nothing sounds twice. */
 export function Keyboard({ low, whiteCount, down, highlight, showNames, showKeyHints, hintsFrom, onDown, onUp, label, style }: KeyboardProps) {
   const whites: number[] = [];
   let m = low;
@@ -55,37 +64,92 @@ export function Keyboard({ low, whiteCount, down, highlight, showNames, showKeyH
   for (let midi = low; midi <= high; midi++) {
     if (isBlackKey(midi)) blacks.push({ midi, leftIndex: whites.indexOf(midi - 1) });
   }
-  const pointerNotes = useRef(new Map<number, number>());
+  const root = useRef<HTMLDivElement>(null);
+  const handlers = useRef({ onDown, onUp });
+  useEffect(() => {
+    handlers.current = { onDown, onUp };
+  });
 
-  const midiAt = (x: number, y: number): number | null => {
-    const el = document.elementFromPoint(x, y)?.closest('[data-midi]') as HTMLElement | null;
-    return el ? Number(el.dataset.midi) : null;
-  };
-  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    const midi = midiAt(e.clientX, e.clientY);
-    if (midi === null) return;
-    e.preventDefault();
-    // No pointer capture: on touch screens the browser captures to the first key, so let it go
-    // and follow the finger by position instead.
-    (e.target as HTMLElement).releasePointerCapture?.(e.pointerId);
-    pointerNotes.current.set(e.pointerId, midi);
-    onDown(midi, e.timeStamp, 'pointer');
-  };
-  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    const was = pointerNotes.current.get(e.pointerId);
-    if (was === undefined) return;
-    const midi = midiAt(e.clientX, e.clientY);
-    if (midi === null || midi === was) return;
-    onUp(was, e.timeStamp);
-    pointerNotes.current.set(e.pointerId, midi);
-    onDown(midi, e.timeStamp, 'pointer');
-  };
-  const release = (e: React.PointerEvent) => {
-    const midi = pointerNotes.current.get(e.pointerId);
-    if (midi === undefined) return;
-    pointerNotes.current.delete(e.pointerId);
-    onUp(midi, e.timeStamp);
-  };
+  useEffect(() => {
+    const el = root.current;
+    if (!el) return;
+    const tracker = new ContactTracker<number>({
+      start: (midi, t) => handlers.current.onDown(midi, t, 'pointer'),
+      end: (midi, t) => handlers.current.onUp(midi, t),
+    });
+    // Only keys of this keyboard count, never another instrument or control under the finger.
+    const keyAt = (x: number, y: number): number | null => {
+      const hit = document.elementFromPoint(x, y)?.closest('[data-midi]') as HTMLElement | null;
+      return hit && el.contains(hit) ? Number(hit.dataset.midi) : null;
+    };
+    const hasTouch = typeof window !== 'undefined' && 'ontouchstart' in window;
+    inputDebug.log('keyboard ready', hasTouch ? 'touch events' : 'pointer events');
+
+    const touch = (kind: 'down' | 'move' | 'up') => (e: TouchEvent) => {
+      if (e.cancelable) e.preventDefault();
+      for (const t of Array.from(e.changedTouches)) {
+        const id = `t${t.identifier}`;
+        if (kind === 'up') tracker.up(id, e.timeStamp);
+        else {
+          const k = keyAt(t.clientX, t.clientY);
+          if (kind === 'down') tracker.down(id, k, e.timeStamp);
+          else tracker.move(id, k, e.timeStamp);
+        }
+      }
+      if (kind !== 'move') inputDebug.log(e.type, `${e.changedTouches.length} changed, ${e.touches.length} down, held ${tracker.held().join(' ')}`);
+    };
+    const tStart = touch('down');
+    const tMove = touch('move');
+    const tEnd = touch('up');
+
+    const pMove = (e: PointerEvent) => tracker.move(`p${e.pointerId}`, keyAt(e.clientX, e.clientY), e.timeStamp);
+    const pUp = (e: PointerEvent) => {
+      tracker.up(`p${e.pointerId}`, e.timeStamp);
+      if (!tracker.active) {
+        window.removeEventListener('pointermove', pMove);
+        window.removeEventListener('pointerup', pUp);
+        window.removeEventListener('pointercancel', pUp);
+      }
+    };
+    const pDown = (e: PointerEvent) => {
+      if (e.pointerType === 'touch' && hasTouch) return; // the touch listeners own fingers
+      if (e.button > 0) return;
+      e.preventDefault();
+      (e.target as Element).releasePointerCapture?.(e.pointerId);
+      tracker.down(`p${e.pointerId}`, keyAt(e.clientX, e.clientY), e.timeStamp);
+      window.addEventListener('pointermove', pMove);
+      window.addEventListener('pointerup', pUp);
+      window.addEventListener('pointercancel', pUp);
+    };
+    const releaseAll = () => {
+      if (tracker.active) inputDebug.log('release all', document.visibilityState);
+      tracker.cancelAll(performance.now());
+    };
+    const onVisible = () => document.visibilityState === 'hidden' && releaseAll();
+
+    el.addEventListener('touchstart', tStart, { passive: false });
+    el.addEventListener('touchmove', tMove, { passive: false });
+    el.addEventListener('touchend', tEnd, { passive: false });
+    el.addEventListener('touchcancel', tEnd, { passive: false });
+    el.addEventListener('pointerdown', pDown);
+    window.addEventListener('blur', releaseAll);
+    window.addEventListener('pagehide', releaseAll);
+    document.addEventListener('visibilitychange', onVisible);
+    return () => {
+      el.removeEventListener('touchstart', tStart);
+      el.removeEventListener('touchmove', tMove);
+      el.removeEventListener('touchend', tEnd);
+      el.removeEventListener('touchcancel', tEnd);
+      el.removeEventListener('pointerdown', pDown);
+      window.removeEventListener('pointermove', pMove);
+      window.removeEventListener('pointerup', pUp);
+      window.removeEventListener('pointercancel', pUp);
+      window.removeEventListener('blur', releaseAll);
+      window.removeEventListener('pagehide', releaseAll);
+      document.removeEventListener('visibilitychange', onVisible);
+      releaseAll(); // leaving the screen never leaves a note sounding
+    };
+  }, []);
   const keyAct = (midi: number) => (e: React.KeyboardEvent) => {
     if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) {
       e.preventDefault();
@@ -104,11 +168,7 @@ export function Keyboard({ low, whiteCount, down, highlight, showNames, showKeyH
       role="group"
       aria-label={label}
       style={{ ['--white-count' as string]: whiteCount, ...style }}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={release}
-      onPointerCancel={release}
-      onPointerLeave={release}
+      ref={root}
     >
       {whites.map((midi, i) => {
         const hint = keyHint(midi);

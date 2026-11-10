@@ -3,7 +3,7 @@ import { lessonById } from '../data/catalog.ts';
 import { START_AT } from '../data/curriculum.ts';
 import { type PathwayId, usePrefs } from '../state/prefs.tsx';
 import { COLOUR_NAMES, PLAYER_COLOURS, type Player, type PlayerColour, players, teacher, usePlayers } from '../store/profiles.ts';
-import { Band, Horizon, Icon, type IconName, Wordmark } from '../ui/icons.tsx';
+import { Horizon, Icon, type IconName, WelcomeArt, Wordmark } from '../ui/icons.tsx';
 
 export function Avatar({ player, size = 48 }: { player: Pick<Player, 'name' | 'colour'>; size?: number }) {
   return (
@@ -88,7 +88,7 @@ export function EntryScreen({ onDone, go, canClose, initial }: { onDone: () => v
           <>
             <div className="entry-hero">
               <Wordmark size={56} />
-              <Band width={240} />
+              <WelcomeArt width={260} />
             </div>
             <h1 id="entry-h" ref={heading} tabIndex={-1} className="entry-title">
               Make music. Find out how it works.

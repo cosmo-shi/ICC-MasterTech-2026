@@ -9,6 +9,7 @@ import { MyMusic } from './screens/MyMusic.tsx';
 import { ControlsSheet } from './screens/ControlsSheet.tsx';
 import { Avatar, EntryScreen } from './screens/EntryScreen.tsx';
 import { players, teacher, usePlayers } from './store/profiles.ts';
+import { InputLog } from './ui/InputLog.tsx';
 
 const MissionScreen = lazy(() => import('./screens/MissionScreen.tsx').then((m) => ({ default: m.MissionScreen })));
 const TheoryScreen = lazy(() => import('./screens/TheoryScreen.tsx').then((m) => ({ default: m.TheoryScreen })));
@@ -86,6 +87,7 @@ function Shell() {
           <Suspense fallback={<p className="support">Loading…</p>}>{screen}</Suspense>
         </main>
         {showEntry && <EntryScreen canClose={!!who.current} onDone={() => setSwitching(false)} go={go} />}
+        <InputLog />
       </div>
     );
   }
@@ -124,8 +126,15 @@ function Shell() {
             <span className="tab-label">{n.label}</span>
           </a>
         ))}
+        <button type="button" className="tab-link rail-gear" aria-expanded={settingsOpen} aria-controls="controls-sheet" onClick={() => setSettingsOpen(!settingsOpen)}>
+          <span className="tab-icon">
+            <Icon name="gear" size={24} />
+          </span>
+          <span className="tab-label">Settings</span>
+        </button>
       </nav>
       {showEntry && <EntryScreen canClose={!!who.current} onDone={() => setSwitching(false)} go={go} />}
+      <InputLog />
       {settingsOpen && <ControlsSheet onClose={() => setSettingsOpen(false)} onSwitchPlayer={() => { setSettingsOpen(false); setSwitching(true); }} />}
       <main id="main" ref={mainRef} tabIndex={-1} className={`sheet-main stage-${section || 'play'}`}>
         {banner}

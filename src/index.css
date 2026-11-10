@@ -4930,3 +4930,532 @@ details > summary {
   box-shadow: inset 0 0 0 1px var(--hairline, rgba(0, 0, 0, 0.12));
   min-width: 112px;
 }
+
+/* ==========================================================================
+   Play stage (10 Nov): the instrument fills the screen that is left, so the
+   instruction, the controls and the keys are visible together without scrolling.
+   ========================================================================== */
+.app.scene-play {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+}
+.app.scene-play .backdrop {
+  height: 120px;
+}
+.app.scene-play .topbar {
+  height: 60px;
+  padding-top: var(--s3);
+}
+.app.scene-play .sheet-main {
+  margin-top: var(--s3);
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: var(--s3) var(--s3) calc(84px + env(safe-area-inset-bottom));
+  overflow-y: auto;
+}
+.play,
+.play .create,
+.play .workspace {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  gap: var(--s2);
+}
+.play .workspace .kb-wrap,
+.play .workspace .pads-wrap {
+  flex: 1 1 auto;
+  min-height: 170px;
+  display: flex;
+  flex-direction: column;
+}
+.play .kb-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+}
+.play .workspace .kb {
+  height: auto;
+  min-height: 140px;
+  flex: none;
+  align-self: stretch;
+}
+.play .ws-bar {
+  margin: 0;
+}
+.play .trail {
+  height: 72px;
+  flex: none;
+}
+.play .pads-wrap {
+  container-type: size;
+  justify-content: center;
+}
+.play .pads-wrap .kit {
+  width: min(100%, calc(100cqh * 1.6));
+  max-height: none;
+  aspect-ratio: 16 / 10;
+}
+.play .pads-wrap .pads {
+  flex: 1;
+  grid-auto-rows: 1fr;
+}
+.play .pads-wrap .pad {
+  min-height: 0;
+}
+.play-bar {
+  flex-wrap: nowrap;
+  gap: var(--s2);
+}
+.play-bar .segmented {
+  flex: none;
+}
+.input-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--target);
+  padding: 0 var(--s3);
+  border-radius: 999px;
+  background: var(--paper-sunk);
+  color: var(--ink);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.input-chip.is-live {
+  background: var(--record-soft, #f8d6dc);
+  color: var(--record-deep, #8c2236);
+}
+.play-bar .last-piece {
+  margin-left: auto;
+}
+.start-sound.compact {
+  margin: 0;
+  padding: var(--s2) var(--s3);
+  border-radius: var(--r-md);
+  background: var(--sun-soft, var(--paper-sunk));
+  justify-content: space-between;
+}
+.start-sound.compact p {
+  margin: 0;
+  font-weight: 700;
+}
+.start-sound.compact .btn {
+  width: auto;
+  min-height: var(--target);
+}
+@media (max-width: 600px) {
+  .play-bar .last-piece {
+    display: none;
+  }
+  .instrument-switch .segment {
+    min-width: 0;
+    padding: 0 var(--s3);
+  }
+  .app.scene-play .kb-top {
+    margin-bottom: 6px;
+  }
+}
+@media (min-width: 900px) {
+  .app.scene-play {
+    display: grid;
+    height: 100vh;
+    height: 100dvh;
+  }
+  .app.scene-play .topbar {
+    height: auto;
+  }
+  .app.scene-play .sheet-main {
+    margin: var(--s4) var(--s4) var(--s4) 0;
+    border-radius: var(--r-lg);
+    padding: var(--s5);
+    grid-row: 1 / -1;
+    grid-column: 2;
+  }
+  .play .trail {
+    height: 112px;
+  }
+}
+
+/* Rotate suggestion on phones (portrait piano). */
+.rotate-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s3);
+  padding: var(--s3);
+  border-radius: var(--r-md);
+  background: var(--dusk-soft);
+  color: var(--ink);
+}
+.rotate-tip p {
+  margin: 0;
+  font-size: var(--t-support);
+}
+.rotate-tip strong {
+  display: block;
+  font-weight: 800;
+}
+.rotate-tip .icon-btn {
+  flex: none;
+  margin-left: auto;
+  background: transparent;
+  color: var(--ink);
+}
+
+/* Phone held sideways: a short screen. No sky, tabs become a slim rail, keys get the height. */
+@media (orientation: landscape) and (max-height: 500px) {
+  .app,
+  .app.scene-play {
+    display: grid;
+    grid-template-columns: calc(64px + env(safe-area-inset-left)) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+    height: 100vh;
+    height: 100dvh;
+  }
+  .app .backdrop {
+    position: fixed;
+    inset: 0;
+    height: auto;
+  }
+  .app .backdrop .horizon {
+    display: none;
+  }
+  .app .topbar {
+    display: none;
+  }
+  .app .tabs {
+    position: relative;
+    grid-column: 1;
+    grid-row: 1;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: var(--s1);
+    background: transparent;
+    border: 0;
+    padding: var(--s2) 4px var(--s2) calc(4px + env(safe-area-inset-left));
+    height: 100%;
+  }
+  .app .tab-link {
+    min-width: 0;
+    width: 56px;
+    color: var(--on-sky);
+    font-size: 0.6875rem;
+  }
+  .app .tab-link .tab-icon {
+    width: 48px;
+  }
+  .app .tab-link[aria-current='page'] .tab-icon {
+    background: var(--paper);
+    color: var(--dusk);
+  }
+  .rail-gear {
+    display: grid !important;
+    margin-top: auto;
+  }
+  .app .sheet-main,
+  .app.scene-play .sheet-main {
+    grid-column: 2;
+    grid-row: 1;
+    margin: 0;
+    border-radius: var(--r-lg) 0 0 var(--r-lg);
+    padding: var(--s2) calc(var(--s3) + env(safe-area-inset-right)) var(--s2) var(--s3);
+    height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+  }
+  .play .trail,
+  .play .kb-top,
+  .rotate-tip {
+    display: none;
+  }
+  .play-bar .last-piece {
+    display: none;
+  }
+  .play .workspace .kb-wrap,
+  .play .workspace .pads-wrap {
+    min-height: 150px;
+    padding: 6px 6px 8px;
+  }
+  .play .ws-bar {
+    flex-wrap: nowrap;
+  }
+  .play .dock {
+    flex-wrap: nowrap;
+    width: auto;
+  }
+  .play .rec {
+    min-height: var(--target);
+    flex: none;
+  }
+  .play .rec-sub {
+    display: none;
+  }
+  .play .rec-dot {
+    width: 32px;
+    height: 32px;
+  }
+  .play .dock .speed {
+    display: none;
+  }
+}
+.rail-gear {
+  display: none !important;
+}
+.app.scene-play .sheet-main > .play {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  min-width: 0;
+}
+.play-bar {
+  min-width: 0;
+}
+.input-chip .chip-long {
+  display: inline;
+}
+@media (max-width: 600px) {
+  .input-chip .chip-long {
+    display: none;
+  }
+}
+.start-sound.compact {
+  padding: 4px 4px 4px var(--s3);
+  background: var(--sun-soft, var(--paper-sunk));
+}
+.start-sound.compact .btn {
+  min-height: 44px;
+  padding: 0 var(--s4);
+  box-shadow: none;
+}
+@media (min-width: 900px) {
+  /* Desktop: the stave and the recording controls share a row, the keyboard spans the sheet. */
+  .play .create .workspace.has-dock {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    column-gap: var(--s4);
+    align-items: start;
+  }
+  .play .workspace.has-dock > .start-sound,
+  .play .workspace.has-dock > .rotate-tip {
+    grid-column: 1 / -1;
+  }
+  .play .workspace.has-dock > .trail {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .play .workspace.has-dock > .ws-bar {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: center;
+    max-width: 420px;
+  }
+  .play .workspace.has-dock > .kb-wrap,
+  .play .workspace.has-dock > .pads-wrap {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    height: 100%;
+  }
+}
+.input-chip .chip-short {
+  display: none;
+}
+@media (max-width: 600px) {
+  .input-chip .chip-short {
+    display: inline;
+  }
+  .input-chip {
+    padding: 0 var(--s3) 0 var(--s2);
+    font-size: 0.9375rem;
+    gap: 4px;
+    margin-left: auto;
+  }
+  .play-bar .instrument-switch .segment {
+    padding: 0 10px;
+    gap: 4px;
+  }
+}
+
+/* ==========================================================================
+   Lesson "try" stage (10 Nov): the instruction, music, keys and the Start/Stop
+   button are on one screen. The instrument takes the height that is left.
+   ========================================================================== */
+.lp-try .lp-instrument {
+  flex: 1 1 auto;
+  min-height: 170px;
+  display: flex;
+  flex-direction: column;
+  margin-top: 0;
+}
+.lp-instrument .workspace {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  gap: var(--s2);
+}
+.lp-instrument .kb-wrap,
+.lp-instrument .pads-wrap {
+  flex: 1 1 auto;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+}
+.lp-instrument .kb-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+}
+.lp-instrument .workspace .kb,
+[data-size='large'] .lp-instrument .workspace .kb {
+  height: auto;
+  min-height: 130px;
+  flex: none;
+  align-self: stretch;
+}
+.lp-instrument .pads-wrap {
+  container-type: size;
+  justify-content: center;
+}
+.lp-instrument .pads-wrap .kit {
+  width: min(100%, calc(100cqh * 1.6));
+  max-height: none;
+}
+@media (max-width: 600px) {
+  .lp-instrument .pads-wrap .kit {
+    width: min(100%, calc(100cqh * 1.16));
+  }
+  .lp-tools {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    max-width: 100%;
+  }
+  .lp-tools .chip {
+    flex: none;
+  }
+  .lp .rotate-tip {
+    padding: var(--s2) var(--s3);
+  }
+}
+@media (min-width: 900px) {
+  .lp-try {
+    align-items: stretch;
+  }
+  .lp-try .lp-task {
+    align-self: center;
+  }
+  .lp-try .lp-instrument {
+    min-height: 320px;
+    max-height: 560px;
+    align-self: center;
+    width: 100%;
+    height: 100%;
+  }
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  .lp-bar {
+    padding: 4px calc(var(--s4) + env(safe-area-inset-right)) 0 calc(var(--s4) + env(safe-area-inset-left));
+  }
+  .lp-bar .icon-btn {
+    width: 44px;
+    height: 44px;
+  }
+  .lp-body {
+    padding: 4px calc(var(--s4) + env(safe-area-inset-right)) 4px calc(var(--s4) + env(safe-area-inset-left));
+  }
+  .lp-try {
+    display: grid;
+    grid-template-columns: minmax(200px, 0.8fr) minmax(0, 1.5fr);
+    gap: var(--s3);
+    align-items: stretch;
+    min-height: 0;
+  }
+  .lp-try .lp-task {
+    align-content: start;
+    overflow-y: auto;
+    min-height: 0;
+  }
+  .lp-title.small {
+    font-size: 1rem;
+  }
+  .lp .notation-svg svg {
+    max-height: 64px;
+  }
+  .lp-try .lp-instrument {
+    min-height: 0;
+  }
+  .lp-instrument .kb-top,
+  .lp .rotate-tip {
+    display: none;
+  }
+  .lp-instrument .kb-wrap,
+  .lp-instrument .pads-wrap {
+    min-height: 0;
+    padding: 6px 6px 8px;
+  }
+  .lp-tools {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .lp-tools .chip {
+    flex: none;
+    min-height: 44px;
+    padding: 0 var(--s3);
+  }
+  .lp-foot {
+    padding: 6px calc(var(--s4) + env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom));
+  }
+  .lp-foot .btn-big {
+    min-height: 48px;
+    font-size: 1.0625rem;
+  }
+  .lp-center {
+    padding: var(--s2) 0;
+    gap: var(--s2);
+  }
+  .big-play {
+    width: 84px;
+    height: 84px;
+    margin: 0;
+  }
+  .lp-title {
+    font-size: 1.4rem;
+  }
+}
+
+.lp-try,
+.lp-task,
+.lp-row,
+.lp-music {
+  min-width: 0;
+  max-width: 100%;
+}
+.lp-row .lp-tools {
+  min-width: 0;
+}
+.input-log {
+  position: fixed;
+  top: env(safe-area-inset-top);
+  right: 0;
+  z-index: 200;
+  width: min(320px, 70vw);
+  max-height: 45vh;
+  overflow: auto;
+  padding: 6px 8px;
+  font: 600 11px/1.3 ui-monospace, monospace;
+  background: rgb(0 0 0 / 0.78);
+  color: #fff;
+  pointer-events: none;
+}
+.input-log ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

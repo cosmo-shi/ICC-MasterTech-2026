@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { type CompositionRecord, store } from '../store/db.ts';
-import { Band, Icon } from '../ui/icons.tsx';
+import { Icon, WelcomeArt } from '../ui/icons.tsx';
 import { usePlayer } from '../ui/usePlayer.ts';
 import { mine, players } from '../store/profiles.ts';
 
@@ -50,7 +50,7 @@ export function MyMusic({ go }: { go: (r: string) => void }) {
       {error && <p className="note-text">{error}</p>}
       {items && items.length === 0 && (
         <div className="panel empty">
-          <Band width={220} />
+          <WelcomeArt width={200} />
           <p className="h2">Nothing saved yet</p>
           <p className="support">Record something on Play, then press Save.</p>
           <button type="button" className="btn" onClick={() => go('#/play')}>

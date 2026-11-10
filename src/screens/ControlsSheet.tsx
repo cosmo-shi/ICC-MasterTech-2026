@@ -103,6 +103,7 @@ export function ControlsSheet({ onClose, onSwitchPlayer }: { onClose: () => void
           {toggle(prefs.large, (v) => set('large', v), 'Bigger keys')}
           {toggle(prefs.simplified, (v) => set('simplified', v), 'Fewer keys', 'One octave, four drums.')}
           {toggle(prefs.noteNames, (v) => set('noteNames', v), 'Note letters', 'On the keys and under the notes you play.')}
+          {segmented('Computer-key letters', 'hints-l', prefs.keyHints, [['auto', 'Automatic'], ['on', 'Show'], ['off', 'Hide']] as const, (v) => set('keyHints', v))}
           {segmented('Drums look like', 'drums-l', prefs.drumView, [['kit', 'Drum kit'], ['pads', 'Pads']] as const, (v) => set('drumView', v))}
           {toggle(prefs.aiEnabled, (v) => set('aiEnabled', v), 'Timing helper', 'Carmen listens to your timing, on this device. Off: simple tips.')}
         </section>
