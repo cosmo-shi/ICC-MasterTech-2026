@@ -1565,3 +1565,31 @@ button.gl-beat-btn { cursor: pointer; box-shadow: 0 3px 0 var(--hairline); }
 /* The welcome lockup never runs off a small phone (320 px): it scales with the screen width. */
 .entry-hero .wordmark { font-size: min(56px, 10.5vw) !important; max-width: 100%; }
 .entry-hero.small .wordmark { font-size: min(40px, 9vw) !important; }
+
+/* ---------- Lesson and project cards (post-main brief, 2.1 and 2.3) ----------
+   Every lesson and every composition is its own card: a white surface with a visible edge
+   on the tinted unit, its state in words and an icon, and one action that names the activity.
+   The card edge is mixed from the ink token so it reaches 3:1 against the unit tint. */
+.lxa-unit, .lxa-create { --card-edge: color-mix(in srgb, var(--ink) 42%, var(--paper-raised)); }
+.lxa-list { background: none; box-shadow: none; padding: 0; border-radius: 0; display: grid; gap: var(--s3); grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr)); }
+.lxa-list > .lxa-item, .lxa-create-list > .lxa-card {
+  display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; gap: var(--s2);
+  margin: 0; padding: var(--s4) var(--s4) var(--s4); border: 2px solid var(--card-edge); border-radius: var(--r-md);
+  background: var(--paper-raised); box-shadow: var(--shadow-soft);
+}
+.lxa-list > .lxa-item:last-child { border-bottom: 2px solid var(--card-edge); }
+.lxa-list > .lxa-item .lxa-item-act { margin-top: var(--s2); }
+.lxa-list > .lxa-item .lx-desc, .lxa-create-list .lx-desc { color: var(--ink); font-size: 1rem; }
+.lxa-list > .lxa-item.is-next { grid-column: 1 / -1; margin: 0; padding: var(--s5); background: var(--sun-tint); border-color: var(--sun-deep); box-shadow: var(--shadow-soft); }
+.lxa-list > .lxa-item.is-next .lx-item-title { font-size: 1.5rem; }
+.lxa-list > .lxa-item.is-done { background: var(--paper-raised); }
+.lxa-list > .lxa-item.is-done .lx-status, .lxa-card.is-done .lx-status { font-weight: 700; }
+@media (max-width: 599px) { .lxa-list > .lxa-item.is-next { margin: 0; padding: var(--s4); } }
+/* Compositions: two or three to a row, the first one wider, so five never leave one card alone. */
+.lxa-create-sub { margin: var(--s2) 0 0; font-size: 1.25rem; }
+.lxa-create-list { display: grid; gap: var(--s3); grid-template-columns: minmax(0, 1fr); list-style: none; margin: 0; padding: 0; }
+.lxa-create-list > .lxa-card { border-top: 2px solid var(--card-edge); padding-top: var(--s4); }
+@media (min-width: 640px) { .lxa-create-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } .lxa-create-list > .lxa-card:first-child { grid-column: 1 / -1; } }
+@media (min-width: 1200px) { .lxa-create-list { grid-template-columns: repeat(3, minmax(0, 1fr)); } .lxa-create-list > .lxa-card:first-child { grid-column: span 2; } .lxa-create-list:has(> .lxa-card:nth-child(4):last-child) > .lxa-card:first-child { grid-column: 1 / -1; } }
+.gl-stave { margin: 0; display: grid; gap: var(--s2); }
+.lxa-create-note { color: var(--ink); }

@@ -3,6 +3,7 @@ import type { DrumSound } from '../music/events.ts';
 import { midiToLetter } from '../music/theory.ts';
 import { DRUM_STAVE, diatonic, stavePosition } from '../music/notationKeys.ts';
 import { trailGeometry } from '../music/trailGeometry.ts';
+import { accidentalColumns, headSides, spaceColumns, trailColumns } from '../music/chords.ts';
 
 export interface TrailNote {
   midi?: number;
@@ -102,91 +103,119 @@ export function NoteTrail({ trail, recording, clef, letters }: { trail: Trail; r
 
       const rx = gap * 0.72;
       const ry = gap * 0.5;
-      for (const { n, pos, cross } of placed) {
-        const sharp = n.midi !== undefined && !n.sound && diatonic(n.midi).sharp;
-        const label = n.midi !== undefined && !n.sound ? midiToLetter(n.midi) : '';
-        const x = head - (now - n.start) * pxPerMs;
-        if (x < left - rx) continue;
-        const y = yOf(pos);
-        const held = n.end === undefined;
+      // Notes that start together are one chord: one column, one stem, heads stacked (a second
+      // puts the upper head on the other side of the stem), sharps in their own columns.
+      // Notes played one after another are separate columns, never drawn on top of each other.
+      const letterFont = `700 ${Math.max(11, Math.min(14, Math.round(gap * 1.1)))}px 'Carmen Music', 'Atkinson Hyperlegible Next', system-ui, sans-serif`;
+      g.font = letterFont;
+      const cols = trailColumns(placed.map((p) => ({ ...p, start: p.n.start, end: p.n.end })));
+      const info = cols.map((c) => {
+        const items = [...c.items].sort((a, b) => a.pos - b.pos);
+        const sides = headSides(items.map((i) => i.pos));
+        const sharpItems = items.filter((i) => i.n.midi !== undefined && !i.n.sound && diatonic(i.n.midi).sharp).reverse();
+        const accCols = accidentalColumns(sharpItems.map((i) => i.pos));
+        const nAcc = sharpItems.length ? Math.max(...accCols) + 1 : 0;
+        const label = showLetters ? items.filter((i) => i.n.midi !== undefined && !i.n.sound).map((i) => midiToLetter(i.n.midi!)).join(' ') : '';
+        const headW = rx * 2 * (sides.includes(1) ? 2 : 1);
+        const left = rx + nAcc * gap * 1.4; // room for sharps before the heads
+        const width = Math.max(headW + left, label ? g.measureText(label).width + 6 : 0);
+        return { c, items, sides, sharpItems, accCols, label, left, width };
+      });
+      const xs = spaceColumns(
+        info.map((k) => head - (now - k.c.start) * pxPerMs),
+        info.slice(0, -1).map((k, i) => Math.max(k.width, info[i + 1].left + rx * 2) + 4),
+      );
+      info.forEach((k, ci) => {
+        const x = xs[ci];
+        if (x < left - rx) return;
+        const held = k.c.end === undefined;
         const col = held ? colour('--sun-deep') : rec.current ? colour('--record') : ink;
-
-        // Ledger lines.
+        const top = k.items[k.items.length - 1].pos;
+        const bottom = k.items[0].pos;
+        // Ledger lines, once per column, wide enough for heads on both sides of the stem.
+        const wide = k.sides.includes(1) ? rx * 3.4 : rx * 1.7;
         g.strokeStyle = line;
         g.lineWidth = 1.2;
-        for (let p = -2; p >= pos; p -= 2) {
+        for (let p = -2; p >= bottom; p -= 2) {
           g.beginPath();
           g.moveTo(x - rx * 1.7, yOf(p));
-          g.lineTo(x + rx * 1.7, yOf(p));
+          g.lineTo(x + wide, yOf(p));
           g.stroke();
         }
-        for (let p = 10; p <= pos; p += 2) {
+        for (let p = 10; p <= top; p += 2) {
           g.beginPath();
           g.moveTo(x - rx * 1.7, yOf(p));
-          g.lineTo(x + rx * 1.7, yOf(p));
+          g.lineTo(x + wide, yOf(p));
           g.stroke();
         }
-        // How long it was held: a soft line after the head.
-        const x1 = head - (now - (n.end ?? now)) * pxPerMs;
-        if (x1 - x > rx * 2) {
+        // How long it was held: a soft line after the column (only while there is room).
+        const x1 = head - (now - (k.c.end ?? now)) * pxPerMs;
+        const nextX = xs[ci + 1] ?? Infinity;
+        if (k.items.length === 1 && Math.min(x1, nextX - rx * 2) - x > rx * 2) {
           g.strokeStyle = col;
           g.globalAlpha = 0.35;
           g.lineWidth = ry * 0.9;
           g.lineCap = 'round';
           g.beginPath();
-          g.moveTo(x + rx, y);
-          g.lineTo(x1, y);
+          g.moveTo(x + rx, yOf(bottom));
+          g.lineTo(Math.min(x1, nextX - rx * 2), yOf(bottom));
           g.stroke();
           g.globalAlpha = 1;
         }
-        // Note head: Carmen's tilted oval, or a cross for cymbals.
         g.fillStyle = col;
         g.strokeStyle = col;
-        if (cross) {
-          g.lineWidth = 2;
-          g.beginPath();
-          g.moveTo(x - rx * 0.8, y - ry);
-          g.lineTo(x + rx * 0.8, y + ry);
-          g.moveTo(x + rx * 0.8, y - ry);
-          g.lineTo(x - rx * 0.8, y + ry);
-          g.stroke();
-        } else {
-          g.beginPath();
-          g.ellipse(x, y, rx, ry, -0.35, 0, Math.PI * 2);
-          g.fill();
-        }
-        // Stem.
+        k.items.forEach((it, i) => {
+          const hx = x + k.sides[i] * rx * 1.84;
+          const y = yOf(it.pos);
+          if (it.cross) {
+            g.lineWidth = 2;
+            g.beginPath();
+            g.moveTo(hx - rx * 0.8, y - ry);
+            g.lineTo(hx + rx * 0.8, y + ry);
+            g.moveTo(hx + rx * 0.8, y - ry);
+            g.lineTo(hx - rx * 0.8, y + ry);
+            g.stroke();
+          } else {
+            g.beginPath();
+            g.ellipse(hx, y, rx, ry, -0.35, 0, Math.PI * 2);
+            g.fill();
+          }
+        });
+        // One stem for the whole chord.
         g.lineWidth = 1.4;
         g.beginPath();
-        if (pos < 4) {
-          g.moveTo(x + rx * 0.92, y - 1);
-          g.lineTo(x + rx * 0.92, y - gap * 3.2);
+        const up = (top + bottom) / 2 < 4 || k.sides.includes(1);
+        if (up) {
+          g.moveTo(x + rx * 0.92, yOf(bottom) - 1);
+          g.lineTo(x + rx * 0.92, yOf(top) - gap * 3.2);
         } else {
-          g.moveTo(x - rx * 0.92, y + 1);
-          g.lineTo(x - rx * 0.92, y + gap * 3.2);
+          g.moveTo(x - rx * 0.92, yOf(top) + 1);
+          g.lineTo(x - rx * 0.92, yOf(bottom) + gap * 3.2);
         }
         g.stroke();
-        if (sharp) {
-          // The engraved sharp from the music font, centred on the note head like printed music.
+        // Sharps, highest first, each column further left so none touch.
+        k.sharpItems.forEach((it, i) => {
+          const ax = x - rx * 1.25 - k.accCols[i] * gap * 1.4;
+          const y = yOf(it.pos);
           g.textAlign = 'right';
           if (musicFont === 'ready') {
             g.textBaseline = 'alphabetic';
             g.font = `${Math.round(gap * 4)}px Bravura`;
-            g.fillText('\uE262', x - rx * 1.25, y);
+            g.fillText('\uE262', ax, y);
           } else {
             g.textBaseline = 'middle';
             g.font = `700 ${Math.round(gap * 2)}px 'Carmen Music', system-ui, sans-serif`;
-            g.fillText('♯', x - rx * 1.25, y);
+            g.fillText('♯', ax, y);
           }
           g.textBaseline = 'alphabetic';
-        }
-        if (showLetters && label) {
+        });
+        if (k.label) {
           g.fillStyle = soft;
-          g.font = `700 ${Math.max(11, Math.min(14, Math.round(gap * 1.1)))}px 'Carmen Music', 'Atkinson Hyperlegible Next', system-ui, sans-serif`;
+          g.font = letterFont;
           g.textAlign = 'center';
-          g.fillText(label, x, h - 8);
+          g.fillText(k.label, x + (k.sides.includes(1) ? rx * 0.9 : 0), h - 8);
         }
-      }
+      });
       return notes.length > 0;
     };
 

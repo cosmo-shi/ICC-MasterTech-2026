@@ -623,7 +623,7 @@
    ],
    "contentNotes": "Original Carmen draft activity.",
    "id": "P01",
-   "title": "Play C to G",
+   "title": "Playing five notes: C to G",
    "goal": "Keyboard",
    "objective": "Play the five notes C D E F G up and back down, one finger on each key.",
    "prerequisites": [
@@ -905,7 +905,7 @@
    ],
    "contentNotes": "Original Carmen draft activity.",
    "id": "P02",
-   "title": "Steps and skips",
+   "title": "Melodic steps and skips",
    "goal": "Keyboard",
    "objective": "Tell steps (next key) from skips (missing one key) and play C E G.",
    "prerequisites": [

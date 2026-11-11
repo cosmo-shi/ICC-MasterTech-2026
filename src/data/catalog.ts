@@ -41,11 +41,11 @@ export interface Mission {
 }
 
 const MISSION_TITLES: Record<string, string> = {
-  F_SOUND_STORY: 'A sound story',
-  P12_RHYTHMIC_CONVERSATION: 'Rhythm call and response',
+  F_SOUND_STORY: 'Tell a story with sound',
+  P12_RHYTHMIC_CONVERSATION: 'Answer a rhythm',
   P34_MELODIC_REPLY: 'Melodic call and response',
-  P56_FORM_AND_TEXTURE: 'Two sections: A and B',
-  OLDER_EXTENSION: 'Add a second part',
+  P56_FORM_AND_TEXTURE: 'Compose two contrasting sections',
+  OLDER_EXTENSION: 'Add an accompanying part',
 };
 
 export const MISSIONS: Mission[] = plan.missions.map((m) => ({
@@ -147,10 +147,10 @@ const BLURBS: Record<string, string> = {
   L07: 'Minims and crotchets',
   L08: 'Reading notes and rests',
   L09: 'Compose a musical response',
-  F_SOUND_STORY: 'A sound story',
-  P12_RHYTHMIC_CONVERSATION: 'Rhythm call and response',
+  F_SOUND_STORY: 'Tell a story with sound',
+  P12_RHYTHMIC_CONVERSATION: 'Answer a rhythm',
   P34_MELODIC_REPLY: 'Melodic call and response',
-  P56_FORM_AND_TEXTURE: 'Two sections: A and B',
-  OLDER_EXTENSION: 'Add a second part',
+  P56_FORM_AND_TEXTURE: 'Compose two contrasting sections',
+  OLDER_EXTENSION: 'Add an accompanying part',
 };
 export const blurb = (id: string, fallback: string) => BLURBS[id] ?? fallback;
