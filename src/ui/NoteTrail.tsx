@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import type { DrumSound } from '../music/events.ts';
 import { midiToLetter } from '../music/theory.ts';
 import { DRUM_STAVE, diatonic, stavePosition } from '../music/notationKeys.ts';
+import { trailGeometry } from '../music/trailGeometry.ts';
 
 export interface TrailNote {
   midi?: number;
@@ -64,14 +65,14 @@ export function NoteTrail({ trail, recording, clef, letters }: { trail: Trail; r
       const soft = colour('--ink-soft');
       const line = colour('--ink-faint');
 
-      // Stave geometry: leave room above and below for ledger lines and letters.
-      const gap = Math.max(6, Math.min(12, (h - (showLetters ? 20 : 6)) / 8));
-      const bottom = (h - (showLetters ? 18 : 0)) / 2 + gap * 2;
-      const yOf = (pos: number) => bottom - (pos * gap) / 2;
       const left = 44;
       const head = w - 28;
       const pxPerMs = PX_PER_MS;
       const windowMs = (head - left + 40) / pxPerMs;
+      const notes = trail.visible(now, windowMs);
+      // Stave geometry: sized so every visible note, its ledger lines and its sharp fit (9B: D♯ was cut off).
+      const placed = notes.flatMap((n) => (n.sound ? [{ n, pos: DRUM_STAVE[n.sound].pos, cross: DRUM_STAVE[n.sound].cross }] : n.midi !== undefined ? [{ n, pos: stavePosition(n.midi, cl === 'bass' ? 'bass' : 'treble'), cross: false }] : []));
+      const { gap, yOf } = trailGeometry(h, placed.map((p) => p.pos), showLetters);
 
       g.strokeStyle = line;
       g.lineWidth = 1;
@@ -99,21 +100,11 @@ export function NoteTrail({ trail, recording, clef, letters }: { trail: Trail; r
       g.lineTo(head + 0.5, yOf(-2) + 6);
       g.stroke();
 
-      const notes = trail.visible(now, windowMs);
       const rx = gap * 0.72;
       const ry = gap * 0.5;
-      for (const n of notes) {
-        let pos: number;
-        let sharp = false;
-        let cross = false;
-        let label = '';
-        if (n.sound) {
-          ({ pos, cross } = DRUM_STAVE[n.sound]);
-        } else if (n.midi !== undefined) {
-          pos = stavePosition(n.midi, cl === 'bass' ? 'bass' : 'treble');
-          sharp = diatonic(n.midi).sharp;
-          label = midiToLetter(n.midi);
-        } else continue;
+      for (const { n, pos, cross } of placed) {
+        const sharp = n.midi !== undefined && !n.sound && diatonic(n.midi).sharp;
+        const label = n.midi !== undefined && !n.sound ? midiToLetter(n.midi) : '';
         const x = head - (now - n.start) * pxPerMs;
         if (x < left - rx) continue;
         const y = yOf(pos);
@@ -176,13 +167,22 @@ export function NoteTrail({ trail, recording, clef, letters }: { trail: Trail; r
         }
         g.stroke();
         if (sharp) {
-          g.font = `700 ${Math.round(gap * 1.5)}px Nunito, system-ui, sans-serif`;
+          // The engraved sharp from the music font, centred on the note head like printed music.
           g.textAlign = 'right';
-          g.fillText('♯', x - rx * 1.3, y);
+          if (musicFont === 'ready') {
+            g.textBaseline = 'alphabetic';
+            g.font = `${Math.round(gap * 4)}px Bravura`;
+            g.fillText('\uE262', x - rx * 1.25, y);
+          } else {
+            g.textBaseline = 'middle';
+            g.font = `700 ${Math.round(gap * 2)}px 'Carmen Music', system-ui, sans-serif`;
+            g.fillText('♯', x - rx * 1.25, y);
+          }
+          g.textBaseline = 'alphabetic';
         }
         if (showLetters && label) {
           g.fillStyle = soft;
-          g.font = `700 ${Math.max(10, Math.round(gap * 1.1))}px Nunito, system-ui, sans-serif`;
+          g.font = `700 ${Math.max(11, Math.min(14, Math.round(gap * 1.1)))}px 'Carmen Music', 'Atkinson Hyperlegible Next', system-ui, sans-serif`;
           g.textAlign = 'center';
           g.fillText(label, x, h - 8);
         }

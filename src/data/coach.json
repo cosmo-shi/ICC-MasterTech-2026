@@ -10,7 +10,7 @@
     "insufficient": "Shall we listen once and try again?"
   },
   "observations": {
-    "wrongNote": "Note {count} was {played}. The music asked for {expected}.",
+    "wrongNote": "You played {played} for note {count}, but this phrase uses {expected}.",
     "wrongDrum": "Sound {count} was a different drum.",
     "missed": "Sound {count} did not play.",
     "rest": "There was a tap on beat {beat}, which is a rest.",

@@ -1,3 +1,4 @@
+import { guidedById } from '../data/guided.ts';
 import { lessonStars, nextFor, reasonText } from '../ai/learner.ts';
 import { useState } from 'react';
 import { blurb, lessonById, missionById } from '../data/catalog.ts';
@@ -35,7 +36,7 @@ export function LearnTabs({ at, go }: { at: 'path' | 'theory'; go: (r: string) =
 }
 
 export const TRACK_ICON: Record<TrackId, IconName> = { foundations: 'click', piano: 'piano', drums: 'drum', create: 'music' };
-export const titleOf = (id: string) => lessonById(id)?.title ?? missionById(id)?.title ?? id;
+export const titleOf = (id: string) => guidedById(id)?.title ?? lessonById(id)?.title ?? missionById(id)?.title ?? id;
 
 const READING: Record<Activity['reading'], string> = { none: 'Listen and copy', symbols: 'Rhythm symbols', stave: 'Notes on the stave' };
 const INPUT: Record<Activity['input'], string> = { tap: 'Tap in time', keys: 'Find the keys', hold: 'Hold keys down', make: 'Make your own' };
@@ -96,19 +97,33 @@ export function TrackProgress({ id, at, done }: { id: string; at: number; done: 
   );
 }
 
-/** Units of each instrument: the concept first, then its steps. Rhythm basics and Create are
- *  shared ideas, played on whichever instrument is chosen. */
-const UNITS: Record<InstrumentId, { track: TrackId; title: string; about: string }[]> = {
+/** Units of each instrument, in teaching order (brief 11 Nov, section 4): sounds before notes, hearing
+ *  before naming, the beat before rhythm symbols, notation after both. Units list activity ids, so a
+ *  unit can draw on more than one track. Compose and create is its own section. */
+export interface Unit {
+  id: string;
+  title: string;
+  about: string;
+  /** Track colour for the unit block. */
+  track: TrackId;
+  ids: string[];
+}
+export const UNITS: Record<InstrumentId, Unit[]> = {
   keyboard: [
-    { track: 'foundations', title: 'Beat and rhythm', about: 'Steady beat, rests and quavers, played on the piano.' },
-    { track: 'piano', title: 'Notes and reading', about: 'Find notes, read the stave and hold notes.' },
-    { track: 'create', title: 'Compose and create', about: 'Make up your own music.' },
+    { id: 'u-sound', track: 'foundations', title: 'Sounds, silence and musical choices', about: 'Make a sound, stop it and change it.', ids: ['L00'] },
+    { id: 'u-pitch', track: 'piano', title: 'Discovering notes and pitch', about: 'Start by hearing how notes can sound higher or lower. Later, learn how musicians name and write them.', ids: ['N01', 'L04', 'L05', 'P01', 'P02', 'S01'] },
+    { id: 'u-beat', track: 'foundations', title: 'Feel the beat', about: 'Tap a steady beat, then make rhythms with sounds and silences.', ids: ['B00', 'L01', 'L02', 'L03', 'L07'] },
+    { id: 'u-read', track: 'piano', title: 'Reading music', about: 'Read notes on the stave and play them.', ids: ['L06', 'L08', 'P03'] },
   ],
   drums: [
-    { track: 'foundations', title: 'Beat and rhythm', about: 'Steady beat, rests and quavers, played on the drums.' },
-    { track: 'drums', title: 'Grooves on the kit', about: 'Rock beat, hi-hat and fills.' },
-    { track: 'create', title: 'Compose and create', about: 'Make up your own rhythms.' },
+    { id: 'u-sound', track: 'foundations', title: 'Sounds, silence and musical choices', about: 'Make a sound, stop it and change it.', ids: ['L00'] },
+    { id: 'u-beat', track: 'foundations', title: 'Feel the beat', about: 'Tap a steady beat, then make rhythms with sounds and silences.', ids: ['B00', 'L01', 'L02', 'L03'] },
+    { id: 'u-kit', track: 'drums', title: 'Grooves on the kit', about: 'Rock beat, hi-hat and fills.', ids: ['D01', 'D02', 'D03'] },
   ],
+};
+const CREATE_IDS: Record<InstrumentId, string[]> = {
+  keyboard: ['L09', 'F_SOUND_STORY', 'P34_MELODIC_REPLY', 'P56_FORM_AND_TEXTURE', 'OLDER_EXTENSION'],
+  drums: ['L09', 'F_SOUND_STORY', 'P12_RHYTHMIC_CONVERSATION', 'P56_FORM_AND_TEXTURE', 'OLDER_EXTENSION'],
 };
 const onInstrument = (a: Activity, inst: InstrumentId) => a.instrument === 'either' || a.instrument === inst;
 
@@ -146,12 +161,9 @@ export function LearnScreen({ go }: { go: (r: string) => void }) {
       set('instrument', i);
     },
     next: { ...item(nextAct), why },
-    units: UNITS[inst]
-      .filter((u) => u.track !== 'create')
-      .map((u) => ({ ...u, items: trackActivities(u.track).filter((a) => onInstrument(a, inst) && a.kind === 'lesson').map(item) }))
-      .filter((u) => u.items.length),
-    // Composing gets its own section: the create-unit lessons and every creative project.
-    projects: UNITS[inst].flatMap((u) => trackActivities(u.track)).filter((a) => onInstrument(a, inst) && (a.kind === 'project' || a.track === 'create')).map(item),
+    units: UNITS[inst].map((u) => ({ ...u, items: u.ids.map((id) => activityById(id)).filter((x): x is Activity => !!x && onInstrument(x, inst)).map(item) })),
+    // Composing gets its own section: the create lesson and every creative project for this instrument.
+    projects: CREATE_IDS[inst].map((id) => activityById(id)).filter((x): x is Activity => !!x && onInstrument(x, inst)).map(item),
     go,
   };
   return (

@@ -78,6 +78,11 @@ export function Notation({ phrase, activeIndex, marks, onNoteTap }: Props) {
         const barW = (width - 12 - firstW) / bars;
         let soundingIdx = 0;
         const all: { n: InstanceType<typeof VF.StaveNote>; tie?: boolean }[] = [];
+        // Vertical extent of what is drawn (stave lines, note heads, stems, ledger lines, accidentals),
+        // from VexFlow's own geometry: the SVG text boxes of music glyphs are much taller than the glyphs.
+        let top = Infinity;
+        let bottom = -Infinity;
+        const drawnNotes: InstanceType<typeof VF.StaveNote>[] = [];
         for (let b = 0; b < bars; b++) {
           const x = b === 0 ? 6 : 6 + firstW + b * barW;
           const w = b === 0 ? barW + firstW : barW;
@@ -85,6 +90,8 @@ export function Notation({ phrase, activeIndex, marks, onNoteTap }: Props) {
           if (b === 0) stave.addClef(clef).addTimeSignature(`${phrase.meter[0]}/${phrase.meter[1]}`);
           if (b === bars - 1) stave.setEndBarType(VF.Barline.type.END);
           stave.setContext(ctx).draw();
+          top = Math.min(top, stave.getYForLine(0) - 12);
+          bottom = Math.max(bottom, stave.getYForLine(4) + 12);
           const notes = laid[b].map((e) => {
             const d = VEX_DURATION[e.duration] ?? 'q';
             const dots = d.endsWith('d') ? 1 : 0;
@@ -106,6 +113,7 @@ export function Notation({ phrase, activeIndex, marks, onNoteTap }: Props) {
               soundingIdx++;
               all.push({ n, tie: e.tie });
             } else n.setStyle({ fillStyle: C.ink, strokeStyle: C.ink });
+            drawnNotes.push(n);
             return n;
           });
           if (!notes.length) continue;
@@ -122,8 +130,24 @@ export function Notation({ phrase, activeIndex, marks, onNoteTap }: Props) {
         const svg = el.querySelector('svg');
         svg?.setAttribute('aria-hidden', 'true');
         svg?.setAttribute('focusable', 'false');
-        // Scale with the box instead of overflowing it if it shrinks before the next redraw.
-        svg?.setAttribute('viewBox', `0 0 ${width} 140`);
+        // Fit the drawing box to what was actually drawn, so high or low notes, ledger lines and
+        // accidentals are never cut off (9B: D♯ was clipped), then scale with the box.
+        for (const n of drawnNotes) {
+          try {
+            const bb = n.getBoundingBox();
+            // Half a stave space either side for accidentals, dots and articulation that sit beside the head.
+            top = Math.min(top, bb.getY() - 6);
+            bottom = Math.max(bottom, bb.getY() + bb.getH() + 6);
+          } catch {
+            /* a note without geometry: the stave box still applies */
+          }
+        }
+        const y0 = Number.isFinite(top) ? Math.floor(Math.min(top, 30)) : 0;
+        const y1 = Number.isFinite(bottom) ? Math.ceil(Math.max(bottom, 110)) : 140;
+        const vb = { x: 0, y: y0, w: width, h: y1 - y0 };
+        svg?.setAttribute('width', String(vb.w));
+        svg?.setAttribute('height', String(vb.h));
+        svg?.setAttribute('viewBox', `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
         svg?.style.setProperty('max-width', '100%');
         svg?.style.setProperty('height', 'auto');
         if (svg && tapRef.current) {
@@ -157,7 +181,7 @@ export function Notation({ phrase, activeIndex, marks, onNoteTap }: Props) {
       {phrase.instrument === 'drums' && (
         <p className="drum-key">
           {drumSoundsIn(phrase)
-            .map((d) => `${PADS.find((p) => p.sound === d)?.name ?? d}: ${DRUM_STAVE[d].where}`)
+            .map((d) => `${PADS.find((p) => p.sound === d)?.name ?? (d === 'clave' ? 'Click' : d)}: ${DRUM_STAVE[d].where}`)
             .join(' · ')}
         </p>
       )}

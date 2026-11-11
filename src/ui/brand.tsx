@@ -1,29 +1,24 @@
 // Carmen's identity art: the brand mark, the wordmark, the header horizon and the welcome picture.
 // These are brand illustration, not interface icons (interface icons come from Lucide, see icons.tsx).
-// Geometry: 24-unit grid, round strokes, the tilted note head as the one filled motif.
 // All of it is decorative (aria-hidden); a visible label or aria-label carries meaning.
 
-/** The brand mark: a note-head sun resting on a stave that curves like hills.
- *  Built on the icon grid so it holds together from 20 px (navigation) to app-icon size. */
+/** The brand mark: the approved Carmen music logo (momo, 11 Nov 2026), a stave of notes in one colour.
+ *  The artwork is a white PNG with transparency (public/brand/carmen-mark.png, cropped from the original
+ *  in docs/brand without redrawing). It is used as a CSS mask, so it takes the colour of the surface it sits
+ *  on (`--brand-mark`, ink by day, light at night); colouring an <img> would not change its pixels.
+ *  `size` is the mark's height in px; the mark is about twice as wide as it is tall. */
+export const LOGO_ASPECT = 480 / 231;
 export function Logo({ size = 32, tile = false }: { size?: number; tile?: boolean }) {
-  return (
-    <svg className={`logo-mark${tile ? ' is-tile' : ''}`} width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      {tile && <rect width="24" height="24" rx="6" fill="var(--sky-top)" />}
-      <ellipse cx="13.5" cy="9.2" rx="5" ry="3.7" transform="rotate(-20 13.5 9.2)" fill="var(--sun-disc)" />
-      <g fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round">
-        <path d="M3 15.2c3-2.2 6-2.6 9-1.2s6 1 9-1" />
-        <path d="M3 19.2c3-2.2 6-2.6 9-1.2s6 1 9-1" />
-      </g>
-    </svg>
-  );
+  return <span className={`logo-mark${tile ? ' is-tile' : ''}`} style={{ height: size, width: Math.round(size * LOGO_ASPECT) }} aria-hidden="true" />;
 }
 
-/** "carmen" in the brand face with the mark. The only place lettering is drawn large outside titles. */
+/** The lockup: the mark beside the word "Carmen" (never under it, never instead of it). */
 export function Wordmark({ size = 30 }: { size?: number }) {
   return (
     <span className="wordmark" style={{ fontSize: size }}>
-      <Logo size={Math.round(size * 1.15)} />
-      <span className="wordmark-text">carmen</span>
+      {/* Sized in em so the whole lockup can shrink on a narrow screen without the mark and word drifting apart. */}
+      <span className="logo-mark" style={{ height: '0.95em', width: `${(0.95 * LOGO_ASPECT).toFixed(3)}em` }} aria-hidden="true" />
+      <span className="wordmark-text">Carmen</span>
     </span>
   );
 }

@@ -3,6 +3,27 @@
 Last updated 10 November 2026. Plain facts only: what runs, how it was checked, and what is still missing.
 
 
+
+## Master brief review (branch `review/master-brief`, from `main` a85bbd5, 11 Nov)
+
+- Working:
+  - fixes for 9A to 9E;
+  - the approved logo in the lockup and on the landscape rail, and new app icons;
+  - three guided lessons: N01 note, B00 beat and rhythm, S01 C and C♯. Each has a mini-check, and completion is saved on the device;
+  - Learn units in teaching order with progress;
+  - the 15-card theory register plus 3 new topics, in course order with search;
+  - an AC v9 alignment map with a coverage report.
+  Evidence is in `docs/review/2026-11-11/`.
+- Checked:
+  - 245 unit tests, tsc, lint and build;
+  - `e2e-devices`, `e2e-touch` and `e2e-video-qa`: all pass in Chromium emulation.
+- Not checked:
+  - real devices and Safari;
+  - how the sounds sound;
+  - a full S01 play-through;
+  - review of the curriculum map by an educator.
+- Not merged, not deployed.
+
 ## Visual direction A (branch `sc-visual-review`, local, 10 Nov evening)
 
 - Working: direction A is the app's design, with plain wording and clearer lesson titles. The landscape drum and stave fixes are in, and so are square pads on desktop. See `docs/DESIGN_DIRECTION.md`.

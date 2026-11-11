@@ -23,8 +23,8 @@ describe('L05 keyboard notes C, D and E', () => {
   });
   it('wrong-note teaching for C D G C against C D E C pairs E with G', () => {
     const r = sequenceResult([60, 62, 64, 60], [60, 62, 67, 60]);
-    expect(r.title).toBe('The note was E');
-    expect(r.observed).toBe('Note 3 was E. You played G.');
+    expect(r.title).toBe('Note 3 is E');
+    expect(r.observed).toBe('You played G for note 3, but this phrase uses E.');
     expect(r.pair).toEqual({ index: 2, expected: 64, played: 67 });
     expect(`${r.observed} ${r.next}`).not.toMatch(/Nearly|Something was different/);
   });
@@ -32,7 +32,7 @@ describe('L05 keyboard notes C, D and E', () => {
     const r = sequenceResult([60, 62, 64, 60], [60, 65, 67, 72]);
     expect(r.wrong.map((w) => w.index)).toEqual([1, 2, 3]);
     expect(r.title).toBe('Notes 2, 3 and 4 were wrong');
-    expect(r.observed).toBe('Note 2 was D. You played F. Note 3 was E. You played G. Note 4 was middle C. You played a higher C.');
+    expect(r.observed).toBe('You played F for note 2, but this phrase uses D. You played G for note 3, but this phrase uses E. You played a higher C for note 4, but this phrase uses middle C.');
   });
   it('a correct sequence passes and an extra note is named', () => {
     expect(sequenceResult([60, 62, 64, 60], [60, 62, 64, 60]).ok).toBe(true);
