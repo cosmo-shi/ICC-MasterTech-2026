@@ -1,6 +1,7 @@
 // Bar layout for drawing notation.
 
 import type { MusicEvent } from './events.ts';
+import { groupChords } from './chords.ts';
 
 const SIZES = [1920, 1440, 960, 720, 480, 240];
 
@@ -35,7 +36,7 @@ export function layoutBar(events: readonly MusicEvent[], barStart: number, barLe
 }
 
 /** One drawable item in a bar. `tie` = this sound carries on into the next item (draw a tie). */
-export type DrawnEvent = MusicEvent & { tie?: boolean; continued?: boolean };
+export type DrawnEvent = MusicEvent & { tie?: boolean; continued?: boolean; chord?: number[] };
 
 const WRITABLE = [1920, 1440, 960, 720, 480, 360, 240, 120];
 
@@ -58,7 +59,8 @@ export function splitLength(len: number): number[] {
  */
 export function layoutBars(events: readonly MusicEvent[], totalTicks: number, barLen: number): DrawnEvent[][] {
   const bars: DrawnEvent[][] = [];
-  const sounding = events.filter((e) => e.kind !== 'rest').sort((a, b) => a.onset - b.onset);
+  // Notes that start together are one chord (one event with several pitches), not separate notes.
+  const sounding = groupChords(events.filter((e) => e.kind !== 'rest'));
   // Clip each sound so it ends by the next onset (one line of music).
   const clipped = sounding
     .filter((e, i) => i === 0 || e.onset >= sounding[i - 1].onset + 1)

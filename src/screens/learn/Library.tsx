@@ -29,18 +29,23 @@ export interface Library {
 /** Says what the button does: the first thing the learner will actually do in that activity
  *  (brief 11 Nov, section 6: no "Try the rhythm" on lessons that are not about rhythm). */
 const FIRST_ACTION: Record<string, string> = {
+  L09: 'Compose a reply',
+  F_SOUND_STORY: 'Create a sound story',
+  P12_RHYTHMIC_CONVERSATION: 'Answer the rhythm',
+  P56_FORM_AND_TEXTURE: 'Build A–B sections',
+  OLDER_EXTENSION: 'Add another part',
   L00: 'Explore sounds',
-  N01: 'Hear the example',
+  N01: 'Learn about notes',
   B00: 'Tap the beat',
   L01: 'Tap the beat',
   L02: 'Practise counted rests',
   L03: 'Practise crotchets and quavers',
   L07: 'Practise minims and crotchets',
-  L04: 'Hear high and low',
-  L05: 'Find the notes',
-  S01: 'Hear C and C♯',
-  P01: 'Start playing',
-  P02: 'Start playing',
+  L04: 'Explore pitch',
+  L05: 'Meet the notes',
+  S01: 'Explore a semitone',
+  P01: 'Play C to G',
+  P02: 'Explore steps and skips',
   L06: 'Read the notes',
   L08: 'Read the melody',
   P03: 'Read the notes',
@@ -54,9 +59,10 @@ export function actionLabelFor(a: Activity): string {
   return FIRST_ACTION[a.id] ?? 'Start';
 }
 export function actionLabel(i: LibItem): string {
-  if (i.state === 'done') return 'Review';
-  if (i.state === 'started') return 'Continue';
-  if (i.a.kind === 'project' || i.a.input === 'make') return 'Start composing';
+  const project = i.a.kind === 'project' || i.a.input === 'make';
+  if (i.state === 'done') return project ? 'Open your piece' : 'Review lesson';
+  if (i.state === 'started') return project ? 'Keep composing' : 'Continue lesson';
+  if (project) return FIRST_ACTION[i.a.id] ?? 'Start composing';
   return FIRST_ACTION[i.a.id] ?? 'Start';
 }
 const STATUS = { new: 'Not started', started: 'In progress', done: 'Completed' } as const;
@@ -193,7 +199,6 @@ export function LearnLibrary({ lib }: { lib: Library }) {
                   </div>
                   <div className="lxa-item-act">
                     <Action i={i} quiet={!i.here} />
-                    <Details i={i} />
                   </div>
                 </li>
               ))}
@@ -205,19 +210,20 @@ export function LearnLibrary({ lib }: { lib: Library }) {
         <section className="lxa-create" aria-labelledby="lxa-create">
           <div className="lxa-create-head">
             <h2 id="lxa-create" className="lx-display lxa-create-title">
-              Compose and create
+              Create music
             </h2>
-            <p className="lxa-create-lede">Listen to an idea, then create a musical reply.</p>
-            <p className="lxa-create-note">Your music projects: experiment, save and improve your ideas. These projects aren’t scored.</p>
+            <p className="lxa-create-lede">Experiment with musical ideas. Compose, listen back and change what you’ve made.</p>
+            <h3 className="lxa-create-sub">Your compositions</h3>
+            <p className="lxa-create-note">Make and save your own music. You can revise each piece; creative choices aren’t marked right or wrong.</p>
           </div>
           <ul className="lxa-create-list">
             {lib.projects.map((i) => (
-              <li key={i.a.id}>
-                <h3 className="lx-item-title">{i.title}</h3>
+              <li key={i.a.id} className={`lxa-card is-${i.state}`}>
+                <h4 className="lx-item-title">{i.title}</h4>
                 <p className="lx-desc">{i.a.learn}</p>
+                <Status i={i} />
                 <div className="lx-row">
                   <Action i={i} />
-                  <Details i={i} />
                 </div>
               </li>
             ))}

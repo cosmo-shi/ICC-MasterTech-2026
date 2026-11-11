@@ -9,13 +9,13 @@ export type Beat = 'sound' | 'rest' | 'pair';
 
 export type GuidedStep =
   /** Hear one or more notes on the piano; the keys light up while they sound. */
-  | { kind: 'listen'; title: string; say: string; more?: string; notes: number[]; button: string; keys?: [number, number] }
+  | { kind: 'listen'; title: string; say: string; more?: string; notes: number[]; button: string; keys?: [number, number]; /** This step teaches the idea in words first. */ explain?: boolean }
   /** Hear two notes, then answer which is higher (or lower). The mini-check when `check` is set. */
-  | { kind: 'compare'; title: string; say: string; first: number; second: number; ask: 'higher' | 'lower'; check?: boolean }
+  | { kind: 'compare'; title: string; say: string; first: number; second: number; ask: 'higher' | 'lower'; check?: boolean; good?: string; miss?: string }
   /** Hold a key for a short and a long time: duration is not pitch or loudness. */
   | { kind: 'hold'; title: string; say: string; more?: string; midi: number }
   /** Show the note names on the keys after hearing them. */
-  | { kind: 'names'; title: string; say: string; more?: string; notes: number[] }
+  | { kind: 'names'; title: string; say: string; more?: string; notes: number[]; stave?: string }
   /** Find and play these keys in order, with the target lit. */
   | { kind: 'find'; title: string; say: string; notes: number[]; lit: boolean }
   /** Hear a steady pulse (beats light up), then tap along. No timing marks. */
@@ -53,33 +53,59 @@ export const GUIDED: GuidedLesson[] = [
     objective: 'Hear a note, tell which of two notes is higher, and meet the note names C, D and E.',
     instrument: 'keyboard',
     steps: [
-      { kind: 'listen', title: 'Let’s listen.', say: 'A piano key makes a pitched sound. Press Hear a note and watch the key.', notes: [C4], button: 'Hear a note' },
       {
         kind: 'listen',
-        title: 'A note is one of the sounds we use to make music.',
-        say: 'Each piano key plays a different note. Listen again.',
-        more: 'In written music, “note” can also mean the sign that tells musicians which pitch to play and how long to hold it. Some sounds, like most drums, don’t have a fixed pitch.',
+        explain: true,
+        title: 'What is a musical note?',
+        say: 'A musical note can mean a sound with a particular pitch, or the written symbol used to represent it. Pitch is how high or low a sound seems. When you play a piano key, you hear a note with its own pitch. You can play a note briefly or hold it longer.',
+        more: 'Many musical sounds, like most drums, have no single clear pitch. They are still music. We just don’t give them note names.',
         notes: [C4],
-        button: 'Hear the note again',
+        button: 'Hear a note',
       },
-      { kind: 'compare', title: 'Hear two notes.', say: 'Listen to the first note, then the second note.', first: C4, second: E4, ask: 'higher' },
+      {
+        kind: 'listen',
+        explain: true,
+        title: 'Notes make melodies.',
+        say: 'Notes are some of the building blocks of melodies. Play a few different notes in a row, and you can begin to make a tune.',
+        notes: [C4, D4, E4, D4, C4],
+        button: 'Hear notes in a row',
+      },
+      {
+        kind: 'listen',
+        title: 'Hear it.',
+        say: 'Listen to two piano notes. They have different pitches. Hear them again, then choose one and play it yourself on the keys.',
+        notes: [C4, E4],
+        button: 'Hear two notes',
+        keys: [C4, E4],
+      },
+      {
+        kind: 'compare',
+        title: 'Which note sounds higher?',
+        say: 'Listen to the first note, then the second note. You can play each one as many times as you like.',
+        first: C4,
+        second: E4,
+        ask: 'higher',
+        check: true,
+        good: 'The second note sounds higher. Its pitch is higher, even if both notes are played at the same volume.',
+        miss: 'Listen again to the two notes. The second is higher in pitch. Higher doesn’t mean louder: try playing both at the same volume.',
+      },
       {
         kind: 'hold',
-        title: 'Now change how long it lasts.',
+        title: 'A note can be short or long.',
         say: 'Tap the key quickly for a short note. Then hold it down for a long note.',
         more: 'How long a note lasts is called its duration. It is not the same as how high it is, or how loud it is.',
         midi: C4,
       },
       {
         kind: 'names',
-        title: 'Notes can have names.',
-        say: 'In this note-naming system, letters help musicians talk about pitches. Here are C, D and E.',
-        more: 'The letters A B C D E F G repeat higher and lower across the keyboard. The C in the middle of the piano is called middle C, or C4.',
-        notes: [C4, D4, E4],
+        title: 'Notes have names.',
+        say: 'In this keyboard example, the lower note is C and the higher is E. Note names help players refer to particular pitches.',
+        more: 'The letters A B C D E F G repeat higher and lower across the keyboard. This C, near the middle of the piano, is called middle C.',
+        notes: [C4, E4],
+        stave: 'Written music can show the same two notes on a stave. The higher note sits higher on the stave. You will learn to read the stave later.',
       },
-      { kind: 'find', title: 'Find C, then play D and E.', say: 'The keys you need are lit. Play C, D, E.', notes: [C4, D4, E4], lit: true },
-      { kind: 'compare', title: 'Show what you noticed.', say: 'Listen to two notes. Which one sounds higher?', first: D4, second: C4, ask: 'higher', check: true },
-      { kind: 'done', title: 'You explored your first notes.', say: 'You listened to and played three notes. Concept completed.', next: 'L04' },
+      { kind: 'find', title: 'Play C, then E.', say: 'Listen to how the pitch changes as you move from C up to E.', notes: [C4, E4], lit: true },
+      { kind: 'done', title: 'You’ve learned what a note is.', say: 'You’ve learned what a note is and compared two pitches. Concept completed.', next: 'L04' },
     ],
   },
   {
@@ -92,9 +118,9 @@ export const GUIDED: GuidedLesson[] = [
       { kind: 'pulse', title: 'Hear a steady beat.', say: 'Listen to four beats. Then tap along. There’s no score for this one.', bpm: 84, beats: 4, taps: 4 },
       {
         kind: 'pulse',
-        title: 'The beat is the steady pulse we follow.',
+        title: 'The beat is the regular pulse you can follow in music.',
         say: 'Each beat lights up as it sounds. Tap with it.',
-        more: 'You can make the beat slower or faster. That speed is called the tempo.',
+        more: 'You can make the beat slower or faster. That speed is called the tempo. A metronome is a tool that plays the beat for you; the beat itself is in the music.',
         bpm: 84,
         beats: 8,
         taps: 4,
@@ -102,7 +128,7 @@ export const GUIDED: GuidedLesson[] = [
       {
         kind: 'rhythm',
         title: 'Hear a rhythm over the beat.',
-        say: 'In this example, the beat stays steady while the rhythm changes. Listen for the longer sounds, the quicker sounds and the silent beat.',
+        say: 'Rhythm is the pattern of sounds and silences organised in time. In this example, the beat stays steady while the rhythm changes. Listen for the longer sounds, the quicker sounds and the silent beat.',
         more: 'Rhythm is the pattern of sounds and silences in time. Try saying “ap-ple” evenly, then “wa-ter-mel-on”. The syllables make different patterns over the same beat.',
         bpm: 84,
         pattern: ['sound', 'pair', 'rest', 'sound'],
@@ -124,7 +150,7 @@ export const GUIDED: GuidedLesson[] = [
   {
     id: 'S01',
     version: '1.0.0-draft',
-    title: 'C and C♯: a closer step',
+    title: 'Semitones: C and C♯',
     objective: 'Hear and play C and C♯, the next note up, a semitone higher.',
     instrument: 'keyboard',
     steps: [
