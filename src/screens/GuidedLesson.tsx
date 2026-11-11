@@ -30,6 +30,12 @@ const STAGE: Record<GuidedStep['kind'], Stage> = {
 
 const BEAT_WORD: Record<Beat, string> = { sound: 'Sound', pair: 'Two quick sounds', rest: 'Silent beat' };
 
+/** A few notes written one per beat in 4/4, to show them on a stave as a new way of seeing them. */
+function notesPhrase(notes: number[]): Phrase {
+  const events: MusicEvent[] = notes.map((m, i) => ({ id: `s${i}`, kind: 'note', midi: m, onset: i * TPQ * 2, duration: TPQ * 2, velocity: 0.7, author: 'lesson' }));
+  return { id: 'names', instrument: 'keyboard', meter: [4, 4], totalTicks: Math.max(4, notes.length * 2) * TPQ, tempoBpm: 80, events };
+}
+
 /** A four-beat pattern as canonical events (480 ticks per crotchet). */
 export function patternPhrase(pattern: Beat[], instrument: 'keyboard' | 'drums', bpm: number): Phrase {
   const events: MusicEvent[] = [];
@@ -142,7 +148,7 @@ export function GuidedLesson({ lesson, go }: { lesson: GL; go: (r: string) => vo
     );
 
   return (
-    <LessonShell step={i + 1} steps={lesson.steps.length} stepKey={`${lesson.id}-${i}`} stage={step.kind === 'compare' && step.check ? 'Feedback' : STAGE[step.kind]} onClose={() => go('#/learn')} foot={foot}>
+    <LessonShell step={i + 1} steps={lesson.steps.length} stepKey={`${lesson.id}-${i}`} stage={step.kind === 'compare' && step.check ? 'Feedback' : step.kind === 'listen' && step.explain ? 'Explain' : STAGE[step.kind]} onClose={() => go('#/learn')} foot={foot}>
       <div className="gl">
         <p className="kicker">{lesson.title}</p>
         <h1 className="lp-title" tabIndex={-1}>
@@ -305,6 +311,12 @@ function StepBody({
             {notes.map((m) => midiToName(m)).join(' · ')}
           </p>
         )}
+        {step.kind === 'names' && step.stave && (
+          <figure className="gl-stave">
+            <Notation phrase={notesPhrase(notes)} />
+            <figcaption className="gl-caption">{step.stave}</figcaption>
+          </figure>
+        )}
       </>
     );
   }
@@ -416,11 +428,11 @@ function Compare({ step, np, keyboard, onHeard, onTry, onRight }: { step: Extrac
         <p className={`gl-msg is-${answer === right ? 'good' : 'miss'}`} role="status">
           {answer === right ? (
             <>
-              <Icon name="check" size={20} /> Yes. The {right} note, {higher}, sounds {step.ask}. {higher === n1 ? n1 : n2} is further {step.ask === 'higher' ? 'right' : 'left'} on the keyboard.
+              <Icon name="check" size={20} /> {step.good ?? `Yes. The ${right} note, ${higher}, sounds ${step.ask}. ${higher === n1 ? n1 : n2} is further ${step.ask === 'higher' ? 'right' : 'left'} on the keyboard.`}
             </>
           ) : (
             <>
-              Not this time. The first note was {n1} and the second was {n2}. {higher} sounds higher: it’s further to the right on the keyboard. Listen to both again, then choose.
+              {step.miss ?? `Not this time. The first note was ${n1} and the second was ${n2}. ${higher} sounds higher: it’s further to the right on the keyboard. Listen to both again, then choose.`}
             </>
           )}
         </p>
