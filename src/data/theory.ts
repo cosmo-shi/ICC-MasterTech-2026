@@ -1,4 +1,5 @@
-// Music words: the learner-facing theory library. Short, plain, Australian terms.
+// Music theory: the learner-facing reference library, in teaching order (sound and notes, then pitch,
+// then time, then expression and form). Short, plain, Australian terms. Wording per the 11 Nov brief.
 // Every example is a real event list, so the notation, the sound and the words never disagree.
 // Draft wording, pending review by a primary music educator (said in Grown-ups).
 
@@ -11,7 +12,9 @@ export interface TheoryExample {
 
 export interface TheoryTopic {
   id: string;
-  group: 'Beat and rhythm' | 'High and low' | 'How it sounds' | 'Building music';
+  group: (typeof THEORY_GROUPS)[number];
+  /** Topics that help to read first (course order, brief 11 Nov section 4). */
+  before?: string[];
   title: string;
   short: string;
   body: string[];
@@ -34,30 +37,56 @@ const C4 = 60, D4 = 62, E4 = 64, F4 = 65, G4 = 67, A4 = 69, B4 = 71, C5 = 72;
 
 export const THEORY: TheoryTopic[] = [
   {
+    id: 'sound-silence',
+    group: 'Sound and notes',
+    title: 'Sound and silence',
+    short: 'Music is made of sounds and the silences between them.',
+    body: ['A sound starts, lasts for a while and stops. The silence after it is part of the music too.', 'You can make sounds with your voice, your body, objects around you or instruments. Each one sounds different.'],
+    examples: [{ label: 'Sound, sound, silence, sound', phrase: keys([n(C4, 0), n(C4, 1), r(2), n(C4, 3)]) }],
+    tryLesson: 'L00',
+    related: ['what-is-a-note', 'rests'],
+  },
+  {
+    id: 'what-is-a-note',
+    group: 'Sound and notes',
+    title: 'What is a musical note?',
+    short: 'A note is one of the sounds we use to make music. Hear one.',
+    body: ['A piano key makes a pitched sound: a note. Each key plays a different note, some higher and some lower.', 'In written music, “note” also means the sign that tells musicians which pitch to play and how long to hold it. Some sounds, like most drums, don’t have a fixed pitch.'],
+    before: ['sound-silence'],
+    examples: [
+      { label: 'One note: C', phrase: keys([n(C4, 0, 2)]) },
+      { label: 'Two notes: C, then E', phrase: keys([n(C4, 0, 2), n(E4, 2, 2)]) },
+    ],
+    tryLesson: 'N01',
+    related: ['pitch', 'note-names'],
+  },
+  {
     id: 'pulse',
-    group: 'Beat and rhythm',
-    title: 'The beat',
-    short: 'The steady pulse under the music, like a heartbeat.',
+    group: 'Keeping time',
+    title: 'Steady beat',
+    short: 'Hear a regular musical pulse. Can you tap along?',
     body: ['The beat (or pulse) keeps going, even when the music is quiet.', 'You can tap it, clap it, nod to it or walk to it. Most songs you know have a beat you can march to.'],
     examples: [{ label: 'A steady beat', phrase: drums([0, 1, 2, 3, 4, 5, 6, 7].map((b) => d(b % 4 === 0 ? 'kick' : 'snare', b)), 2) }],
-    tryLesson: 'L01',
+    tryLesson: 'B00',
     related: ['tempo', 'metre', 'rhythm'],
   },
   {
     id: 'rhythm',
-    group: 'Beat and rhythm',
-    title: 'Rhythm',
-    short: 'The pattern of long and short sounds on top of the beat.',
-    body: ['The beat stays the same. The rhythm changes: some sounds are long, some are short, and some beats are silent.', 'Say “Ap-ple pie” or “Wa-ter-mel-on” and you are saying a rhythm.'],
-    examples: [{ label: 'A rhythm over the beat', phrase: drums([d('kick', 0), d('snare', 1, 0.5), d('snare', 1.5, 0.5), d('kick', 2), r(3)], 1) }],
+    group: 'Keeping time',
+    title: 'How rhythm works',
+    short: 'Make patterns with sounds and silences of different lengths.',
+    body: ['Rhythm is the pattern of sounds and silences in time. Notes can last for different lengths, and rests make space in the pattern.', 'In this example, the beat stays steady while the rhythm changes. Listen for the longer sounds, quicker sounds and silent beat.', 'Try saying “ap-ple” evenly, then “wa-ter-mel-on”. Can you hear how the syllables make different patterns? Now clap along with a steady beat. (These are playful speech patterns, not exact note values.)'],
+    before: ['pulse'],
+    examples: [{ label: 'Hear the rhythm while the beat continues', phrase: drums([d('kick', 0), d('snare', 1, 0.5), d('snare', 1.5, 0.5), d('kick', 2), r(3)], 1) }],
     tryLesson: 'L03',
     related: ['pulse', 'note-values', 'quavers'],
   },
   {
     id: 'tempo',
-    group: 'Beat and rhythm',
-    title: 'Tempo',
-    short: 'How fast or slow the beat goes.',
+    group: 'Keeping time',
+    title: 'Tempo: fast and slow',
+    short: 'Hear how changing the speed changes the music.',
+    before: ['pulse'],
     body: ['Tempo is the speed of the beat. We count it in beats a minute.', 'Slow music might be 60 beats a minute, like a clock ticking. Fast music might be 140.'],
     facts: [
       ['Slow', 'about 60 beats a minute'],
@@ -72,24 +101,25 @@ export const THEORY: TheoryTopic[] = [
   },
   {
     id: 'metronome',
-    group: 'Beat and rhythm',
+    group: 'Keeping time',
     title: 'Metronome',
-    short: 'A tool that plays a steady beat for you to play along with.',
+    short: 'Choose a speed and practise following a steady click.',
     body: ['A metronome ticks on every beat at the tempo you choose. Musicians use it to practise keeping steady.', 'In Carmen, turn on the metronome before you record. You will hear four beats first, then play.'],
     examples: [{ label: 'Four beats, then play', phrase: drums([0, 1, 2, 3].map((b) => d('clave', b, 1, 0.6)), 1, 90) }],
     related: ['tempo', 'pulse'],
   },
   {
     id: 'note-values',
-    group: 'Beat and rhythm',
-    title: 'Long and short notes',
-    short: 'Each note shape tells you how many beats it lasts.',
-    body: ['The shape of a note tells you how long to hold it. An open note head lasts longer than a filled one.'],
+    group: 'Keeping time',
+    title: 'How long notes last',
+    short: 'Some notes last longer than others. Hear a crotchet and a minim in 4/4 time.',
+    body: ['The shape of a note tells you how long to hold it. An open note head lasts longer than a filled one.', 'In 4/4 time, where the beat is a crotchet, the note lengths below are counted in beats. In other time signatures the beat can be a different note, so the counts change.'],
+    before: ['pulse', 'rhythm'],
     facts: [
-      ['Semibreve', '4 beats (an open note, no stem)'],
-      ['Minim', '2 beats (an open note with a stem)'],
-      ['Crotchet', '1 beat (a filled note with a stem)'],
-      ['Quaver', 'half a beat (a filled note with a flag, often joined in pairs)'],
+      ['Semibreve', '4 beats in 4/4 (an open note, no stem)'],
+      ['Minim', '2 beats in 4/4 (an open note with a stem)'],
+      ['Crotchet', '1 beat in 4/4 (a filled note with a stem)'],
+      ['Quaver', 'half a beat in 4/4 (a filled note with a flag, often joined in pairs)'],
     ],
     examples: [
       { label: 'Semibreve', phrase: keys([n(C4, 0, 4)]) },
@@ -102,19 +132,21 @@ export const THEORY: TheoryTopic[] = [
   },
   {
     id: 'quavers',
-    group: 'Beat and rhythm',
-    title: 'Two sounds in a beat',
-    short: 'Quavers: two even sounds fit in one beat.',
-    body: ['A quaver lasts half a beat, so two quavers fill one beat. They are often joined by a beam.', 'Say “ti-ti” for two quavers and “ta” for a crotchet.'],
+    group: 'Keeping time',
+    title: 'Crotchets and quavers',
+    short: 'Hear one crotchet and two even quavers sharing a beat in this exercise.',
+    body: ['In this 4/4 exercise the beat is a crotchet. A quaver lasts half a beat, so two even quavers share one beat. They are often joined by a beam.', 'Count “1, 2, 3 and, 4”: the “and” is the second quaver. Some classes say “ta” for a crotchet and “ti-ti” for two quavers.'],
+    before: ['note-values'],
     examples: [{ label: 'ta  ta  ti-ti  ta', phrase: drums([d('snare', 0), d('snare', 1), d('snare', 2, 0.5), d('snare', 2.5, 0.5), d('snare', 3)]) }],
     tryLesson: 'L03',
     related: ['note-values', 'rhythm'],
   },
   {
     id: 'rests',
-    group: 'Beat and rhythm',
-    title: 'Rests',
-    short: 'A rest is a silence that still counts beats.',
+    group: 'Keeping time',
+    title: 'Rests: counting the silence',
+    short: 'When you see a rest, keep counting without playing.',
+    before: ['rhythm'],
     body: ['A rest tells you to be silent for a time. The beat keeps going while you wait.', 'Each note length has a matching rest: a crotchet rest is one beat of silence.'],
     facts: [
       ['Crotchet rest', '1 beat of silence (a squiggle)'],
@@ -127,10 +159,11 @@ export const THEORY: TheoryTopic[] = [
   },
   {
     id: 'metre',
-    group: 'Beat and rhythm',
-    title: 'Bars and time signatures',
-    short: 'Beats come in groups called bars.',
-    body: ['Music is split into bars by bar lines. The time signature at the start says how many beats are in each bar.', '4/4 means four crotchet beats in a bar. 3/4 means three, like a waltz: STRONG-two-three.'],
+    group: 'Keeping time',
+    title: 'Bars and 4/4 time',
+    short: 'Bar lines divide written music. In 4/4, each bar contains four crotchet beats.',
+    body: ['Bar lines divide written music into bars. The time signature at the start says how many beats are in each bar, and which note gets one beat.', 'In 4/4, the top 4 means four beats in a bar and the bottom 4 means each beat is a crotchet. In 3/4 there are three crotchet beats, like a waltz: STRONG-two-three.'],
+    before: ['note-values'],
     facts: [
       ['4/4', 'four crotchet beats in each bar'],
       ['3/4', 'three crotchet beats in each bar'],
@@ -141,10 +174,11 @@ export const THEORY: TheoryTopic[] = [
   },
   {
     id: 'pitch',
-    group: 'High and low',
-    title: 'High and low',
-    short: 'Pitch is how high or low a sound is.',
-    body: ['Keys to the right on a keyboard sound higher. Keys to the left sound lower.', 'A tune can step up, step down, leap or stay the same.'],
+    group: 'Discovering notes and pitch',
+    title: 'Pitch: hear high and low',
+    short: 'Listen to two notes and notice which sounds higher.',
+    body: ['Pitch is how high or low a note sounds. It is not the same as loud or soft: a high note can be quiet and a low note can be loud.', 'On a keyboard, keys to the right sound higher and keys to the left sound lower. A tune can step up, step down, leap or stay the same.'],
+    before: ['what-is-a-note'],
     examples: [
       { label: 'Going up', phrase: keys([n(C4, 0), n(E4, 1), n(G4, 2), n(C5, 3)]) },
       { label: 'Going down', phrase: keys([n(C5, 0), n(G4, 1), n(E4, 2), n(C4, 3)]) },
@@ -154,14 +188,14 @@ export const THEORY: TheoryTopic[] = [
   },
   {
     id: 'note-names',
-    group: 'High and low',
-    title: 'Note names',
-    short: 'Notes are named with seven letters: C D E F G A B.',
-    body: ['After B the letters start again at C. Every white key has a letter.', 'Find C just to the left of each pair of black keys. Middle C is the C nearest the middle of the keyboard.'],
+    group: 'Discovering notes and pitch',
+    title: 'Meet the note names',
+    short: 'In Western note naming, the letters A to G repeat. Hear C, D and E.',
+    body: ['Names let musicians talk about pitches: “play E” is quicker than “play the third white key”. In Western music the seven letters A B C D E F G name the white keys, then repeat higher and lower.', 'Find C just to the left of each pair of black keys. Middle C is the C nearest the middle of the keyboard. Other music traditions name and write pitches in other ways.'],
+    before: ['pitch'],
     facts: [
       ['Middle C', 'C4, the C near the middle of the keyboard'],
       ['Octave', 'from one C to the next C: eight white keys'],
-      ['Sharp (♯)', 'the key just above, often a black key'],
     ],
     examples: [{ label: 'C D E F G A B C', phrase: keys([C4, D4, E4, F4, G4, A4, B4, C5].map((m, i) => n(m, i * 0.5, 0.5))) }],
     tryLesson: 'L05',
@@ -169,10 +203,11 @@ export const THEORY: TheoryTopic[] = [
   },
   {
     id: 'stave',
-    group: 'High and low',
-    title: 'The stave and clefs',
-    short: 'Five lines that show how high or low to play.',
-    body: ['Notes sit on the lines or in the spaces of the stave. Higher on the stave means a higher sound.', 'The treble clef (G clef) is used for higher notes. The bass clef (F clef) is used for lower notes.'],
+    group: 'Discovering notes and pitch',
+    title: 'Reading the stave',
+    short: 'A stave has five lines. A clef helps us identify the written pitches.',
+    body: ['Notes sit on the lines or in the spaces of the stave. Under the same clef, higher on the stave means a higher sound.', 'The clef tells you which line is which note. The treble clef (G clef) curls around the G line and is used for higher notes. The bass clef (F clef) puts its two dots around the F line and is used for lower notes, so the same line means a different note in each clef.'],
+    before: ['note-names'],
     facts: [
       ['Treble clef', 'curls around the G line'],
       ['Bass clef', 'its two dots sit around the F line'],
@@ -183,10 +218,27 @@ export const THEORY: TheoryTopic[] = [
     related: ['note-names', 'pitch'],
   },
   {
+    id: 'sharps-flats',
+    group: 'Discovering notes and pitch',
+    title: 'Sharps, flats and naturals',
+    short: 'A sharp raises a note by one semitone. A flat lowers it by one.',
+    body: ['A semitone is the smallest step on the keyboard: from one key to the very next key, black or white.', 'C♯ (C sharp) is the black key just to the right of C. The same key can be called D♭ (D flat). A natural (♮) cancels a sharp or flat.', 'A sharp doesn’t always mean a black key: E♯ is played on the white key F, because there is no black key between E and F.'],
+    before: ['note-names'],
+    facts: [
+      ['Sharp (♯)', 'one semitone higher'],
+      ['Flat (♭)', 'one semitone lower'],
+      ['Natural (♮)', 'back to the plain note'],
+    ],
+    examples: [{ label: 'C, then C♯', phrase: keys([n(C4, 0, 2), n(61, 2, 2)]) }],
+    tryLesson: 'S01',
+    related: ['note-names', 'stave'],
+  },
+  {
     id: 'melody',
-    group: 'High and low',
-    title: 'Melody',
-    short: 'A tune: notes one after another that make sense together.',
+    group: 'Discovering notes and pitch',
+    title: 'Make a melody',
+    short: 'Listen to notes form a musical idea. Then make a short melody of your own.',
+    before: ['pitch'],
     body: ['A melody can step to the next note, leap over notes, or repeat a note.', 'Many melodies end on the note they started from, so they feel finished.'],
     examples: [{ label: 'A small melody', phrase: keys([n(E4, 0), n(D4, 1), n(C4, 2), n(D4, 3), n(E4, 4), n(E4, 5), n(E4, 6, 2)], 2) }],
     tryLesson: 'L06',
@@ -194,10 +246,10 @@ export const THEORY: TheoryTopic[] = [
   },
   {
     id: 'dynamics',
-    group: 'How it sounds',
-    title: 'Loud and soft',
-    short: 'Dynamics: how loud or soft the music is.',
-    body: ['Musicians use Italian words for loud and soft. Changing the loudness tells a story.'],
+    group: 'Expression and sound',
+    title: 'Dynamics: loud and soft',
+    short: 'Change how loudly or softly a phrase is played. Hear the difference.',
+    body: ['Dynamics are how loudly or softly music is played. The two examples below are the same notes: only the loudness changes, not the pitch.', 'Musicians use Italian words for loud and soft. Changing the loudness can tell a story.'],
     facts: [
       ['piano (p)', 'soft'],
       ['forte (f)', 'loud'],
@@ -213,9 +265,9 @@ export const THEORY: TheoryTopic[] = [
   },
   {
     id: 'timbre',
-    group: 'How it sounds',
-    title: 'Tone colour',
-    short: 'Timbre: what makes a piano sound different from a drum.',
+    group: 'Expression and sound',
+    title: 'Timbre: the character of a sound',
+    short: 'Hear how two instruments sound different, even when playing at similar loudness.',
     body: ['Two instruments can play the same rhythm and still sound different. That difference is called timbre, or tone colour.', 'Drums are untuned: they don’t play a tune. A piano is tuned: each key is a different note.'],
     examples: [
       { label: 'On the piano', phrase: keys([n(C4, 0), n(C4, 1), n(C4, 2, 0.5), n(C4, 2.5, 0.5), n(C4, 3)]) },
@@ -226,8 +278,8 @@ export const THEORY: TheoryTopic[] = [
   {
     id: 'form',
     group: 'Building music',
-    title: 'Form: A and B',
-    short: 'How a piece is built from parts.',
+    title: 'Musical form: A and B',
+    short: 'Hear two contrasting musical ideas, then arrange them into a piece.',
     body: ['Give each idea a letter. Repeat it and it is A A. Follow it with something new and it is A B.', 'A B A comes back home: the first idea returns at the end.'],
     facts: [
       ['Motif', 'a short idea that comes back'],
@@ -246,4 +298,4 @@ export const THEORY: TheoryTopic[] = [
 ];
 
 export const topicById = (topicId: string) => THEORY.find((t) => t.id === topicId);
-export const THEORY_GROUPS = ['Beat and rhythm', 'High and low', 'How it sounds', 'Building music'] as const;
+export const THEORY_GROUPS = ['Sound and notes', 'Discovering notes and pitch', 'Keeping time', 'Expression and sound', 'Building music'] as const;

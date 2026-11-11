@@ -55,7 +55,12 @@ const KEY = 'carmen-prefs-v1';
 function read(): Prefs {
   try {
     const raw = localStorage.getItem(KEY);
-    if (raw) return { ...DEFAULTS, ...JSON.parse(raw) };
+    if (raw) {
+      const saved = { ...DEFAULTS, ...JSON.parse(raw) } as Prefs;
+      // A damaged or old saved value must never break a screen (an unknown instrument blanked Learn).
+      if (saved.instrument !== 'keyboard' && saved.instrument !== 'drums') saved.instrument = DEFAULTS.instrument;
+      return saved;
+    }
   } catch {
     /* storage blocked: defaults still work */
   }

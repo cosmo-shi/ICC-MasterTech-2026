@@ -184,7 +184,7 @@ export function nextFor(planning: LearnerState, o: TeacherOverrides, ctx: Tailor
 /** Lesson score, out of 3: 1 = had a go, 2 = matched with practice, 3 = matched on your own. */
 export function lessonStars(attempts: Pick<AttemptRecord, 'activityId' | 'kind' | 'passed'>[], activityId: string): 0 | 1 | 2 | 3 {
   const mine = attempts.filter((a) => a.activityId === activityId && a.kind !== 'check');
-  if (mine.some((a) => (a.kind === 'independent' || a.kind === 'mission-check') && a.passed)) return 3;
+  if (mine.some((a) => (a.kind === 'independent' || a.kind === 'mission-check' || a.kind === 'concept') && a.passed)) return 3;
   if (mine.some((a) => a.passed)) return 2;
   return mine.length ? 1 : 0;
 }

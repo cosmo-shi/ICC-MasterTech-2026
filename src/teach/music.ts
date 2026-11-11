@@ -89,7 +89,7 @@ export interface WrongNote {
 const listWords = (xs: string[]) => (xs.length <= 1 ? xs.join('') : `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`);
 
 /**
- * Every wrong pitch in one attempt, in plain words ("Note 3 was E. You played G."),
+ * Every wrong pitch in one attempt, in plain words ("You played G for note 3, but this phrase uses E."),
  * not just the first one. `heard` is "You played", or "Carmen heard" for an estimate.
  */
 export function wrongNotesWords(wrong: WrongNote[], heard = 'You played'): { title: string; observed: string } {
@@ -99,8 +99,9 @@ export function wrongNotesWords(wrong: WrongNote[], heard = 'You played'): { tit
     return m === 60 ? 'middle C' : `${m > other ? 'a higher' : 'a lower'} ${l}`;
   };
   const right = (w: WrongNote) => (midiToLetter(w.expected) === midiToLetter(w.played) && w.expected === 60 ? 'middle C' : midiToLetter(w.expected));
-  const one = (w: WrongNote) => `Note ${w.index + 1} was ${right(w)}. ${heard} ${name(w.played, w.expected)}.`;
-  if (wrong.length === 1) return { title: `The note was ${right(wrong[0])}`, observed: one(wrong[0]) };
+  // Brief 11 Nov, section 6: "You played G for note 3, but this phrase uses E."
+  const one = (w: WrongNote) => `${heard} ${name(w.played, w.expected)} for note ${w.index + 1}, but this phrase uses ${right(w)}.`;
+  if (wrong.length === 1) return { title: `Note ${wrong[0].index + 1} is ${right(wrong[0])}`, observed: one(wrong[0]) };
   return {
     title: `Notes ${listWords(wrong.map((w) => String(w.index + 1)))} were wrong`,
     observed: wrong.map(one).join(' '),

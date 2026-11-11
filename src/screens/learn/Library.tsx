@@ -21,26 +21,52 @@ export interface Library {
   inst: InstrumentId;
   setInst: (i: InstrumentId) => void;
   next: LibItem & { why: string };
-  units: { track: string; title: string; about: string; items: LibItem[] }[];
+  units: { id: string; track: string; title: string; about: string; items: LibItem[] }[];
   projects: LibItem[];
   go: (r: string) => void;
 }
 
-/** Says what the button does: the first thing the learner will actually do. */
+/** Says what the button does: the first thing the learner will actually do in that activity
+ *  (brief 11 Nov, section 6: no "Try the rhythm" on lessons that are not about rhythm). */
+const FIRST_ACTION: Record<string, string> = {
+  L00: 'Explore sounds',
+  N01: 'Hear the example',
+  B00: 'Tap the beat',
+  L01: 'Tap the beat',
+  L02: 'Practise counted rests',
+  L03: 'Practise crotchets and quavers',
+  L07: 'Practise minims and crotchets',
+  L04: 'Hear high and low',
+  L05: 'Find the notes',
+  S01: 'Hear C and C♯',
+  P01: 'Start playing',
+  P02: 'Start playing',
+  L06: 'Read the notes',
+  L08: 'Read the melody',
+  P03: 'Read the notes',
+  D01: 'Start playing',
+  D02: 'Start playing',
+  D03: 'Start playing',
+};
+/** The first action of an activity, before the learner has started it. */
+export function actionLabelFor(a: Activity): string {
+  if (a.kind === 'project' || a.input === 'make') return 'Start composing';
+  return FIRST_ACTION[a.id] ?? 'Start';
+}
 export function actionLabel(i: LibItem): string {
-  if (i.state === 'done') return 'Practise again';
+  if (i.state === 'done') return 'Review';
   if (i.state === 'started') return 'Continue';
-  if (i.a.kind === 'project') return 'Start composing';
-  return { tap: 'Try the rhythm', keys: 'Find the notes', hold: 'Start playing', make: 'Start composing' }[i.a.input];
+  if (i.a.kind === 'project' || i.a.input === 'make') return 'Start composing';
+  return FIRST_ACTION[i.a.id] ?? 'Start';
 }
 const STATUS = { new: 'Not started', started: 'In progress', done: 'Completed' } as const;
+const PROJECT_STATUS = { new: 'Not started', started: 'Saved', done: 'Saved' } as const;
 const STATUS_ICON = { new: 'ring', started: 'half', done: 'good' } as const;
 
 function Status({ i }: { i: LibItem }) {
   return (
     <span className={`lx-status st-${i.state}`}>
-      <Icon name={STATUS_ICON[i.state]} size={16} /> {STATUS[i.state]}
-      {i.state === 'started' && i.a.kind === 'lesson' ? ` · ${i.stars} of 3` : ''}
+      <Icon name={STATUS_ICON[i.state]} size={16} /> {(i.a.kind === 'project' ? PROJECT_STATUS : STATUS)[i.state]}
     </span>
   );
 }
@@ -57,7 +83,7 @@ function Action({ i, quiet }: { i: LibItem; quiet?: boolean }) {
 function Details({ i }: { i: LibItem }) {
   return (
     <button type="button" className="lx-link" onClick={i.info} aria-haspopup="dialog">
-      Lesson details<span className="sr-only">: {i.title}</span>
+      What you’ll learn<span className="sr-only">: {i.title}</span>
     </button>
   );
 }
@@ -115,7 +141,7 @@ export function LearnLibrary({ lib }: { lib: Library }) {
       <FromTeacher go={lib.go} />
       <section className={`lxa-feature tr-${n.a.track}`} aria-labelledby="lxa-next">
         <div className="lxa-feature-text">
-          <p className="lx-kicker">{n.state === 'new' ? 'Your next lesson' : 'Carry on'}</p>
+          <p className="lx-kicker">{n.state === 'started' ? 'Carry on' : 'Up next'}</p>
           <h2 id="lxa-next" className="lx-display lxa-feature-title">
             {n.title}
           </h2>
@@ -126,47 +152,63 @@ export function LearnLibrary({ lib }: { lib: Library }) {
             <Details i={n} />
           </div>
         </div>
-        <div className="lxa-feature-score">
-          <Preview p={n.preview} track={n.a.track} />
-        </div>
-      </section>
-      {lib.units.map((u, ui) => (
-        <section key={u.track} className={`lxa-unit tr-${u.track}`} aria-labelledby={`lxa-u${ui}`}>
-          <div className="lxa-unit-head">
-            <span className="lxa-num" aria-hidden="true">
-              {two(ui)}
-            </span>
-            <div>
-              <h2 id={`lxa-u${ui}`} className="lx-display lxa-unit-title">
-                {u.title}
-              </h2>
-              <p className="lx-about">{u.about}</p>
-            </div>
+        {n.preview && n.preview.events.length > 0 && (
+          <div className="lxa-feature-score">
+            <Preview p={n.preview} />
           </div>
-          <ol className="lxa-list">
-            {u.items.map((i) => (
-              <li key={i.a.id} className={`lxa-item is-${i.state}${i.here ? ' is-next' : ''}`}>
-                <div className="lxa-item-text">
-                  <h3 className="lx-item-title">{i.title}</h3>
-                  <p className="lx-desc">{i.a.learn}</p>
-                  <Status i={i} />
+        )}
+      </section>
+      {lib.units.map((u, ui) => {
+        const done = u.items.filter((i) => i.state === 'done').length;
+        return (
+          <section key={u.id} className={`lxa-unit tr-${u.track}`} aria-labelledby={`lxa-u${ui}`}>
+            <div className="lxa-unit-head">
+              <span className="lxa-num" aria-hidden="true">
+                {two(ui)}
+              </span>
+              <div className="lxa-unit-words">
+                <p className="lx-kicker">Unit {ui + 1}</p>
+                <h2 id={`lxa-u${ui}`} className="lx-display lxa-unit-title">
+                  {u.title}
+                </h2>
+                <p className="lx-about">{u.about}</p>
+                <div className="lxa-unit-progress">
+                  <span className="lxa-bar" role="progressbar" aria-label={`${u.title}: concepts explored`} aria-valuemin={0} aria-valuemax={u.items.length} aria-valuenow={done}>
+                    <span style={{ width: `${(done / Math.max(1, u.items.length)) * 100}%` }} />
+                  </span>
+                  <span className="lxa-count">
+                    {done} of {u.items.length} explored
+                  </span>
                 </div>
-                <div className="lxa-item-act">
-                  <Action i={i} quiet={!i.here} />
-                  <Details i={i} />
-                </div>
-              </li>
-            ))}
-          </ol>
-        </section>
-      ))}
+              </div>
+            </div>
+            <ol className="lxa-list">
+              {u.items.map((i) => (
+                <li key={i.a.id} className={`lxa-item is-${i.state}${i.here ? ' is-next' : ''}`}>
+                  <div className="lxa-item-text">
+                    {i.here && <span className="lxa-upnext">Up next</span>}
+                    <h3 className="lx-item-title">{i.title}</h3>
+                    <p className="lx-desc">{i.a.learn}</p>
+                    <Status i={i} />
+                  </div>
+                  <div className="lxa-item-act">
+                    <Action i={i} quiet={!i.here} />
+                    <Details i={i} />
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </section>
+        );
+      })}
       {lib.projects.length > 0 && (
         <section className="lxa-create" aria-labelledby="lxa-create">
           <div className="lxa-create-head">
             <h2 id="lxa-create" className="lx-display lxa-create-title">
               Compose and create
             </h2>
-            <p className="lxa-create-lede">Write and play your own music.</p>
+            <p className="lxa-create-lede">Listen to an idea, then create a musical reply.</p>
+            <p className="lxa-create-note">Your music projects: experiment, save and improve your ideas. These projects aren’t scored.</p>
           </div>
           <ul className="lxa-create-list">
             {lib.projects.map((i) => (

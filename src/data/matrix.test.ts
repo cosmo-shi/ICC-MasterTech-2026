@@ -2,6 +2,7 @@
 // Keeps docs/CURRICULUM_MATRIX.md in step with the content. The matrix is generated from the
 // activity list, the lesson data and the pathway plan; this test fails if the file is stale.
 // Regenerate: UPDATE_MATRIX=1 npx vitest run src/data/matrix.test.ts
+import { guidedById } from './guided.ts';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import plan from './pathways.plan.json';
@@ -30,16 +31,17 @@ function build(): string {
     const l = lessonById(a.id);
     const m = missionById(a.id);
     const track = TRACKS.find((t) => t.id === a.track)!.name;
-    const evidence = a.kind === 'project' ? (m?.independentEvidence ?? 'Finished piece') : l?.independent ? 'Practice, then a different pattern on their own with hints hidden' : l?.assessment.score ? 'Practice only (no on-your-own pattern yet)' : 'Exploration; nothing is marked';
+    const g = guidedById(a.id);
+    const evidence = g ? 'One mini-check by listening; marks the concept as explored, not mastered' : a.kind === 'project' ? (m?.independentEvidence ?? 'Finished piece') : l?.independent ? 'Practice, then a different pattern on their own with hints hidden' : l?.assessment.score ? 'Practice only (no on-your-own pattern yet)' : 'Exploration; nothing is marked';
     const bands = bandsFor(a.id);
-    return `| ${a.id} | ${l?.title ?? m?.title ?? a.id} | ${track} | ${a.learn} | ${a.level} | ${a.reading} | ${a.input} | ${checks(a.id)} | ${evidence} | ${bands.length ? bands.join(', ') : 'none'} | ${statusOf(l?.reviewStatus)} |`;
+    return `| ${a.id} | ${g?.title ?? l?.title ?? m?.title ?? a.id} | ${track} | ${a.learn} | ${a.level} | ${a.reading} | ${a.input} | ${checks(a.id)} | ${evidence} | ${bands.length ? bands.join(', ') : 'none'} | ${statusOf(l?.reviewStatus)} |`;
   });
   const bandRows = plan.bands.map((b) => {
     const p = PATHWAYS.find((x) => x.id === b.id);
     return `| ${b.label} | ${b.codes.join(', ')} | ${b.focus.join('; ')} | ${p ? [...p.recommended, p.missionId].join(', ') : ''} | Draft |`;
   });
   const counts = { Draft: 0, Reviewed: 0, Validated: 0 };
-  for (const a of ACTIVITIES) counts[statusOf(lessonById(a.id)?.reviewStatus)]++;
+  for (const a of ACTIVITIES) counts[statusOf(lessonById(a.id)?.reviewStatus ?? (guidedById(a.id) ? 'draft' : undefined))]++;
   return `# Carmen curriculum coverage matrix
 
 Generated from \`src/data/curriculum.ts\`, the lesson files and \`src/data/pathways.plan.json\` by

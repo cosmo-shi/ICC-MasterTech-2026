@@ -24,6 +24,8 @@ import { Notation, describePhrase } from "../ui/Notation.tsx";
 import { usePlayer } from "../ui/usePlayer.ts";
 import { type LiveEvent, Workspace } from "../ui/Workspace.tsx";
 import { FreeLesson } from "./FreeLesson.tsx";
+import { GuidedLesson } from "./GuidedLesson.tsx";
+import { guidedById } from "../data/guided.ts";
 import { inputsToPhrase } from "../ai/coach.ts";
 import { coachFocus, LESSON_INFOS, skillsForActivity, supportFor } from "../ai/learner.ts";
 import { CHECK_CARDS, SUPPORTS, TRICKY, type CheckKind, type SupportId, checkInOffer, rulesCheckInOffer } from "../ai/checkin.ts";
@@ -53,6 +55,8 @@ interface Props {
 }
 
 export function LessonScreen({ lessonId, go, view }: Props) {
+  const guided = guidedById(lessonId);
+  if (guided) return <GuidedLesson key={lessonId} lesson={guided} go={go} />;
   const lesson = lessonById(lessonId);
   if (!lesson)
     return (

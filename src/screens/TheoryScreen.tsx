@@ -1,17 +1,25 @@
-import { lessonById } from '../data/catalog.ts';
+import { useState } from 'react';
+import { activityById } from '../data/curriculum.ts';
 import { THEORY, THEORY_GROUPS, type TheoryExample, topicById } from '../data/theory.ts';
 import { Icon } from '../ui/icons.tsx';
 import { Notation } from '../ui/Notation.tsx';
 import { usePlayer } from '../ui/usePlayer.ts';
-import { LearnTabs } from './LearnScreen.tsx';
+import { LearnTabs, titleOf } from './LearnScreen.tsx';
 
 /** Each category keeps one track hue so it is findable by place, words and colour. */
-const GROUP_TONE: Record<string, string> = { 'Beat and rhythm': 'tr-foundations', 'High and low': 'tr-piano', 'How it sounds': 'tr-drums', 'Building music': 'tr-create' };
+const GROUP_TONE: Record<string, string> = {
+  'Sound and notes': 'tr-foundations',
+  'Discovering notes and pitch': 'tr-piano',
+  'Keeping time': 'tr-foundations',
+  'Expression and sound': 'tr-drums',
+  'Building music': 'tr-create',
+};
 const GROUP_ABOUT: Record<string, string> = {
-  'Beat and rhythm': 'How music moves in time: the beat, note lengths, rests and bars.',
-  'High and low': 'Where notes sit: pitch, the stave, clefs, sharps and flats.',
-  'How it sounds': 'Loud and soft, fast and slow, smooth and short.',
-  'Building music': 'How ideas join up: patterns, phrases, call and response, form.',
+  'Sound and notes': 'Start here: what sound, silence and a musical note are.',
+  'Discovering notes and pitch': 'Start by hearing how notes can sound higher or lower. Later, learn how musicians name and write them.',
+  'Keeping time': 'Feel the beat first, then rhythm, note lengths, rests and bars.',
+  'Expression and sound': 'Loud and soft, and the character of different instruments.',
+  'Building music': 'How ideas join up: melody, phrases, call and response, form.',
 };
 
 /** Hear-it button for a topic card: plays the first example from the same event list as its notation. */
@@ -28,12 +36,20 @@ function HearFirst({ t }: { t: (typeof THEORY)[number] }) {
 }
 
 function TheoryIndexLook({ go }: { go: (r: string) => void }) {
+  const [q, setQ] = useState('');
+  const needle = q.trim().toLowerCase();
+  const shown = (t: (typeof THEORY)[number]) => !needle || `${t.title} ${t.short} ${t.body.join(' ')} ${(t.facts ?? []).flat().join(' ')}`.toLowerCase().includes(needle);
+  const anyShown = THEORY.some(shown);
   return (
     <div className="screen lx lxt">
       <header className="lxt-head">
         <h1 className="lx-display lxt-title">Music theory</h1>
         <LearnTabs at="theory" go={go} />
-        <p className="lxt-lede">The words musicians use, each with real notation you can hear.</p>
+        <p className="lxt-lede">Look up a music word. Each one has notation you can hear and links to the lesson that teaches it. For a course in order, use Lessons.</p>
+        <label className="lxt-search">
+          <span>Find a word</span>
+          <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="For example: rest, sharp, tempo" />
+        </label>
       </header>
       <nav className="lxt-jump" aria-label="Categories">
         {THEORY_GROUPS.map((g, i) => (
@@ -42,14 +58,15 @@ function TheoryIndexLook({ go }: { go: (r: string) => void }) {
           </a>
         ))}
       </nav>
-      {THEORY_GROUPS.map((g, gi) => (
+      {!anyShown && <p className="lxt-none" role="status">No music word matches “{q}”. Try a shorter word.</p>}
+      {THEORY_GROUPS.filter((g) => THEORY.some((t) => t.group === g && shown(t))).map((g, gi) => (
         <section key={g} id={`tg-${gi}`} className={`lxt-group ${GROUP_TONE[g]}`} aria-labelledby={`tgh-${gi}`}>
           <div className="lxt-group-head">
             <h2 id={`tgh-${gi}`} className="lx-display lxt-group-title">{g}</h2>
             <p className="lx-about">{GROUP_ABOUT[g]}</p>
           </div>
           <ul className="lxt-grid">
-            {THEORY.filter((t) => t.group === g).map((t) => (
+            {THEORY.filter((t) => t.group === g && shown(t)).map((t) => (
               <li key={t.id} className="lxt-card">
                 <h3 className="lx-item-title">{t.title}</h3>
                 <p className="lx-desc">{t.short}</p>
@@ -61,7 +78,7 @@ function TheoryIndexLook({ go }: { go: (r: string) => void }) {
                 <div className="lx-row">
                   <HearFirst t={t} />
                   <button type="button" className="lx-link" onClick={() => go(`#/theory/${t.id}`)}>
-                    Read about it<span className="sr-only">: {t.title}</span>
+                    Read and listen<span className="sr-only">: {t.title}</span>
                   </button>
                 </div>
               </li>
@@ -98,7 +115,10 @@ export function TheoryScreen({ topicId, go }: { topicId?: string; go: (r: string
   const topic = topicId ? topicById(topicId) : undefined;
 
   if (topic) {
-    const lesson = topic.tryLesson ? lessonById(topic.tryLesson) : undefined;
+    const lesson = topic.tryLesson ? activityById(topic.tryLesson) : undefined;
+    // Course order: the categories in teaching order, topics in order inside each.
+    const ordered = THEORY_GROUPS.flatMap((g) => THEORY.filter((t) => t.group === g));
+    const nextTopic = ordered[ordered.indexOf(topic) + 1];
     return (
       <div className={`screen theory lx lxt-topic ${GROUP_TONE[topic.group]}`}>
         <nav className="crumbs" aria-label="Breadcrumb">
@@ -129,16 +149,37 @@ export function TheoryScreen({ topicId, go }: { topicId?: string; go: (r: string
             <Example key={ex.label} ex={ex} />
           ))}
         </div>
+        {topic.before && topic.before.length > 0 && (
+          <p className="theory-before">
+            Helps to know first:{' '}
+            {topic.before.map((b, k) => (
+              <span key={b}>
+                {k > 0 && ', '}
+                <button type="button" className="link" onClick={() => go(`#/theory/${b}`)}>
+                  {topicById(b)?.title}
+                </button>
+              </span>
+            ))}
+          </p>
+        )}
         <div className="row wrap">
           {lesson && (
-            <button type="button" className="btn" onClick={() => go(`#/lesson/${lesson.id}`)}>
-              Try it: {lesson.title}
+            <button type="button" className="btn" onClick={() => go(lesson.kind === 'lesson' ? `#/lesson/${lesson.id}` : `#/mission/${lesson.id}`)}>
+              Lesson: {titleOf(lesson.id)}
             </button>
           )}
           <button type="button" className="btn-quiet" onClick={() => go('#/play')}>
-            Play with it
+            Play it yourself
           </button>
         </div>
+        {nextTopic && nextTopic !== topic && (
+          <p className="theory-next">
+            Next word:{' '}
+            <button type="button" className="link" onClick={() => go(`#/theory/${nextTopic.id}`)}>
+              {nextTopic.title}
+            </button>
+          </p>
+        )}
         {topic.related.length > 0 && (
           <section className="theory-related" aria-labelledby="rel-h">
             <h2 id="rel-h" className="h3">

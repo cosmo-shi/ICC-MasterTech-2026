@@ -41,7 +41,9 @@ export interface AttemptRecord {
   activityId: string; // lesson id (L01) or mission id
   activityVersion: string;
   /** 'check' = a short "what's getting in the way?" check: never used as evidence of a skill. */
-  kind: 'practice' | 'independent' | 'mission' | 'mission-check' | 'check';
+  /** 'concept' = a short concept lesson finished with one meaningful mini-check (brief 11 Nov, section 7).
+   *  It marks the concept as explored, not mastered, and is never skill evidence for the learner model. */
+  kind: 'practice' | 'independent' | 'mission' | 'mission-check' | 'check' | 'concept';
   instrument: InstrumentId;
   tempoBpm: number;
   support: { hintLevel: number; heardExample: boolean; largeControls: boolean; simplified: boolean; aiEnabled: boolean; slower: boolean; counting?: boolean };

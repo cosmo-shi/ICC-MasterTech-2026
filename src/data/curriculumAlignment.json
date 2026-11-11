@@ -1,0 +1,635 @@
+{
+ "curriculum": "Australian Curriculum",
+ "version": "9.0",
+ "learningArea": "The Arts: Music",
+ "scope": "Foundation to Year 6",
+ "claim": "Alignment mapping by the Carmen team. Not ACARA certification or endorsement. Draft pending a primary music educator.",
+ "sources": [
+  {
+   "id": "QCAA_CD",
+   "title": "QCAA: Australian Curriculum v9.0 Music, sequence of content descriptions P-6",
+   "url": "https://www.qcaa.qld.edu.au/downloads/aciqv9/the-arts/curriculum/ac9_arts_music_p-6_cd_sequence.pdf",
+   "licence": "CC BY 4.0 (© State of Queensland (QCAA) 2022; Australian Curriculum material © ACARA 2010–present, CC BY 4.0)"
+  },
+  {
+   "id": "QCAA_AS",
+   "title": "QCAA: Australian Curriculum v9.0 Music, sequence of achievement standards P-6",
+   "url": "https://www.qcaa.qld.edu.au/downloads/aciqv9/the-arts/curriculum/ac9_arts_music_prep-yr6_as_sequence.pdf",
+   "licence": "CC BY 4.0"
+  },
+  {
+   "id": "ACARA_TERMS",
+   "title": "ACARA copyright and terms of use",
+   "url": "https://www.australiancurriculum.edu.au/copyright-and-terms-of-use",
+   "licence": "Curriculum content CC BY 4.0 except logos, trade marks, site design and third-party material"
+  }
+ ],
+ "attribution": "© Australian Curriculum, Assessment and Reporting Authority (ACARA) 2010 to present, unless otherwise indicated. Content descriptions reproduced via QCAA (CC BY 4.0), not modified except where shortened with an ellipsis.",
+ "strands": [
+  "Exploring and responding",
+  "Developing practices and skills",
+  "Creating and making",
+  "Presenting and performing"
+ ],
+ "elements": {
+  "list": [
+   "duration/time",
+   "pitch",
+   "dynamics",
+   "timbre",
+   "texture",
+   "form"
+  ],
+  "verification": "Taken from the owner brief (11 Nov). The fetched QCAA PDFs refer to \"elements of music\" without listing them; not yet checked against an official list."
+ },
+ "descriptors": [
+  {
+   "code": "AC9AMUFE01",
+   "band": "Foundation",
+   "strand": "Exploring and responding",
+   "officialText": "explore how and why the arts are important for people and communities",
+   "paraphrase": "Talk about where and why people make and enjoy music.",
+   "sourceUrl": "https://www.qcaa.qld.edu.au/downloads/aciqv9/the-arts/curriculum/ac9_arts_music_p-6_cd_sequence.pdf",
+   "checkedOn": "2026-11-11",
+   "verification": "verified against the QCAA reproduction of ACARA v9.0 text (2026-11-11); ACARA site not reachable from this environment"
+  },
+  {
+   "code": "AC9AMUFD01",
+   "band": "Foundation",
+   "strand": "Developing practices and skills",
+   "officialText": "use play, imagination, arts knowledge, processes and/or skills to discover possibilities and develop ideas",
+   "paraphrase": "Discover sounds and ideas through play.",
+   "sourceUrl": "https://www.qcaa.qld.edu.au/downloads/aciqv9/the-arts/curriculum/ac9_arts_music_p-6_cd_sequence.pdf",
+   "checkedOn": "2026-11-11",
+   "verification": "text verified against the QCAA reproduction; the PDF prints the code as \"AC9AMUD01\". Check the code on the ACARA site before any external use."
+  },
+  {
+   "code": "AC9AMUFC01",
+   "band": "Foundation",
+   "strand": "Creating and making",
+   "officialText": "create arts works that communicate ideas",
+   "paraphrase": "Make a short piece that communicates an idea.",
+   "sourceUrl": "https://www.qcaa.qld.edu.au/downloads/aciqv9/the-arts/curriculum/ac9_arts_music_p-6_cd_sequence.pdf",
+   "checkedOn": "2026-11-11",
+   "verification": "verified against the QCAA reproduction of ACARA v9.0 text (2026-11-11); ACARA site not reachable from this environment"
+  },
+  {
+   "code": "AC9AMUFP01",
+   "band": "Foundation",
+   "strand": "Presenting and performing",
+   "officialText": "share their arts works with audiences",
+   "paraphrase": "Share music they made with someone.",
+   "sourceUrl": "https://www.qcaa.qld.edu.au/downloads/aciqv9/the-arts/curriculum/ac9_arts_music_p-6_cd_sequence.pdf",
+   "checkedOn": "2026-11-11",
+   "verification": "verified against the QCAA reproduction of ACARA v9.0 text (2026-11-11); ACARA site not reachable from this environment"
+  },
+  {
+   "code": "AC9AMU2E01",
+   "band": "Years 1-2",
+   "strand": "Exploring and responding",
+   "officialText": "explore where, why and how people across cultures, communities and/or other contexts experience music",
+   "paraphrase": "Explore where, why and how people experience music.",
+   "sourceUrl": "https://www.qcaa.qld.edu.au/downloads/aciqv9/the-arts/curriculum/ac9_arts_music_p-6_cd_sequence.pdf",
+   "checkedOn": "2026-11-11",
+   "verification": "verified against the QCAA reproduction of ACARA v9.0 text (2026-11-11); ACARA site not reachable from this environment"
+  },
+  {
+   "code": "AC9AMU2E02",
+   "band": "Years 1-2",
+   "strand": "Exploring and responding",
+   "officialText": "explore examples of music composed and/or performed by First Nations Australians",
+   "paraphrase": "Explore music by First Nations Australians (needs authorised material).",
+   "sourceUrl": "https://www.qcaa.qld.edu.au/downloads/aciqv9/the-arts/curriculum/ac9_arts_music_p-6_cd_sequence.pdf",
+   "checkedOn": "2026-11-11",
+   "verification": "verified against the QCAA reproduction of ACARA v9.0 text (2026-11-11); ACARA site not reachable from this environment"
+  },
+  {
+   "code": "AC9AMU2D01",
+   "band": "Years 1-2",
+   "strand": "Developing practices and skills",
+   "officialText": "develop listening skills and skills for singing and playing instruments",
+   "paraphrase": "Listen carefully and build playing skills.",
+   "sourceUrl": "https://www.qcaa.qld.edu.au/downloads/aciqv9/the-arts/curriculum/ac9_arts_music_p-6_cd_sequence.pdf",
+   "checkedOn": "2026-11-11",
+   "verification": "verified against the QCAA reproduction of ACARA v9.0 text (2026-11-11); ACARA site not reachable from this environment"
+  },
+  {
+   "code": "AC9AMU2C01",
+   "band": "Years 1-2",
+   "strand": "Creating and making",
+   "officialText": "select and combine elements of music when composing and practising music for performance",
+   "paraphrase": "Choose and combine musical elements when making music.",
+   "sourceUrl": "https://www.qcaa.qld.edu.au/downloads/aciqv9/the-arts/curriculum/ac9_arts_music_p-6_cd_sequence.pdf",
+   "checkedOn": "2026-11-11",
+   "verification": "verified against the QCAA reproduction of ACARA v9.0 text (2026-11-11); ACARA site not reachable from this environment"
+  },
+  {
+   "code": "AC9AMU2P01",
+   "band": "Years 1-2",
+   "strand": "Presenting and performing",
+   "officialText": "sing and play music in informal settings",
+   "paraphrase": "Play music informally.",
+   "sourceUrl": "https://www.qcaa.qld.edu.au/downloads/aciqv9/the-arts/curriculum/ac9_arts_music_p-6_cd_sequence.pdf",
+   "checkedOn": "2026-11-11",
+   "verification": "verified against the QCAA reproduction of ACARA v9.0 text (2026-11-11); ACARA site not reachable from this environment"
+  },
+  {
+   "code": "AC9AMU4E01",
+   "band": "Years 3-4",
+   "strand": "Exploring and responding",
+   "officialText": "explore where, why and how music is composed and/or performed across cultures, times, places and/or other contexts",
+   "paraphrase": "Explore how music is made in different contexts.",
+   "sourceUrl": "https://www.qcaa.qld.edu.au/downloads/aciqv9/the-arts/curriculum/ac9_arts_music_p-6_cd_sequence.pdf",
+   "checkedOn": "2026-11-11",
+   "verification": "verified against the QCAA reproduction of ACARA v9.0 text (2026-11-11); ACARA site not reachable from this environment"
+  },
+  {
+   "code": "AC9AMU4E02",
+   "band": "Years 3-4",
+   "strand": "Exploring and responding",
+   "officialText": "explore how First Nations Australians use music to communicate their connection to and responsibility for Country/Place",
+   "paraphrase": "Explore First Nations music and Country/Place (needs authorised material).",
+   "sourceUrl": "https://www.qcaa.qld.edu.au/downloads/aciqv9/the-arts/curriculum/ac9_arts_music_p-6_cd_sequence.pdf",
+   "checkedOn": "2026-11-11",
+   "verification": "verified against the QCAA reproduction of ACARA v9.0 text (2026-11-11); ACARA site not reachable from this environment"
+  },
+  {
+   "code": "AC9AMU4D01",
+   "band": "Years 3-4",
+   "strand": "Developing practices and skills",
+   "officialText": "develop listening skills and skills for manipulating elements of music when singing and playing instruments",
+   "paraphrase": "Listen and control musical elements when playing.",
+   "sourceUrl": "https://www.qcaa.qld.edu.au/downloads/aciqv9/the-arts/curriculum/ac9_arts_music_p-6_cd_sequence.pdf",
+   "checkedOn": "2026-11-11",
+   "verification": "verified against the QCAA reproduction of ACARA v9.0 text (2026-11-11); ACARA site not reachable from this environment"
+  },
+  {
+   "code": "AC9AMU4C01",
+   "band": "Years 3-4",
+   "strand": "Creating and making",
+   "officialText": "manipulate elements of music to communicate ideas, perspectives and/or meaning … (full text in source)",
+   "paraphrase": "Change musical elements to communicate an idea when composing.",
+   "sourceUrl": "https://www.qcaa.qld.edu.au/downloads/aciqv9/the-arts/curriculum/ac9_arts_music_p-6_cd_sequence.pdf",
+   "checkedOn": "2026-11-11",
+   "verification": "verified against the QCAA reproduction of ACARA v9.0 text (2026-11-11); ACARA site not reachable from this environment"
+  },
+  {
+   "code": "AC9AMU4P01",
+   "band": "Years 3-4",
+   "strand": "Presenting and performing",
+   "officialText": "sing and play music they have learnt and/or composed in informal settings",
+   "paraphrase": "Play music they learnt or made, informally.",
+   "sourceUrl": "https://www.qcaa.qld.edu.au/downloads/aciqv9/the-arts/curriculum/ac9_arts_music_p-6_cd_sequence.pdf",
+   "checkedOn": "2026-11-11",
+   "verification": "verified against the QCAA reproduction of ACARA v9.0 text (2026-11-11); ACARA site not reachable from this environment"
+  },
+  {
+   "code": "AC9AMU6E01",
+   "band": "Years 5-6",
+   "strand": "Exploring and responding",
+   "officialText": "explore ways that the elements of music are combined in music across cultures, times, places and/or other contexts",
+   "paraphrase": "Explore how elements are combined in different music.",
+   "sourceUrl": "https://www.qcaa.qld.edu.au/downloads/aciqv9/the-arts/curriculum/ac9_arts_music_p-6_cd_sequence.pdf",
+   "checkedOn": "2026-11-11",
+   "verification": "verified against the QCAA reproduction of ACARA v9.0 text (2026-11-11); ACARA site not reachable from this environment"
+  },
+  {
+   "code": "AC9AMU6E02",
+   "band": "Years 5-6",
+   "strand": "Exploring and responding",
+   "officialText": "explore ways First Nations Australians use music to continue and revitalise culture",
+   "paraphrase": "Explore how First Nations Australians use music to continue culture (needs authorised material).",
+   "sourceUrl": "https://www.qcaa.qld.edu.au/downloads/aciqv9/the-arts/curriculum/ac9_arts_music_p-6_cd_sequence.pdf",
+   "checkedOn": "2026-11-11",
+   "verification": "verified against the QCAA reproduction of ACARA v9.0 text (2026-11-11); ACARA site not reachable from this environment"
+  },
+  {
+   "code": "AC9AMU6D01",
+   "band": "Years 5-6",
+   "strand": "Developing practices and skills",
+   "officialText": "develop listening/aural skills and skills for manipulating elements of music to achieve expressive effects … (full text in source)",
+   "paraphrase": "Listen closely and shape elements for expressive effect.",
+   "sourceUrl": "https://www.qcaa.qld.edu.au/downloads/aciqv9/the-arts/curriculum/ac9_arts_music_p-6_cd_sequence.pdf",
+   "checkedOn": "2026-11-11",
+   "verification": "verified against the QCAA reproduction of ACARA v9.0 text (2026-11-11); ACARA site not reachable from this environment"
+  },
+  {
+   "code": "AC9AMU6C01",
+   "band": "Years 5-6",
+   "strand": "Creating and making",
+   "officialText": "manipulate elements of music and use compositional devices to communicate ideas, perspectives and/or meaning … (full text in source; adds notating, documenting and/or recording)",
+   "paraphrase": "Compose with elements and devices, and notate or record the result.",
+   "sourceUrl": "https://www.qcaa.qld.edu.au/downloads/aciqv9/the-arts/curriculum/ac9_arts_music_p-6_cd_sequence.pdf",
+   "checkedOn": "2026-11-11",
+   "verification": "verified against the QCAA reproduction of ACARA v9.0 text (2026-11-11); ACARA site not reachable from this environment"
+  },
+  {
+   "code": "AC9AMU6P01",
+   "band": "Years 5-6",
+   "strand": "Presenting and performing",
+   "officialText": "perform music in a range of forms they have learnt and/or composed in informal and/or formal settings",
+   "paraphrase": "Perform music they learnt or composed.",
+   "sourceUrl": "https://www.qcaa.qld.edu.au/downloads/aciqv9/the-arts/curriculum/ac9_arts_music_p-6_cd_sequence.pdf",
+   "checkedOn": "2026-11-11",
+   "verification": "verified against the QCAA reproduction of ACARA v9.0 text (2026-11-11); ACARA site not reachable from this environment"
+  }
+ ],
+ "mappings": [
+  {
+   "activityId": "L00",
+   "codes": [
+    "AC9AMUFD01"
+   ],
+   "elements": [
+    "timbre",
+    "duration"
+   ],
+   "experientialActivity": "Make a sound, stop it, change it on piano or drums.",
+   "observableEvidence": "The learner makes and stops at least one sound.",
+   "assessment": "Completion only; not marked.",
+   "accessibleEquivalent": "Large controls; any key or pad works.",
+   "confidence": "proposed-partial"
+  },
+  {
+   "activityId": "N01",
+   "codes": [
+    "AC9AMUFD01",
+    "AC9AMU2D01"
+   ],
+   "elements": [
+    "pitch",
+    "duration"
+   ],
+   "experientialActivity": "Hear a note, compare two pitches, hold short and long notes, play C, D, E.",
+   "observableEvidence": "Mini-check: chooses the higher of two heard notes; plays C, D, E in order.",
+   "assessment": "One listening mini-check marks the concept as explored, not mastered.",
+   "accessibleEquivalent": "Show-the-notes option lights the keys; this is not the same as hearing pitch and says so.",
+   "confidence": "proposed-partial"
+  },
+  {
+   "activityId": "B00",
+   "codes": [
+    "AC9AMUFD01",
+    "AC9AMU2D01",
+    "AC9AMU2C01"
+   ],
+   "elements": [
+    "duration/time"
+   ],
+   "experientialActivity": "Tap a steady beat, hear a rhythm over it, build a 4-beat rhythm with a rest, see it written in 4/4.",
+   "observableEvidence": "Mini-check: picks which of two heard rhythms has a silent beat; builds a rhythm with sounds and a rest.",
+   "assessment": "One listening mini-check marks the concept as explored. Taps are not timed or marked.",
+   "accessibleEquivalent": "Beats light up as they sound; patterns are also shown as shapes with words.",
+   "confidence": "proposed-partial"
+  },
+  {
+   "activityId": "L01",
+   "codes": [
+    "AC9AMU2D01",
+    "AC9AMU2P01"
+   ],
+   "elements": [
+    "duration/time"
+   ],
+   "experientialActivity": "Play along with a steady pulse.",
+   "observableEvidence": "Taps on the beat, compared with the expected events.",
+   "assessment": "Practice, then on-your-own pattern; timing described.",
+   "accessibleEquivalent": "Slower tempo, counting shown.",
+   "confidence": "proposed-partial"
+  },
+  {
+   "activityId": "L02",
+   "codes": [
+    "AC9AMU2D01"
+   ],
+   "elements": [
+    "duration/time"
+   ],
+   "experientialActivity": "Keep counting through a one-beat rest.",
+   "observableEvidence": "Silence on the rest beat, compared with the expected events.",
+   "assessment": "Practice and on-your-own pattern.",
+   "accessibleEquivalent": "Counting shown; rests drawn as shapes with words.",
+   "confidence": "proposed-partial"
+  },
+  {
+   "activityId": "L03",
+   "codes": [
+    "AC9AMU2D01",
+    "AC9AMU4D01"
+   ],
+   "elements": [
+    "duration/time"
+   ],
+   "experientialActivity": "One crotchet or two even quavers per beat in a 4/4 exercise.",
+   "observableEvidence": "Matches the written pattern of crotchets and quavers.",
+   "assessment": "Practice and on-your-own pattern.",
+   "accessibleEquivalent": "Slower tempo.",
+   "confidence": "proposed-partial"
+  },
+  {
+   "activityId": "L04",
+   "codes": [
+    "AC9AMU2D01"
+   ],
+   "elements": [
+    "pitch"
+   ],
+   "experientialActivity": "Listen and play notes that rise and fall.",
+   "observableEvidence": "Plays notes in the heard order.",
+   "assessment": "Practice and on-your-own pattern.",
+   "accessibleEquivalent": "Key hints.",
+   "confidence": "proposed-partial"
+  },
+  {
+   "activityId": "L05",
+   "codes": [
+    "AC9AMU2D01"
+   ],
+   "elements": [
+    "pitch"
+   ],
+   "experientialActivity": "Find C, D and E and play a short pattern.",
+   "observableEvidence": "Plays the right keys in order.",
+   "assessment": "Practice and on-your-own pattern.",
+   "accessibleEquivalent": "Lit keys, note names.",
+   "confidence": "proposed-partial"
+  },
+  {
+   "activityId": "L06",
+   "codes": [
+    "AC9AMU4D01"
+   ],
+   "elements": [
+    "pitch"
+   ],
+   "experientialActivity": "Read C, D, E on the treble stave and play the keys.",
+   "observableEvidence": "Plays the written notes.",
+   "assessment": "Practice and on-your-own pattern.",
+   "accessibleEquivalent": "Note names on keys and stave.",
+   "confidence": "proposed-weak: reading notation is not named in the F-4 descriptors"
+  },
+  {
+   "activityId": "P01",
+   "codes": [
+    "AC9AMU4D01"
+   ],
+   "elements": [
+    "pitch"
+   ],
+   "experientialActivity": "Play C to G up and down.",
+   "observableEvidence": "Plays five notes in order.",
+   "assessment": "Practice and on-your-own pattern.",
+   "accessibleEquivalent": "Lit keys.",
+   "confidence": "proposed-partial"
+  },
+  {
+   "activityId": "S01",
+   "codes": [
+    "AC9AMU4D01"
+   ],
+   "elements": [
+    "pitch"
+   ],
+   "experientialActivity": "Hear and play C and C♯; meet the name D♭.",
+   "observableEvidence": "Mini-check: chooses the higher of C and C♯ by listening.",
+   "assessment": "One listening mini-check marks the concept as explored.",
+   "accessibleEquivalent": "Show-the-notes option.",
+   "confidence": "proposed-weak"
+  },
+  {
+   "activityId": "L07",
+   "codes": [
+    "AC9AMU2D01",
+    "AC9AMU4D01"
+   ],
+   "elements": [
+    "duration/time"
+   ],
+   "experientialActivity": "Play one-beat and two-beat notes in 4/4.",
+   "observableEvidence": "Holds notes for the written length.",
+   "assessment": "Practice and on-your-own pattern.",
+   "accessibleEquivalent": "Counting shown.",
+   "confidence": "proposed-partial"
+  },
+  {
+   "activityId": "L08",
+   "codes": [
+    "AC9AMU4D01",
+    "AC9AMU6C01"
+   ],
+   "elements": [
+    "pitch",
+    "duration/time"
+   ],
+   "experientialActivity": "Read and play a two-bar melody with rests.",
+   "observableEvidence": "Plays the written notes and rests.",
+   "assessment": "Practice and on-your-own pattern.",
+   "accessibleEquivalent": "Counting shown.",
+   "confidence": "proposed-weak: 6C01 is about notating compositions, used here only as related reading"
+  },
+  {
+   "activityId": "P02",
+   "codes": [
+    "AC9AMU4D01"
+   ],
+   "elements": [
+    "pitch"
+   ],
+   "experientialActivity": "Compare steps and skips.",
+   "observableEvidence": "Plays step and skip patterns.",
+   "assessment": "Practice and on-your-own pattern.",
+   "accessibleEquivalent": "Lit keys.",
+   "confidence": "proposed-partial"
+  },
+  {
+   "activityId": "P03",
+   "codes": [
+    "AC9AMU6D01"
+   ],
+   "elements": [
+    "pitch"
+   ],
+   "experientialActivity": "Read and play a simple lower melody in bass clef.",
+   "observableEvidence": "Plays the written low notes.",
+   "assessment": "Practice and on-your-own pattern.",
+   "accessibleEquivalent": "Note names.",
+   "confidence": "proposed-weak"
+  },
+  {
+   "activityId": "D01",
+   "codes": [
+    "AC9AMU4D01",
+    "AC9AMU4P01"
+   ],
+   "elements": [
+    "duration/time",
+    "timbre"
+   ],
+   "experientialActivity": "Bass drum on 1 and 3, snare on 2 and 4.",
+   "observableEvidence": "Plays the groove; which drum was hit is not judged by microphone.",
+   "assessment": "Practice and on-your-own pattern.",
+   "accessibleEquivalent": "Pads or kit view, slower tempo.",
+   "confidence": "proposed-partial"
+  },
+  {
+   "activityId": "D02",
+   "codes": [
+    "AC9AMU4D01",
+    "AC9AMU4P01"
+   ],
+   "elements": [
+    "duration/time",
+    "timbre"
+   ],
+   "experientialActivity": "Steady quavers on hi-hat with snare on 2 and 4.",
+   "observableEvidence": "Plays the pattern.",
+   "assessment": "Practice and on-your-own pattern.",
+   "accessibleEquivalent": "Slower tempo.",
+   "confidence": "proposed-partial"
+  },
+  {
+   "activityId": "D03",
+   "codes": [
+    "AC9AMU4D01",
+    "AC9AMU4C01"
+   ],
+   "elements": [
+    "duration/time",
+    "form"
+   ],
+   "experientialActivity": "Tom pattern ending on a crash.",
+   "observableEvidence": "Plays the fill.",
+   "assessment": "Practice and on-your-own pattern.",
+   "accessibleEquivalent": "Slower tempo.",
+   "confidence": "proposed-partial"
+  },
+  {
+   "activityId": "L09",
+   "codes": [
+    "AC9AMU2C01",
+    "AC9AMU4C01"
+   ],
+   "elements": [
+    "pitch",
+    "duration/time",
+    "form"
+   ],
+   "experientialActivity": "Make a musical reply to a short phrase.",
+   "observableEvidence": "A saved reply the learner made.",
+   "assessment": "Described, not marked.",
+   "accessibleEquivalent": "Record on either instrument.",
+   "confidence": "proposed-partial"
+  },
+  {
+   "activityId": "F_SOUND_STORY",
+   "codes": [
+    "AC9AMUFC01",
+    "AC9AMUFP01"
+   ],
+   "elements": [
+    "dynamics",
+    "timbre"
+   ],
+   "experientialActivity": "Tell a story with loud and soft sounds.",
+   "observableEvidence": "A saved sound story; optional sharing chosen by the learner.",
+   "assessment": "Described, not marked.",
+   "accessibleEquivalent": "Any instrument.",
+   "confidence": "proposed-partial"
+  },
+  {
+   "activityId": "P12_RHYTHMIC_CONVERSATION",
+   "codes": [
+    "AC9AMU2C01",
+    "AC9AMU2P01"
+   ],
+   "elements": [
+    "duration/time",
+    "form"
+   ],
+   "experientialActivity": "Hear a rhythm and create an answer.",
+   "observableEvidence": "A saved answer rhythm.",
+   "assessment": "Described, not marked.",
+   "accessibleEquivalent": "Drums or keys.",
+   "confidence": "proposed-partial"
+  },
+  {
+   "activityId": "P34_MELODIC_REPLY",
+   "codes": [
+    "AC9AMU4C01"
+   ],
+   "elements": [
+    "pitch",
+    "form"
+   ],
+   "experientialActivity": "Reply to a melody, higher or lower.",
+   "observableEvidence": "A saved melodic reply and the learner’s choice.",
+   "assessment": "Described, not marked.",
+   "accessibleEquivalent": "Keys.",
+   "confidence": "proposed-partial"
+  },
+  {
+   "activityId": "P56_FORM_AND_TEXTURE",
+   "codes": [
+    "AC9AMU6C01",
+    "AC9AMU6D01"
+   ],
+   "elements": [
+    "form",
+    "texture"
+   ],
+   "experientialActivity": "Make A and B sections and arrange them.",
+   "observableEvidence": "Saved sections and the order chosen.",
+   "assessment": "Described, not marked.",
+   "accessibleEquivalent": "Either instrument.",
+   "confidence": "proposed-partial"
+  },
+  {
+   "activityId": "OLDER_EXTENSION",
+   "codes": [
+    "AC9AMU6C01"
+   ],
+   "elements": [
+    "texture"
+   ],
+   "experientialActivity": "Add a second part and decide how it changes the piece.",
+   "observableEvidence": "Saved two-part piece and the learner’s reason.",
+   "assessment": "Described, not marked.",
+   "accessibleEquivalent": "Either instrument.",
+   "confidence": "proposed-partial"
+  }
+ ],
+ "gaps": [
+  "Exploring and responding (E01, E02) has no Carmen activity in any band: no listening to music from other cultures, times and places yet.",
+  "E02 (First Nations Australians) needs authorised material and cultural advice; Carmen will not invent or imitate it.",
+  "Presenting and performing is only informal playing on the device; sharing with an audience is optional and outside the app.",
+  "Singing is not covered (keyboard and drums only).",
+  "Foundation descriptors are Arts-wide; Carmen covers only the music part of D01 and C01.",
+  "No mapping is checked by a primary music educator yet."
+ ],
+ "achievementStandards": [
+  {
+   "band": "Foundation",
+   "responding": "By the end of the Prep year, students describe experiences, observations, ideas and/or feelings about arts works … (full text in source)",
+   "making": "Students use play, imagination, arts knowledge, processes and/or skills to create and share arts works in different forms.",
+   "sourceUrl": "https://www.qcaa.qld.edu.au/downloads/aciqv9/the-arts/curriculum/ac9_arts_music_prep-yr6_as_sequence.pdf"
+  },
+  {
+   "band": "Years 1-2",
+   "responding": "By the end of Year 2, students identify where they experience music. … (full text in source)",
+   "making": "Students demonstrate listening skills. … use the elements of music to improvise and/or compose music, and sing and play music in informal settings (paraphrased from source).",
+   "sourceUrl": "https://www.qcaa.qld.edu.au/downloads/aciqv9/the-arts/curriculum/ac9_arts_music_prep-yr6_as_sequence.pdf"
+  },
+  {
+   "band": "Years 3-4",
+   "responding": "By the end of Year 4, students describe the use of elements of music in music they compose, perform and/or experience. … (full text in source)",
+   "making": "Students demonstrate listening skills when performing and composing. … (full text in source)",
+   "sourceUrl": "https://www.qcaa.qld.edu.au/downloads/aciqv9/the-arts/curriculum/ac9_arts_music_prep-yr6_as_sequence.pdf"
+  },
+  {
+   "band": "Years 5-6",
+   "responding": "By the end of Year 6, students explain how elements of music are manipulated in music they compose, perform and/or experience. … (full text in source)",
+   "making": "Students demonstrate listening and aural skills when composing and performing. … notate, document and/or record the music they compose … (full text in source)",
+   "sourceUrl": "https://www.qcaa.qld.edu.au/downloads/aciqv9/the-arts/curriculum/ac9_arts_music_prep-yr6_as_sequence.pdf"
+  }
+ ]
+}

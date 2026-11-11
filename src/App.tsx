@@ -2,7 +2,7 @@ import { lazy, Suspense, useEffect, useRef, useState, useSyncExternalStore } fro
 import { audio } from './audio/engine.ts';
 import { PrefsProvider, usePrefs } from './state/prefs.tsx';
 import { Icon } from './ui/icons.tsx';
-import { Horizon, Wordmark } from './ui/brand.tsx';
+import { Horizon, Logo, Wordmark } from './ui/brand.tsx';
 import { PlayScreen } from './screens/PlayScreen.tsx';
 import { LearnScreen } from './screens/LearnScreen.tsx';
 import { LessonScreen } from './screens/LessonScreen.tsx';
@@ -128,15 +128,16 @@ function Shell() {
             {me ? <Avatar player={me} size={32} /> : <span className="avatar c-guest" style={{ width: 32, height: 32 }} aria-hidden="true">?</span>}
             <span className="player-name">{me ? me.name : 'Guest'}</span>
           </button>
-          <button type="button" className="icon-btn" onClick={() => audio.stopAll()} aria-label="Stop all sound">
-            <Icon name="stop" size={20} />
-          </button>
           <button type="button" className="icon-btn" aria-expanded={settingsOpen} aria-controls="controls-sheet" aria-label="Settings" onClick={() => setSettingsOpen(!settingsOpen)}>
             <Icon name="gear" size={24} />
           </button>
         </div>
       </header>
       <nav className="tabs" aria-label="Main">
+        <a className="rail-brand" href="#/play" aria-label="Carmen, go to Play">
+          <Logo size={20} />
+          <span className="rail-brand-name" aria-hidden="true">Carmen</span>
+        </a>
         {NAV.map((n) => (
           <a key={n.href} href={n.href} className="tab-link" aria-current={current === n.href ? 'page' : undefined}>
             <span className="tab-icon">
