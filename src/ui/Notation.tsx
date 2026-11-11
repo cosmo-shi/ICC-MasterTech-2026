@@ -101,9 +101,12 @@ export function Notation({ phrase, activeIndex, marks, onNoteTap }: Props) {
                 ? new VF.StaveNote({ keys: [isDrum ? 'c/5' : clef === 'bass' ? 'd/3' : 'b/4'], duration: `${base}r`, clef })
                 : e.kind === 'drum'
                   ? new VF.StaveNote({ keys: [DRUM_STAVE[e.sound].key], duration: base, clef, stemDirection: 1 })
-                  : new VF.StaveNote({ keys: [noteKey(e.midi)], duration: base, clef, autoStem: true });
+                  : new VF.StaveNote({ keys: (e.chord ?? [e.midi]).map(noteKey), duration: base, clef, autoStem: true });
             if (dots) VF.Dot.buildAndAttach([n], { all: true });
-            if (e.kind === 'note' && accidentalFor(e.midi) && !e.continued) n.addModifier(new VF.Accidental('#'), 0);
+            // One sharp per pitch that needs it; VexFlow stacks them so a chord's sharps don't collide.
+            if (e.kind === 'note' && !e.continued) (e.chord ?? [e.midi]).forEach((m, k) => {
+                if (accidentalFor(m)) n.addModifier(new VF.Accidental('#'), k);
+              });
             if (e.kind !== 'rest') {
               if (e.continued) soundingIdx--;
               const mark = marks?.[soundingIdx];
